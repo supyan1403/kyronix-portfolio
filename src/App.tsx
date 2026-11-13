@@ -774,19 +774,7 @@ function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const t = dict[lang];
   const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
-  const orbY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
-  // reduced layer count + shorter travel = less jank from hero
-  const hiY = useTransform(scrollYProgress, [0, 1], ["0%", "-16%"]);
-  const hiX = useTransform(scrollYProgress, [0, 1], ["0%", "-4%"]);
-  const headY = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
-  const headX = useTransform(scrollYProgress, [0, 1], ["0%", "-3%"]);
-  const subY = useTransform(scrollYProgress, [0, 1], ["0%", "-14%"]);
-  const subX = useTransform(scrollYProgress, [0, 1], ["0%", "4%"]);
-  const metaY = useTransform(scrollYProgress, [0, 1], ["0%", "-16%"]);
-  const ctaY = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  // parallax dimatikan — sebelumnya bgY 12% / orbY 22% / hiY -16% / headY -10% / subY -14% bikin renggang & Lenis jank
   const kyRef = useRef<HTMLHeadingElement>(null);
   const kyX = useMotionValue(-9999);
   const kyY = useMotionValue(-9999);
@@ -819,10 +807,10 @@ function Hero({ ready }: { ready: boolean }) {
       {/* brutalist hard red base — di bawah grid/glow */}
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[#4a0000]" />
       <div aria-hidden className="hero-vignette pointer-events-none absolute inset-0" />
-      <motion.div className="absolute inset-0" style={{ y: bgY }}>
+      <div className="absolute inset-0">
         <div className="grid-bg absolute inset-[-10%] opacity-[0.10]" />
         <div className="hero-epic-glow pointer-events-none absolute inset-0 opacity-[0.32]" />
-      </motion.div>
+      </div>
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-[52%] h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet/20 blur-[42px]"
@@ -836,11 +824,9 @@ function Hero({ ready }: { ready: boolean }) {
         initial={{ opacity: 0, filter: "blur(10px)" }}
         animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.32 }}
-        style={{ opacity: textOpacity } as unknown as Record<string, unknown>}
       >
         <motion.p
           className="font-mono text-xs uppercase tracking-[0.32em] text-snow/70"
-          style={{ y: hiY, x: hiX } as unknown as Record<string, unknown>}
           initial="hidden"
           animate={ready ? "show" : "hidden"}
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.032, delayChildren: 0.58 } } }}
@@ -876,7 +862,7 @@ function Hero({ ready }: { ready: boolean }) {
               ref={kyRef}
               data-text="KYRONIX"
               className="kyronix-glitch relative grid place-items-center overflow-visible font-display text-[clamp(5.2rem,14vw,12rem)] font-black leading-none tracking-[0.14em]"
-              style={{ y: headY, x: headX, textShadow: "none", filter: "none", lineHeight: 1, pointerEvents: kyInteractive ? "auto" : "none" } as unknown as React.CSSProperties}
+              style={{ textShadow: "none", filter: "none", lineHeight: 1, pointerEvents: kyInteractive ? "auto" : "none" } as unknown as React.CSSProperties}
               onMouseMove={(e) => {
                 if (!kyInteractive) return;
                 const r = kyRef.current?.getBoundingClientRect();
@@ -989,7 +975,6 @@ function Hero({ ready }: { ready: boolean }) {
             </motion.h1>
             <motion.h2
               className="mt-3 flex flex-wrap justify-center font-display text-[clamp(1.7rem,4vw,2.85rem)] font-black leading-[0.92] tracking-[0.22em] text-snow"
-              style={{ y: subY, x: subX } as unknown as Record<string, unknown>}
               initial="hidden"
               animate={ready ? "show" : "hidden"}
               variants={{ hidden: {}, show: { transition: { staggerChildren: 0.048, delayChildren: 1.1 } } }}
@@ -1023,7 +1008,6 @@ function Hero({ ready }: { ready: boolean }) {
           animate={ready ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1, ease: EASE, delay: 1.05 }}
           className="flex flex-wrap justify-center gap-4 pt-8"
-          style={{ y: ctaY } as unknown as Record<string, unknown>}
         >
           <Magnetic href="#contact" variant="lime" onClick={() => scrollToId("contact")}>
             {t.hero.ctaPrimary} <ArrowDownRight size={18} />
@@ -1039,7 +1023,6 @@ function Hero({ ready }: { ready: boolean }) {
           animate={ready ? { opacity: 1 } : {}}
           transition={{ delay: 1.4, duration: 0.8 }}
           className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/40 hover:text-white/70 md:flex"
-          style={{ y: ctaY } as unknown as Record<string, unknown>}
         >
           <span>Scroll</span>
           <span className="h-7 w-px bg-white/20">
