@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KYRONIX — Logo K Options Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Press+Start+2P&family=Space+Grotesk:wght@700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bone:#e9e3d8;--red:#e8112d;--lime:#f7ff3c;--obs:#050505}
+*{box-sizing:border-box;margin:0}
+body{background:#050505;color:var(--bone);font-family:"Space Grotesk",sans-serif;padding:32px}
+h1{font-family:Anton,sans-serif;font-size:clamp(2rem,6vw,3.2rem);letter-spacing:.06em;line-height:1;text-transform:uppercase}
+.sub{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#a8a296;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:36px}
+.card{background:#0a0a0a;border:3px solid var(--bone);box-shadow:8px 8px 0 var(--red);padding:18px;position:relative}
+.card::after{content:"";position:absolute;inset:-2px;box-shadow:0 0 24px rgba(247,255,60,.22);opacity:0;transition:.22s;pointer-events:none;z-index:-1}
+.card:hover::after{opacity:1}
+.badge{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:5px 8px;border:1px solid #222}
+.b-lime{background:var(--lime);color:var(--obs);border-color:var(--lime);font-weight:900}
+.b-red{background:var(--red);color:#fff;border-color:var(--red)}
+.b-bone{background:var(--bone);color:var(--obs)}
+.logo-box{height:220px;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,rgba(247,255,60,.06),transparent 60%),#050505;border:1px solid rgba(233,227,216,.08);margin:14px 0 12px;position:relative;overflow:hidden}
+.logo-box.dark{background:#e9e3d8}
+.fav-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.fav-row span{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#a8a296}
+.fav{border:1px solid rgba(233,227,216,.14);background:#050505;display:grid;place-items:center}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:10px 12px;border:1px solid rgba(233,227,216,.2);background:transparent;color:var(--bone);cursor:pointer}
+.btn.primary{background:var(--lime);color:var(--obs);border-color:var(--lime);font-weight:900;box-shadow:3px 3px 0 var(--red)}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--red)}
+.tab-mock{display:flex;align-items:center;gap:8px;background:#2b2b2b;border:1px solid #3a3a3a;border-radius:8px 8px 0 0;padding:6px 10px;max-width:280px;margin-top:8px;font-size:12px;color:#c9c9c9}
+.tab-mock i{width:14px;height:14px;display:inline-grid;place-items:center;border-radius:2px;overflow:hidden;flex:0 0 14px}
+.note{margin-top:28px;border:1px dashed rgba(233,227,216,.22);padding:12px 14px;color:#a8a296;font-size:13px;line-height:1.6}
+.note b{color:var(--lime)}
+</style>
+</head>
+<body>
+  <p class="sub">KYRONIX — favicon preview · K only · brutalist 3px bone + 8px red</p>
+  <h1>Pilih logo K</h1>
+  <p class="sub" style="margin-top:6px;color:var(--lime)">Palette obsidian #050505 · lime #f7ff3c · snow #e9e3d8 · coral #e8112d · Anton + Press Start 2P</p>
+
+  <div class="grid">
+
+    <!-- A: CHIP BRUTALIST (rekomendasi) -->
+    <div class="card">
+      <span class="badge b-lime">A — CHIP BRUTALIST · Rekomendasi</span>
+      <div class="logo-box">
+        <svg width="132" height="132" viewBox="0 0 132 132" shape-rendering="crispEdges" aria-label="K chip">
+          <!-- hard offset shadow -->
+          <rect x="12" y="12" width="108" height="108" fill="#e8112d"/>
+          <!-- main chip -->
+          <rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="6"/>
+          <!-- K -->
+          <text x="58" y="88" text-anchor="middle" font-family="Anton, sans-serif" font-size="74" font-weight="900" fill="#f7ff3c" style="letter-spacing:2px">K</text>
+          <!-- pins top -->
+          <rect x="28" y="4" width="12" height="6" fill="#e9e3d8"/><rect x="52" y="4" width="12" height="6" fill="#e9e3d8"/><rect x="76" y="4" width="12" height="6" fill="#e9e3d8"/>
+          <!-- pins bottom -->
+          <rect x="28" y="106" width="12" height="6" fill="#e9e3d8"/><rect x="52" y="106" width="12" height="6" fill="#e9e3d8"/><rect x="76" y="106" width="12" height="6" fill="#e9e3d8"/>
+          <!-- pins left -->
+          <rect x="4" y="28" width="6" height="12" fill="#e9e3d8"/><rect x="4" y="52" width="6" height="12" fill="#e9e3d8"/><rect x="4" y="76" width="6" height="12" fill="#e9e3d8"/>
+          <!-- pins right -->
+          <rect x="106" y="28" width="6" height="12" fill="#e9e3d8"/><rect x="106" y="52" width="6" height="12" fill="#e9e3d8"/><rect x="106" y="76" width="6" height="12" fill="#e9e3d8"/>
+        </svg>
+      </div>
+      <div class="fav-row"><span>fav preview</span>
+        <span class="fav" style="width:16px;height:16px"><svg viewBox="0 0 132 132" width="12" height="12"><rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="10"/><text x="58" y="90" text-anchor="middle" font-family="Anton" font-size="80" fill="#f7ff3c">K</text></svg></span>
+        <span class="fav" style="width:32px;height:32px"><svg viewBox="0 0 132 132" width="24" height="24"><rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="8"/><text x="58" y="88" text-anchor="middle" font-family="Anton" font-size="74" fill="#f7ff3c">K</text></svg></span>
+        <span class="fav" style="width:48px;height:48px"><svg viewBox="0 0 132 132" width="36" height="36"><rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="6"/><text x="58" y="88" text-anchor="middle" font-family="Anton" font-size="74" fill="#f7ff3c">K</text></svg></span>
+      </div>
+      <div class="tab-mock"><i style="background:#050505;border:1px solid #e9e3d8"><svg viewBox="0 0 32 32" width="14" height="14"><rect x="1" y="1" width="30" height="30" fill="#050505"/><text x="16" y="22" text-anchor="middle" font-family="Anton" font-size="20" fill="#f7ff3c">K</text></svg></i> KYRONIX — Supyan Sauri</div>
+      <p class="sub" style="text-transform:none;letter-spacing:.02em;color:#a8a296;margin-top:8px">Chip + pin 3 sisi, paling kebaca 16px, nyambung sama <b>ChipPixel 24px stroke 1.7</b> di Experience.</p>
+      <div class="actions"><button class="btn primary" onclick="pick('A')">Pakai A → favicon</button><button class="btn" onclick="downloadSVG('A')">Unduh SVG</button></div>
+    </div>
+
+    <!-- B: SOLID LIME BLOCK -->
+    <div class="card">
+      <span class="badge b-bone">B — SOLID LIME BLOCK</span>
+      <div class="logo-box">
+        <svg width="132" height="132" viewBox="0 0 132 132">
+          <rect x="12" y="12" width="108" height="108" fill="#e8112d"/>
+          <rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="6"/>
+          <!-- K with lime fill + hard shadow -->
+          <text x="62" y="90" text-anchor="middle" font-family="Anton" font-size="84" fill="#e8112d" opacity="0.95">K</text>
+          <text x="58" y="86" text-anchor="middle" font-family="Anton" font-size="84" fill="#f7ff3c" stroke="#e9e3d8" stroke-width="2" paint-order="stroke fill">K</text>
+        </svg>
+      </div>
+      <div class="fav-row"><span>fav preview</span>
+        <span class="fav" style="width:16px;height:16px"><svg viewBox="0 0 132 132" width="12" height="12"><text x="66" y="92" text-anchor="middle" font-family="Anton" font-size="90" fill="#f7ff3c">K</text></svg></span>
+        <span class="fav" style="width:32px;height:32px;background:#050505"><svg viewBox="0 0 132 132" width="24" height="24"><text x="62" y="90" font-family="Anton" font-size="84" fill="#e8112d">K</text><text x="58" y="86" font-family="Anton" font-size="84" fill="#f7ff3c">K</text></svg></span>
+      </div>
+      <div class="tab-mock"><i><svg viewBox="0 0 32 32" width="14" height="14"><rect width="32" height="32" fill="#050505"/><text x="16" y="23" text-anchor="middle" font-family="Anton" font-size="22" fill="#f7ff3c">K</text></svg></i> KYRONIX — Supyan Sauri</div>
+      <p class="sub" style="text-transform:none;letter-spacing:.02em;color:#a8a296;margin-top:8px">K lime tebal + shadow merah offset 4px, paling brutal & pop di tab gelap.</p>
+      <div class="actions"><button class="btn primary" onclick="pick('B')">Pakai B → favicon</button><button class="btn" onclick="downloadSVG('B')">Unduh SVG</button></div>
+    </div>
+
+    <!-- C: BONE KNOCKOUT -->
+    <div class="card">
+      <span class="badge" style="background:#e9e3d8;color:#050505">C — BONE KNOCKOUT</span>
+      <div class="logo-box dark">
+        <svg width="132" height="132" viewBox="0 0 132 132">
+          <rect x="12" y="12" width="108" height="108" fill="#e8112d"/>
+          <rect x="4" y="4" width="108" height="108" fill="#e9e3d8" stroke="#050505" stroke-width="6"/>
+          <text x="62" y="90" text-anchor="middle" font-family="Anton" font-size="84" fill="#e8112d">K</text>
+          <text x="58" y="86" text-anchor="middle" font-family="Anton" font-size="84" fill="#050505">K</text>
+        </svg>
+      </div>
+      <div class="fav-row"><span>fav preview</span>
+        <span class="fav" style="width:16px;height:16px;background:#e9e3d8"><svg viewBox="0 0 32 32" width="12" height="12"><text x="16" y="22" text-anchor="middle" font-family="Anton" font-size="20" fill="#050505">K</text></svg></span>
+        <span class="fav" style="width:32px;height:32px;background:#e9e3d8"><svg viewBox="0 0 132 132" width="24" height="24"><rect width="132" height="132" fill="#e9e3d8"/><text x="58" y="86" text-anchor="middle" font-family="Anton" font-size="84" fill="#050505">K</text></svg></span>
+      </div>
+      <div class="tab-mock"><i style="background:#e9e3d8;border:1px solid #050505"><svg viewBox="0 0 32 32" width="14" height="14"><rect width="32" height="32" fill="#e9e3d8"/><text x="16" y="22" text-anchor="middle" font-family="Anton" font-size="20" fill="#050505">K</text></svg></i> KYRONIX — Supyan Sauri</div>
+      <p class="sub" style="text-transform:none;letter-spacing:.02em;color:#a8a296;margin-top:8px">Bone terang, K hitam knockout — kebalikannya A, enak untuk light mode / cetak.</p>
+      <div class="actions"><button class="btn primary" onclick="pick('C')">Pakai C → favicon</button><button class="btn" onclick="downloadSVG('C')">Unduh SVG</button></div>
+    </div>
+
+    <!-- D: PIXEL RETRO — REDESIGN RAPIH (pixel-perfect rects, bukan font) -->
+    <div class="card" style="outline:2px solid #f7ff3c; outline-offset:2px">
+      <span class="badge b-red">D — PIXEL RETRO · redesign rapi</span>
+      <div class="logo-box">
+        <svg width="132" height="132" viewBox="0 0 132 132" shape-rendering="crispEdges">
+          <!-- hard offset shadow -->
+          <rect x="12" y="12" width="108" height="108" fill="#e8112d"/>
+          <!-- chip -->
+          <rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="6"/>
+          <!-- subtle 4px grid dots -->
+          <g opacity="0.14">
+            <rect x="18" y="18" width="2" height="2" fill="#e9e3d8"/><rect x="38" y="18" width="2" height="2" fill="#e9e3d8"/><rect x="58" y="18" width="2" height="2" fill="#e9e3d8"/><rect x="78" y="18" width="2" height="2" fill="#e9e3d8"/><rect x="98" y="18" width="2" height="2" fill="#e9e3d8"/>
+            <rect x="18" y="38" width="2" height="2" fill="#e9e3d8"/><rect x="98" y="38" width="2" height="2" fill="#e9e3d8"/>
+            <rect x="18" y="98" width="2" height="2" fill="#e9e3d8"/><rect x="98" y="98" width="2" height="2" fill="#e9e3d8"/>
+          </g>
+          <!-- K pixel-perfect — 6px block, 11×13 grid, centered -->
+          <!-- base x=25 y=20 block=6 -->
+          <g fill="#f7ff3c">
+            <!-- col 0-2 stem: 13 rows -->
+            <rect x="25" y="20" width="18" height="78" />
+            <!-- joint center bar -->
+            <rect x="43" y="50" width="12" height="6" />
+            <rect x="43" y="56" width="18" height="6" />
+            <!-- upper diagonal -> top-right -->
+            <rect x="55" y="44" width="6" height="6" /><rect x="61" y="38" width="6" height="6" /><rect x="67" y="32" width="6" height="6" /><rect x="73" y="26" width="12" height="6" /><rect x="85" y="20" width="6" height="6" />
+            <rect x="67" y="38" width="6" height="6" /><rect x="73" y="32" width="6" height="6" />
+            <!-- lower diagonal -> bottom-right -->
+            <rect x="55" y="62" width="6" height="6" /><rect x="61" y="68" width="6" height="6" /><rect x="67" y="74" width="6" height="6" /><rect x="73" y="80" width="6" height="6" /><rect x="79" y="86" width="6" height="6" /><rect x="85" y="92" width="6" height="6" />
+            <rect x="67" y="80" width="6" height="6" /><rect x="73" y="86" width="6" height="6" />
+            <!-- extra thickness to make diagonals blocky-readable -->
+            <rect x="61" y="44" width="6" height="6" /><rect x="61" y="62" width="6" height="6" />
+          </g>
+          <!-- 1px bone highlight on top edge of K -->
+          <g fill="#e9e3d8" opacity="0.95">
+            <rect x="25" y="20" width="18" height="2"/><rect x="73" y="26" width="12" height="2"/><rect x="85" y="20" width="6" height="2"/>
+          </g>
+          <!-- arcade underline: 3 lime ticks -->
+          <rect x="25" y="104" width="14" height="3" fill="#f7ff3c"/><rect x="42" y="104" width="14" height="3" fill="#f7ff3c" opacity="0.55"/><rect x="59" y="104" width="14" height="3" fill="#f7ff3c" opacity="0.28"/>
+          <rect x="85" y="104" width="6" height="3" fill="#e8112d"/>
+        </svg>
+      </div>
+      <div class="fav-row"><span>fav preview</span>
+        <span class="fav" style="width:16px;height:16px" title="16px"><svg viewBox="0 0 132 132" width="12" height="12" shape-rendering="crispEdges"><rect x="4" y="4" width="108" height="108" fill="#050505"/><g fill="#f7ff3c"><rect x="25" y="20" width="18" height="78"/><rect x="43" y="50" width="18" height="12"/><rect x="55" y="44" width="6" height="6"/><rect x="61" y="38" width="6" height="6"/><rect x="67" y="32" width="6" height="6"/><rect x="73" y="26" width="12" height="6"/><rect x="55" y="62" width="6" height="6"/><rect x="61" y="68" width="6" height="6"/><rect x="67" y="74" width="6" height="6"/><rect x="73" y="80" width="6" height="6"/><rect x="79" y="86" width="6" height="6"/><rect x="85" y="92" width="6" height="6"/></g></svg></span>
+        <span class="fav" style="width:32px;height:32px" title="32px"><svg viewBox="0 0 132 132" width="24" height="24" shape-rendering="crispEdges"><rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="4"/><g fill="#f7ff3c"><rect x="25" y="20" width="18" height="78"/><rect x="43" y="50" width="18" height="12"/><rect x="55" y="44" width="6" height="6"/><rect x="61" y="38" width="6" height="6"/><rect x="67" y="32" width="6" height="6"/><rect x="73" y="26" width="12" height="6"/><rect x="55" y="62" width="6" height="6"/><rect x="61" y="68" width="6" height="6"/><rect x="67" y="74" width="6" height="6"/><rect x="73" y="80" width="6" height="6"/><rect x="79" y="86" width="6" height="6"/><rect x="85" y="92" width="6" height="6"/></g></svg></span>
+        <span class="fav" style="width:48px;height:48px" title="48px"><svg viewBox="0 0 132 132" width="36" height="36" shape-rendering="crispEdges"><rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="5"/><g fill="#f7ff3c"><rect x="25" y="20" width="18" height="78"/><rect x="43" y="50" width="18" height="12"/><rect x="55" y="44" width="6" height="6"/><rect x="61" y="38" width="6" height="6"/><rect x="67" y="32" width="6" height="6"/><rect x="73" y="26" width="12" height="6"/><rect x="55" y="62" width="6" height="6"/><rect x="61" y="68" width="6" height="6"/><rect x="67" y="74" width="6" height="6"/><rect x="73" y="80" width="6" height="6"/><rect x="79" y="86" width="6" height="6"/><rect x="85" y="92" width="6" height="6"/></g></svg></span>
+      </div>
+      <div class="tab-mock"><i style="background:#050505"><svg viewBox="0 0 32 32" width="14" height="14" shape-rendering="crispEdges"><rect width="32" height="32" fill="#050505"/><g fill="#f7ff3c"><rect x="5" y="4" width="5" height="20"/><rect x="10" y="12" width="4" height="4"/><rect x="14" y="9" width="3" height="3"/><rect x="17" y="6" width="4" height="3"/><rect x="14" y="16" width="3" height="3"/><rect x="17" y="19" width="3" height="3"/><rect x="20" y="22" width="3" height="4"/></g></svg></i> KYRONIX — Supyan Sauri</div>
+      <p class="sub" style="text-transform:none;letter-spacing:.02em;color:#a8a296;margin-top:8px">Pixel-perfect <b>rect 6px grid 11×13</b> — tanpa font, <code style="color:#e9e3d8">shape-rendering:crispEdges</code> jadi 16px tidak blur. Underline 3 ticks = arcade <b>.glass</b>.</p>
+      <div class="actions"><button class="btn primary" onclick="pick('D')">Pakai D → favicon</button><button class="btn" onclick="downloadSVG('D')">Unduh SVG</button><button class="btn" onclick="downloadPNG('D')">Unduh PNG 512</button></div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    Preview ada di <b>http://localhost:8443/logo-preview.html</b> · Klik <b>Pakai → favicon</b> lalu bilang ke gue opsi mana (A/B/C/D) — gue overwrite <b>public/favicon.png + public/favicon.svg</b> + cek <b>.figma/make/site.json:6 icons.icon</b> + <b>vite.config.ts:147 link rel=icon</b> → <b>npm run build</b> + hard reload tab.<br>
+    Rekomendasi gue: <b>A CHIP BRUTALIST</b> untuk favicon 16–32px paling kebaca & konsisten sama Hero KYRONIX tracking <b>src/index.css:198</b>.
+  </div>
+
+<script>
+const svgs={
+A:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 132" width="512" height="512"><rect x="12" y="12" width="108" height="108" fill="#e8112d"/><rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="6"/><text x="58" y="88" text-anchor="middle" font-family="Anton, sans-serif" font-size="74" font-weight="900" fill="#f7ff3c">K</text><rect x="28" y="4" width="12" height="6" fill="#e9e3d8"/><rect x="52" y="4" width="12" height="6" fill="#e9e3d8"/><rect x="76" y="4" width="12" height="6" fill="#e9e3d8"/><rect x="28" y="106" width="12" height="6" fill="#e9e3d8"/><rect x="52" y="106" width="12" height="6" fill="#e9e3d8"/><rect x="76" y="106" width="12" height="6" fill="#e9e3d8"/><rect x="4" y="28" width="6" height="12" fill="#e9e3d8"/><rect x="4" y="52" width="6" height="12" fill="#e9e3d8"/><rect x="4" y="76" width="6" height="12" fill="#e9e3d8"/><rect x="106" y="28" width="6" height="12" fill="#e9e3d8"/><rect x="106" y="52" width="6" height="12" fill="#e9e3d8"/><rect x="106" y="76" width="6" height="12" fill="#e9e3d8"/></svg>`,
+B:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 132" width="512" height="512"><rect x="12" y="12" width="108" height="108" fill="#e8112d"/><rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="6"/><text x="62" y="90" text-anchor="middle" font-family="Anton, sans-serif" font-size="84" fill="#e8112d" opacity="0.95">K</text><text x="58" y="86" text-anchor="middle" font-family="Anton, sans-serif" font-size="84" fill="#f7ff3c" stroke="#e9e3d8" stroke-width="2" paint-order="stroke fill">K</text></svg>`,
+C:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 132" width="512" height="512"><rect x="12" y="12" width="108" height="108" fill="#e8112d"/><rect x="4" y="4" width="108" height="108" fill="#e9e3d8" stroke="#050505" stroke-width="6"/><text x="62" y="90" text-anchor="middle" font-family="Anton, sans-serif" font-size="84" fill="#e8112d">K</text><text x="58" y="86" text-anchor="middle" font-family="Anton, sans-serif" font-size="84" fill="#050505">K</text></svg>`,
+D:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 132" width="512" height="512" shape-rendering="crispEdges"><rect x="12" y="12" width="108" height="108" fill="#e8112d"/><rect x="4" y="4" width="108" height="108" fill="#050505" stroke="#e9e3d8" stroke-width="6"/><g opacity="0.14"><rect x="18" y="18" width="2" height="2" fill="#e9e3d8"/><rect x="38" y="18" width="2" height="2" fill="#e9e3d8"/><rect x="58" y="18" width="2" height="2" fill="#e9e3d8"/><rect x="78" y="18" width="2" height="2" fill="#e9e3d8"/><rect x="98" y="18" width="2" height="2" fill="#e9e3d8"/><rect x="18" y="38" width="2" height="2" fill="#e9e3d8"/><rect x="98" y="38" width="2" height="2" fill="#e9e3d8"/><rect x="18" y="98" width="2" height="2" fill="#e9e3d8"/><rect x="98" y="98" width="2" height="2" fill="#e9e3d8"/></g><g fill="#f7ff3c"><rect x="25" y="20" width="18" height="78"/><rect x="43" y="50" width="12" height="6"/><rect x="43" y="56" width="18" height="6"/><rect x="55" y="44" width="6" height="6"/><rect x="61" y="38" width="6" height="6"/><rect x="67" y="32" width="6" height="6"/><rect x="73" y="26" width="12" height="6"/><rect x="85" y="20" width="6" height="6"/><rect x="67" y="38" width="6" height="6"/><rect x="73" y="32" width="6" height="6"/><rect x="55" y="62" width="6" height="6"/><rect x="61" y="68" width="6" height="6"/><rect x="67" y="74" width="6" height="6"/><rect x="73" y="80" width="6" height="6"/><rect x="79" y="86" width="6" height="6"/><rect x="85" y="92" width="6" height="6"/><rect x="67" y="80" width="6" height="6"/><rect x="73" y="86" width="6" height="6"/><rect x="61" y="44" width="6" height="6"/><rect x="61" y="62" width="6" height="6"/></g><g fill="#e9e3d8" opacity="0.95"><rect x="25" y="20" width="18" height="2"/><rect x="73" y="26" width="12" height="2"/><rect x="85" y="20" width="6" height="2"/></g><rect x="25" y="104" width="14" height="3" fill="#f7ff3c"/><rect x="42" y="104" width="14" height="3" fill="#f7ff3c" opacity="0.55"/><rect x="59" y="104" width="14" height="3" fill="#f7ff3c" opacity="0.28"/><rect x="85" y="104" width="6" height="3" fill="#e8112d"/></svg>`
+};
+function pick(which){ alert('Kamu pilih opsi '+which+' — bilang ke gue "pakai '+which+'" nanti gue set jadi public/favicon.png + site.json'); navigator.clipboard?.writeText(svgs[which]); }
+function downloadSVG(which){
+  const blob=new Blob([svgs[which]],{type:'image/svg+xml'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kyronix-K-'+which+'.svg';a.click();
+}
+function downloadPNG(which){
+  const svgStr=svgs[which];
+  const blob=new Blob([svgStr],{type:'image/svg+xml'});
+  const url=URL.createObjectURL(blob);
+  const img=new Image();
+  img.onload=function(){
+    const c=document.createElement('canvas');c.width=512;c.height=512;
+    const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(img,0,0,512,512);
+    c.toBlob(function(b){ const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='kyronix-K-'+which+'-512.png';a.click(); });
+  };
+  img.src=url;
+}
+</script>
+</body>
+</html>
