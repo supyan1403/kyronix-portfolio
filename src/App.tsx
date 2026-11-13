@@ -168,7 +168,7 @@ function Magnetic({
       whileHover={{ scale: 1.015 }}
       transition={{ type: "spring", stiffness: 420, damping: 22 }}
       style={{ x: sx, y: sy }}
-      className={`inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold uppercase tracking-wider transition-[filter,background-color,border-color] duration-200 ${styles}`}
+      className={`inline-flex w-full justify-center items-center gap-2 rounded-full px-6 py-4 text-[13px] font-bold uppercase tracking-wider transition-[filter,background-color,border-color] duration-200 sm:w-auto sm:px-7 sm:py-3.5 sm:text-sm ${styles}`}
     >
       {children}
     </motion.a>
@@ -795,7 +795,7 @@ function Hero({ ready }: { ready: boolean }) {
     <section
       id="top"
       ref={ref}
-      className="relative flex min-h-[100svh] flex-col justify-center overflow-x-clip bg-[#4a0000] pt-24"
+      className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-[#4a0000] pt-20 sm:pt-24"
     >
       <motion.div
         aria-hidden
@@ -820,13 +820,13 @@ function Hero({ ready }: { ready: boolean }) {
 
       {/* FOREGROUND CONTENT — center, typing entrance + variatif scroll kepinggir */}
       <motion.div
-        className="relative z-20 mx-auto flex w-full max-w-[1200px] flex-1 flex-col items-center justify-center gap-6 px-[5vw] pb-8 pt-2 text-center md:px-[4vw]"
+        className="relative z-20 mx-auto flex w-full max-w-[1200px] flex-1 flex-col items-center justify-center gap-4 px-[6vw] pb-12 pt-2 text-center sm:gap-6 sm:px-[5vw] sm:pb-8 md:px-[4vw]"
         initial={{ opacity: 0, filter: "blur(10px)" }}
         animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.32 }}
       >
         <motion.p
-          className="font-mono text-xs uppercase tracking-[0.32em] text-snow/70"
+          className="font-mono text-[13px] uppercase tracking-[0.28em] text-snow/70 sm:text-xs sm:tracking-[0.32em]"
           initial="hidden"
           animate={ready ? "show" : "hidden"}
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.032, delayChildren: 0.58 } } }}
@@ -855,13 +855,13 @@ function Hero({ ready }: { ready: boolean }) {
           />
         </motion.p>
 
-        <div className="flex w-full flex-col items-center justify-center gap-4 text-center">
-          <div className="flex w-full max-w-[720px] flex-col items-center">
+        <div className="flex w-full flex-col items-center justify-center gap-3 text-center sm:gap-4">
+          <div className="flex w-full max-w-none flex-col items-center sm:max-w-[720px]">
             {/* KYRONIX — typing entrance + tracking + coral 3D spotlight */}
             <motion.h1
               ref={kyRef}
               data-text="KYRONIX"
-              className="kyronix-glitch relative grid place-items-center overflow-visible font-display text-[clamp(5.2rem,14vw,12rem)] font-black leading-none tracking-[0.14em]"
+              className="kyronix-glitch relative grid place-items-center overflow-visible font-display text-[clamp(4.2rem,16vw,12rem)] font-black leading-none tracking-[0.06em] sm:text-[clamp(5.2rem,14vw,12rem)] sm:tracking-[0.14em]"
               style={{ textShadow: "none", filter: "none", lineHeight: 1, pointerEvents: kyInteractive ? "auto" : "none" } as unknown as React.CSSProperties}
               onMouseMove={(e) => {
                 if (!kyInteractive) return;
@@ -974,7 +974,7 @@ function Hero({ ready }: { ready: boolean }) {
               </motion.span>
             </motion.h1>
             <motion.h2
-              className="mt-3 flex flex-wrap justify-center font-display text-[clamp(1.7rem,4vw,2.85rem)] font-black leading-[0.92] tracking-[0.22em] text-snow"
+              className="mt-2 flex flex-wrap justify-center px-2 font-display text-[clamp(1.45rem,5.2vw,2.85rem)] font-black leading-[1.05] tracking-[0.10em] text-snow sm:mt-3 sm:px-0 sm:text-[clamp(1.7rem,4vw,2.85rem)] sm:leading-[0.92] sm:tracking-[0.22em]"
               initial="hidden"
               animate={ready ? "show" : "hidden"}
               variants={{ hidden: {}, show: { transition: { staggerChildren: 0.048, delayChildren: 1.1 } } }}
@@ -1007,7 +1007,7 @@ function Hero({ ready }: { ready: boolean }) {
           initial={{ opacity: 0, y: 18 }}
           animate={ready ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1, ease: EASE, delay: 1.05 }}
-          className="flex flex-wrap justify-center gap-4 pt-8"
+          className="flex w-full flex-col items-stretch gap-3 px-2 pt-6 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4 sm:px-0 sm:pt-8"
         >
           <Magnetic href="#contact" variant="lime" onClick={() => scrollToId("contact")}>
             {t.hero.ctaPrimary} <ArrowDownRight size={18} />
