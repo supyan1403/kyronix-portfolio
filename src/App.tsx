@@ -168,7 +168,7 @@ function Magnetic({
       whileHover={{ scale: 1.015 }}
       transition={{ type: "spring", stiffness: 420, damping: 22 }}
       style={{ x: sx, y: sy }}
-      className={`inline-flex w-full justify-center items-center gap-2 rounded-full px-5 py-3 text-[11px] font-bold uppercase tracking-[0.14em] transition-[filter,background-color,border-color] duration-200 sm:w-auto sm:px-7 sm:py-3.5 sm:text-sm sm:tracking-wider ${styles}`}
+      className={`inline-flex w-auto justify-center items-center gap-2 self-center rounded-full px-6 py-3 text-[11px] font-bold uppercase tracking-[0.14em] transition-[filter,background-color,border-color] duration-200 sm:w-auto sm:px-7 sm:py-3.5 sm:text-sm sm:tracking-wider ${styles}`}
     >
       {children}
     </motion.a>
@@ -1007,7 +1007,7 @@ function Hero({ ready }: { ready: boolean }) {
           initial={{ opacity: 0, y: 18 }}
           animate={ready ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1, ease: EASE, delay: 1.05 }}
-          className="mx-auto flex w-full max-w-[340px] flex-col items-stretch gap-2.5 px-2 pt-6 sm:mx-0 sm:w-auto sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4 sm:px-0 sm:pt-8"
+          className="flex w-auto flex-col items-center gap-2.5 pt-6 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4 sm:pt-8"
         >
           <Magnetic href="#contact" variant="lime" onClick={() => scrollToId("contact")}>
             {t.hero.ctaPrimary} <ArrowDownRight size={18} />
