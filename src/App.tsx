@@ -1688,10 +1688,8 @@ function CertificateViewer({
   const { lang } = useLang();
   const t = dict[lang];
   const title = href ? href.split("/").pop()?.replace(".pdf", "") ?? "Sertifikat" : "";
-  const [rot, setRot] = useState(0);
   useEffect(() => {
     if (!open) return;
-    setRot(0);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     lenisInstance?.stop();
@@ -1705,23 +1703,6 @@ function CertificateViewer({
       window.removeEventListener("keydown", onKey);
     };
   }, [open, onClose]);
-  const doDownload = async () => {
-    if (!href) return;
-    try {
-      const res = await fetch(href);
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = href.split("/").pop() || "sertifikat.pdf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch {
-      window.open(href, "_blank", "noopener,noreferrer");
-    }
-  };
   return (
     <AnimatePresence>
       {open && href && (
@@ -1755,21 +1736,6 @@ function CertificateViewer({
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <button
-                  onClick={() => setRot((r) => (r + 90) % 360)}
-                  title="Putar 90° — landscape/portrait"
-                  className="inline-flex cursor-pointer items-center gap-1.5 border border-white/20 bg-transparent px-3 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-lime hover:text-lime sm:px-3"
-                >
-                  ⟲ <span className="hidden sm:inline">Putar</span>
-                </button>
-                <button
-                  onClick={doDownload}
-                  className="inline-flex cursor-pointer items-center gap-1.5 bg-lime px-3 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d] sm:px-4 sm:gap-2"
-                >
-                  <Download size={14} />
-                  <span className="hidden sm:inline">{(t.experience as { download: string }).download}</span>
-                  <span className="sm:hidden">Unduh</span>
-                </button>
-                <button
                   onClick={onClose}
                   aria-label={t.projectModal.close}
                   className="flex h-9 w-9 cursor-pointer items-center justify-center border border-white/20 bg-transparent text-snow hover:border-lime hover:text-lime sm:h-9 sm:w-9"
@@ -1778,18 +1744,12 @@ function CertificateViewer({
                 </button>
               </div>
             </div>
-            {/* pdf — toolbar chrome disembunyikan #toolbar=0, landscape via rotate */}
+            {/* pdf — toolbar chrome disembunyikan #toolbar=0 */}
             <div className="flex flex-1 items-center justify-center overflow-auto bg-[#141414] p-2 sm:p-3">
               <iframe
                 src={`${href}#toolbar=0&navpanes=0&statusbar=0`}
                 title={title}
-                className="h-full w-full shrink-0 border border-white/10 bg-white"
-                style={{
-                  transform: rot ? `rotate(${rot}deg)` : undefined,
-                  width: rot % 180 !== 0 ? "min(78vh, 96%)" : undefined,
-                  height: rot % 180 !== 0 ? "min(88vw, 100%)" : undefined,
-                  maxWidth: rot % 180 !== 0 ? "92%" : undefined,
-                } as React.CSSProperties}
+                className="h-full w-full border border-white/10 bg-white"
                 loading="lazy"
               />
             </div>
