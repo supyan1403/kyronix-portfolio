@@ -67,6 +67,24 @@ function useIsMobile() {
   return v;
 }
 
+function useInViewActive() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setActive(true);
+      },
+      { rootMargin: "-35% 0px -55% 0px", threshold: 0.15 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return { ref, active } as const;
+}
+
 type Lang = "id" | "en";
 const LangCtx = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang: "id", setLang: () => {} });
 const useLang = () => useContext(LangCtx);
@@ -1622,7 +1640,9 @@ function ExpRow({
   const role = (e.role as { id: string; en: string })[lang] ?? (e.role as unknown as string);
   const points = (Array.isArray(e.points) ? e.points : (e.points as { id: string[]; en: string[] })[lang]) as string[];
   const isMobile = useIsMobile();
-  // latch: chip nyala kuning saat pipa sampai dan TETAP nyala setelah lewat — window diperlebar 0.058→~0.14 biar buttery, filter disederhanakan biar tidak jank
+  const io = useInViewActive();
+  const active = isMobile ? io.active : false;
+  // desktop: scroll-linked buttery (window 0.145), mobile: discrete observer -> CSS transition (murah, tidak per-frame)
   const glow = useTransform(smooth, [dotPos - 0.16, dotPos - 0.015], [0, 1], { clamp: true });
   const dotScale = useTransform(glow, [0, 1], [1, 1.14]);
   const dotBg = useTransform(glow, [0, 1], ["rgba(5,5,5,0)", "rgba(247,255,60,0.08)"] as unknown as string[]);
@@ -1637,32 +1657,54 @@ function ExpRow({
   ]);
   const cardShadow = useTransform(glow, [0, 1], ["8px 8px 0 #e8112d", "8px 8px 0 #e8112d, 0 0 20px rgba(247,255,60,0.22)"]);
   const [open, setOpen] = useState(false);
-  // mobile: bypass semua scroll-linked MotionValue — statis, tidak hit tiap frame
+  const cc = "280ms cubic-bezier(0.22,1,0.36,1)" as const;
+  const mobileDotStyle: React.CSSProperties = {
+    color: active ? "#f7ff3c" : "#5a5a52",
+    backgroundColor: active ? "rgba(247,255,60,0.08)" : "rgba(5,5,5,0)",
+    filter: active ? "drop-shadow(0 0 10px rgba(247,255,60,0.7)) drop-shadow(0 0 22px rgba(247,255,60,0.32))" : "drop-shadow(0 0 0 rgba(247,255,60,0))",
+    transform: active ? "scale(1.14)" : "scale(1)",
+    transition: `color ${cc}, background-color ${cc}, filter ${cc}, transform ${cc}`,
+  };
+  const mobileHaloStyle: React.CSSProperties = {
+    opacity: active ? 0.75 : 0,
+    transition: `opacity ${cc}`,
+  };
+  const mobileCardStyle: React.CSSProperties = {
+    borderColor: active ? "#f7ff3c" : "#e9e3d8",
+    boxShadow: active ? "8px 8px 0 #e8112d, 0 0 20px rgba(247,255,60,0.22)" : "8px 8px 0 #e8112d",
+    transition: `border-color ${cc}, box-shadow ${cc}`,
+  };
+  const mobileIconStyle: React.CSSProperties = {
+    color: active ? "#f7ff3c" : "#a8a29e",
+    transition: `color ${cc}`,
+  };
+  const mobileBulletBg = active ? "rgba(247,255,60,1)" : "rgba(255,255,255,0.3)";
+  // desktop: MotionValue-driven, mobile: CSS transition murah
   const dotStyle = isMobile
-    ? undefined
+    ? (mobileDotStyle as unknown as Record<string, unknown>)
     : ({ scale: dotScale, backgroundColor: dotBg, color: dotColor, filter: dotShadow } as unknown as Record<string, unknown>);
   const cardStyle = isMobile
-    ? undefined
+    ? (mobileCardStyle as unknown as Record<string, unknown>)
     : ({ borderColor: cardBorder, boxShadow: cardShadow } as unknown as Record<string, unknown>);
-  const haloStyle = isMobile ? ({ opacity: 0 } as unknown as Record<string, unknown>) : ({ opacity: haloOpacity } as unknown as Record<string, unknown>);
-  const iconStyle = isMobile ? undefined : ({ color: iconColor } as unknown as Record<string, unknown>);
-  const bulletStyle = isMobile ? undefined : ({ backgroundColor: bulletBg } as unknown as Record<string, unknown>);
+  const haloStyle = isMobile ? (mobileHaloStyle as unknown as Record<string, unknown>) : ({ opacity: haloOpacity } as unknown as Record<string, unknown>);
+  const iconStyle = isMobile ? (mobileIconStyle as unknown as Record<string, unknown>) : ({ color: iconColor } as unknown as Record<string, unknown>);
+  const bulletStyle = isMobile ? ({ backgroundColor: mobileBulletBg } as unknown as Record<string, unknown>) : ({ backgroundColor: bulletBg } as unknown as Record<string, unknown>);
   if (isMobile) {
     return (
-      <div className={`relative flex w-full ${isLeft ? "md:justify-start" : "md:justify-end"} justify-end`}>
-        <button
+      <div ref={io.ref} className={`relative flex w-full ${isLeft ? "md:justify-start" : "md:justify-end"} justify-end`}>
+        <span
           data-dot
-          onClick={onJump}
-          aria-label={`${period} — ${role}`}
-          className="absolute left-[14px] top-8 z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent text-[#f7ff3c] md:left-1/2 md:top-1/2"
-          style={{ color: "#f7ff3c", background: "rgba(247,255,60,0.08)" } as React.CSSProperties}
+          aria-hidden
+          className="pointer-events-none absolute left-[14px] top-8 z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
+          style={mobileDotStyle}
         >
-          <span className="pointer-events-none absolute -inset-3 rounded-md bg-lime/20 blur-[8px] opacity-0" />
+          <span className="pointer-events-none absolute -inset-3 rounded-md bg-lime/20 blur-[8px]" style={mobileHaloStyle} />
           <ChipPixel size={26} />
-        </button>
+        </span>
         <article
           onClick={onJump}
           className={`glass relative w-[calc(100%-40px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
+          style={mobileCardStyle}
         >
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
@@ -1670,7 +1712,7 @@ function ExpRow({
               <h3 className="mt-5 font-display text-2xl tracking-wide md:text-3xl">{role}</h3>
               <p className="mt-1 text-silver">{e.org}</p>
             </div>
-            <span className="shrink-0 text-[#f7ff3c]">
+            <span className="shrink-0" style={mobileIconStyle}>
               <Icon size={30} />
             </span>
           </div>
@@ -1679,7 +1721,7 @@ function ExpRow({
             <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
               {points.map((p) => (
                 <li key={p} className="flex gap-3 leading-relaxed text-silver">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/30" />
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: mobileBulletBg, transition: `background-color ${cc}` }} />
                   {p}
                 </li>
               ))}
@@ -1730,7 +1772,7 @@ function ExpRow({
                 <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
                   {points.map((p) => (
                     <li key={p} className="flex gap-3 leading-relaxed text-silver">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/30" />
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: mobileBulletBg, transition: `background-color ${cc}` }} />
                       {p}
                     </li>
                   ))}
