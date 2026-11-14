@@ -1793,12 +1793,6 @@ function CertificateViewer({
                 loading="lazy"
               />
             </div>
-            <div className="flex shrink-0 items-center justify-between gap-3 border-t border-white/10 bg-obsidian px-3 py-2 sm:px-4">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-silver/60 sm:text-xs">© 2025 KYRONIX — Supyan Sauri • Verified Certificate</p>
-              <button onClick={onClose} className="cursor-pointer font-mono text-xs uppercase tracking-widest text-snow/70 hover:text-lime">
-                {t.projectModal.close} ✕
-              </button>
-            </div>
           </motion.div>
         </motion.div>
       )}
