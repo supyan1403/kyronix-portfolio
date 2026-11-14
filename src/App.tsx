@@ -55,6 +55,18 @@ function ChipPixel({ size = 24, className, style }: { size?: number; className?:
 const EASE = [0.22, 1, 0.36, 1] as const;
 let lenisInstance: Lenis | null = null;
 
+function useIsMobile() {
+  const [v, setV] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const upd = () => setV(mq.matches || window.matchMedia("(pointer: coarse)").matches);
+    upd();
+    mq.addEventListener("change", upd);
+    return () => mq.removeEventListener("change", upd);
+  }, []);
+  return v;
+}
+
 type Lang = "id" | "en";
 const LangCtx = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang: "id", setLang: () => {} });
 const useLang = () => useContext(LangCtx);
@@ -1609,7 +1621,8 @@ function ExpRow({
   const period = (e.period as { id: string; en: string })[lang] ?? (e.period as unknown as string);
   const role = (e.role as { id: string; en: string })[lang] ?? (e.role as unknown as string);
   const points = (Array.isArray(e.points) ? e.points : (e.points as { id: string[]; en: string[] })[lang]) as string[];
-  // latch: chip nyala kuning saat pipa sampai dan TETAP nyala setelah lewat (tidak fade-out)
+  const isMobile = useIsMobile();
+  // latch: chip nyala kuning saat pipa sampai dan TETAP nyala setelah lewat (tidak fade-out) — dimatikan di mobile biar smooth
   const glow = useTransform(smooth, [dotPos - 0.07, dotPos - 0.012], [0, 1], { clamp: true });
   const dotScale = useTransform(glow, [0, 1], [1, 1.18]);
   const dotBg = useTransform(glow, [0, 1], ["rgba(5,5,5,0)", "rgba(247,255,60,0.08)"] as unknown as string[]);
@@ -1625,27 +1638,182 @@ function ExpRow({
   ]);
   const cardShadow = useTransform(glow, [0, 1], ["8px 8px 0 #e8112d, 0 0 0 rgba(247,255,60,0), 0 0 0 rgba(247,255,60,0)", "8px 8px 0 #e8112d, 0 0 18px rgba(247,255,60,0.28), 0 0 36px rgba(247,255,60,0.14)"]);
   const [open, setOpen] = useState(false);
+  // mobile: bypass semua scroll-linked MotionValue — statis, tidak hit tiap frame
+  const dotStyle = isMobile
+    ? undefined
+    : ({ scale: dotScale, backgroundColor: dotBg, color: dotColor, filter: dotShadow } as unknown as Record<string, unknown>);
+  const cardStyle = isMobile
+    ? undefined
+    : ({ borderColor: cardBorder, boxShadow: cardShadow } as unknown as Record<string, unknown>);
+  const haloStyle = isMobile ? ({ opacity: 0 } as unknown as Record<string, unknown>) : ({ opacity: haloOpacity } as unknown as Record<string, unknown>);
+  const iconStyle = isMobile ? undefined : ({ color: iconColor } as unknown as Record<string, unknown>);
+  const bulletStyle = isMobile ? undefined : ({ backgroundColor: bulletBg } as unknown as Record<string, unknown>);
+  if (isMobile) {
+    return (
+      <div className={`relative flex w-full ${isLeft ? "md:justify-start" : "md:justify-end"} justify-end`}>
+        <button
+          data-dot
+          onClick={onJump}
+          aria-label={`${period} — ${role}`}
+          className="absolute left-[14px] top-8 z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent text-[#f7ff3c] md:left-1/2 md:top-1/2"
+          style={{ color: "#f7ff3c", background: "rgba(247,255,60,0.08)" } as React.CSSProperties}
+        >
+          <span className="pointer-events-none absolute -inset-3 rounded-md bg-lime/20 blur-[8px] opacity-0" />
+          <ChipPixel size={26} />
+        </button>
+        <article
+          onClick={onJump}
+          className={`glass relative w-[calc(100%-40px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <Tag tone={e.tone}>{period}</Tag>
+              <h3 className="mt-5 font-display text-2xl tracking-wide md:text-3xl">{role}</h3>
+              <p className="mt-1 text-silver">{e.org}</p>
+            </div>
+            <span className="shrink-0 text-[#f7ff3c]">
+              <Icon size={30} />
+            </span>
+          </div>
+          {/* Desktop: always expanded — viewer B replaces _blank tab */}
+          <div className="hidden sm:block">
+            <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
+              {points.map((p) => (
+                <li key={p} className="flex gap-3 leading-relaxed text-silver">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/30" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+            {(e as { certificateHref?: string }).certificateHref && (
+              <div className="mt-6 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+                <button
+                  type="button"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    onOpenCert?.((e as { certificateHref: string }).certificateHref);
+                  }}
+                  className="inline-flex cursor-pointer items-center gap-2 bg-lime px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d]"
+                >
+                  {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
+                </button>
+                <button
+                  type="button"
+                  onClick={async (ev) => {
+                    ev.stopPropagation();
+                    const href = (e as { certificateHref: string }).certificateHref;
+                    try {
+                      const res = await fetch(href);
+                      const blob = await res.blob();
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = href.split("/").pop() || "sertifikat.pdf";
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                      setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    } catch {
+                      window.open(href, "_blank", "noopener,noreferrer");
+                    }
+                  }}
+                  className="inline-flex cursor-pointer items-center gap-2 border border-white/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
+                >
+                  {(t.experience as { download: string }).download} <Download size={12} />
+                </button>
+              </div>
+            )}
+          </div>
+          {/* Mobile: collapsed preview + brutalist toggle */}
+          <div className="sm:hidden">
+            {open ? (
+              <div className="overflow-hidden">
+                <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
+                  {points.map((p) => (
+                    <li key={p} className="flex gap-3 leading-relaxed text-silver">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/30" />
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+                {(e as { certificateHref?: string }).certificateHref && (
+                  <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+                    <button
+                      type="button"
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        onOpenCert?.((e as { certificateHref: string }).certificateHref);
+                      }}
+                      className="inline-flex cursor-pointer items-center gap-2 bg-lime px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d]"
+                    >
+                      {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async (ev) => {
+                        ev.stopPropagation();
+                        const href = (e as { certificateHref: string }).certificateHref;
+                        try {
+                          const res = await fetch(href);
+                          const blob = await res.blob();
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = href.split("/").pop() || "sertifikat.pdf";
+                          document.body.appendChild(a);
+                          a.click();
+                          a.remove();
+                          setTimeout(() => URL.revokeObjectURL(url), 1000);
+                        } catch {
+                          window.open(href, "_blank", "noopener,noreferrer");
+                        }
+                      }}
+                      className="inline-flex cursor-pointer items-center gap-2 border border-white/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
+                    >
+                      {(t.experience as { download: string }).download} <Download size={12} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="mt-4 line-clamp-2 border-t border-white/10 pt-4 text-sm leading-relaxed text-silver/80">{points[0]}</p>
+            )}
+            <button
+              type="button"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                setOpen((v) => !v);
+              }}
+              className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 border-2 px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest transition-colors ${open ? "border-white/20 bg-transparent text-snow hover:border-white/30" : "border-lime bg-lime text-obsidian hover:bg-[#eef64d]"}`}
+            >
+              {open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}
+            </button>
+          </div>
+        </article>
+      </div>
+    );
+  }
   return (
     <div className={`relative flex w-full ${isLeft ? "md:justify-start" : "md:justify-end"} justify-end`}>
       <motion.button
         data-dot
         onClick={onJump}
         aria-label={`${period} — ${role}`}
-        style={{ scale: dotScale, backgroundColor: dotBg, color: dotColor, filter: dotShadow } as unknown as Record<string, unknown>}
+        style={dotStyle}
         className="absolute left-[14px] top-8 z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
       >
-        <motion.span style={{ opacity: haloOpacity } as unknown as Record<string, unknown>} className="pointer-events-none absolute -inset-3 rounded-md bg-lime/20 blur-[8px]" />
+        <motion.span style={haloStyle} className="pointer-events-none absolute -inset-3 rounded-md bg-lime/20 blur-[8px]" />
         <ChipPixel size={26} />
       </motion.button>
       <motion.article
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={isMobile ? undefined : ({ opacity: 0, y: 16 } as unknown as Record<string, unknown>)}
+        whileInView={isMobile ? undefined : ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.55, ease: EASE }}
         onClick={onJump}
-        whileHover={{ y: -3, scale: 1.01 }}
+        whileHover={isMobile ? undefined : ({ y: -3, scale: 1.01 } as unknown as Record<string, unknown>)}
         whileTap={{ scale: 0.98 }}
-        style={{ borderColor: cardBorder, boxShadow: cardShadow } as unknown as Record<string, unknown>}
+        style={cardStyle}
         className={`glass relative w-[calc(100%-40px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
       >
         <div className="flex items-start justify-between gap-4">
@@ -1654,7 +1822,7 @@ function ExpRow({
             <h3 className="mt-5 font-display text-2xl tracking-wide md:text-3xl">{role}</h3>
             <p className="mt-1 text-silver">{e.org}</p>
           </div>
-          <motion.span style={{ color: iconColor } as unknown as Record<string, unknown>} className="shrink-0">
+          <motion.span style={iconStyle} className="shrink-0">
             <Icon size={30} />
           </motion.span>
         </div>
@@ -1663,7 +1831,7 @@ function ExpRow({
           <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
             {points.map((p) => (
               <li key={p} className="flex gap-3 leading-relaxed text-silver">
-                <motion.span style={{ backgroundColor: bulletBg } as unknown as Record<string, unknown>} className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" />
+                <motion.span style={bulletStyle} className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" />
                 {p}
               </li>
             ))}
@@ -1906,6 +2074,7 @@ function Experience() {
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [dots, setDots] = useState<number[]>([0.22, 0.5, 0.78]);
   const [certHref, setCertHref] = useState<string | null>(null);
+  const isExpMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start 78%", "end 52%"] });
   const smooth = useSpring(scrollYProgress, { stiffness: 220, damping: 32, mass: 0.4 });
@@ -1956,17 +2125,23 @@ function Experience() {
         />
         <div ref={trackRef} className="relative mt-10">
           <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-white/12 md:left-1/2" aria-hidden />
-          {/* neon pipa: core 5px + bloom lebar di belakang */}
-          <motion.div
-            className="pointer-events-none absolute left-[14px] top-3 w-[18px] origin-top -translate-x-1/2 bg-lime/22 blur-[8px] md:left-1/2"
-            style={{ scaleY: pipe, height: "100%" } as unknown as Record<string, unknown>}
-            aria-hidden
-          />
-          <motion.div
-            className="pointer-events-none absolute left-[14px] top-3 w-[5px] origin-top -translate-x-1/2 bg-lime md:left-1/2"
-            style={{ scaleY: pipe, height: "100%", boxShadow: "0 0 12px rgba(247,255,60,0.95), 0 0 26px rgba(247,255,60,0.5), 0 0 42px rgba(247,255,60,0.2)" } as unknown as Record<string, unknown>}
-            aria-hidden
-          />
+          {/* neon pipa: desktop animated (scaleY + blur), mobile statis full-height tanpa blur — paling enteng */}
+          {isExpMobile ? (
+            <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[5px] -translate-x-1/2 bg-lime md:left-1/2" aria-hidden />
+          ) : (
+            <>
+              <motion.div
+                className="pointer-events-none absolute left-[14px] top-3 w-[18px] origin-top -translate-x-1/2 bg-lime/22 blur-[8px] md:left-1/2"
+                style={{ scaleY: pipe, height: "100%" } as unknown as Record<string, unknown>}
+                aria-hidden
+              />
+              <motion.div
+                className="pointer-events-none absolute left-[14px] top-3 w-[5px] origin-top -translate-x-1/2 bg-lime md:left-1/2"
+                style={{ scaleY: pipe, height: "100%", boxShadow: "0 0 12px rgba(247,255,60,0.95), 0 0 26px rgba(247,255,60,0.5), 0 0 42px rgba(247,255,60,0.2)" } as unknown as Record<string, unknown>}
+                aria-hidden
+              />
+            </>
+          )}
           <div className="flex flex-col gap-12 md:gap-16">
             {experience.map((e, i) => (
               <div key={(e.role as unknown as { id: string }).id ?? i} ref={(el) => { itemRefs.current[i] = el; }}>
