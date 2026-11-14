@@ -62,7 +62,8 @@ const useLang = () => useContext(LangCtx);
 function scrollToId(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
-  if (lenisInstance)
+  const isCoarse = window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches;
+  if (lenisInstance && !isCoarse)
     lenisInstance.scrollTo(el, {
       offset: 0,
       duration: 2.4,
@@ -74,7 +75,8 @@ function scrollToId(id: string) {
 /* ---------- Smooth scroll (Lenis) ---------- */
 function useLenis() {
   useEffect(() => {
-    const lenis = new Lenis({ duration: 1.25, wheelMultiplier: 0.9, smoothWheel: true });
+    if (window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches) return;
+    const lenis = new Lenis({ duration: 1.25, wheelMultiplier: 0.9, smoothWheel: true, smoothTouch: false });
     lenisInstance = lenis;
     let raf = 0;
     const loop = (t: number) => {
@@ -1223,8 +1225,96 @@ function Projects() {
     setActive(p);
   };
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const upd = () => setIsMobile(mq.matches || window.matchMedia("(pointer: coarse)").matches);
+    upd();
+    mq.addEventListener("change", upd);
+    return () => mq.removeEventListener("change", upd);
+  }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const x = useTransform(scrollYProgress, [0, 1], [0, -maxX]);
+
+  if (isMobile) {
+    return (
+      <section id="projects" className="relative px-[5vw] py-[6vh]">
+        <div className="mx-auto max-w-[1120px]">
+          <Eyebrow index="02" label={t.projectsEyebrow} />
+          <SplitReveal
+            key={t.projectsTitle}
+            text={t.projectsTitle}
+            className="font-display text-[clamp(2.3rem,5.2vw,4.25rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
+          />
+          <div className="mt-8 grid gap-4">
+            {projects.map((p) => (
+              <article
+                key={p.no}
+                role="button"
+                tabIndex={0}
+                onClick={() => handleOpen(p)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleOpen(p); } }}
+                className="glass arcade flex cursor-pointer flex-col overflow-hidden p-6"
+              >
+                <div className="mb-4 flex flex-col gap-2">
+                  <span className="font-display text-4xl font-extrabold leading-none text-snow/45">{p.no}</span>
+                  <span className={`inline-flex w-fit items-center gap-2 rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider ${p.statusTone === "lime" ? "bg-lime/15 text-lime border-lime/30" : p.statusTone === "coral" ? "bg-coral/15 text-coral border-coral/30" : "bg-violet/15 text-[#ffb3c0] border-violet/30"}`}>
+                    {(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0 rounded-full" />}
+                    {p.status}
+                  </span>
+                </div>
+                <p className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-lime">{p.kind}</p>
+                <h3 className="mb-3 font-display text-[1.6rem] leading-[1.1] tracking-wide">{p.title}</h3>
+                <p className="text-sm leading-relaxed text-silver">{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
+                <div className="mt-5 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+                  {p.stack.map((s) => (
+                    <Tag key={s} tone={p.tone}>{s}</Tag>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+        <AnimatePresence>
+          {active && (
+            <motion.div role="dialog" aria-modal="true" aria-label={t.projectModal.title} className="fixed inset-0 z-[100] flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActive(null)}>
+              <div className="absolute inset-0 bg-obsidian/85 backdrop-blur-sm" />
+              <motion.div initial={{ y: 16, scale: 0.98, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }} exit={{ y: 8, scale: 0.98, opacity: 0 }} transition={{ type: "spring", stiffness: 380, damping: 24 }} onClick={(e) => e.stopPropagation()} className="glass arcade relative w-full max-w-[520px] bg-[#0a0a0a] p-6 text-left md:p-7">
+                <button onClick={() => setActive(null)} aria-label={t.projectModal.close} className="absolute right-3 top-3 flex h-8 w-8 cursor-pointer items-center justify-center border border-white/25 bg-obsidian text-snow hover:border-lime hover:text-lime"><X size={16} /></button>
+                <p className="font-mono text-xs uppercase tracking-[0.2em] text-lime">{active.kind}</p>
+                <h3 className="mt-2 pr-8 font-display text-2xl font-normal uppercase leading-tight tracking-[0.14em] text-snow">{((active as { href?: string }).href ? (t.projectModal as { articleTitle: string }).articleTitle : t.projectModal.title)}</h3>
+                <p className="mt-2 inline-block bg-lime px-2.5 py-1.5 font-mono text-xs font-black uppercase leading-none tracking-[0.22em] text-obsidian">{active.title}</p>
+                <p className="mt-3 text-sm font-medium leading-relaxed text-snow">{((active as { href?: string }).href ? (t.projectModal as { articleBody: string }).articleBody : t.projectModal.body)}</p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {(() => {
+                    const href = (active as { href?: string }).href;
+                    const hasArticle = typeof href === "string" && href.length > 0;
+                    if (hasArticle) {
+                      return (
+                        <>
+                          <motion.button onClick={() => { const h = href!; setActive(null); setDocHref(h); }} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 bg-lime px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-obsidian shadow-[3px_3px_0_#e8112d] hover:bg-[#eef64d] hover:shadow-[4px_4px_0_#e8112d]">{(t.projectModal as { readArticle: string }).readArticle} <ArrowUpRight size={14} /></motion.button>
+                          <motion.button onClick={async () => { try { const res = await fetch(href!); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href!.split("/").pop() || "artikel.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1200); } catch { window.open(href!, "_blank", "noopener,noreferrer"); } }} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-white/20 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5">{(t.projectModal as { download: string }).download} <Download size={14} /></motion.button>
+                          <motion.button onClick={handleCta} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-lime/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-lime hover:bg-lime/10">{(t.projectModal as { articleCta: string }).articleCta} <ArrowUpRight size={14} /></motion.button>
+                          <motion.button onClick={() => setActive(null)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30">{t.projectModal.close}</motion.button>
+                        </>
+                      );
+                    }
+                    return (
+                      <>
+                        <motion.button onClick={handleCta} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 bg-lime px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-obsidian shadow-[3px_3px_0_#e8112d] hover:bg-[#eef64d] hover:shadow-[4px_4px_0_#e8112d]">{t.projectModal.cta} <ArrowUpRight size={14} /></motion.button>
+                        <motion.button onClick={() => setActive(null)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30">{t.projectModal.close}</motion.button>
+                      </>
+                    );
+                  })()}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {docHref && <CertificateViewer href={docHref} open={!!docHref} onClose={() => setDocHref(null)} kind="article" />}
+      </section>
+    );
+  }
 
   return (
     <section id="projects" ref={ref} className="relative h-[260vh]">
