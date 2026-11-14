@@ -1622,21 +1622,20 @@ function ExpRow({
   const role = (e.role as { id: string; en: string })[lang] ?? (e.role as unknown as string);
   const points = (Array.isArray(e.points) ? e.points : (e.points as { id: string[]; en: string[] })[lang]) as string[];
   const isMobile = useIsMobile();
-  // latch: chip nyala kuning saat pipa sampai dan TETAP nyala setelah lewat (tidak fade-out) — dimatikan di mobile biar smooth
-  const glow = useTransform(smooth, [dotPos - 0.07, dotPos - 0.012], [0, 1], { clamp: true });
-  const dotScale = useTransform(glow, [0, 1], [1, 1.18]);
+  // latch: chip nyala kuning saat pipa sampai dan TETAP nyala setelah lewat — window diperlebar 0.058→~0.14 biar buttery, filter disederhanakan biar tidak jank
+  const glow = useTransform(smooth, [dotPos - 0.16, dotPos - 0.015], [0, 1], { clamp: true });
+  const dotScale = useTransform(glow, [0, 1], [1, 1.14]);
   const dotBg = useTransform(glow, [0, 1], ["rgba(5,5,5,0)", "rgba(247,255,60,0.08)"] as unknown as string[]);
   const dotColor = useTransform(glow, [0, 1], ["#5a5a52", "#f7ff3c"] as unknown as string[]);
-  const haloOpacity = useTransform(glow, [0, 1], [0, 0.85]);
+  const haloOpacity = useTransform(glow, [0, 1], [0, 0.75]);
   const cardBorder = useTransform(glow, [0, 1], ["rgba(233,227,216,1)", "rgba(247,255,60,1)"] as unknown as string[]);
   const bulletBg = useTransform(glow, [0, 1], ["rgba(255,255,255,0.3)", "rgba(247,255,60,1)"] as unknown as string[]);
   const iconColor = useTransform(glow, [0, 1], ["#a8a29e", "#f7ff3c"] as unknown as string[]);
-  const dotShadow = useTransform(glow, [0, 0.5, 1], [
+  const dotShadow = useTransform(glow, [0, 1], [
     "drop-shadow(0 0 0 rgba(247,255,60,0))",
-    "drop-shadow(0 0 10px rgba(247,255,60,0.55)) drop-shadow(0 0 18px rgba(247,255,60,0.28))",
-    "drop-shadow(0 0 12px rgba(247,255,60,0.9)) drop-shadow(0 0 26px rgba(247,255,60,0.5)) drop-shadow(0 0 38px rgba(247,255,60,0.22))",
+    "drop-shadow(0 0 10px rgba(247,255,60,0.7)) drop-shadow(0 0 22px rgba(247,255,60,0.32))",
   ]);
-  const cardShadow = useTransform(glow, [0, 1], ["8px 8px 0 #e8112d, 0 0 0 rgba(247,255,60,0), 0 0 0 rgba(247,255,60,0)", "8px 8px 0 #e8112d, 0 0 18px rgba(247,255,60,0.28), 0 0 36px rgba(247,255,60,0.14)"]);
+  const cardShadow = useTransform(glow, [0, 1], ["8px 8px 0 #e8112d", "8px 8px 0 #e8112d, 0 0 20px rgba(247,255,60,0.22)"]);
   const [open, setOpen] = useState(false);
   // mobile: bypass semua scroll-linked MotionValue — statis, tidak hit tiap frame
   const dotStyle = isMobile
