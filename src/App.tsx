@@ -1190,6 +1190,7 @@ function Projects() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [maxX, setMaxX] = useState(0);
   const [active, setActive] = useState<(typeof projects)[number] | null>(null);
+  const [docHref, setDocHref] = useState<string | null>(null);
   useEffect(() => {
     const measure = () => {
       if (trackRef.current) setMaxX(Math.max(trackRef.current.scrollWidth - window.innerWidth, 0));
@@ -1346,30 +1347,48 @@ function Projects() {
                     return (
                       <>
                         <motion.button
-                          onClick={() => window.open(href!, "_blank", "noopener,noreferrer")}
+                          onClick={() => {
+                            const h = href!;
+                            setActive(null);
+                            setDocHref(h);
+                          }}
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex items-center gap-2 bg-lime px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-obsidian shadow-[3px_3px_0_#e8112d] hover:bg-[#eef64d] hover:shadow-[4px_4px_0_#e8112d]"
+                          className="inline-flex cursor-pointer items-center gap-2 bg-lime px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-obsidian shadow-[3px_3px_0_#e8112d] hover:bg-[#eef64d] hover:shadow-[4px_4px_0_#e8112d]"
                         >
                           {(t.projectModal as { readArticle: string }).readArticle} <ArrowUpRight size={14} />
                         </motion.button>
-                        <motion.a
-                          href={href}
-                          download
+                        <motion.button
+                          onClick={async () => {
+                            try {
+                              const res = await fetch(href!);
+                              const blob = await res.blob();
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = url;
+                              a.download = href!.split("/").pop() || "artikel.pdf";
+                              document.body.appendChild(a);
+                              a.click();
+                              a.remove();
+                              setTimeout(() => URL.revokeObjectURL(url), 1200);
+                            } catch {
+                              window.open(href!, "_blank", "noopener,noreferrer");
+                            }
+                          }}
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex items-center gap-2 border border-white/20 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
+                          className="inline-flex cursor-pointer items-center gap-2 border border-white/20 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
                         >
                           {(t.projectModal as { download: string }).download} <Download size={14} />
-                        </motion.a>
+                        </motion.button>
                         <motion.button
                           onClick={handleCta}
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex items-center gap-2 border border-lime/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-lime hover:bg-lime/10"
+                          className="inline-flex cursor-pointer items-center gap-2 border border-lime/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-lime hover:bg-lime/10"
                         >
                           {(t.projectModal as { articleCta: string }).articleCta} <ArrowUpRight size={14} />
                         </motion.button>
@@ -1378,7 +1397,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30"
+                          className="inline-flex cursor-pointer items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30"
                         >
                           {t.projectModal.close}
                         </motion.button>
@@ -1392,7 +1411,7 @@ function Projects() {
                         whileHover={{ y: -2, scale: 1.02 }}
                         whileTap={{ scale: 0.97, y: 0 }}
                         transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                        className="inline-flex items-center gap-2 bg-lime px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-obsidian shadow-[3px_3px_0_#e8112d] hover:bg-[#eef64d] hover:shadow-[4px_4px_0_#e8112d]"
+                        className="inline-flex cursor-pointer items-center gap-2 bg-lime px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-obsidian shadow-[3px_3px_0_#e8112d] hover:bg-[#eef64d] hover:shadow-[4px_4px_0_#e8112d]"
                       >
                         {t.projectModal.cta} <ArrowUpRight size={14} />
                       </motion.button>
@@ -1401,7 +1420,7 @@ function Projects() {
                         whileHover={{ y: -2, scale: 1.02 }}
                         whileTap={{ scale: 0.97, y: 0 }}
                         transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                        className="inline-flex items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30"
+                        className="inline-flex cursor-pointer items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30"
                       >
                         {t.projectModal.close}
                       </motion.button>
@@ -1413,6 +1432,7 @@ function Projects() {
           </motion.div>
         )}
       </AnimatePresence>
+      {docHref && <CertificateViewer href={docHref} open={!!docHref} onClose={() => setDocHref(null)} kind="article" />}
     </section>
   );
 }
@@ -1680,14 +1700,17 @@ function CertificateViewer({
   href,
   open,
   onClose,
+  kind = "certificate",
 }: {
   href: string | null;
   open: boolean;
   onClose: () => void;
+  kind?: "certificate" | "article";
 }) {
   const { lang } = useLang();
   const t = dict[lang];
-  const title = href ? href.split("/").pop()?.replace(".pdf", "") ?? "Sertifikat" : "";
+  const title = href ? href.split("/").pop()?.replace(".pdf", "") ?? (kind === "article" ? "Artikel" : "Sertifikat") : "";
+  const headerEyebrow = kind === "article" ? "Artikel — KYRONIX" : "Sertifikat — KYRONIX";
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -1703,6 +1726,23 @@ function CertificateViewer({
       window.removeEventListener("keydown", onKey);
     };
   }, [open, onClose]);
+  const doDownload = async () => {
+    if (!href) return;
+    try {
+      const res = await fetch(href);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = href.split("/").pop() || "document.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1200);
+    } catch {
+      window.open(href, "_blank", "noopener,noreferrer");
+    }
+  };
   return (
     <AnimatePresence>
       {open && href && (
@@ -1730,11 +1770,20 @@ function CertificateViewer({
               <div className="min-w-0 flex items-center gap-2.5">
                 <span className="hidden h-7 w-7 items-center justify-center bg-lime text-[11px] font-black text-obsidian sm:inline-flex">K</span>
                 <div className="min-w-0">
-                  <p className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-lime sm:text-xs">Sertifikat — KYRONIX</p>
+                  <p className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-lime sm:text-xs">{headerEyebrow}</p>
                   <p className="truncate font-mono text-[11px] font-bold uppercase tracking-widest text-snow sm:text-xs">{title}</p>
                 </div>
               </div>
               <div className="flex shrink-0 items-center gap-2">
+                {kind === "article" && (
+                  <button
+                    onClick={doDownload}
+                    className="inline-flex cursor-pointer items-center gap-1.5 bg-lime px-3 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d] sm:px-4 sm:gap-2"
+                  >
+                    <Download size={14} />
+                    {(t.projectModal as { download: string }).download}
+                  </button>
+                )}
                 <button
                   onClick={onClose}
                   aria-label={t.projectModal.close}
