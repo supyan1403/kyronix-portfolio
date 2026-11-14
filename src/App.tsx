@@ -1484,12 +1484,14 @@ function ExpRow({
   dotPos,
   smooth,
   onJump,
+  onOpenCert,
 }: {
   e: (typeof experience)[number];
   isLeft: boolean;
   dotPos: number;
   smooth: MotionValue<number>;
   onJump: () => void;
+  onOpenCert?: (href: string) => void;
 }) {
   const Icon = e.icon;
   const { lang } = useLang();
@@ -1546,7 +1548,7 @@ function ExpRow({
             <Icon size={30} />
           </motion.span>
         </div>
-        {/* Desktop: always expanded */}
+        {/* Desktop: always expanded — viewer B replaces _blank tab */}
         <div className="hidden sm:block">
           <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
             {points.map((p) => (
@@ -1558,23 +1560,40 @@ function ExpRow({
           </ul>
           {(e as { certificateHref?: string }).certificateHref && (
             <div className="mt-6 flex flex-wrap gap-2 border-t border-white/10 pt-4">
-              <a
-                href={(e as { certificateHref: string }).certificateHref}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(ev) => ev.stopPropagation()}
+              <button
+                type="button"
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  onOpenCert?.((e as { certificateHref: string }).certificateHref);
+                }}
                 className="inline-flex items-center gap-2 bg-lime px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d]"
               >
                 {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
-              </a>
-              <a
-                href={(e as { certificateHref: string }).certificateHref}
-                download
-                onClick={(ev) => ev.stopPropagation()}
+              </button>
+              <button
+                type="button"
+                onClick={async (ev) => {
+                  ev.stopPropagation();
+                  const href = (e as { certificateHref: string }).certificateHref;
+                  try {
+                    const res = await fetch(href);
+                    const blob = await res.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = href.split("/").pop() || "sertifikat.pdf";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                  } catch {
+                    window.open(href, "_blank", "noopener,noreferrer");
+                  }
+                }}
                 className="inline-flex items-center gap-2 border border-white/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
               >
                 {(t.experience as { download: string }).download} <Download size={12} />
-              </a>
+              </button>
             </div>
           )}
         </div>
@@ -1599,23 +1618,40 @@ function ExpRow({
                 </ul>
                 {(e as { certificateHref?: string }).certificateHref && (
                   <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4">
-                    <a
-                      href={(e as { certificateHref: string }).certificateHref}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(ev) => ev.stopPropagation()}
+                    <button
+                      type="button"
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        onOpenCert?.((e as { certificateHref: string }).certificateHref);
+                      }}
                       className="inline-flex items-center gap-2 bg-lime px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d]"
                     >
                       {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
-                    </a>
-                    <a
-                      href={(e as { certificateHref: string }).certificateHref}
-                      download
-                      onClick={(ev) => ev.stopPropagation()}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async (ev) => {
+                        ev.stopPropagation();
+                        const href = (e as { certificateHref: string }).certificateHref;
+                        try {
+                          const res = await fetch(href);
+                          const blob = await res.blob();
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = href.split("/").pop() || "sertifikat.pdf";
+                          document.body.appendChild(a);
+                          a.click();
+                          a.remove();
+                          setTimeout(() => URL.revokeObjectURL(url), 1000);
+                        } catch {
+                          window.open(href, "_blank", "noopener,noreferrer");
+                        }
+                      }}
                       className="inline-flex items-center gap-2 border border-white/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
                     >
                       {(t.experience as { download: string }).download} <Download size={12} />
-                    </a>
+                    </button>
                   </div>
                 )}
               </motion.div>
@@ -1640,12 +1676,128 @@ function ExpRow({
   );
 }
 
+function CertificateViewer({
+  href,
+  open,
+  onClose,
+}: {
+  href: string | null;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const { lang } = useLang();
+  const t = dict[lang];
+  const title = href ? href.split("/").pop()?.replace(".pdf", "") ?? "Sertifikat" : "";
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    lenisInstance?.stop();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      lenisInstance?.start();
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, onClose]);
+  const doDownload = async () => {
+    if (!href) return;
+    try {
+      const res = await fetch(href);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = href.split("/").pop() || "sertifikat.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      window.open(href, "_blank", "noopener,noreferrer");
+    }
+  };
+  return (
+    <AnimatePresence>
+      {open && href && (
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-label={title}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <div className="absolute inset-0 bg-obsidian/90 backdrop-blur-sm" />
+          <motion.div
+            initial={{ y: 16, scale: 0.98, opacity: 0 }}
+            animate={{ y: 0, scale: 1, opacity: 1 }}
+            exit={{ y: 8, scale: 0.98, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 380, damping: 24 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative flex h-[min(88vh,860px)] max-h-[88vh] w-[min(96vw,920px)] flex-col overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-[8px_8px_0_#e8112d] md:shadow-[10px_10px_0_#e8112d]"
+          >
+            {/* header branded — bukan toolbar chrome */}
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-white/10 bg-obsidian px-3 py-2.5 sm:px-4 sm:py-3">
+              <div className="min-w-0 flex items-center gap-2.5">
+                <span className="hidden h-7 w-7 items-center justify-center bg-lime text-[11px] font-black text-obsidian sm:inline-flex">K</span>
+                <div className="min-w-0">
+                  <p className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-lime sm:text-xs">Sertifikat — KYRONIX</p>
+                  <p className="truncate font-mono text-[11px] font-bold uppercase tracking-widest text-snow sm:text-xs">{title}</p>
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <button
+                  onClick={doDownload}
+                  className="inline-flex items-center gap-1.5 bg-lime px-3 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d] sm:px-4 sm:gap-2"
+                >
+                  <Download size={14} />
+                  <span className="hidden sm:inline">{(t.experience as { download: string }).download}</span>
+                  <span className="sm:hidden">Unduh</span>
+                </button>
+                <button
+                  onClick={onClose}
+                  aria-label={t.projectModal.close}
+                  className="flex h-9 w-9 items-center justify-center border border-white/20 bg-transparent text-snow hover:border-lime hover:text-lime sm:h-9 sm:w-9"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+            {/* pdf — toolbar chrome disembunyikan #toolbar=0 */}
+            <div className="flex-1 overflow-hidden bg-[#141414] p-2 sm:p-3">
+              <iframe
+                src={`${href}#toolbar=0&navpanes=0&statusbar=0`}
+                title={title}
+                className="h-full w-full border border-white/10 bg-white"
+                loading="lazy"
+              />
+            </div>
+            <div className="flex shrink-0 items-center justify-between gap-3 border-t border-white/10 bg-obsidian px-3 py-2 sm:px-4">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-silver/60 sm:text-xs">kyronix.my.id — viewer</p>
+              <button onClick={onClose} className="font-mono text-xs uppercase tracking-widest text-snow/70 hover:text-lime">
+                {t.projectModal.close} ✕
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 function Experience() {
   const { lang } = useLang();
   const t = dict[lang];
   const trackRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [dots, setDots] = useState<number[]>([0.22, 0.5, 0.78]);
+  const [certHref, setCertHref] = useState<string | null>(null);
 
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start 78%", "end 52%"] });
   const smooth = useSpring(scrollYProgress, { stiffness: 220, damping: 32, mass: 0.4 });
@@ -1710,12 +1862,13 @@ function Experience() {
           <div className="flex flex-col gap-12 md:gap-16">
             {experience.map((e, i) => (
               <div key={(e.role as unknown as { id: string }).id ?? i} ref={(el) => { itemRefs.current[i] = el; }}>
-                <ExpRow e={e} isLeft={i % 2 === 0} dotPos={dots[i] ?? (i + 1) / (experience.length + 1)} smooth={smooth} onJump={() => jumpTo(i)} />
+                <ExpRow e={e} isLeft={i % 2 === 0} dotPos={dots[i] ?? (i + 1) / (experience.length + 1)} smooth={smooth} onJump={() => jumpTo(i)} onOpenCert={setCertHref} />
               </div>
             ))}
           </div>
         </div>
       </div>
+      <CertificateViewer href={certHref} open={!!certHref} onClose={() => setCertHref(null)} />
     </section>
   );
 }
