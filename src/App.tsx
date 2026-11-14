@@ -676,6 +676,8 @@ const dict = {
       hint: "Klik dot / kartu untuk lompat",
       viewCert: "Lihat Sertifikat",
       download: "Unduh",
+      showDetail: "Lihat Detail ↓",
+      hideDetail: "Tutup ↑",
     },
     labEyebrow: "Cara Kerja",
     labTitle: "CARA SAYA BEKERJA.",
@@ -734,6 +736,8 @@ const dict = {
       hint: "Click dot / card to jump",
       viewCert: "View Certificate",
       download: "Download",
+      showDetail: "View Detail ↓",
+      hideDetail: "Hide ↑",
     },
     labEyebrow: "How I Work",
     labTitle: "HOW I WORK.",
@@ -1508,6 +1512,7 @@ function ExpRow({
     "drop-shadow(0 0 12px rgba(247,255,60,0.9)) drop-shadow(0 0 26px rgba(247,255,60,0.5)) drop-shadow(0 0 38px rgba(247,255,60,0.22))",
   ]);
   const cardShadow = useTransform(glow, [0, 1], ["8px 8px 0 #e8112d, 0 0 0 rgba(247,255,60,0), 0 0 0 rgba(247,255,60,0)", "8px 8px 0 #e8112d, 0 0 18px rgba(247,255,60,0.28), 0 0 36px rgba(247,255,60,0.14)"]);
+  const [open, setOpen] = useState(false);
   return (
     <div className={`relative flex w-full ${isLeft ? "md:justify-start" : "md:justify-end"} justify-end`}>
       <motion.button
@@ -1541,35 +1546,95 @@ function ExpRow({
             <Icon size={30} />
           </motion.span>
         </div>
-        <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
-          {points.map((p) => (
-            <li key={p} className="flex gap-3 leading-relaxed text-silver">
-              <motion.span style={{ backgroundColor: bulletBg } as unknown as Record<string, unknown>} className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" />
-              {p}
-            </li>
-          ))}
-        </ul>
-        {(e as { certificateHref?: string }).certificateHref && (
-          <div className="mt-6 flex flex-wrap gap-2 border-t border-white/10 pt-4">
-            <a
-              href={(e as { certificateHref: string }).certificateHref}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(ev) => ev.stopPropagation()}
-              className="inline-flex items-center gap-2 bg-lime px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d]"
-            >
-              {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
-            </a>
-            <a
-              href={(e as { certificateHref: string }).certificateHref}
-              download
-              onClick={(ev) => ev.stopPropagation()}
-              className="inline-flex items-center gap-2 border border-white/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
-            >
-              {(t.experience as { download: string }).download} <Download size={12} />
-            </a>
-          </div>
-        )}
+        {/* Desktop: always expanded */}
+        <div className="hidden sm:block">
+          <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
+            {points.map((p) => (
+              <li key={p} className="flex gap-3 leading-relaxed text-silver">
+                <motion.span style={{ backgroundColor: bulletBg } as unknown as Record<string, unknown>} className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" />
+                {p}
+              </li>
+            ))}
+          </ul>
+          {(e as { certificateHref?: string }).certificateHref && (
+            <div className="mt-6 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+              <a
+                href={(e as { certificateHref: string }).certificateHref}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(ev) => ev.stopPropagation()}
+                className="inline-flex items-center gap-2 bg-lime px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d]"
+              >
+                {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
+              </a>
+              <a
+                href={(e as { certificateHref: string }).certificateHref}
+                download
+                onClick={(ev) => ev.stopPropagation()}
+                className="inline-flex items-center gap-2 border border-white/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
+              >
+                {(t.experience as { download: string }).download} <Download size={12} />
+              </a>
+            </div>
+          )}
+        </div>
+        {/* Mobile: collapsed preview + brutalist toggle — expand animates height auto */}
+        <div className="sm:hidden">
+          <AnimatePresence initial={false}>
+            {open && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.32, ease: EASE }}
+                className="overflow-hidden"
+              >
+                <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
+                  {points.map((p) => (
+                    <li key={p} className="flex gap-3 leading-relaxed text-silver">
+                      <motion.span style={{ backgroundColor: bulletBg } as unknown as Record<string, unknown>} className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" />
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+                {(e as { certificateHref?: string }).certificateHref && (
+                  <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+                    <a
+                      href={(e as { certificateHref: string }).certificateHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(ev) => ev.stopPropagation()}
+                      className="inline-flex items-center gap-2 bg-lime px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d]"
+                    >
+                      {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
+                    </a>
+                    <a
+                      href={(e as { certificateHref: string }).certificateHref}
+                      download
+                      onClick={(ev) => ev.stopPropagation()}
+                      className="inline-flex items-center gap-2 border border-white/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
+                    >
+                      {(t.experience as { download: string }).download} <Download size={12} />
+                    </a>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {!open && (
+            <p className="mt-4 line-clamp-2 border-t border-white/10 pt-4 text-sm leading-relaxed text-silver/80">{points[0]}</p>
+          )}
+          <button
+            type="button"
+            onClick={(ev) => {
+              ev.stopPropagation();
+              setOpen((v) => !v);
+            }}
+            className={`mt-4 inline-flex w-full items-center justify-center gap-2 border-2 px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest transition-colors ${open ? "border-white/20 bg-transparent text-snow hover:border-white/30" : "border-lime bg-lime text-obsidian hover:bg-[#eef64d]"}`}
+          >
+            {open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}
+          </button>
+        </div>
       </motion.article>
     </div>
   );
