@@ -391,6 +391,8 @@ main header.site-nav .font-display { color: var(--hit-bone); }
 
 /* modal: pointer only on buttons */
 [role="dialog"] button, [role="dialog"] a { cursor: pointer; }
+a[href], button { cursor: pointer; }
+button:disabled, a[aria-disabled="true"] { cursor: default; }
 
 /* click shake */
 .shake { animation: screen-shake 0.3s steps(2, end); }

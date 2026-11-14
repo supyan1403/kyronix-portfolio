@@ -168,7 +168,7 @@ function Magnetic({
       whileHover={{ scale: 1.015 }}
       transition={{ type: "spring", stiffness: 420, damping: 22 }}
       style={{ x: sx, y: sy }}
-      className={`inline-flex w-auto justify-center items-center gap-2 self-center rounded-full px-6 py-3 text-[11px] font-bold uppercase tracking-[0.14em] transition-[filter,background-color,border-color] duration-200 sm:w-auto sm:px-7 sm:py-3.5 sm:text-sm sm:tracking-wider ${styles}`}
+      className={`inline-flex w-auto justify-center items-center gap-2 self-center rounded-full px-6 py-3 text-[11px] font-bold uppercase tracking-[0.14em] transition-[filter,background-color,border-color] duration-200 sm:w-auto sm:px-7 sm:py-3.5 sm:text-sm sm:tracking-wider cursor-pointer ${styles}`}
     >
       {children}
     </motion.a>
@@ -1624,7 +1624,7 @@ function ExpRow({
                         ev.stopPropagation();
                         onOpenCert?.((e as { certificateHref: string }).certificateHref);
                       }}
-                      className="inline-flex items-center gap-2 bg-lime px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d]"
+                      className="inline-flex cursor-pointer items-center gap-2 bg-lime px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d]"
                     >
                       {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
                     </button>
@@ -1648,7 +1648,7 @@ function ExpRow({
                           window.open(href, "_blank", "noopener,noreferrer");
                         }
                       }}
-                      className="inline-flex items-center gap-2 border border-white/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
+                      className="inline-flex cursor-pointer items-center gap-2 border border-white/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-white/30 hover:bg-white/5"
                     >
                       {(t.experience as { download: string }).download} <Download size={12} />
                     </button>
@@ -1666,7 +1666,7 @@ function ExpRow({
               ev.stopPropagation();
               setOpen((v) => !v);
             }}
-            className={`mt-4 inline-flex w-full items-center justify-center gap-2 border-2 px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest transition-colors ${open ? "border-white/20 bg-transparent text-snow hover:border-white/30" : "border-lime bg-lime text-obsidian hover:bg-[#eef64d]"}`}
+            className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 border-2 px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest transition-colors ${open ? "border-white/20 bg-transparent text-snow hover:border-white/30" : "border-lime bg-lime text-obsidian hover:bg-[#eef64d]"}`}
           >
             {open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}
           </button>
@@ -1688,8 +1688,10 @@ function CertificateViewer({
   const { lang } = useLang();
   const t = dict[lang];
   const title = href ? href.split("/").pop()?.replace(".pdf", "") ?? "Sertifikat" : "";
+  const [rot, setRot] = useState(0);
   useEffect(() => {
     if (!open) return;
+    setRot(0);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     lenisInstance?.stop();
@@ -1740,7 +1742,7 @@ function CertificateViewer({
             exit={{ y: 8, scale: 0.98, opacity: 0 }}
             transition={{ type: "spring", stiffness: 380, damping: 24 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative flex h-[min(88vh,860px)] max-h-[88vh] w-[min(96vw,920px)] flex-col overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-[8px_8px_0_#e8112d] md:shadow-[10px_10px_0_#e8112d]"
+            className="relative flex h-[min(90vh,920px)] max-h-[90vh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-[8px_8px_0_#e8112d] md:shadow-[10px_10px_0_#e8112d]"
           >
             {/* header branded — bukan toolbar chrome */}
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-white/10 bg-obsidian px-3 py-2.5 sm:px-4 sm:py-3">
@@ -1753,8 +1755,15 @@ function CertificateViewer({
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <button
+                  onClick={() => setRot((r) => (r + 90) % 360)}
+                  title="Putar 90° — landscape/portrait"
+                  className="inline-flex cursor-pointer items-center gap-1.5 border border-white/20 bg-transparent px-3 py-2 font-mono text-xs font-bold uppercase tracking-widest text-snow hover:border-lime hover:text-lime sm:px-3"
+                >
+                  ⟲ <span className="hidden sm:inline">Putar</span>
+                </button>
+                <button
                   onClick={doDownload}
-                  className="inline-flex items-center gap-1.5 bg-lime px-3 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d] sm:px-4 sm:gap-2"
+                  className="inline-flex cursor-pointer items-center gap-1.5 bg-lime px-3 py-2 font-mono text-xs font-black uppercase tracking-widest text-obsidian hover:bg-[#eef64d] sm:px-4 sm:gap-2"
                 >
                   <Download size={14} />
                   <span className="hidden sm:inline">{(t.experience as { download: string }).download}</span>
@@ -1763,24 +1772,30 @@ function CertificateViewer({
                 <button
                   onClick={onClose}
                   aria-label={t.projectModal.close}
-                  className="flex h-9 w-9 items-center justify-center border border-white/20 bg-transparent text-snow hover:border-lime hover:text-lime sm:h-9 sm:w-9"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center border border-white/20 bg-transparent text-snow hover:border-lime hover:text-lime sm:h-9 sm:w-9"
                 >
                   <X size={16} />
                 </button>
               </div>
             </div>
-            {/* pdf — toolbar chrome disembunyikan #toolbar=0 */}
-            <div className="flex-1 overflow-hidden bg-[#141414] p-2 sm:p-3">
+            {/* pdf — toolbar chrome disembunyikan #toolbar=0, landscape via rotate */}
+            <div className="flex flex-1 items-center justify-center overflow-auto bg-[#141414] p-2 sm:p-3">
               <iframe
                 src={`${href}#toolbar=0&navpanes=0&statusbar=0`}
                 title={title}
-                className="h-full w-full border border-white/10 bg-white"
+                className="h-full w-full shrink-0 border border-white/10 bg-white"
+                style={{
+                  transform: rot ? `rotate(${rot}deg)` : undefined,
+                  width: rot % 180 !== 0 ? "min(78vh, 96%)" : undefined,
+                  height: rot % 180 !== 0 ? "min(88vw, 100%)" : undefined,
+                  maxWidth: rot % 180 !== 0 ? "92%" : undefined,
+                } as React.CSSProperties}
                 loading="lazy"
               />
             </div>
             <div className="flex shrink-0 items-center justify-between gap-3 border-t border-white/10 bg-obsidian px-3 py-2 sm:px-4">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-silver/60 sm:text-xs">kyronix.my.id — viewer</p>
-              <button onClick={onClose} className="font-mono text-xs uppercase tracking-widest text-snow/70 hover:text-lime">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-silver/60 sm:text-xs">© 2025 KYRONIX — Supyan Sauri • Verified Certificate</p>
+              <button onClick={onClose} className="cursor-pointer font-mono text-xs uppercase tracking-widest text-snow/70 hover:text-lime">
                 {t.projectModal.close} ✕
               </button>
             </div>
