@@ -21,6 +21,15 @@ This is the canonical project structure. Start with task-relevant files below. O
 - `vite.config.ts` - Vite configuration with React, Tailwind CSS v4, and Figma Make plugins plus the `@` alias for `src`
 - `.mise.toml` - Toolchain versions for Node.js and pnpm
 
+## Deployment
+
+Production is `https://kyronix.my.id` (Vercel project `portofolio2`).
+
+- **Deploy only via `git push origin main`.** Vercel's Git integration builds and aliases production automatically.
+- **Never run `vercel --prod` after a push.** That creates a second deployment for the same commit, doubling `Images Storage` / `Deployment Storage` usage and bloating the account (already hit the 10 GB Hobby cap once).
+- Use `vercel --prod` only when the Git integration is broken, and delete the duplicate afterwards with `vercel remove <url> --yes`.
+- Check usage with `vercel ls portofolio2`; keep at most 2–3 deployments.
+
 ## Dependencies
 
 - Runtime: React 19 and React DOM 19
