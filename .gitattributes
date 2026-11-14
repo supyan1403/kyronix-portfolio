@@ -2,9 +2,10 @@
 # Generated for binary, large, and non-diffable file types
 
 # ---------------------------------------------------------------------------
-# Images & Graphics
-# ---------------------------------------------------------------------------
+# Images & Graphics — keep small web images un-LFS so Vercel does not bloat Image/Deployment Storage (9.66GB cache per deploy → keep *.png/*.webp off LFS; *.pdf still via root query)
+# (png/webp tracked via root ?(a) filter but not required for build)
 *.png                filter=lfs diff=lfs merge=lfs -text
+# NOTE: for this portfolio, small public/*.png + favicon are kept off LFS via public/.gitattributes overrides; large assets still use LFS
 *.jpg                filter=lfs diff=lfs merge=lfs -text
 *.jpeg               filter=lfs diff=lfs merge=lfs -text
 *.gif                filter=lfs diff=lfs merge=lfs -text

@@ -1,2 +1,6 @@
-# AgentPlat packages this default favicon directly from source without LFS hydration.
+# Keep tiny site images off LFS — prevents 9.66GB Image Storage bloat (Vercel caches image/* per deploy × LFS blobs)
 favicon.png -filter -diff -merge -text
+favicon-*.png -filter -diff -merge -text
+kyronix-k-retro.webp -filter -diff -merge -text
+*.png -filter -diff -merge -text
+*.webp -filter -diff -merge -text
