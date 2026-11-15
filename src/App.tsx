@@ -1866,14 +1866,26 @@ function CertificateViewer({
                 </button>
               </div>
             </div>
-            {/* pdf — toolbar chrome disembunyikan #toolbar=0 */}
-            <div className="flex flex-1 items-center justify-center overflow-auto bg-[#141414] p-2 sm:p-3">
-              <iframe
-                src={`${href}#toolbar=0&navpanes=0&statusbar=0`}
-                title={title}
-                className="h-full w-full border border-border bg-white"
-                loading="lazy"
-              />
+            {/* pdf — FitH + object fallback jika Chrome viewer diblok; XFO SAMEORIGIN + CSP object-src 'self' */}
+            <div className="flex flex-1 flex-col items-center justify-center overflow-auto bg-[#141414] p-2 sm:p-3">
+              <object
+                data={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
+                type="application/pdf"
+                className="h-full w-full min-h-[52vh] border border-border bg-white"
+                aria-label={title}
+              >
+                <iframe
+                  src={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
+                  title={title}
+                  className="h-full w-full min-h-[52vh] border-0 bg-white"
+                  loading="lazy"
+                  allow="fullscreen"
+                />
+              </object>
+              <div className="mt-2 flex w-full items-center justify-between gap-2 border-t border-border/20 pt-2 font-mono text-[11px] text-muted">
+                <span>Gagal load viewer? Pakai tombol Unduh PDF di atas.</span>
+                <a href={href} target="_blank" rel="noreferrer" className="border border-terracotta bg-terracotta px-3 py-1.5 font-bold uppercase tracking-widest text-white hover:bg-[#d46a52]">Buka Tab Baru</a>
+              </div>
             </div>
           </motion.div>
         </motion.div>
