@@ -2166,9 +2166,18 @@ function Experience() {
         />
         <div ref={trackRef} className="relative mt-10">
           <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-white/12 md:left-1/2" aria-hidden />
-          {/* neon pipa: desktop animated (scaleY + blur), mobile statis full-height tanpa blur — paling enteng */}
+          {/* neon pipa: mobile = scaleY kontinu tanpa layer blur (1 transform/frame), desktop = bloom blur + scaleY */}
           {isExpMobile ? (
-            <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[5px] -translate-x-1/2 bg-lime md:left-1/2" aria-hidden />
+            <motion.div
+              className="pointer-events-none absolute left-[14px] top-3 h-full w-[5px] origin-top -translate-x-1/2 bg-lime md:left-1/2"
+              style={
+                {
+                  scaleY: pipe,
+                  boxShadow: "0 0 10px rgba(247,255,60,0.75), 0 0 22px rgba(247,255,60,0.32)",
+                } as unknown as Record<string, unknown>
+              }
+              aria-hidden
+            />
           ) : (
             <>
               <motion.div
