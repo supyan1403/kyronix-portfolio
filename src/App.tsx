@@ -301,11 +301,11 @@ function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yello
   );
 }
 
-/* ---------- Kinetic band — tanpa BG (menyatu global) + solid 3× ---------- */
-function KineticBand({ text, accent }: { text: string; accent?: string; reverse?: boolean }) {
+/* ---------- Kinetic band — tanpa BG (menyatu global) + solid 3× (selang-seling) ---------- */
+function KineticBand({ text, accent, reverse }: { text: string; accent?: string; reverse?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
+  const x = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
   return (
     <div ref={ref} className="overflow-hidden bg-transparent py-7 md:py-9" aria-hidden>
       <motion.div
@@ -1961,11 +1961,11 @@ function App() {
         </div>
         <Stack />
       </div>
-      <KineticBand text={bands.selectedWork} />
+      <KineticBand text={bands.selectedWork} reverse />
       <Projects />
       <KineticBand text={bands.experience} />
       <Experience />
-      <KineticBand text={bands.howIBuild} />
+      <KineticBand text={bands.howIBuild} reverse />
       <Lab />
       <KineticBand text={bands.letsBuild} />
       <Contact />
