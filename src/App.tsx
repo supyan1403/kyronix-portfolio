@@ -31,16 +31,16 @@ import {
 const RETRO = {
   navyDark: "#0a1628",
   navySurface: "#111d35",
-  retroYellow: "#ffcc00",
-  retroPink: "#ff4d6d",
-  offwhite: "#e8f4f8",
+  retroYellow: "#E07A5F",
+  retroPink: "#E7E5E4",
+  ink: "#E7E5E4",
   steel: "#7ba3c4",
-  neonLime: "#ffcc00",
+  neonLime: "#E07A5F",
   coral: "#ff4d62",
   violet: "#7c3aed",
 } as const;
 
-/* ---------- ChipPixel (retro pixel icon) ---------- */
+/* ---------- ChipPixel ---------- */
 function ChipPixel({ size = 24, className, style }: { size?: number; className?: string; style?: React.CSSProperties }) {
   return (
     <svg
@@ -159,7 +159,7 @@ function GlowCursor() {
         x: sx,
         y: sy,
         background:
-          "radial-gradient(circle, rgba(247,255,60,0.12), rgba(232,17,45,0.08) 40%, transparent 70%)",
+          "radial-gradient(circle, rgba(224,122,95,0.07), rgba(143,168,155,0.06) 40%, transparent 70%)",
       }}
     />
   );
@@ -207,7 +207,7 @@ function Magnetic({
       whileTap={{ scale: 0.96 }}
       transition={{ type: "spring", stiffness: 420, damping: 22 }}
       style={{ x: sx, y: sy }}
-      className={`inline-flex w-auto justify-center items-center gap-2 self-center border-[3px] px-6 py-3 font-mono text-[11px] font-black uppercase tracking-[0.14em] sm:px-7 sm:py-3.5 sm:text-sm cursor-pointer ${variant === "primary" ? `border-${RETRO.offwhite} bg-${RETRO.retroYellow} text-${RETRO.navyDark} shadow-[4px_4px_0_${RETRO.retroPink}]` : `border-${RETRO.offwhite}/70 bg-transparent text-${RETRO.offwhite} shadow-[4px_4px_0_rgba(255,77,109,0.5)]`}`}
+      className={`inline-flex w-auto justify-center items-center gap-2 self-center border px-6 py-3 font-mono text-[11px] font-black uppercase tracking-[0.14em] sm:px-7 sm:py-3.5 sm:text-sm cursor-pointer ${variant === "primary" ? `border-ink bg-terracotta text-white shadow-[0_4px_16px_rgba(28,25,23,0.08)]` : `border-border bg-surface text-ink shadow-[0_4px_16px_rgba(28,25,23,0.08)]`}`}
     >
       {children}
     </motion.a>
@@ -262,10 +262,10 @@ function Eyebrow({ index, label }: { index: string; label: string }) {
       viewport={{ once: true }}
       transition={{ duration: 0.9, ease: EASE }}
       className="mb-5 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em]"
-      style={{ color: RETRO.steel }}
+      style={{ color: WARM.muted }}
     >
-      <span style={{ color: RETRO.retroYellow }}>{index}</span>
-      <ChipPixel size={14} className="text-retro-yellow/60" />
+      <span style={{ color: WARM.terracotta }}>{index}</span>
+      <ChipPixel size={14} className="text-terracotta/60" />
       {label}
     </motion.p>
   );
@@ -273,10 +273,10 @@ function Eyebrow({ index, label }: { index: string; label: string }) {
 
 function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yellow" | "pink" | "violet" | "silver" }) {
   const t = {
-    yellow: "retro-tag yellow",
-    pink: "retro-tag pink",
-    violet: "retro-tag violet",
-    silver: "retro-tag silver",
+    yellow: "warm-tag yellow",
+    pink: "warm-tag",
+    violet: "warm-tag",
+    silver: "warm-tag silver",
   }[tone];
   return (
     <span className={`inline-block rounded-none border px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-wider ${t}`}>
@@ -365,7 +365,7 @@ function Intro({ onDone }: { onDone: () => void }) {
     <AnimatePresence onExitComplete={onDone}>
       {!leaving && (
         <motion.div
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-navy-dark px-6"
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-cream px-6"
           exit={{ clipPath: "inset(0 0 100% 0)", y: "-3%", filter: "blur(8px)", scale: 1.02 }}
           transition={{ duration: 1.05, ease: EASE }}
           onClick={() => {
@@ -374,15 +374,15 @@ function Intro({ onDone }: { onDone: () => void }) {
           }}
         >
           <div className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "repeating-linear-gradient(-45deg, transparent 0 14px, rgba(232,17,45,0.5) 14px 16px)" }} />
-          <p className="absolute left-6 top-6 font-mono text-xs uppercase tracking-[0.3em] text-steel">
+          <p className="absolute left-6 top-6 font-mono text-xs uppercase tracking-[0.3em] text-muted">
             FRAME 001 / BOOTING — SUPYAN SAURI
           </p>
-          <div className="relative w-[min(560px,92vw)] border-[3px] border-offwhite bg-[#0a0a0a] p-5 shadow-[8px_8px_0_#ff4d6d] md:p-7">
-            <div className="absolute -right-2 -top-2 bg-retro-pink px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-offwhite">BOOTING</div>
+          <div className="relative w-[min(560px,92vw)] border border-border bg-surface p-5 shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:p-7">
+            <div className="absolute -right-2 -top-2 bg-terracotta px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-ink">BOOTING</div>
             <div className="mb-3 flex gap-1.5">
-              <i className="h-2.5 w-2.5 rounded-full bg-retro-pink" />
+              <i className="h-2.5 w-2.5 rounded-full bg-terracotta" />
               <i className="h-2.5 w-2.5 rounded-full bg-[#fbbf24]" />
-              <i className="h-2.5 w-2.5 rounded-full bg-retro-yellow" />
+              <i className="h-2.5 w-2.5 rounded-full bg-terracotta" />
             </div>
             <div className="space-y-1.5 font-mono text-sm leading-6">
               {LINES.slice(0, lineIdx + 1).map((ln, i) => {
@@ -390,27 +390,27 @@ function Intro({ onDone }: { onDone: () => void }) {
                 const visible = i < lineIdx ? ln.text : isActive ? ln.text.slice(0, charIdx) : "";
                 const isPrompt = ln.prompt === "$";
                 return (
-                  <p key={i} className={isPrompt ? "text-steel" : "text-offwhite"}>
-                    <span className={isPrompt ? "mr-2 text-retro-yellow" : "mr-2 text-retro-pink"}>{ln.prompt}</span>
+                  <p key={i} className={isPrompt ? "text-muted" : "text-ink"}>
+                    <span className={isPrompt ? "mr-2 text-terracotta" : "mr-2 text-terracotta"}>{ln.prompt}</span>
                     <span>{visible}</span>
-                    {isActive && <span className="ml-[2px] inline-block h-[1.15em] w-[8px] translate-y-[3px] bg-retro-yellow animate-pulse" />}
+                    {isActive && <span className="ml-[2px] inline-block h-[1.15em] w-[8px] translate-y-[3px] bg-terracotta animate-pulse" />}
                   </p>
                 );
               })}
               {done && (
-                <p className="text-steel">
-                  <span className="mr-2 text-retro-yellow">$</span>
-                  <span className="inline-block h-[1.15em] w-[8px] translate-y-[3px] bg-retro-yellow animate-pulse" />
+                <p className="text-muted">
+                  <span className="mr-2 text-terracotta">$</span>
+                  <span className="inline-block h-[1.15em] w-[8px] translate-y-[3px] bg-terracotta animate-pulse" />
                 </p>
               )}
             </div>
             <div className="mt-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
-              <span className={`h-2 w-2 rounded-full ${done ? "bg-retro-yellow live-dot" : "bg-[#fbbf24] animate-pulse"}`} />
-              {done ? <span className="text-retro-yellow">ready</span> : <span>typing...</span>}
+              <span className={`h-2 w-2 rounded-full ${done ? "bg-terracotta live-dot" : "bg-[#fbbf24] animate-pulse"}`} />
+              {done ? <span className="text-terracotta">ready</span> : <span>typing...</span>}
               <span>• click or ESC to skip</span>
             </div>
           </div>
-          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-steel">SYSTEMS OVER SYNTAX</p>
+          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-muted">SYSTEMS OVER SYNTAX</p>
         </motion.div>
       )}
     </AnimatePresence>
@@ -429,13 +429,13 @@ const links = [
 function LangSwitch() {
   const { lang, setLang } = useLang();
   return (
-    <div className="inline-flex border-[3px] border-offwhite/30 bg-navy-dark p-1">
+    <div className="inline-flex border border-border/30 bg-cream p-1">
       {(["id", "en"] as const).map((l) => (
         <button
           key={l}
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
-          className={`px-3 py-1 font-mono text-xs font-black uppercase tracking-widest transition-colors ${lang === l ? "bg-retro-yellow text-navy-dark" : "text-steel hover:text-offwhite"}`}
+          className={`px-3 py-1 font-mono text-xs font-black uppercase tracking-widest transition-colors ${lang === l ? "bg-ink text-white" : "text-muted hover:text-ink"}`}
         >
           {l === "id" ? "ID" : "EN"}
         </button>
@@ -460,9 +460,9 @@ function Nav({ ready }: { ready: boolean }) {
         aria-label="Section navigation"
         className="fixed right-6 top-1/2 z-[90] hidden -translate-y-1/2 flex-col items-center gap-5 opacity-[0.25] transition-opacity duration-300 hover:opacity-100 md:flex"
       >
-        <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-offwhite/10" />
+        <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border" />
         <motion.div
-          className="pointer-events-none absolute left-1/2 top-0 w-px origin-top -translate-x-1/2 bg-retro-pink"
+          className="pointer-events-none absolute left-1/2 top-0 w-px origin-top -translate-x-1/2 bg-terracotta"
           style={{ scaleY: bar, height: "100%" }}
         />
         {dots.map((d, i) => {
@@ -475,13 +475,13 @@ function Nav({ ready }: { ready: boolean }) {
               className="group relative flex items-center justify-center"
             >
               <span
-                className={`relative block border bg-navy-dark transition-colors ${
+                className={`relative block border bg-cream transition-colors ${
                   isActive
-                    ? `h-3 w-3 border-retro-pink bg-retro-pink group-hover:bg-retro-yellow group-hover:border-retro-yellow`
-                    : `h-2.5 w-2.5 border-offwhite/40 group-hover:border-retro-yellow group-hover:bg-retro-yellow`
+                    ? `h-3 w-3 rounded-full border-terracotta bg-terracotta group-hover:bg-terracotta group-hover:border-terracotta`
+                    : `h-2.5 w-2.5 rounded-full border-border group-hover:border-terracotta group-hover:bg-terracotta`
                 }`}
               />
-              <span className="pointer-events-none absolute right-8 top-1/2 hidden -translate-y-1/2 whitespace-nowrap border border-offwhite/20 bg-navy-dark px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-offwhite opacity-0 transition-opacity group-hover:opacity-100 md:block">
+              <span className="pointer-events-none absolute right-8 top-1/2 hidden -translate-y-1/2 whitespace-nowrap border border-border/20 bg-cream px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-ink opacity-0 transition-opacity group-hover:opacity-100 md:block">
                 {d.label}
               </span>
             </button>
@@ -494,9 +494,9 @@ function Nav({ ready }: { ready: boolean }) {
         aria-label="Section navigation"
         className="fixed bottom-5 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-3 opacity-[0.4] transition-opacity hover:opacity-100 active:opacity-100 md:hidden"
       >
-        <div className="pointer-events-none absolute inset-x-3 top-1/2 h-px -translate-y-1/2 bg-offwhite/10" />
+        <div className="pointer-events-none absolute inset-x-3 top-1/2 h-px -translate-y-1/2 bg-border" />
         <motion.div
-          className="pointer-events-none absolute inset-x-3 top-1/2 h-px origin-left -translate-y-1/2 bg-retro-pink"
+          className="pointer-events-none absolute inset-x-3 top-1/2 h-px origin-left -translate-y-1/2 bg-terracotta"
           style={{ scaleX: bar }}
         />
         {dots.map((d, i) => {
@@ -509,10 +509,10 @@ function Nav({ ready }: { ready: boolean }) {
               className="relative flex h-7 w-7 items-center justify-center"
             >
               <span
-                className={`relative block border bg-navy-dark transition-colors ${
+                className={`relative block border bg-cream transition-colors ${
                   isActive
-                    ? `h-3.5 w-3.5 border-retro-pink bg-retro-pink active:bg-retro-yellow active:border-retro-yellow`
-                    : `h-3 w-3 border-offwhite/40 active:border-retro-yellow active:bg-retro-yellow`
+                    ? `h-3.5 w-3.5 rounded-full border-terracotta bg-terracotta active:bg-terracotta active:border-terracotta`
+                    : `h-3 w-3 rounded-full border-border/40 active:border-terracotta active:bg-terracotta`
                 }`}
               />
             </button>
@@ -588,30 +588,30 @@ function Hero3D({ ready, mx, my }: { ready: boolean; mx: MotionValue<number>; my
         {/* shadow ground */}
         <div className="absolute left-1/2 top-[68%] h-[120px] w-[220px] -translate-x-1/2 rounded-[50%] bg-black/60 blur-[18px]" />
         {/* cube 1 - lime bottom */}
-        <motion.div className="absolute left-[18%] top-[38%] h-[160px] w-[160px] border-[3px] border-navy-dark bg-retro-yellow shadow-[8px_8px_0_#e8f4f8]" style={{ transformStyle: "preserve-3d", z: z1 } as unknown as Record<string, unknown>}>
+        <motion.div className="absolute left-[18%] top-[38%] h-[160px] w-[160px] rounded-[20px] border border-border bg-surface shadow-[0_8px_24px_rgba(28,25,23,0.08)]" style={{ transformStyle: "preserve-3d", z: z1 } as unknown as Record<string, unknown>}>
           <div className="absolute inset-0 bg-[radial-gradient(rgba(5,5,5,0.12)_1.2px,transparent_1.6px)] [background-size:7px_7px]" />
-          <span className="absolute right-2 top-2 font-mono text-[10px] font-bold tracking-[0.14em] text-navy-dark/70">01</span>
-          <span className="absolute bottom-2 left-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-navy-dark">STACK</span>
-          <span className="absolute inset-0 translate-x-[10px] translate-y-[-10px] -z-10 border-[3px] border-navy-dark bg-retro-pink" style={{ transform: "translateZ(-18px)" } as React.CSSProperties} />
-          <span className="absolute left-0 top-0 h-[18px] w-full -translate-y-full bg-[#f0f043] border-[3px] border-navy-dark" style={{ transform: "rotateX(90deg) translateZ(0)", transformOrigin: "bottom" } as React.CSSProperties} />
+          <span className="absolute right-2 top-2 font-mono text-[10px] font-bold tracking-[0.14em] text-muted/70">01</span>
+          <span className="absolute bottom-2 left-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted">STACK</span>
+          <span className="absolute inset-0 hidden hidden hidden border border-border bg-surface" style={{ transform: "translateZ(-18px)" } as React.CSSProperties} />
+          <span className="absolute left-0 top-0 h-[18px] w-full -translate-y-full bg-terracotta border border-border" style={{ transform: "rotateX(90deg) translateZ(0)", transformOrigin: "bottom" } as React.CSSProperties} />
         </motion.div>
         {/* cube 2 - coral mid */}
-        <motion.div className="absolute left-[42%] top-[22%] h-[150px] w-[150px] border-[3px] border-navy-dark bg-retro-pink shadow-[8px_8px_0_#e8f4f8]" style={{ transformStyle: "preserve-3d", z: z2 } as unknown as Record<string, unknown>}>
+        <motion.div className="absolute left-[42%] top-[22%] h-[150px] w-[150px] rounded-[20px] border border-border bg-surface shadow-[0_8px_24px_rgba(28,25,23,0.08)]" style={{ transformStyle: "preserve-3d", z: z2 } as unknown as Record<string, unknown>}>
           <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.18)_1.2px,transparent_1.6px)] [background-size:7px_7px]" />
-          <span className="absolute right-2 top-2 font-mono text-[10px] font-bold tracking-[0.14em] text-offwhite/80">02</span>
-          <span className="absolute bottom-2 left-2 font-display text-[18px] leading-none tracking-wide text-offwhite">LAB</span>
-          <span className="absolute inset-0 translate-x-[10px] translate-y-[-10px] -z-10 border-[3px] border-navy-dark bg-offwhite" style={{ transform: "translateZ(-16px)" } as React.CSSProperties} />
-          <span className="absolute left-0 top-0 h-[18px] w-full -translate-y-full bg-[#ff4d62] border-[3px] border-navy-dark" style={{ transform: "rotateX(90deg) translateZ(0)", transformOrigin: "bottom" } as React.CSSProperties} />
+          <span className="absolute right-2 top-2 font-mono text-[10px] font-bold tracking-[0.14em] text-ink/80">02</span>
+          <span className="absolute bottom-2 left-2 font-display text-[18px] leading-none tracking-wide text-ink">LAB</span>
+          <span className="absolute inset-0 hidden hidden hidden border border-border bg-surface" style={{ transform: "translateZ(-16px)" } as React.CSSProperties} />
+          <span className="absolute left-0 top-0 h-[18px] w-full -translate-y-full bg-terracotta border border-border" style={{ transform: "rotateX(90deg) translateZ(0)", transformOrigin: "bottom" } as React.CSSProperties} />
         </motion.div>
         {/* cube 3 - snow top small */}
-        <div className="absolute left-[58%] top-[12%] h-[92px] w-[92px] border-[3px] border-navy-dark bg-offwhite shadow-[6px_6px_0_var(--hit-red)]" style={{ transform: "translateZ(48px) rotateX(14deg) rotateY(-18deg)" } as React.CSSProperties}>
+        <div className="absolute left-[58%] top-[12%] h-[92px] w-[92px] rounded-[20px] border border-border bg-surface shadow-[0_8px_24px_rgba(28,25,23,0.08)]" style={{ transform: "translateZ(48px) rotateX(14deg) rotateY(-18deg)" } as React.CSSProperties}>
           <span className="absolute inset-0 bg-[radial-gradient(rgba(5,5,5,0.1)_1.1px,transparent_1.5px)] [background-size:6px_6px]" />
-          <span className="absolute bottom-1.5 left-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-navy-dark">DATA</span>
-          <span className="absolute left-0 top-0 h-[12px] w-full -translate-y-full bg-[#efe9dd] border-[3px] border-navy-dark" style={{ transform: "rotateX(90deg) translateZ(0)", transformOrigin: "bottom" } as React.CSSProperties} />
+          <span className="absolute bottom-1.5 left-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-muted">DATA</span>
+          <span className="absolute left-0 top-0 h-[12px] w-full -translate-y-full bg-cream-deep border border-border" style={{ transform: "rotateX(90deg) translateZ(0)", transformOrigin: "bottom" } as React.CSSProperties} />
         </div>
         {/* floating dots */}
-        <motion.span animate={{ y: [0, -8, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="absolute right-[8%] top-[54%] h-2 w-2 rounded-full bg-retro-yellow border border-navy-dark" />
-        <motion.span animate={{ y: [0, 6, 0] }} transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", delay: 0.4 }} className="absolute left-[12%] top-[18%] h-2 w-2 rounded-full bg-retro-pink border border-navy-dark" />
+        <motion.span animate={{ y: [0, -8, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="absolute right-[8%] top-[54%] h-2 w-2 rounded-full bg-terracotta border border-border" />
+        <motion.span animate={{ y: [0, 6, 0] }} transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", delay: 0.4 }} className="absolute left-[12%] top-[18%] h-2 w-2 rounded-full bg-terracotta border border-border" />
       </motion.div>
     </motion.div>
   );
@@ -642,8 +642,8 @@ function HoloCore({ ready, mx, my }: { ready: boolean; mx: MotionValue<number>; 
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute left-1/2 top-1/2 h-[124px] w-[124px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5px] border-retro-yellow/28 lg:h-[132px] lg:w-[132px]"
-          style={{ transform: "translate(-50%,-50%) rotateX(74deg)", boxShadow: "0 0 12px rgba(247,255,60,0.16), inset 0 0 10px rgba(247,255,60,0.08)" } as React.CSSProperties}
+          className="absolute left-1/2 top-1/2 h-[124px] w-[124px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5px] border-terracotta/28 lg:h-[132px] lg:w-[132px]"
+          style={{ transform: "translate(-50%,-50%) rotateX(74deg)", boxShadow: "0 0 12px rgba(247,255,60,0.16), inset 0 0 10px rgba(224,122,95,0.08)" } as React.CSSProperties}
         />
         <motion.div
           animate={{ rotate: -360 }}
@@ -655,12 +655,12 @@ function HoloCore({ ready, mx, my }: { ready: boolean; mx: MotionValue<number>; 
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
-          className="absolute left-1/2 top-1/2 h-[92px] w-[92px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-offwhite/14 lg:h-[100px] lg:w-[100px]"
+          className="absolute left-1/2 top-1/2 h-[92px] w-[92px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-border/14 lg:h-[100px] lg:w-[100px]"
           style={{ transform: "translate(-50%,-50%) rotateX(58deg) rotateZ(20deg)" } as React.CSSProperties}
         />
         {/* core — pure circle 62px, no square border */}
-        <div className="absolute left-1/2 top-1/2 h-[58px] w-[58px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-[radial-gradient(circle_at_35%_30%,#ffcc00_0%,#ff4d6d_42%,#2a0a14_72%,#0a1628_100%)] shadow-[0_0_14px_rgba(232,17,45,0.35),0_0_22px_rgba(124,58,237,0.22)] lg:h-[62px] lg:w-[62px]" style={{ transform: "translate(-50%,-50%) translateZ(14px)" } as React.CSSProperties}>
-          <span className="absolute inset-[14%] rounded-full border border-white/15 bg-white/8 blur-[1px]" />
+        <div className="absolute left-1/2 top-1/2 h-[58px] w-[58px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-[radial-gradient(circle_at_35%_30%,#E07A5F_0%,#E7E5E4_42%,#2a0a14_72%,#0a1628_100%)] shadow-[0_0_14px_rgba(232,17,45,0.35),0_0_22px_rgba(124,58,237,0.22)] lg:h-[62px] lg:w-[62px]" style={{ transform: "translate(-50%,-50%) translateZ(14px)" } as React.CSSProperties}>
+          <span className="absolute inset-[14%] rounded-full border border-border bg-white/8 blur-[1px]" />
           <span className="absolute left-[22%] top-[18%] h-[10px] w-[10px] rounded-full bg-white/80 blur-[0.5px]" />
         </div>
         {/* orbiting dots smaller */}
@@ -670,7 +670,7 @@ function HoloCore({ ready, mx, my }: { ready: boolean; mx: MotionValue<number>; 
           className="absolute left-1/2 top-1/2 h-[124px] w-[124px] -translate-x-1/2 -translate-y-1/2 lg:h-[132px] lg:w-[132px]"
           style={{ transform: "translate(-50%,-50%) rotateX(74deg)" } as React.CSSProperties}
         >
-          <i className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-navy-dark bg-retro-yellow shadow-[0_0_6px_#ffcc00]" />
+          <i className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-surface shadow-[0_0_8px_rgba(224,122,95,0.25)]" />
         </motion.span>
         <motion.span
           animate={{ rotate: -360 }}
@@ -678,7 +678,7 @@ function HoloCore({ ready, mx, my }: { ready: boolean; mx: MotionValue<number>; 
           className="absolute left-1/2 top-1/2 h-[106px] w-[106px] -translate-x-1/2 -translate-y-1/2 lg:h-[114px] lg:w-[114px]"
           style={{ transform: "translate(-50%,-50%) rotateY(68deg)" } as React.CSSProperties}
         >
-          <i className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-navy-dark bg-retro-pink shadow-[0_0_6px_#ff4d6d]" />
+          <i className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-surface shadow-[0_0_8px_rgba(224,122,95,0.25)]" />
         </motion.span>
         <div className="pointer-events-none absolute left-1/2 top-1/2 h-[160px] w-px -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-transparent via-lime/10 to-transparent blur-[0.5px]" style={{ transform: "translate(-50%,-50%) translateZ(-18px)" } as React.CSSProperties} />
       </motion.div>
@@ -810,196 +810,38 @@ const dict = {
   },
 } as const;
 
-/* ---------- 1. Hero — Retro Web 90s / Brutal ---------- */
+/* ---------- 1. Hero — Warm Minimal ---------- */
 function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
-  const t = dict[lang];
+  const t2 = dict[lang];
   const ref = useRef<HTMLElement>(null);
-  const kyRef = useRef<HTMLHeadingElement>(null);
-  const kyX = useMotionValue(-9999);
-  const kyY = useMotionValue(-9999);
-  const kyMask = useMotionTemplate`radial-gradient(180px circle at ${kyX}px ${kyY}px, black 42%, transparent 68%)`;
-  const kyClip = useMotionTemplate`circle(180px at ${kyX}px ${kyY}px)`;
-  const [kyInteractive, setKyInteractive] = useState(false);
-  useEffect(() => {
-    if (!ready) { setKyInteractive(false); return; }
-    const id = window.setTimeout(() => setKyInteractive(true), 1900);
-    return () => window.clearTimeout(id);
-  }, [ready]);
-
-  // Marquee items
-  const marqueeItems = lang === "id"
-    ? ["FULLSTACK DEVELOPER", "DATA ENGINEER", "BPS VOLUNTEER", "KYRONIX.MY.ID", "SYSTEMS OVER SYNTAX"]
-    : ["FULLSTACK DEVELOPER", "DATA ENGINEER", "BPS VOLUNTEER", "KYRONIX.MY.ID", "SYSTEMS OVER SYNTAX"];
-
+  const marqueeItems = ["FULLSTACK DEVELOPER", "DATA ENGINEER", "BPS VOLUNTEER", "KYRONIX.MY.ID", "SYSTEMS OVER SYNTAX"];
   return (
-    <section
-      id="top"
-      ref={ref}
-      className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-navy-dark pt-20 sm:pt-24"
-    >
-      {/* Scanline overlay */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-[8] scanlines-overlay" />
-      {/* Diagonal stripe pattern */}
-      <div aria-hidden className="diagonal-stripes pointer-events-none absolute inset-0" />
-      {/* Grid pattern */}
-      <div className="absolute inset-0 grid-pattern opacity-[0.5]" />
-      {/* Subtle glow */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[52%] h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-none bg-retro-yellow/8 blur-[60px]"
-      />
-
-      {/* FOREGROUND CONTENT */}
-      <motion.div
-        className="relative z-20 mx-auto flex w-full max-w-[1200px] flex-1 flex-col items-center justify-center gap-4 px-[6vw] pb-12 pt-2 text-center sm:gap-6 sm:px-[5vw] sm:pb-8 md:px-[4vw]"
-        initial={{ opacity: 0, filter: "blur(10px)" }}
-        animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}}
-        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.32 }}
-      >
-        {/* Typing intro */}
-        <motion.p
-          className="font-mono text-[13px] uppercase tracking-[0.28em] text-steel/70 sm:text-xs sm:tracking-[0.32em]"
-          initial="hidden"
-          animate={ready ? "show" : "hidden"}
-          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.032, delayChildren: 0.58 } } }}
-          aria-label={t.hero.hi}
-        >
-          {t.hero.hi.split("").map((ch, i) => {
-            const nameStart = t.hero.hi.indexOf("Supyan");
-            const isName = nameStart >= 0 ? i >= nameStart : false;
-            return (
-              <motion.span
-                key={i}
-                variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}
-                transition={{ duration: 0.12 }}
-                className={isName ? "text-offwhite" : ""}
-              >
-                {ch === " " ? "\u00A0" : ch}
-              </motion.span>
-            );
-          })}
-          <motion.span
-            variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}
-            transition={{ duration: 0.2, delay: 0.08 }}
-            className="ml-1 inline-block h-[1.05em] w-[7px] -translate-y-px bg-retro-yellow align-middle"
-            style={{ animation: ready ? "blink 1.1s steps(1) infinite 1.25s" : undefined } as React.CSSProperties}
-          />
+    <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-20 sm:pt-24">
+      <div className="absolute inset-0 halftone opacity-40" />
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[46%] h-[560px] w-[820px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.04] blur-[52px]" />
+      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1120px] flex-1 flex-col items-center justify-center gap-5 px-[6vw] pb-16 pt-4 text-center sm:gap-7 sm:px-[5vw] md:px-[4vw]" initial={{ opacity: 0, filter: "blur(10px)" }} animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.28 }}>
+        <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.45 }}>
+          <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
+          {t2.hero.hi}
         </motion.p>
-
-        <div className="flex w-full flex-col items-center justify-center gap-3 text-center sm:gap-4">
-          <div className="flex w-full max-w-none flex-col items-center sm:max-w-[720px]">
-            {/* KYRONIX — retro brutalist title */}
-            <motion.h1
-              ref={kyRef}
-              data-text="KYRONIX"
-              className="relative grid place-items-center overflow-visible font-display text-[clamp(4.2rem,16vw,12rem)] font-black leading-none tracking-[0.06em] sm:text-[clamp(5.2rem,14vw,12rem)] sm:tracking-[0.14em]"
-              style={{ color: RETRO.offwhite, textShadow: `4px 4px 0 ${RETRO.retroPink}`, lineHeight: 1, pointerEvents: kyInteractive ? "auto" : "none" } as unknown as React.CSSProperties}
-              onMouseMove={(e) => {
-                if (!kyInteractive) return;
-                const r = kyRef.current?.getBoundingClientRect();
-                if (!r) return;
-                kyX.set(e.clientX - r.left);
-                kyY.set(e.clientY - r.top);
-              }}
-              onMouseLeave={() => { kyX.set(-9999); kyY.set(-9999); }}
-              onTouchMove={(e) => {
-                if (!kyInteractive) return;
-                const r = kyRef.current?.getBoundingClientRect();
-                if (!r) return;
-                kyX.set(e.touches[0].clientX - r.left);
-                kyY.set(e.touches[0].clientY - r.top);
-              }}
-              onTouchEnd={() => { kyX.set(-9999); kyY.set(-9999); }}
-              initial="hidden"
-              animate={ready ? "show" : "hidden"}
-              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.14, delayChildren: 0.70 } } }}
-            >
-              {"KYRONIX".split("").map((c, i) => (
-                <motion.span
-                  key={`ky-${i}`}
-                  variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}
-                  transition={{ duration: 0.08, ease: "linear" }}
-                  className="inline-block"
-                  style={{ textShadow: `3px 3px 0 ${RETRO.retroPink}` }}
-                >
-                  {c}
-                </motion.span>
-              ))}
-            </motion.h1>
-            <motion.h2
-              className="mt-3 flex flex-wrap justify-center px-2 font-display text-[clamp(1.45rem,5.2vw,2.85rem)] font-black leading-[1.05] tracking-[0.10em] text-offwhite sm:mt-4 sm:px-0 sm:text-[clamp(1.7rem,4vw,2.85rem)] sm:leading-[0.92] sm:tracking-[0.22em]"
-              initial="hidden"
-              animate={ready ? "show" : "hidden"}
-              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.048, delayChildren: 1.1 } } }}
-            >
-              {t.hero.tagline.split("").map((c, j) => {
-                const isInfra = j >= t.hero.tagline.indexOf("INFRA.");
-                return isInfra ? null : (
-                  <motion.span
-                    key={j}
-                    variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
-                    transition={{ duration: 0.28 }}
-                    className="inline-block"
-                  >
-                    {c === " " ? "\u00A0" : c}
-                  </motion.span>
-                );
-              })}
-              <motion.span
-                variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
-                transition={{ duration: 0.28 }}
-                className="inline-block text-retro-yellow"
-              >
-                INFRA.
-              </motion.span>
-            </motion.h2>
-          </div>
+        <div className="flex w-full flex-col items-center gap-4">
+          <motion.h1 className="font-display text-[clamp(3.6rem,12vw,8.5rem)] font-[800] leading-[0.9] tracking-[-0.04em] text-ink" initial={{ opacity: 0, y: 18 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}>KYRONIX</motion.h1>
+          <motion.p className="max-w-[22ch] text-balance font-sans text-[clamp(1.05rem,2.4vw,1.35rem)] leading-relaxed text-muted sm:max-w-none" initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.72 }}>
+            {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold text-ink"> INFRA.</span>
+          </motion.p>
+          <motion.p className="max-w-[36ch] text-sm leading-relaxed text-muted/80 sm:text-[15px]" initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ duration: 0.7, delay: 0.88 }}>{lang === "id" ? "Fullstack yang mikir sistem dulu, syntax belakangan. Bikin produk yang rapi, cepat, dan enak dipakai." : "A fullstack who thinks systems first. Building tidy, fast, and pleasant products."}</motion.p>
         </div>
-
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={ready ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1, ease: EASE, delay: 1.05 }}
-          className="flex w-auto flex-col items-center gap-3 pt-6 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4 sm:pt-8"
-        >
-          <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>
-            {t.hero.ctaPrimary} <ArrowDownRight size={18} />
-          </Magnetic>
-          <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>
-            {t.hero.ctaSecondary} <ArrowDownRight size={18} />
-          </Magnetic>
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, ease: EASE, delay: 1.0 }} className="flex w-auto flex-col items-center gap-3 pt-2 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
+          <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
+          <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
         </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.button
-          aria-label="Scroll"
-          onClick={() => scrollToId("stack")}
-          initial={{ opacity: 0 }}
-          animate={ready ? { opacity: 1 } : {}}
-          transition={{ delay: 1.4, duration: 0.8 }}
-          className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-offwhite/40 hover:text-offwhite/70 md:flex"
-        >
-          <span>Scroll</span>
-          <span className="h-7 w-px bg-offwhite/20">
-            <motion.i className="block h-3 w-px bg-retro-yellow" animate={{ y: [0, 14, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }} />
-          </span>
+        <motion.button aria-label="Scroll" onClick={() => scrollToId("stack")} initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: 1.35, duration: 0.6 }} className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink md:flex">
+          <span>Scroll</span><span className="h-7 w-px bg-border"><motion.i className="block h-3 w-px bg-terracotta" animate={{ y: [0, 14, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }} /></span>
         </motion.button>
       </motion.div>
-
-      {/* MARQUEE BAR */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 border-t-[3px] border-offwhite/20 bg-navy-dark/90 py-3 backdrop-blur-sm">
-        <div className="overflow-hidden">
-          <div className="marquee-track inline-flex items-center gap-12 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-offwhite/60">
-            {[...marqueeItems, ...marqueeItems].map((item, i) => (
-              <span key={i} className="flex items-center gap-12 whitespace-nowrap">
-                <span>{item}</span>
-                <span className="text-retro-pink">◆</span>
-              </span>
-            ))}
-          </div>
-        </div>
+      <div className="absolute bottom-0 left-0 right-0 z-10 border-y border-border bg-surface/90 py-3 backdrop-blur-sm">
+        <div className="overflow-hidden"><div className="marquee-track inline-flex items-center gap-10 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">{[...marqueeItems, ...marqueeItems].map((item, i) => (<span key={i} className="flex items-center gap-10 whitespace-nowrap"><span>{item}</span><span className="text-terracotta">·</span></span>))}</div></div>
       </div>
     </section>
   );
@@ -1049,7 +891,7 @@ function Stack() {
   const { lang } = useLang();
   const t = dict[lang];
   return (
-    <section id="stack" className="relative px-[5vw] py-[18vh] bg-navy-dark">
+    <section id="stack" className="relative px-[5vw] py-[18vh] bg-cream">
       <div className="relative mx-auto max-w-[1120px]">
         <Eyebrow index="01" label={t.stackEyebrow} />
         <SplitReveal
@@ -1057,42 +899,33 @@ function Stack() {
           text={t.stackTitle}
           className="max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.1] tracking-[0.02em]"
         />
-        <p className="mt-4 max-w-2xl text-lg leading-relaxed" style={{ color: RETRO.steel }}>
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed" style={{ color: WARM.muted }}>
           {t.stackDesc}
         </p>
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {stack.map((group, i) => {
             const Icon = group.icon;
-            const accentColor = group.tone === "lime" ? RETRO.retroYellow : group.tone === "coral" ? RETRO.retroPink : "#c4b5fd";
+            const accentColor = group.tone === "lime" ? WARM.terracotta : group.tone === "coral" ? WARM.terracotta : WARM.sage;
             return (
               <motion.article
                 key={group.title}
-                initial={{ opacity: 0, y: 50, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.9, ease: EASE, delay: i * 0.1 }}
-                whileHover={{ y: -4, scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                className="retro-card cursor-pointer p-7"
-                style={{ borderLeft: `4px solid ${accentColor}` } as React.CSSProperties}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.6, ease: EASE, delay: i * 0.08 }}
+                whileHover={{ y: -4 }}
+                className="warm-card p-7"
               >
-                <div className="window-bar mb-4">
-                  <span className="font-mono text-[10px] font-black uppercase tracking-wider">0{i + 1}</span>
-                  <div className="window-dots">
-                    <span className="window-dot" />
-                    <span className="window-dot" />
-                    <span className="window-dot" />
-                  </div>
+                <div className="mb-5 flex items-center justify-between">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-cream">
+                    <Icon size={18} style={{ color: accentColor }} />
+                  </span>
+                  <span className="font-mono text-xs tracking-widest text-muted">0{i + 1}</span>
                 </div>
-                <div className="mb-6 flex items-center justify-between">
-                  <Icon size={28} style={{ color: accentColor }} />
-                </div>
-                <h3 className="mb-6 font-display text-xl font-bold leading-tight tracking-wide text-offwhite">{group.title}</h3>
+                <h3 className="mb-3 font-display text-lg font-bold leading-tight tracking-tight text-ink">{group.title}</h3>
                 <div className="flex flex-wrap gap-2">
                   {group.items.map((item) => (
-                    <Tag key={item} tone={group.tone === "lime" ? "yellow" : group.tone === "coral" ? "pink" : "violet"}>
-                      {item}
-                    </Tag>
+                    <span key={item} className="warm-tag">{item}</span>
                   ))}
                 </div>
               </motion.article>
@@ -1104,7 +937,7 @@ function Stack() {
   );
 }
 
-/* ---------- 3. Featured projects — status-badged builds ---------- */
+/* ---------- 3. Featured projects — warm-tagd builds ---------- */
 const projects = [
   {
     no: "01",
@@ -1202,7 +1035,7 @@ function Projects() {
 
   if (isMobile) {
     return (
-      <section id="projects" className="relative px-[5vw] py-[6vh] bg-navy-dark">
+      <section id="projects" className="relative px-[5vw] py-[6vh] bg-cream">
         <div className="mx-auto max-w-[1120px]">
           <Eyebrow index="02" label={t.projectsEyebrow} />
           <SplitReveal
@@ -1212,7 +1045,7 @@ function Projects() {
           />
           <div className="mt-8 grid gap-4">
             {projects.map((p) => {
-              const statusClass = p.statusTone === "lime" ? "status-badge lime" : p.statusTone === "coral" ? "status-badge pink" : "status-badge violet";
+              const statusClass = p.statusTone === "lime" ? "warm-tag" : p.statusTone === "coral" ? "warm-tag" : "warm-tag";
               return (
                 <article
                   key={p.no}
@@ -1220,26 +1053,19 @@ function Projects() {
                   tabIndex={0}
                   onClick={() => handleOpen(p)}
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleOpen(p); } }}
-                  className="retro-card flex cursor-pointer flex-col overflow-hidden p-6"
+                  className="warm-card flex cursor-pointer flex-col overflow-hidden p-6"
                 >
-                  <div className="window-bar mb-4">
-                    <span className="font-mono text-[10px] font-black uppercase tracking-wider">{p.no}</span>
-                    <div className="window-dots">
-                      <span className="window-dot" />
-                      <span className="window-dot" />
-                      <span className="window-dot" />
-                    </div>
-                  </div>
-                  <div className="mb-3">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
                     <span className={`inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider ${statusClass}`}>
                       {(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}
                       {p.status}
                     </span>
                   </div>
-                  <p className="mb-2 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: RETRO.retroYellow }}>{p.kind}</p>
-                  <h3 className="mb-3 font-display text-xl leading-[1.1] tracking-wide text-offwhite">{p.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: RETRO.steel }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
-                  <div className="mt-5 flex flex-wrap gap-2 border-t border-offwhite/10 pt-4">
+                  <p className="mt-4 mb-2 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
+                  <h3 className="mb-3 font-display text-xl leading-[1.1] tracking-wide text-ink">{p.title}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
+                  <div className="mt-5 flex flex-wrap gap-2 border-t border-border/10 pt-4">
                     {p.stack.map((s) => (
                       <Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>
                     ))}
@@ -1252,13 +1078,13 @@ function Projects() {
         <AnimatePresence>
           {active && (
             <motion.div role="dialog" aria-modal="true" aria-label={t.projectModal.title} className="fixed inset-0 z-[100] flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActive(null)}>
-              <div className="absolute inset-0 bg-navy-dark/85 backdrop-blur-sm" />
-              <motion.div initial={{ y: 16, scale: 0.98, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }} exit={{ y: 8, scale: 0.98, opacity: 0 }} transition={{ type: "spring", stiffness: 380, damping: 24 }} onClick={(e) => e.stopPropagation()} className="glass arcade relative w-full max-w-[520px] bg-[#0a0a0a] p-6 text-left md:p-7">
-                <button onClick={() => setActive(null)} aria-label={t.projectModal.close} className="absolute right-3 top-3 flex h-8 w-8 cursor-pointer items-center justify-center border-[3px] border-offwhite/25 bg-navy-dark text-offwhite hover:border-retro-yellow hover:text-retro-yellow"><X size={16} /></button>
-                <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: RETRO.retroYellow }}>{active.kind}</p>
-                <h3 className="mt-2 pr-8 font-display text-2xl font-normal uppercase leading-tight tracking-[0.14em] text-offwhite">{((active as { href?: string }).href ? (t.projectModal as { articleTitle: string }).articleTitle : t.projectModal.title)}</h3>
-                <p className="mt-2 inline-block bg-retro-yellow px-2.5 py-1.5 font-mono text-xs font-black uppercase leading-none tracking-[0.22em] text-navy-dark">{active.title}</p>
-                <p className="mt-3 text-sm font-medium leading-relaxed text-offwhite">{((active as { href?: string }).href ? (t.projectModal as { articleBody: string }).articleBody : t.projectModal.body)}</p>
+              <div className="absolute inset-0 bg-cream/85 backdrop-blur-sm" />
+              <motion.div initial={{ y: 16, scale: 0.98, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }} exit={{ y: 8, scale: 0.98, opacity: 0 }} transition={{ type: "spring", stiffness: 380, damping: 24 }} onClick={(e) => e.stopPropagation()} className="warm-card relative w-full max-w-[520px] bg-surface p-6 text-left md:p-7">
+                <button onClick={() => setActive(null)} aria-label={t.projectModal.close} className="absolute right-3 top-3 flex h-8 w-8 cursor-pointer items-center justify-center border border-border/25 bg-cream text-ink hover:border-terracotta hover:text-terracotta"><X size={16} /></button>
+                <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{active.kind}</p>
+                <h3 className="mt-2 pr-8 font-display text-2xl font-normal uppercase leading-tight tracking-[0.14em] text-ink">{((active as { href?: string }).href ? (t.projectModal as { articleTitle: string }).articleTitle : t.projectModal.title)}</h3>
+                <p className="mt-2 inline-block bg-terracotta px-2.5 py-1.5 font-mono text-xs font-black uppercase leading-none tracking-[0.22em] text-white">{active.title}</p>
+                <p className="mt-3 text-sm font-medium leading-relaxed text-ink">{((active as { href?: string }).href ? (t.projectModal as { articleBody: string }).articleBody : t.projectModal.body)}</p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   {(() => {
                     const href = (active as { href?: string }).href;
@@ -1266,17 +1092,17 @@ function Projects() {
                     if (hasArticle) {
                       return (
                         <>
-                          <motion.button onClick={() => { const h = href!; setActive(null); setDocHref(h); }} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border-retro-yellow bg-retro-yellow px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-navy-dark shadow-[3px_3px_0_#ff4d6d] hover:bg-[#ffe066] hover:shadow-[4px_4px_0_#ff4d6d]">{(t.projectModal as { readArticle: string }).readArticle} <ArrowUpRight size={14} /></motion.button>
-                          <motion.button onClick={async () => { try { const res = await fetch(href!); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href!.split("/").pop() || "artikel.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1200); } catch { window.open(href!, "_blank", "noopener,noreferrer"); } }} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-white/20 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-white/30 hover:bg-white/5">{(t.projectModal as { download: string }).download} <Download size={14} /></motion.button>
-                          <motion.button onClick={handleCta} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border-[3px] border-offwhite/50 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:bg-offwhite/10">{(t.projectModal as { articleCta: string }).articleCta} <ArrowUpRight size={14} /></motion.button>
-                          <motion.button onClick={() => setActive(null)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-white/30">{t.projectModal.close}</motion.button>
+                          <motion.button onClick={() => { const h = href!; setActive(null); setDocHref(h); }} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]">{(t.projectModal as { readArticle: string }).readArticle} <ArrowUpRight size={14} /></motion.button>
+                          <motion.button onClick={async () => { try { const res = await fetch(href!); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href!.split("/").pop() || "artikel.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1200); } catch { window.open(href!, "_blank", "noopener,noreferrer"); } }} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30 hover:bg-white/5">{(t.projectModal as { download: string }).download} <Download size={14} /></motion.button>
+                          <motion.button onClick={handleCta} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-border/50 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:bg-border">{(t.projectModal as { articleCta: string }).articleCta} <ArrowUpRight size={14} /></motion.button>
+                          <motion.button onClick={() => setActive(null)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30">{t.projectModal.close}</motion.button>
                         </>
                       );
                     }
                     return (
                       <>
-                        <motion.button onClick={handleCta} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border-retro-yellow bg-retro-yellow px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-navy-dark shadow-[3px_3px_0_#ff4d6d] hover:bg-[#ffe066] hover:shadow-[4px_4px_0_#ff4d6d]">{t.projectModal.cta} <ArrowUpRight size={14} /></motion.button>
-                        <motion.button onClick={() => setActive(null)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-white/30">{t.projectModal.close}</motion.button>
+                        <motion.button onClick={handleCta} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]">{t.projectModal.cta} <ArrowUpRight size={14} /></motion.button>
+                        <motion.button onClick={() => setActive(null)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30">{t.projectModal.close}</motion.button>
                       </>
                     );
                   })()}
@@ -1293,7 +1119,7 @@ function Projects() {
   return (
     <section id="projects" ref={ref} className="relative h-[260vh]">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-        <div className="orb right-[-10%] top-[20%] h-[420px] w-[420px] bg-retro-pink/10" />
+        <div className="orb right-[-10%] top-[20%] h-[420px] w-[420px] bg-terracotta/10" />
         <div className="mx-auto mb-10 w-[min(1120px,90vw)] pt-16">
           <Eyebrow index="02" label={t.projectsEyebrow} />
           <div className="flex items-end justify-between gap-6">
@@ -1319,56 +1145,40 @@ function Projects() {
               whileHover={{ y: -4, scale: 1.005 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 380, damping: 22 }}
-              className={`retro-card mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 ${
+              className={`warm-card mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 ${
                 idx === 0
                   ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7"
                   : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7"
               }`}
             >
-              <span className="scanlines" />
-              {/* window-bar header */}
-              <div className="window-bar mb-4">
-                <span className="font-mono text-[10px] font-black uppercase tracking-wider">{p.no}</span>
-                <div className="window-dots">
-                  <span className="window-dot" />
-                  <span className="window-dot" />
-                  <span className="window-dot" />
-                </div>
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="mb-4 flex items-center justify-between gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <span
-                    className={`inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 ${
-                      p.statusTone === "lime"
-                        ? "status-badge lime"
-                        : p.statusTone === "coral"
-                          ? "status-badge pink"
-                          : "status-badge violet"
-                    }`}
-                  >
+              
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
+                  <span className={`inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 ${"warm-tag"}`}>
                     {(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}
                     <span className="break-words">{p.status}</span>
                   </span>
                 </div>
-                <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: RETRO.retroYellow }}>{p.kind}</p>
-                <h3 data-text={p.title} className="font-display text-[2rem] leading-[1.1] tracking-wide text-offwhite md:text-4xl">{p.title}</h3>
-                <p className="leading-relaxed" style={{ color: RETRO.steel }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
+              <div className="min-w-0 flex-1">
+                <p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
+                <h3 data-text={p.title} className="font-display text-[2rem] leading-[1.1] tracking-wide text-ink md:text-4xl">{p.title}</h3>
+                <p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
               </div>
-              <div className="mt-6 flex items-end justify-between gap-3 border-t border-offwhite/10 pt-4">
+              <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
                 <div className="flex flex-1 flex-wrap gap-2 pr-2">
                   {p.stack.map((s) => (
                     <Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>
                   ))}
                 </div>
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-[3px] border-offwhite/30 bg-transparent text-retro-yellow hover:bg-retro-yellow hover:text-navy-dark md:h-12 md:w-12">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white md:h-12 md:w-12">
                   <ArrowUpRight size={18} />
                 </span>
               </div>
             </motion.article>
           ))}
         </motion.div>
-        <div className="mx-auto mt-10 h-px w-[min(1120px,90vw)] bg-white/10">
-          <motion.div className="h-full origin-left bg-retro-pink" style={{ scaleX: scrollYProgress }} />
+        <div className="mx-auto mt-10 h-px w-[min(1120px,90vw)] bg-border">
+          <motion.div className="h-full origin-left bg-terracotta" style={{ scaleX: scrollYProgress }} />
         </div>
       </div>
       <AnimatePresence>
@@ -1383,32 +1193,32 @@ function Projects() {
             exit={{ opacity: 0 }}
             onClick={() => setActive(null)}
           >
-            <div className="absolute inset-0 bg-navy-dark/85 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-cream/85 backdrop-blur-sm" />
             <motion.div
               initial={{ y: 16, scale: 0.98, opacity: 0 }}
               animate={{ y: 0, scale: 1, opacity: 1 }}
               exit={{ y: 8, scale: 0.98, opacity: 0 }}
               transition={{ type: "spring", stiffness: 380, damping: 24 }}
               onClick={(e) => e.stopPropagation()}
-              className="retro-card relative w-full max-w-[520px] bg-navy-surface p-6 text-left md:p-7"
+              className="warm-card relative w-full max-w-[520px] bg-surface p-6 text-left md:p-7"
             >
               <button
                 onClick={() => setActive(null)}
                 aria-label={t.projectModal.close}
-                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center border-[3px] border-offwhite/25 bg-navy-dark text-offwhite hover:border-retro-yellow hover:text-retro-yellow"
+                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center border border-border/25 bg-cream text-ink hover:border-terracotta hover:text-terracotta"
               >
                 <X size={16} />
               </button>
-              <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: RETRO.retroYellow }}>{active.kind}</p>
-              <h3 className="mt-2 pr-8 font-display text-2xl font-normal uppercase leading-tight tracking-[0.14em] text-offwhite">
+              <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{active.kind}</p>
+              <h3 className="mt-2 pr-8 font-display text-2xl font-normal uppercase leading-tight tracking-[0.14em] text-ink">
                 {((active as { href?: string }).href ? (t.projectModal as { articleTitle: string }).articleTitle : t.projectModal.title)}
               </h3>
               <p
-                className="mt-2 inline-block bg-retro-yellow px-2.5 py-1.5 font-mono text-xs font-black uppercase leading-none tracking-[0.22em] text-navy-dark"
+                className="mt-2 inline-block bg-terracotta px-2.5 py-1.5 font-mono text-xs font-black uppercase leading-none tracking-[0.22em] text-white"
               >
                 {active.title}
               </p>
-              <p className="mt-3 text-sm font-medium leading-relaxed text-offwhite">{((active as { href?: string }).href ? (t.projectModal as { articleBody: string }).articleBody : t.projectModal.body)}</p>
+              <p className="mt-3 text-sm font-medium leading-relaxed text-ink">{((active as { href?: string }).href ? (t.projectModal as { articleBody: string }).articleBody : t.projectModal.body)}</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 {(() => {
                   const href = (active as { href?: string }).href;
@@ -1425,7 +1235,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 bg-retro-yellow px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-navy-dark shadow-[3px_3px_0_#ff4d6d] hover:bg-[#ffe066] hover:shadow-[4px_4px_0_#ff4d6d]"
+                          className="inline-flex cursor-pointer items-center gap-2 bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
                         >
                           {(t.projectModal as { readArticle: string }).readArticle} <ArrowUpRight size={14} />
                         </motion.button>
@@ -1449,7 +1259,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 border border-white/20 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-white/30 hover:bg-white/5"
+                          className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30 hover:bg-white/5"
                         >
                           {(t.projectModal as { download: string }).download} <Download size={14} />
                         </motion.button>
@@ -1458,7 +1268,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 border border-retro-yellow/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-retro-yellow hover:bg-retro-yellow/10"
+                          className="inline-flex cursor-pointer items-center gap-2 border border-terracotta/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-terracotta hover:bg-ink/10"
                         >
                           {(t.projectModal as { articleCta: string }).articleCta} <ArrowUpRight size={14} />
                         </motion.button>
@@ -1467,7 +1277,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-white/30"
+                          className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
                         >
                           {t.projectModal.close}
                         </motion.button>
@@ -1481,7 +1291,7 @@ function Projects() {
                         whileHover={{ y: -2, scale: 1.02 }}
                         whileTap={{ scale: 0.97, y: 0 }}
                         transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                        className="inline-flex cursor-pointer items-center gap-2 bg-retro-yellow px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-navy-dark shadow-[3px_3px_0_#ff4d6d] hover:bg-[#ffe066] hover:shadow-[4px_4px_0_#ff4d6d]"
+                        className="inline-flex cursor-pointer items-center gap-2 bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
                       >
                         {t.projectModal.cta} <ArrowUpRight size={14} />
                       </motion.button>
@@ -1490,7 +1300,7 @@ function Projects() {
                         whileHover={{ y: -2, scale: 1.02 }}
                         whileTap={{ scale: 0.97, y: 0 }}
                         transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                        className="inline-flex cursor-pointer items-center gap-2 border border-white/15 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-white/30"
+                        className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
                       >
                         {t.projectModal.close}
                       </motion.button>
@@ -1595,23 +1405,23 @@ function ExpRow({
   // desktop: scroll-linked buttery (window 0.145), mobile: discrete observer -> CSS transition (murah, tidak per-frame)
   const glow = useTransform(smooth, [dotPos - 0.16, dotPos - 0.015], [0, 1], { clamp: true });
   const dotScale = useTransform(glow, [0, 1], [1, 1.14]);
-  const dotBg = useTransform(glow, [0, 1], ["rgba(5,5,5,0)", "rgba(247,255,60,0.08)"] as unknown as string[]);
-  const dotColor = useTransform(glow, [0, 1], ["#5a5a52", "#ffcc00"] as unknown as string[]);
+  const dotBg = useTransform(glow, [0, 1], ["rgba(255,251,245,0)", "rgba(224,122,95,0.08)"] as unknown as string[]);
+  const dotColor = useTransform(glow, [0, 1], ["#78716C", "#E07A5F"] as unknown as string[]);
   const haloOpacity = useTransform(glow, [0, 1], [0, 0.75]);
-  const cardBorder = useTransform(glow, [0, 1], ["rgba(233,227,216,1)", "rgba(247,255,60,1)"] as unknown as string[]);
-  const bulletBg = useTransform(glow, [0, 1], ["rgba(255,255,255,0.3)", "rgba(247,255,60,1)"] as unknown as string[]);
-  const iconColor = useTransform(glow, [0, 1], ["#a8a29e", "#ffcc00"] as unknown as string[]);
+  const cardBorder = useTransform(glow, [0, 1], ["rgba(231,229,228,1)", "rgba(224,122,95,1)"] as unknown as string[]);
+  const bulletBg = useTransform(glow, [0, 1], ["rgba(120,113,108,0.25)", "rgba(224,122,95,1)"] as unknown as string[]);
+  const iconColor = useTransform(glow, [0, 1], ["#78716C", "#E07A5F"] as unknown as string[]);
   const dotShadow = useTransform(glow, [0, 1], [
     "drop-shadow(0 0 0 rgba(247,255,60,0))",
-    "drop-shadow(0 0 10px rgba(247,255,60,0.7)) drop-shadow(0 0 22px rgba(247,255,60,0.32))",
+    "drop-shadow(0 0 10px rgba(224,122,95,0.12)) drop-shadow(0 0 22px rgba(224,122,95,0.12))",
   ]);
-  const cardShadow = useTransform(glow, [0, 1], ["8px 8px 0 #ff4d6d", "8px 8px 0 #ff4d6d, 0 0 20px rgba(247,255,60,0.22)"]);
+  const cardShadow = useTransform(glow, [0, 1], ["0 8px 24px rgba(28,25,23,0.06)", "0 8px 24px rgba(28,25,23,0.06), 0 0 20px rgba(224,122,95,0.08)"]);
   const [open, setOpen] = useState(false);
   const cc = "280ms cubic-bezier(0.22,1,0.36,1)" as const;
   const mobileDotStyle: React.CSSProperties = {
-    color: active ? "#ffcc00" : "#5a5a52",
-    backgroundColor: active ? "rgba(247,255,60,0.08)" : "rgba(5,5,5,0)",
-    filter: active ? "drop-shadow(0 0 10px rgba(247,255,60,0.7)) drop-shadow(0 0 22px rgba(247,255,60,0.32))" : "drop-shadow(0 0 0 rgba(247,255,60,0))",
+    color: active ? "#E07A5F" : "#78716C",
+    backgroundColor: active ? "rgba(224,122,95,0.08)" : "rgba(255,251,245,0)",
+    filter: active ? "drop-shadow(0 0 10px rgba(224,122,95,0.12)) drop-shadow(0 0 22px rgba(224,122,95,0.12))" : "drop-shadow(0 0 0 rgba(247,255,60,0))",
     transform: active ? "scale(1.14)" : "scale(1)",
     transition: `color ${cc}, background-color ${cc}, filter ${cc}, transform ${cc}`,
   };
@@ -1620,15 +1430,15 @@ function ExpRow({
     transition: `opacity ${cc}`,
   };
   const mobileCardStyle: React.CSSProperties = {
-    borderColor: active ? "#ffcc00" : "#e8f4f8",
-    boxShadow: active ? "8px 8px 0 #ff4d6d, 0 0 20px rgba(247,255,60,0.22)" : "8px 8px 0 #ff4d6d",
+    borderColor: active ? "#E07A5F" : "#E7E5E4",
+    boxShadow: active ? "0 8px 24px rgba(28,25,23,0.06), 0 0 20px rgba(224,122,95,0.08)" : "0 8px 24px rgba(28,25,23,0.06)",
     transition: `border-color ${cc}, box-shadow ${cc}`,
   };
   const mobileIconStyle: React.CSSProperties = {
-    color: active ? "#ffcc00" : "#a8a29e",
+    color: active ? "#E07A5F" : "#78716C",
     transition: `color ${cc}`,
   };
-  const mobileBulletBg = active ? "rgba(247,255,60,1)" : "rgba(255,255,255,0.3)";
+  const mobileBulletBg = active ? "rgba(224,122,95,1)" : "rgba(120,113,108,0.25)";
   // desktop: MotionValue-driven, mobile: CSS transition murah
   const dotStyle = isMobile
     ? (mobileDotStyle as unknown as Record<string, unknown>)
@@ -1648,19 +1458,19 @@ function ExpRow({
           className="pointer-events-none absolute left-[14px] top-8 z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
           style={mobileDotStyle}
         >
-          <span className="pointer-events-none absolute -inset-3 rounded-md bg-retro-yellow/20 blur-[8px]" style={mobileHaloStyle} />
+          <span className="pointer-events-none absolute -inset-3 rounded-md bg-terracotta/20 blur-[8px]" style={mobileHaloStyle} />
           <ChipPixel size={26} />
         </span>
         <article
           onClick={onJump}
-          className={`retro-card relative w-[calc(100%-40px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
+          className={`warm-card relative w-[calc(100%-40px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
           style={mobileCardStyle}
         >
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <Tag tone={e.tone}>{period}</Tag>
               <h3 className="mt-5 font-display text-2xl tracking-wide md:text-3xl">{role}</h3>
-              <p className="mt-1 text-steel">{e.org}</p>
+              <p className="mt-1 text-muted">{e.org}</p>
             </div>
             <span className="shrink-0" style={mobileIconStyle}>
               <Icon size={30} />
@@ -1668,23 +1478,23 @@ function ExpRow({
           </div>
           {/* Desktop: always expanded — viewer B replaces _blank tab */}
           <div className="hidden sm:block">
-            <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
+            <ul className="mt-6 space-y-2 border-t border-border pt-6">
               {points.map((p) => (
-                <li key={p} className="flex gap-3 leading-relaxed text-steel">
+                <li key={p} className="flex gap-3 leading-relaxed text-muted">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: mobileBulletBg, transition: `background-color ${cc}` }} />
                   {p}
                 </li>
               ))}
             </ul>
             {(e as { certificateHref?: string }).certificateHref && (
-              <div className="mt-6 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+              <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-4">
                 <button
                   type="button"
                   onClick={(ev) => {
                     ev.stopPropagation();
                     onOpenCert?.((e as { certificateHref: string }).certificateHref);
                   }}
-                  className="inline-flex cursor-pointer items-center gap-2 border-retro-yellow bg-retro-yellow px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-navy-dark hover:bg-[#ffe066]"
+                  className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]"
                 >
                   {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
                 </button>
@@ -1708,7 +1518,7 @@ function ExpRow({
                       window.open(href, "_blank", "noopener,noreferrer");
                     }
                   }}
-                                  className="inline-flex items-center gap-2 border-[3px] border-offwhite/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-offwhite/30 hover:bg-offwhite/5"
+                                  className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5"
                 >
                   {(t.experience as { download: string }).download} <Download size={12} />
                 </button>
@@ -1719,23 +1529,23 @@ function ExpRow({
           <div className="sm:hidden">
             {open ? (
               <div className="overflow-hidden">
-                <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
+                <ul className="mt-6 space-y-2 border-t border-border pt-6">
                   {points.map((p) => (
-                    <li key={p} className="flex gap-3 leading-relaxed text-steel">
+                    <li key={p} className="flex gap-3 leading-relaxed text-muted">
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: mobileBulletBg, transition: `background-color ${cc}` }} />
                       {p}
                     </li>
                   ))}
                 </ul>
                 {(e as { certificateHref?: string }).certificateHref && (
-                  <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+                  <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
                     <button
                       type="button"
                       onClick={(ev) => {
                         ev.stopPropagation();
                         onOpenCert?.((e as { certificateHref: string }).certificateHref);
                       }}
-                      className="inline-flex cursor-pointer items-center gap-2 border-retro-yellow bg-retro-yellow px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-navy-dark hover:bg-[#ffe066]"
+                      className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]"
                     >
                       {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
                     </button>
@@ -1759,7 +1569,7 @@ function ExpRow({
                           window.open(href, "_blank", "noopener,noreferrer");
                         }
                       }}
-                                      className="inline-flex items-center gap-2 border-[3px] border-offwhite/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-offwhite/30 hover:bg-offwhite/5"
+                                      className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5"
                     >
                       {(t.experience as { download: string }).download} <Download size={12} />
                     </button>
@@ -1767,7 +1577,7 @@ function ExpRow({
                 )}
               </div>
             ) : (
-              <p className="mt-4 line-clamp-2 border-t border-white/10 pt-4 text-sm leading-relaxed text-steel/80">{points[0]}</p>
+              <p className="mt-4 line-clamp-2 border-t border-border pt-4 text-sm leading-relaxed text-muted/80">{points[0]}</p>
             )}
             <button
               type="button"
@@ -1775,7 +1585,7 @@ function ExpRow({
                 ev.stopPropagation();
                 setOpen((v) => !v);
               }}
-              className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 border-[3px] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest transition-colors ${open ? `border-offwhite/20 bg-transparent text-offwhite hover:border-offwhite/30` : `border-retro-yellow bg-retro-yellow text-navy-dark hover:bg-[#ffe066]`}`}
+              className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 border px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest transition-colors ${open ? `border-border/20 bg-transparent text-ink hover:border-border/30` : `border-terracotta bg-terracotta text-white hover:bg-[#d46a52]`}`}
             >
               {open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}
             </button>
@@ -1793,7 +1603,7 @@ function ExpRow({
         style={dotStyle}
         className="absolute left-[14px] top-8 z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
       >
-        <motion.span style={haloStyle} className="pointer-events-none absolute -inset-3 rounded-md bg-retro-yellow/20 blur-[8px]" />
+        <motion.span style={haloStyle} className="pointer-events-none absolute -inset-3 rounded-md bg-terracotta/20 blur-[8px]" />
         <ChipPixel size={26} />
       </motion.button>
       <motion.article
@@ -1805,13 +1615,13 @@ function ExpRow({
         whileHover={isMobile ? undefined : ({ y: -3, scale: 1.01 } as unknown as Record<string, unknown>)}
         whileTap={{ scale: 0.98 }}
         style={cardStyle}
-        className={`retro-card relative w-[calc(100%-40px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
+        className={`warm-card relative w-[calc(100%-40px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
       >
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <Tag tone={e.tone}>{period}</Tag>
             <h3 className="mt-5 font-display text-2xl tracking-wide md:text-3xl">{role}</h3>
-            <p className="mt-1 text-steel">{e.org}</p>
+            <p className="mt-1 text-muted">{e.org}</p>
           </div>
           <motion.span style={iconStyle} className="shrink-0">
             <Icon size={30} />
@@ -1819,23 +1629,23 @@ function ExpRow({
         </div>
         {/* Desktop: always expanded — viewer B replaces _blank tab */}
         <div className="hidden sm:block">
-          <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
+          <ul className="mt-6 space-y-2 border-t border-border pt-6">
             {points.map((p) => (
-              <li key={p} className="flex gap-3 leading-relaxed text-steel">
+              <li key={p} className="flex gap-3 leading-relaxed text-muted">
                 <motion.span style={bulletStyle} className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" />
                 {p}
               </li>
             ))}
           </ul>
           {(e as { certificateHref?: string }).certificateHref && (
-            <div className="mt-6 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+            <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-4">
               <button
                 type="button"
                 onClick={(ev) => {
                   ev.stopPropagation();
                   onOpenCert?.((e as { certificateHref: string }).certificateHref);
                 }}
-                className="inline-flex items-center gap-2 bg-retro-yellow px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-navy-dark hover:bg-[#ffe066]"
+                className="inline-flex items-center gap-2 bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]"
               >
                 {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
               </button>
@@ -1859,7 +1669,7 @@ function ExpRow({
                     window.open(href, "_blank", "noopener,noreferrer");
                   }
                 }}
-                className="inline-flex items-center gap-2 border-[3px] border-offwhite/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-offwhite/30 hover:bg-offwhite/5"
+                className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5"
               >
                 {(t.experience as { download: string }).download} <Download size={12} />
               </button>
@@ -1877,23 +1687,23 @@ function ExpRow({
                 transition={{ duration: 0.32, ease: EASE }}
                 className="overflow-hidden"
               >
-                <ul className="mt-6 space-y-2 border-t border-white/10 pt-6">
+                <ul className="mt-6 space-y-2 border-t border-border pt-6">
                   {points.map((p) => (
-                    <li key={p} className="flex gap-3 leading-relaxed text-steel">
+                    <li key={p} className="flex gap-3 leading-relaxed text-muted">
                       <motion.span style={{ backgroundColor: bulletBg } as unknown as Record<string, unknown>} className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" />
                       {p}
                     </li>
                   ))}
                 </ul>
                 {(e as { certificateHref?: string }).certificateHref && (
-                  <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+                  <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
                     <button
                       type="button"
                       onClick={(ev) => {
                         ev.stopPropagation();
                         onOpenCert?.((e as { certificateHref: string }).certificateHref);
                       }}
-                      className="inline-flex cursor-pointer items-center gap-2 border-retro-yellow bg-retro-yellow px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-navy-dark hover:bg-[#ffe066]"
+                      className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]"
                     >
                       {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
                     </button>
@@ -1917,7 +1727,7 @@ function ExpRow({
                           window.open(href, "_blank", "noopener,noreferrer");
                         }
                       }}
-                                      className="inline-flex items-center gap-2 border-[3px] border-offwhite/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-offwhite hover:border-offwhite/30 hover:bg-offwhite/5"
+                                      className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5"
                     >
                       {(t.experience as { download: string }).download} <Download size={12} />
                     </button>
@@ -1927,7 +1737,7 @@ function ExpRow({
             )}
           </AnimatePresence>
           {!open && (
-            <p className="mt-4 line-clamp-2 border-t border-white/10 pt-4 text-sm leading-relaxed text-steel/80">{points[0]}</p>
+            <p className="mt-4 line-clamp-2 border-t border-border pt-4 text-sm leading-relaxed text-muted/80">{points[0]}</p>
           )}
           <button
             type="button"
@@ -1935,7 +1745,7 @@ function ExpRow({
               ev.stopPropagation();
               setOpen((v) => !v);
             }}
-            className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 border-[3px] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest transition-colors ${open ? "border-offwhite/20 bg-transparent text-offwhite hover:border-offwhite/30" : "border-retro-yellow bg-retro-yellow text-navy-dark hover:bg-[#ffe066]"}`}
+            className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 border px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest transition-colors ${open ? "border-border/20 bg-transparent text-ink hover:border-border/30" : "border-terracotta bg-terracotta text-white hover:bg-[#d46a52]"}`}
           >
             {open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}
           </button>
@@ -2005,29 +1815,29 @@ function CertificateViewer({
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
-          <div className="absolute inset-0 bg-navy-dark/90 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-cream/90 backdrop-blur-sm" />
           <motion.div
             initial={{ y: 16, scale: 0.98, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 8, scale: 0.98, opacity: 0 }}
             transition={{ type: "spring", stiffness: 380, damping: 24 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative flex h-[min(90vh,920px)] max-h-[90vh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-[8px_8px_0_#ff4d6d] md:shadow-[10px_10px_0_#ff4d6d]"
+            className="relative flex h-[min(90vh,920px)] max-h-[90vh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-border bg-surface shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]"
           >
             {/* header branded — bukan toolbar chrome */}
-            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-white/10 bg-navy-dark px-3 py-2.5 sm:px-4 sm:py-3">
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-cream px-3 py-2.5 sm:px-4 sm:py-3">
               <div className="min-w-0 flex items-center gap-2.5">
-                <span className="hidden h-7 w-7 items-center justify-center bg-retro-yellow text-[11px] font-black text-navy-dark sm:inline-flex">K</span>
+                <span className="hidden h-7 w-7 items-center justify-center bg-terracotta text-[11px] font-black text-white sm:inline-flex">K</span>
                 <div className="min-w-0">
-                  <p className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-retro-yellow sm:text-xs">{headerEyebrow}</p>
-                  <p className="truncate font-mono text-[11px] font-bold uppercase tracking-widest text-offwhite sm:text-xs">{title}</p>
+                  <p className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta sm:text-xs">{headerEyebrow}</p>
+                  <p className="truncate font-mono text-[11px] font-bold uppercase tracking-widest text-ink sm:text-xs">{title}</p>
                 </div>
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 {kind === "article" && (
                   <button
                     onClick={doDownload}
-                    className="inline-flex cursor-pointer items-center gap-1.5 bg-retro-yellow px-3 py-2 font-mono text-xs font-black uppercase tracking-widest text-navy-dark hover:bg-[#ffe066] sm:px-4 sm:gap-2"
+                    className="inline-flex cursor-pointer items-center gap-1.5 bg-terracotta px-3 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52] sm:px-4 sm:gap-2"
                   >
                     <Download size={14} />
                     {(t.projectModal as { download: string }).download}
@@ -2036,7 +1846,7 @@ function CertificateViewer({
                 <button
                   onClick={onClose}
                   aria-label={t.projectModal.close}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center border border-white/20 bg-transparent text-offwhite hover:border-retro-yellow hover:text-retro-yellow sm:h-9 sm:w-9"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center border border-border bg-transparent text-ink hover:border-terracotta hover:text-terracotta sm:h-9 sm:w-9"
                 >
                   <X size={16} />
                 </button>
@@ -2047,7 +1857,7 @@ function CertificateViewer({
               <iframe
                 src={`${href}#toolbar=0&navpanes=0&statusbar=0`}
                 title={title}
-                className="h-full w-full border border-white/10 bg-white"
+                className="h-full w-full border border-border bg-white"
                 loading="lazy"
               />
             </div>
@@ -2106,7 +1916,7 @@ function Experience() {
   };
 
   return (
-    <section id="experience" className="relative px-[5vw] py-[10vh] md:py-[14vh] bg-navy-dark">
+    <section id="experience" className="relative px-[5vw] py-[10vh] md:py-[14vh] bg-cream">
       <div className="mx-auto max-w-[1120px]">
         <Eyebrow index="03" label={t.experience.eyebrow} />
         <SplitReveal
@@ -2115,15 +1925,15 @@ function Experience() {
           className="max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
         />
         <div ref={trackRef} className="relative mt-10">
-          <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-offwhite/12 md:left-1/2" aria-hidden />
-          {/* neon pipa: mobile = scaleY kontinu tanpa layer blur (1 transform/frame), desktop = bloom blur + scaleY */}
+          <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-border md:left-1/2" aria-hidden />
+          {/* warm pipe */}
           {isExpMobile ? (
             <motion.div
-              className="pointer-events-none absolute left-[14px] top-3 h-full w-[5px] origin-top -translate-x-1/2 bg-retro-yellow md:left-1/2"
+              className="pointer-events-none absolute left-[14px] top-3 h-full w-[5px] origin-top -translate-x-1/2 bg-terracotta md:left-1/2"
               style={
                 {
                   scaleY: pipe,
-                  boxShadow: "0 0 10px rgba(255,204,0,0.75), 0 0 22px rgba(255,204,0,0.32)",
+                  boxShadow: "0 0 10px rgba(224,122,95,0.35), 0 0 22px rgba(224,122,95,0.12)",
                 } as unknown as Record<string, unknown>
               }
               aria-hidden
@@ -2131,13 +1941,13 @@ function Experience() {
           ) : (
             <>
               <motion.div
-                className="pointer-events-none absolute left-[14px] top-3 w-[18px] origin-top -translate-x-1/2 bg-retro-yellow/22 blur-[8px] md:left-1/2"
+                className="pointer-events-none absolute left-[14px] top-3 w-[18px] origin-top -translate-x-1/2 bg-terracotta/18 blur-[8px] md:left-1/2"
                 style={{ scaleY: pipe, height: "100%" } as unknown as Record<string, unknown>}
                 aria-hidden
               />
               <motion.div
-                className="pointer-events-none absolute left-[14px] top-3 w-[5px] origin-top -translate-x-1/2 bg-retro-yellow md:left-1/2"
-                style={{ scaleY: pipe, height: "100%", boxShadow: "0 0 12px rgba(255,204,0,0.95), 0 0 26px rgba(255,204,0,0.5), 0 0 42px rgba(255,204,0,0.2)" } as unknown as Record<string, unknown>}
+                className="pointer-events-none absolute left-[14px] top-3 w-[5px] origin-top -translate-x-1/2 bg-terracotta md:left-1/2"
+                style={{ scaleY: pipe, height: "100%", boxShadow: "0 0 12px rgba(224,122,95,0.35), 0 0 26px rgba(224,122,95,0.18), 0 0 42px rgba(224,122,95,0.08)" } as unknown as Record<string, unknown>}
                 aria-hidden
               />
             </>
@@ -2157,7 +1967,7 @@ function Experience() {
 }
 
 
-/* ---------- 5. How I Build — Systems over Syntax (Retro) ---------- */
+/* ---------- 5. How I Build — Systems over Syntax (Warm) ---------- */
 function Lab() {
   const { lang } = useLang();
   const t = dict[lang];
@@ -2167,42 +1977,34 @@ function Lab() {
     tone: (["violet", "yellow", "pink"] as const)[i]!,
   }));
   return (
-    <section id="lab" className="relative overflow-hidden px-[5vw] py-[14vh] bg-navy-dark">
-      <div aria-hidden className="diagonal-stripes pointer-events-none absolute inset-0 opacity-[0.5]" />
-      <div className="absolute left-[10%] top-[10%] h-[380px] w-[380px] rounded-none bg-retro-pink/8 blur-[60px]" />
-      <div className="absolute right-[-5%] bottom-[0%] h-[420px] w-[420px] rounded-none bg-violet/15 blur-[60px]" />
+    <section id="lab" className="relative overflow-hidden px-[5vw] py-[14vh] bg-cream">
+      <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.5]" />
+      <div className="absolute left-[10%] top-[10%] h-[380px] w-[380px] rounded-none bg-terracotta/8 blur-[60px]" />
+      <div className="absolute right-[-5%] bottom-[0%] h-[420px] w-[420px] rounded-none bg-sage/10 blur-[60px]" />
       <div className="relative mx-auto max-w-[1120px]">
         <Eyebrow index="04" label={t.labEyebrow} />
         <SplitReveal
           key={t.labTitle}
           text={t.labTitle}
-          className="max-w-3xl font-display text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-offwhite"
+          className="max-w-3xl font-display text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
         />
-        <p className="mt-4 max-w-2xl leading-relaxed" style={{ color: RETRO.steel }}>
+        <p className="mt-4 max-w-2xl leading-relaxed" style={{ color: WARM.muted }}>
           {t.labDesc}
         </p>
         <div className="mt-10 grid gap-6 md:grid-cols-3 md:items-start">
           {steps.map((step, idx) => (
             <article
               key={step.n}
-              className={`retro-card flex flex-col ${idx === 1 ? "md:p-9 md:-translate-y-4" : "p-7 md:p-8"}`}
+              className={`warm-card flex flex-col ${idx === 1 ? "md:p-9 md:-translate-y-4" : "p-7 md:p-8"}`}
             >
-              <div className="window-bar mb-4">
-                <span className="font-mono text-[10px] font-black uppercase tracking-wider">{step.n}</span>
-                <div className="window-dots">
-                  <span className="window-dot" />
-                  <span className="window-dot" />
-                  <span className="window-dot" />
-                </div>
-              </div>
               <div className="flex items-center gap-3">
-                <span className={`inline-flex h-9 w-9 items-center justify-center border-[3px] font-mono text-sm font-black text-navy-dark ${step.tone === "yellow" ? "border-retro-yellow bg-retro-yellow" : step.tone === "pink" ? "border-retro-pink bg-retro-pink" : "border-violet bg-violet"}`}>
+                <span className={`inline-flex h-9 w-9 items-center justify-center border font-mono text-sm font-black text-white ${step.tone === "yellow" ? "border-terracotta bg-terracotta" : step.tone === "pink" ? "border-terracotta bg-terracotta" : "border-violet bg-violet"}`}>
                   {step.n}
                 </span>
-                <step.icon size={18} style={{ color: RETRO.steel }} />
+                <step.icon size={18} style={{ color: WARM.muted }} />
               </div>
-              <h3 className="mt-5 font-display text-[1.7rem] font-black uppercase leading-none tracking-[0.08em] text-offwhite">{step.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed" style={{ color: RETRO.steel }}>{step.desc}</p>
+              <h3 className="mt-5 font-display text-[1.7rem] font-black uppercase leading-none tracking-[0.08em] text-ink">{step.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed" style={{ color: WARM.muted }}>{step.desc}</p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {step.tags.map((tag) => (
                   <Tag key={tag} tone={step.tone === "yellow" ? "yellow" : step.tone === "pink" ? "pink" : "violet"}>
@@ -2227,18 +2029,18 @@ function Contact() {
     { label: "Email", href: "mailto:supyansauri47@gmail.com" },
   ];
   return (
-    <footer id="contact" className="relative overflow-hidden px-[5vw] pb-10 pt-[16vh] bg-navy-dark">
-      <div aria-hidden className="diagonal-stripes pointer-events-none absolute inset-0 opacity-[0.4]" />
-      <div className="absolute left-[-5%] top-[10%] h-[460px] w-[460px] rounded-none bg-retro-yellow/8 blur-[60px]" />
+    <footer id="contact" className="relative overflow-hidden px-[5vw] pb-10 pt-[16vh] bg-cream">
+      <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.4]" />
+      <div className="absolute left-[-5%] top-[10%] h-[460px] w-[460px] rounded-none bg-terracotta/8 blur-[60px]" />
       <div className="absolute right-[-5%] top-[20%] h-[460px] w-[460px] rounded-none bg-violet/12 blur-[60px]" />
       <div className="relative mx-auto max-w-[1120px] text-center">
         <Eyebrow index="05" label={t.contactEyebrow} />
         <SplitReveal
           key={t.contactTitle}
           text={t.contactTitle}
-          className="font-display text-[clamp(2.6rem,8.5vw,6.75rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-offwhite"
+          className="font-display text-[clamp(2.6rem,8.5vw,6.75rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
         />
-        <p className="mx-auto mt-8 max-w-lg text-lg" style={{ color: RETRO.steel }}>
+        <p className="mx-auto mt-8 max-w-lg text-lg" style={{ color: WARM.muted }}>
           {t.contactDesc}
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
@@ -2253,17 +2055,17 @@ function Contact() {
               href={s.href}
               target="_blank"
               rel="noreferrer"
-              className="retro-btn secondary"
-              style={{ boxShadow: `4px 4px 0 ${RETRO.offwhite}` } as React.CSSProperties}
+              className="warm-btn secondary"
+              style={{ boxShadow: `0 4px 16px rgba(28,25,23,0.08)` } as React.CSSProperties}
             >
               {s.label} ↗
             </a>
           ))}
         </div>
-        <div className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t border-offwhite/10 pt-6 font-mono text-xs uppercase tracking-widest" style={{ color: RETRO.steel }}>
+        <div className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t border-border/10 pt-6 font-mono text-xs uppercase tracking-widest" style={{ color: WARM.muted }}>
           <p>© 2025 Supyan Sauri</p>
           <p>KYRONIX</p>
-          <button onClick={() => scrollToId("top")} className="text-retro-yellow hover:text-[#ffe066] transition-colors cursor-pointer font-mono text-xs uppercase tracking-widest">
+          <button onClick={() => scrollToId("top")} className="text-terracotta hover:text-ink transition-colors cursor-pointer font-mono text-xs uppercase tracking-widest">
             {t.backToTop}
           </button>
         </div>
@@ -2279,7 +2081,7 @@ function App() {
   const bands = dict[lang].bands;
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
-      <main className="crt relative bg-navy-dark">
+      <main className="crt relative bg-cream">
       <Intro onDone={() => setReady(true)} />
       <GlowCursor />
       <Nav ready={ready} />
@@ -2287,7 +2089,7 @@ function App() {
       <div className="relative">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[200px] bg-gradient-to-b from-navy-dark/40 via-navy-surface/10 to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[200px] bg-gradient-to-b from-cream/40 via-cream-deep/10 to-transparent"
         />
         <div className="relative">
           <KineticBand text={bands.capabilities} />
