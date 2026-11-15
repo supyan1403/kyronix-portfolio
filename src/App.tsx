@@ -826,37 +826,67 @@ const dict = {
   },
 } as const;
 
-/* ---------- 1. Hero — Warm Dark Center renggang huruf ---------- */
+/* ---------- 1. Hero — Warm Dark Center + typing KYRONIX + scroll parallax (fix) ---------- */
 function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const t2 = dict[lang];
   const ref = useRef<HTMLElement>(null);
-  const marqueeItems = ["FULLSTACK DEVELOPER", "DATA ENGINEER", "BPS VOLUNTEER", "KYRONIX.MY.ID", "SYSTEMS OVER SYNTAX"];
+  const FULL = "KYRONIX";
+  const [typed, setTyped] = useState("");
+  const [typingDone, setTypingDone] = useState(false);
+  useEffect(() => {
+    if (!ready) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setTyped(FULL);
+      setTypingDone(true);
+      return;
+    }
+    let idx = 0;
+    let tm: number | undefined;
+    const tick = () => {
+      if (idx <= FULL.length) {
+        setTyped(FULL.slice(0, idx));
+        idx += 1;
+        if (idx <= FULL.length) tm = window.setTimeout(tick, idx === 1 ? 420 : 118 + Math.random() * 55) as unknown as number;
+        else setTypingDone(true);
+      }
+    };
+    tm = window.setTimeout(tick, 360) as unknown as number;
+    return () => clearTimeout(tm);
+  }, [ready]);
+  // parallax: hero fades/lifts saat scroll ke section berikutnya
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, -90]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 0.97]);
+  const halftoneY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const glowY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
-      <div className="absolute inset-0 halftone opacity-[0.04]" />
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[46%] h-[640px] w-[920px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.06] blur-[62px]" />
-      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-20 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" initial={{ opacity: 0, filter: "blur(10px)" }} animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.28 }}>
-        <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.45 }}>
+      <motion.div aria-hidden className="absolute inset-0 halftone opacity-[0.04]" style={{ y: halftoneY }} />
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[46%] h-[640px] w-[920px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.06] blur-[62px]" style={{ y: glowY }} />
+      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={{ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>} initial={{ opacity: 0, filter: "blur(10px)" }} animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
+        <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.35 }}>
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
           {t2.hero.hi}
         </motion.p>
-        <motion.h1 className="font-display text-[clamp(3.8rem,11vw,8.5rem)] font-[800] leading-[0.86] tracking-[0.08em] text-ink" initial={{ opacity: 0, y: 18 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}>KYRONIX</motion.h1>
-        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.72 }}>
+        <h1 className="font-display text-[clamp(3.8rem,11vw,8.5rem)] font-[800] leading-[0.86] tracking-[0.08em] text-ink">
+          <span>{typed}</span>
+          <span className={`ml-[3px] inline-block h-[0.78em] w-[4px] translate-y-[0.06em] bg-terracotta ${typingDone ? "blink" : "animate-pulse"}`} aria-hidden />
+        </h1>
+        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.62 }}>
           {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
         </motion.p>
-        <motion.p className="max-w-[42ch] text-sm leading-relaxed tracking-[0.03em] text-muted/80 sm:text-[15px]" initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ duration: 0.7, delay: 0.88 }}>{lang === "id" ? "Fullstack yang mikir sistem dulu, syntax belakangan. Bikin produk yang rapi, cepat, dan enak dipakai." : "A fullstack who thinks systems first. Building tidy, fast, and pleasant products."}</motion.p>
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, ease: EASE, delay: 1.0 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
+        <motion.p className="max-w-[42ch] text-sm leading-relaxed tracking-[0.03em] text-muted/80 sm:text-[15px]" initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ duration: 0.7, delay: 0.78 }}>{lang === "id" ? "Fullstack yang mikir sistem dulu, syntax belakangan. Bikin produk yang rapi, cepat, dan enak dipakai." : "A fullstack who thinks systems first. Building tidy, fast, and pleasant products."}</motion.p>
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, ease: EASE, delay: 0.9 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
           <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
           <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
         </motion.div>
-        <motion.button aria-label="Scroll" onClick={() => scrollToId("stack")} initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: 1.35, duration: 0.6 }} className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink md:flex">
+        <motion.button aria-label="Scroll" onClick={() => scrollToId("stack")} initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: 1.2, duration: 0.6 }} className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink md:flex">
           <span>Scroll</span><span className="h-7 w-px bg-border"><motion.i className="block h-3 w-px bg-terracotta" animate={{ y: [0, 14, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }} /></span>
         </motion.button>
       </motion.div>
-      <div className="absolute bottom-0 left-0 right-0 z-10 border-y border-border bg-surface/90 py-3 backdrop-blur-sm">
-        <div className="overflow-hidden"><div className="marquee-track inline-flex items-center gap-10 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">{[...marqueeItems, ...marqueeItems].map((item, i) => (<span key={i} className="flex items-center gap-10 whitespace-nowrap"><span>{item}</span><span className="text-terracotta">·</span></span>))}</div></div>
-      </div>
+      {/* marquee bottom bar removed — gausah pake ini */}
     </section>
   );
 }
