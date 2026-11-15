@@ -27,18 +27,28 @@ import {
   X,
 } from "lucide-react";
 
-/* ---------- Utility: Retro palette tokens (used via inline styles) ---------- */
-const RETRO = {
-  navyDark: "#0a1628",
-  navySurface: "#111d35",
-  retroYellow: "#E07A5F",
-  retroPink: "#E7E5E4",
-  ink: "#E7E5E4",
-  steel: "#7ba3c4",
-  neonLime: "#E07A5F",
-  coral: "#ff4d62",
+/* ---------- Utility: Warm palette tokens ---------- */
+const WARM = {
+  cream: "#FFFBF5",
+  creamDeep: "#F5EFE6",
+  surface: "#FFFFFF",
+  ink: "#1C1917",
+  muted: "#78716C",
+  border: "#E7E5E4",
+  terracotta: "#E07A5F",
+  sage: "#8FA89B",
+  sageDeep: "#6B8A7A",
   violet: "#7c3aed",
+  retroYellow: "#E07A5F",
+  retroPink: "#E07A5F",
+  offwhite: "#FFFBF5",
+  steel: "#78716C",
+  navyDark: "#FFFBF5",
+  navySurface: "#FFFFFF",
+  neonLime: "#E07A5F",
+  coral: "#E07A5F",
 } as const;
+const RETRO = WARM as unknown as typeof WARM;
 
 /* ---------- ChipPixel ---------- */
 function ChipPixel({ size = 24, className, style }: { size?: number; className?: string; style?: React.CSSProperties }) {
