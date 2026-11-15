@@ -65,17 +65,25 @@
 .kinetic {
   font-family: var(--font-display);
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   line-height: 1;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
 }
 .text-outline {
   color: transparent;
-  -webkit-text-stroke: 1.35px var(--color-ink);
+  -webkit-text-stroke: 1.45px rgba(245,239,230,0.92);
   -webkit-text-fill-color: transparent;
   paint-order: stroke fill;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+  font-weight: 700;
 }
 @media (max-width: 640px) {
-  .text-outline { -webkit-text-stroke-width: 1.05px; }
+  .text-outline { -webkit-text-stroke-width: 1.15px; }
 }
 
 /* Warm card — dark surface, soft shadow */

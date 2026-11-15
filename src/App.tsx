@@ -308,7 +308,7 @@ function KineticBand({ text, accent }: { text: string; accent?: string; reverse?
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
   return (
     <div ref={ref} className="overflow-hidden bg-transparent py-7 md:py-9" aria-hidden>
-      <motion.div className="kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.08em] md:gap-16" style={{ x }}>
+      <motion.div className="kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.06em] md:gap-16" style={{ x }}>
         <span className="text-outline">{text}</span>
         <span className="text-terracotta">{accent ?? "//"}</span>
         <span className="text-outline">{text}</span>
