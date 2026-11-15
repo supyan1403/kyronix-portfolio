@@ -259,8 +259,8 @@ function SplitReveal({
         <span className="mask-line mr-[0.25em]" key={i}>
           <motion.span
             className="inline-block"
-            variants={{ hidden: { y: "115%" }, show: { y: 0 } }}
-            transition={{ duration: 1, ease: EASE }}
+            variants={{ hidden: { y: "115%", opacity: 0, filter: "blur(6px)" }, show: { y: 0, opacity: 1, filter: "blur(0px)" } }}
+            transition={{ duration: 0.9, ease: EASE }}
           >
             {w}
           </motion.span>
@@ -301,19 +301,26 @@ function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yello
   );
 }
 
-/* ---------- Kinetic band — tanpa BG (menyatu global) + outline gede 3× ---------- */
+/* ---------- Kinetic band — tanpa BG (menyatu global) + solid 3× ---------- */
 function KineticBand({ text, accent }: { text: string; accent?: string; reverse?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
   return (
     <div ref={ref} className="overflow-hidden bg-transparent py-7 md:py-9" aria-hidden>
-      <motion.div className="kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.06em] md:gap-16" style={{ x }}>
-        <span className="text-outline">{text}</span>
+      <motion.div
+        className="kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.06em] text-ink md:gap-16"
+        style={{ x }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.7, ease: EASE }}
+      >
+        <span>{text}</span>
         <span className="text-terracotta">{accent ?? "//"}</span>
-        <span className="text-outline">{text}</span>
+        <span>{text}</span>
         <span className="text-terracotta">{accent ?? "//"}</span>
-        <span className="text-outline">{text}</span>
+        <span>{text}</span>
       </motion.div>
     </div>
   );
@@ -830,7 +837,7 @@ const dict = {
   },
 } as const;
 
-/* ---------- 1. Hero — Warm Dark Center + typing KYRONIX + scroll parallax (fix) ---------- */
+/* ---------- 1. Hero — Warm Dark Center + epic KYRONIX (daya tarik utama) + scroll parallax ---------- */
 function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const t2 = dict[lang];
@@ -849,13 +856,13 @@ function Hero({ ready }: { ready: boolean }) {
       if (idx <= FULL.length) {
         setTyped(FULL.slice(0, idx));
         idx += 1;
-        if (idx <= FULL.length) tm = window.setTimeout(tick, idx === 0 ? 520 : 175 + Math.random() * 45) as unknown as number;
+        if (idx <= FULL.length) tm = window.setTimeout(tick, idx === 0 ? 420 : 145 + Math.random() * 55) as unknown as number;
       }
     };
-    tm = window.setTimeout(tick, 520) as unknown as number;
+    tm = window.setTimeout(tick, 380) as unknown as number;
     return () => clearTimeout(tm);
   }, [ready]);
-  // parallax: hero fades/lifts saat scroll ke section berikutnya
+  const done = typed.length === FULL.length;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, -90]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
@@ -865,27 +872,74 @@ function Hero({ ready }: { ready: boolean }) {
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
       <motion.div aria-hidden className="absolute inset-0 halftone opacity-[0.04]" style={{ y: halftoneY }} />
-      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[46%] h-[640px] w-[920px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.06] blur-[62px]" style={{ y: glowY }} />
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[720px] w-[980px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.09] blur-[70px]" style={{ y: glowY }} />
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[460px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sage/10 blur-[80px]" style={{ y: glowY }} />
       <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={{ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>} initial={{ opacity: 0, filter: "blur(10px)" }} animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
         <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.35 }}>
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
           {t2.hero.hi}
         </motion.p>
-        <h1 className="font-display text-[clamp(3.8rem,11vw,8.5rem)] font-[800] leading-[0.86] tracking-[0.08em] text-ink">
-          <span>{typed}</span>
+        {/* KYRONIX — hero magnet: per-letter stagger + blur → focus + subtle shine */}
+        <h1 aria-label={FULL} className="relative inline-flex select-none flex-wrap justify-center font-display text-[clamp(3.8rem,11vw,8.5rem)] font-[800] leading-[0.86] tracking-[0.07em] text-ink">
+          <span className="sr-only">{FULL}</span>
+          <span aria-hidden className="inline-flex">
+            {FULL.split("").map((ch, i) => {
+              const visible = i < typed.length;
+              const isLast = i === FULL.length - 1;
+              return (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 }}
+                  animate={visible ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 } : { opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 }}
+                  transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * 0.06 }}
+                  className="inline-block will-change-transform"
+                  style={{
+                    textShadow: visible ? "0 1px 0 rgba(245,239,230,0.06), 0 12px 32px rgba(224,122,95,0.18), 0 2px 18px rgba(0,0,0,0.25)" : undefined,
+                  }}
+                >
+                  {ch}
+                  {isLast && done && (
+                    <motion.span
+                      aria-hidden
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.35, duration: 0.6 }}
+                      className="pointer-events-none absolute -inset-x-3 -top-2 bottom-0 -z-10 bg-gradient-to-r from-transparent via-terracotta/12 to-transparent blur-[14px]"
+                    />
+                  )}
+                </motion.span>
+              );
+            })}
+          </span>
+          {/* shine sweep once done */}
+          {done && (
+            <motion.span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.4 }}
+            >
+              <motion.span
+                className="absolute inset-y-0 w-[35%] bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-12deg]"
+                initial={{ x: "-120%" }}
+                animate={{ x: "320%" }}
+                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.7 }}
+              />
+            </motion.span>
+          )}
         </h1>
-        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.62 }}>
+        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={{ opacity: 0, y: 12, filter: "blur(6px)" }} animate={ready ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}} transition={{ duration: 0.8, delay: 0.72 }}>
           {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
         </motion.p>
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, ease: EASE, delay: 0.9 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
+        <motion.div initial={{ opacity: 0, y: 12, filter: "blur(6px)" }} animate={ready ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
           <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
           <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
         </motion.div>
-        <motion.button aria-label="Scroll" onClick={() => scrollToId("stack")} initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: 1.2, duration: 0.6 }} className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink md:flex">
+        <motion.button aria-label="Scroll" onClick={() => scrollToId("stack")} initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: 1.25, duration: 0.6 }} className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink md:flex">
           <span>Scroll</span><span className="h-7 w-px bg-border"><motion.i className="block h-3 w-px bg-terracotta" animate={{ y: [0, 14, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }} /></span>
         </motion.button>
       </motion.div>
-      {/* marquee bottom bar removed — gausah pake ini */}
     </section>
   );
 }
@@ -942,9 +996,16 @@ function Stack() {
           text={t.stackTitle}
           className="max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.1] tracking-[0.02em]"
         />
-        <p className="mt-4 max-w-2xl text-lg leading-relaxed" style={{ color: WARM.muted }}>
+        <motion.p
+          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
+          className="mt-4 max-w-2xl text-lg leading-relaxed"
+          style={{ color: WARM.muted }}
+        >
           {t.stackDesc}
-        </p>
+        </motion.p>
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {stack.map((group, i) => {
             const Icon = group.icon;
@@ -952,10 +1013,10 @@ function Stack() {
             return (
               <motion.article
                 key={group.title}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 viewport={{ once: true, amount: 0.25 }}
-                transition={{ duration: 0.6, ease: EASE, delay: i * 0.08 }}
+                transition={{ duration: 0.65, ease: EASE, delay: i * 0.09 }}
                 whileHover={{ y: -4 }}
                 className="warm-card p-7"
               >
@@ -1761,13 +1822,25 @@ function Lab() {
           text={t.labTitle}
           className="max-w-3xl font-display text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
         />
-        <p className="mt-4 max-w-2xl leading-relaxed" style={{ color: WARM.muted }}>
+        <motion.p
+          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
+          className="mt-4 max-w-2xl leading-relaxed"
+          style={{ color: WARM.muted }}
+        >
           {t.labDesc}
-        </p>
+        </motion.p>
         <div className="mt-10 grid gap-6 md:grid-cols-3 md:items-start">
           {steps.map((step, idx) => (
-            <article
+            <motion.article
               key={step.n}
+              initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.6, ease: EASE, delay: 0.12 + idx * 0.1 }}
+              whileHover={{ y: -4 }}
               className={`warm-card flex flex-col ${idx === 1 ? "md:p-9 md:-translate-y-4" : "p-7 md:p-8"}`}
             >
               <div className="flex items-center gap-3">
@@ -1785,7 +1858,7 @@ function Lab() {
                   </Tag>
                 ))}
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </div>
@@ -1813,15 +1886,34 @@ function Contact() {
           text={t.contactTitle}
           className="font-display text-[clamp(2.6rem,8.5vw,6.75rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
         />
-        <p className="mx-auto mt-8 max-w-lg text-lg" style={{ color: WARM.muted }}>
+        <motion.p
+          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.15 }}
+          className="mx-auto mt-8 max-w-lg text-lg"
+          style={{ color: WARM.muted }}
+        >
           {t.contactDesc}
-        </p>
-        <div className="mt-10 flex flex-wrap justify-center gap-4">
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.22 }}
+          className="mt-10 flex flex-wrap justify-center gap-4"
+        >
           <Magnetic href="/cv.pdf" variant="primary">
             {t.downloadCv} <Download size={16} />
           </Magnetic>
-        </div>
-        <div className="mt-16 flex flex-wrap justify-center gap-3">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.28 }}
+          className="mt-16 flex flex-wrap justify-center gap-3"
+        >
           {socials.map((s) => (
             <a
               key={s.label}
@@ -1834,7 +1926,7 @@ function Contact() {
               {s.label} ↗
             </a>
           ))}
-        </div>
+        </motion.div>
         <div className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t border-border/10 pt-6 font-mono text-xs uppercase tracking-widest" style={{ color: WARM.muted }}>
           <p>© 2025 Supyan Sauri</p>
           <p>KYRONIX</p>
