@@ -1485,7 +1485,7 @@ function ExpRow({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <Tag tone={e.tone}>{period}</Tag>
-              <h3 className="mt-5 font-display text-2xl tracking-wide md:text-3xl">{role}</h3>
+              <h3 className="mt-5 font-display text-2xl font-bold tracking-wide md:text-3xl">{role}</h3>
               <p className="mt-1 text-muted">{e.org}</p>
             </div>
             <span className="shrink-0" style={mobileIconStyle}>
