@@ -2,22 +2,22 @@
 @import "tailwindcss";
 
 @theme {
-  /* Warm Minimal palette */
-  --color-cream: #FFFBF5;
-  --color-cream-deep: #F5EFE6;
-  --color-surface: #FFFFFF;
-  --color-ink: #1C1917;
-  --color-muted: #78716C;
-  --color-border: #E7E5E4;
+  /* Warm Dark palette — hangat, bukan hitam pekat */
+  --color-cream: #1A1816;
+  --color-cream-deep: #252220;
+  --color-surface: #252220;
+  --color-ink: #F5EFE6;
+  --color-muted: #A8A298;
+  --color-border: #3A3632;
   --color-terracotta: #E07A5F;
-  --color-terracotta-light: #FDEDE8;
+  --color-terracotta-light: #3D2A24;
   --color-sage: #8FA89B;
-  --color-sage-light: #E8F0EC;
+  --color-sage-light: #2A3330;
   --color-sage-deep: #6B8A7A;
   /* keep legacy alias for safety */
-  --color-obsidian: #1C1917;
-  --color-snow: #FFFBF5;
-  --color-silver: #78716C;
+  --color-obsidian: #1A1816;
+  --color-snow: #F5EFE6;
+  --color-silver: #A8A298;
   --font-display: "Syne", "Space Grotesk", sans-serif;
   --font-sans: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -50,7 +50,7 @@
   }
 }
 
-/* ===== WARM MINIMAL — soft brutalism ===== */
+/* ===== WARM DARK — soft dark ===== */
 
 /* Kinetic band — epic scroll */
 @keyframes marquee {
@@ -62,21 +62,27 @@
 }
 .marquee-track:hover { animation-play-state: paused; }
 
-/* Warm card — soft rounded, 1px border, soft shadow */
+.kinetic {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+/* Warm card — dark surface, soft shadow */
 .warm-card {
   position: relative;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(28, 25, 23, 0.06), 0 1px 3px rgba(28,25,23,0.04);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0,0,0,0.2);
   will-change: transform;
   transform: translateZ(0);
   transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease, border-color 220ms ease;
 }
 .warm-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(28, 25, 23, 0.08), 0 4px 12px rgba(28,25,23,0.06);
-  border-color: #DDD6CE;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0,0,0,0.25);
+  border-color: #4A4642;
 }
 
 /* Warm button */
@@ -92,18 +98,18 @@
   letter-spacing: 0.12em;
   border-radius: 9999px;
   cursor: pointer;
-  transition: transform 150ms, background 150ms, color 150ms, box-shadow 150ms;
+  transition: transform 150ms, background 150ms, color 150ms, box-shadow 150ms, border-color 150ms;
 }
 .warm-btn.primary {
   background: var(--color-ink);
-  color: white;
+  color: var(--color-cream);
   border: 1.5px solid var(--color-ink);
-  box-shadow: 0 4px 16px rgba(28,25,23,0.12);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 .warm-btn.primary:hover {
-  background: #292524;
+  background: #E8DED0;
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(28,25,23,0.16);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 .warm-btn.ghost {
   background: transparent;
@@ -112,7 +118,7 @@
 }
 .warm-btn.ghost:hover {
   background: var(--color-surface);
-  border-color: #D6D3D1;
+  border-color: #4A4642;
   transform: translateY(-1px);
 }
 
@@ -127,7 +133,7 @@
   letter-spacing: 0.06em;
   border-radius: 9999px;
   border: 1px solid var(--color-border);
-  background: var(--color-cream);
+  background: #2E2B29;
   color: var(--color-muted);
 }
 
@@ -136,17 +142,17 @@
 .diagonal-stripes { display: none; }
 .grid-pattern { display: none; }
 
-/* Subtle warm grid */
+/* Subtle warm grid — light on dark */
 .warm-grid {
   background-image:
-    linear-gradient(rgba(28,25,23,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(28,25,23,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(245,239,230,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,239,230,0.04) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
-/* Halftone dots */
+/* Halftone dots — light on dark */
 .halftone {
-  background-image: radial-gradient(circle, rgba(28,25,23,0.06) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(circle, rgba(245,239,230,0.06) 1.5px, transparent 1.5px);
   background-size: 16px 16px;
 }
 

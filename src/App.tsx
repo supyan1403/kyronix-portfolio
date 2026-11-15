@@ -27,24 +27,24 @@ import {
   X,
 } from "lucide-react";
 
-/* ---------- Utility: Warm palette tokens ---------- */
+/* ---------- Utility: Warm Dark palette tokens ---------- */
 const WARM = {
-  cream: "#FFFBF5",
-  creamDeep: "#F5EFE6",
-  surface: "#FFFFFF",
-  ink: "#1C1917",
-  muted: "#78716C",
-  border: "#E7E5E4",
+  cream: "#1A1816",
+  creamDeep: "#252220",
+  surface: "#252220",
+  ink: "#F5EFE6",
+  muted: "#A8A298",
+  border: "#3A3632",
   terracotta: "#E07A5F",
   sage: "#8FA89B",
   sageDeep: "#6B8A7A",
   violet: "#7c3aed",
   retroYellow: "#E07A5F",
   retroPink: "#E07A5F",
-  offwhite: "#FFFBF5",
-  steel: "#78716C",
-  navyDark: "#FFFBF5",
-  navySurface: "#FFFFFF",
+  offwhite: "#F5EFE6",
+  steel: "#A8A298",
+  navyDark: "#1A1816",
+  navySurface: "#252220",
   neonLime: "#E07A5F",
   coral: "#E07A5F",
 } as const;
@@ -295,15 +295,19 @@ function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yello
   );
 }
 
-/* ---------- Kinetic oversized title band ---------- */
+/* ---------- Kinetic oversized title band — Warm Dark solid ink ---------- */
 function KineticBand({ text, accent, reverse }: { text: string; accent?: string; reverse?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], reverse ? ["-45%", "5%"] : ["10%", "-50%"]);
+  const x = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
   return (
-    <div ref={ref} className="overflow-hidden bg-transparent py-6" aria-hidden>
-      <motion.div className="kinetic w-max" style={{ x }}>
-        {text} <b>{accent ?? "//"}</b> {text}
+    <div ref={ref} className="overflow-hidden border-y border-border bg-ink py-4" aria-hidden>
+      <motion.div className="kinetic flex w-max items-center gap-8 whitespace-nowrap px-[5vw] font-display text-sm font-bold uppercase tracking-[0.2em] text-cream md:text-base" style={{ x }}>
+        <span>{text}</span>
+        <span className="text-terracotta">{accent ?? "//"}</span>
+        <span>{text}</span>
+        <span className="text-terracotta">{accent ?? "//"}</span>
+        <span>{text}</span>
       </motion.div>
     </div>
   );
