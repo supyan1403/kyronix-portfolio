@@ -1471,7 +1471,7 @@ function ExpRow({
         <span
           data-dot
           aria-hidden
-          className="pointer-events-none absolute left-[14px] top-8 z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
+          className="pointer-events-none absolute left-[14px] top-8 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
           style={mobileDotStyle}
         >
           <span className="pointer-events-none absolute -inset-3 rounded-md bg-terracotta/20 blur-[8px]" style={mobileHaloStyle} />
@@ -1479,7 +1479,7 @@ function ExpRow({
         </span>
         <article
           onClick={onJump}
-          className={`warm-card relative w-[calc(100%-40px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
+          className={`warm-card relative z-[2] w-[calc(100%-56px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
           style={mobileCardStyle}
         >
           <div className="flex items-start justify-between gap-4">
@@ -1617,7 +1617,7 @@ function ExpRow({
         onClick={onJump}
         aria-label={`${period} — ${role}`}
         style={dotStyle}
-        className="absolute left-[14px] top-8 z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
+        className="absolute left-[14px] top-8 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
       >
         <motion.span style={haloStyle} className="pointer-events-none absolute -inset-3 rounded-md bg-terracotta/20 blur-[8px]" />
         <ChipPixel size={26} />
@@ -1631,7 +1631,7 @@ function ExpRow({
         whileHover={isMobile ? undefined : ({ y: -3, scale: 1.01 } as unknown as Record<string, unknown>)}
         whileTap={{ scale: 0.98 }}
         style={cardStyle}
-        className={`warm-card relative w-[calc(100%-40px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
+        className={`warm-card relative z-[2] w-[calc(100%-56px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
       >
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
