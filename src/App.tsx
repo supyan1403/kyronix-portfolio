@@ -826,32 +826,51 @@ const dict = {
   },
 } as const;
 
-/* ---------- 1. Hero — Warm Minimal ---------- */
+/* ---------- 1. Hero — Warm Dark Split Minimal (B + renggang) ---------- */
 function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const t2 = dict[lang];
   const ref = useRef<HTMLElement>(null);
   const marqueeItems = ["FULLSTACK DEVELOPER", "DATA ENGINEER", "BPS VOLUNTEER", "KYRONIX.MY.ID", "SYSTEMS OVER SYNTAX"];
   return (
-    <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-20 sm:pt-24">
-      <div className="absolute inset-0 halftone opacity-40" />
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[46%] h-[560px] w-[820px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.04] blur-[52px]" />
-      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1120px] flex-1 flex-col items-center justify-center gap-5 px-[6vw] pb-16 pt-4 text-center sm:gap-7 sm:px-[5vw] md:px-[4vw]" initial={{ opacity: 0, filter: "blur(10px)" }} animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.28 }}>
-        <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.45 }}>
-          <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
-          {t2.hero.hi}
-        </motion.p>
-        <div className="flex w-full flex-col items-center gap-4">
-          <motion.h1 className="font-display text-[clamp(3.6rem,12vw,8.5rem)] font-[800] leading-[0.9] tracking-[-0.04em] text-ink" initial={{ opacity: 0, y: 18 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}>KYRONIX</motion.h1>
-          <motion.p className="max-w-[22ch] text-balance font-sans text-[clamp(1.05rem,2.4vw,1.35rem)] leading-relaxed text-muted sm:max-w-none" initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.72 }}>
+    <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
+      <div className="absolute inset-0 halftone opacity-[0.04]" />
+      <div aria-hidden className="pointer-events-none absolute left-[22%] top-[42%] h-[640px] w-[920px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.06] blur-[62px]" />
+      {/* renggang: grid split + gap besar, cards dekoratif kanan */}
+      <motion.div className="relative z-20 mx-auto grid w-full max-w-[1200px] flex-1 content-center gap-10 px-[6vw] pb-20 pt-6 sm:gap-12 sm:px-[5vw] md:grid-cols-[1.1fr_0.9fr] md:gap-14 md:px-[4vw] lg:gap-16" initial={{ opacity: 0, filter: "blur(10px)" }} animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.28 }}>
+        {/* kiri: text block — renggang */}
+        <div className="flex flex-col items-start gap-6 text-left sm:gap-7">
+          <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.45 }}>
+            <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
+            {t2.hero.hi}
+          </motion.p>
+          <motion.h1 className="font-display text-[clamp(3.8rem,11vw,8.5rem)] font-[800] leading-[0.86] tracking-[-0.04em] text-ink" initial={{ opacity: 0, y: 18 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}>KYRONIX</motion.h1>
+          <motion.p className="max-w-[22ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed text-muted" initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.72 }}>
             {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold text-ink"> INFRA.</span>
           </motion.p>
-          <motion.p className="max-w-[36ch] text-sm leading-relaxed text-muted/80 sm:text-[15px]" initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ duration: 0.7, delay: 0.88 }}>{lang === "id" ? "Fullstack yang mikir sistem dulu, syntax belakangan. Bikin produk yang rapi, cepat, dan enak dipakai." : "A fullstack who thinks systems first. Building tidy, fast, and pleasant products."}</motion.p>
+          <motion.p className="max-w-[42ch] text-sm leading-relaxed text-muted/80 sm:text-[15px]" initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ duration: 0.7, delay: 0.88 }}>{lang === "id" ? "Fullstack yang mikir sistem dulu, syntax belakangan. Bikin produk yang rapi, cepat, dan enak dipakai." : "A fullstack who thinks systems first. Building tidy, fast, and pleasant products."}</motion.p>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, ease: EASE, delay: 1.0 }} className="flex w-auto flex-wrap items-center gap-3 pt-2">
+            <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
+            <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
+          </motion.div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, ease: EASE, delay: 1.0 }} className="flex w-auto flex-col items-center gap-3 pt-2 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
-          <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
-          <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
-        </motion.div>
+        {/* kanan: 2 warm-card dekoratif — renggang offset */}
+        <div className="hidden flex-col gap-4 self-center md:flex lg:gap-5">
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.85 }} className="warm-card p-6">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-cream text-[10px] font-bold text-muted">01</span>
+              <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
+            </div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-terracotta">Data & System</p>
+            <p className="mt-1 font-display text-lg font-bold leading-tight tracking-tight text-ink">FROM IDEA → TO INFRA.</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted">Sistem rapi, cepat, enak dipakai.</p>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.98 }} className="warm-card ml-6 p-5 lg:ml-8">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">KYRONIX.MY.ID</p>
+            <p className="mt-2 font-mono text-xs leading-relaxed text-muted">// Vibe Coder · System Architect<br />BPS · Research · IoT</p>
+            <span className="mt-3 inline-flex rounded-full border border-border bg-cream px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-muted">2025</span>
+          </motion.div>
+        </div>
         <motion.button aria-label="Scroll" onClick={() => scrollToId("stack")} initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: 1.35, duration: 0.6 }} className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink md:flex">
           <span>Scroll</span><span className="h-7 w-px bg-border"><motion.i className="block h-3 w-px bg-terracotta" animate={{ y: [0, 14, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }} /></span>
         </motion.button>
