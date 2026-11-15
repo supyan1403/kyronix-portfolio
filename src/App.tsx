@@ -936,7 +936,7 @@ function Stack() {
                   </span>
                   <span className="font-mono text-xs tracking-widest text-muted">0{i + 1}</span>
                 </div>
-                <h3 className="mb-3 font-display text-lg font-bold leading-tight tracking-tight text-ink">{group.title}</h3>
+                <h3 className="mb-3 font-sans text-lg font-semibold leading-tight tracking-[-0.02em] text-ink">{group.title}</h3>
                 <div className="flex flex-wrap gap-2">
                   {group.items.map((item) => (
                     <span key={item} className="warm-tag">{item}</span>
@@ -1077,7 +1077,7 @@ function Projects() {
                     </span>
                   </div>
                   <p className="mt-4 mb-2 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
-                  <h3 className="mb-3 font-display text-xl leading-[1.1] tracking-wide text-ink">{p.title}</h3>
+                  <h3 className="mb-3 font-sans text-xl font-semibold leading-[1.1] tracking-[-0.02em] text-ink">{p.title}</h3>
                   <p className="text-sm leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
                   <div className="mt-5 flex flex-wrap gap-2 border-t border-border/10 pt-4">
                     {p.stack.map((s) => (
@@ -1175,7 +1175,7 @@ function Projects() {
                 </div>
               <div className="min-w-0 flex-1">
                 <p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
-                <h3 data-text={p.title} className="font-display text-[2rem] leading-[1.1] tracking-wide text-ink md:text-4xl">{p.title}</h3>
+                <h3 data-text={p.title} className="font-sans text-[2rem] font-semibold leading-[1.1] tracking-[-0.02em] text-ink md:text-4xl">{p.title}</h3>
                 <p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
               </div>
               <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
@@ -1483,7 +1483,7 @@ function ExpRow({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <Tag tone={e.tone}>{period}</Tag>
-              <h3 className="mt-5 font-display text-2xl font-bold tracking-wide md:text-3xl">{role}</h3>
+              <h3 className="mt-5 font-sans text-2xl font-semibold tracking-[-0.02em] md:text-3xl">{role}</h3>
               <p className="mt-1 text-muted">{e.org}</p>
             </div>
             <span className="shrink-0" style={mobileIconStyle}>
@@ -1634,7 +1634,7 @@ function ExpRow({
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <Tag tone={e.tone}>{period}</Tag>
-            <h3 className="mt-5 font-display text-2xl font-bold tracking-wide md:text-3xl">{role}</h3>
+            <h3 className="mt-5 font-sans text-2xl font-semibold tracking-[-0.02em] md:text-3xl">{role}</h3>
             <p className="mt-1 text-muted">{e.org}</p>
           </div>
           <motion.span style={iconStyle} className="shrink-0">
@@ -2029,7 +2029,7 @@ function Lab() {
                 </span>
                 <step.icon size={18} style={{ color: WARM.muted }} />
               </div>
-              <h3 className="mt-5 font-display text-[1.7rem] font-black uppercase leading-none tracking-[0.08em] text-ink">{step.title}</h3>
+              <h3 className="mt-5 font-sans text-[1.7rem] font-semibold leading-none tracking-[-0.02em] text-ink">{step.title}</h3>
               <p className="mt-3 text-sm leading-relaxed" style={{ color: WARM.muted }}>{step.desc}</p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {step.tags.map((tag) => (
