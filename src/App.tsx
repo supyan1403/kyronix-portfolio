@@ -116,21 +116,27 @@ const useLang = () => useContext(LangCtx);
 function scrollToId(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
-  const isCoarse = window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches;
-  if (lenisInstance && !isCoarse)
+  if (lenisInstance)
     lenisInstance.scrollTo(el, {
       offset: 0,
-      duration: 2.4,
+      duration: 2.2,
       easing: (t: number) => 1 - Math.pow(1 - t, 3),
     });
   else el.scrollIntoView({ behavior: "smooth" });
 }
 
-/* ---------- Smooth scroll (Lenis) ---------- */
+/* ---------- Smooth scroll (Lenis) — desktop + mobile 100% ---------- */
 function useLenis() {
   useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches) return;
-    const lenis = new Lenis({ duration: 1.25, wheelMultiplier: 0.9, smoothWheel: true, smoothTouch: false });
+    const isCoarse = window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches;
+    const lenis = new Lenis({
+      duration: isCoarse ? 1.05 : 1.25,
+      wheelMultiplier: isCoarse ? 0.95 : 0.9,
+      smoothWheel: true,
+      smoothTouch: true,
+      touchMultiplier: 1.6,
+      gestureOrientation: "vertical",
+    });
     lenisInstance = lenis;
     let raf = 0;
     const loop = (t: number) => {
@@ -295,21 +301,19 @@ function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yello
   );
 }
 
-/* ---------- Kinetic band — Warm Dark (tanpa putih) + tanpa reverse ---------- */
+/* ---------- Kinetic band — tanpa BG (menyatu global) + outline gede 3× ---------- */
 function KineticBand({ text, accent }: { text: string; accent?: string; reverse?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
   return (
-    <div ref={ref} className="overflow-hidden border-y border-border bg-surface py-6 md:py-7" aria-hidden>
-      <motion.div className="kinetic flex w-max items-center gap-10 whitespace-nowrap px-[4vw] font-display text-[clamp(1.35rem,3.4vw,2.6rem)] font-extrabold uppercase tracking-[0.12em] text-ink md:gap-14" style={{ x }}>
-        <span>{text}</span>
+    <div ref={ref} className="overflow-hidden bg-transparent py-7 md:py-9" aria-hidden>
+      <motion.div className="kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.08em] md:gap-16" style={{ x }}>
+        <span className="text-outline">{text}</span>
         <span className="text-terracotta">{accent ?? "//"}</span>
-        <span>{text}</span>
+        <span className="text-outline">{text}</span>
         <span className="text-terracotta">{accent ?? "//"}</span>
-        <span>{text}</span>
-        <span className="text-terracotta">{accent ?? "//"}</span>
-        <span>{text}</span>
+        <span className="text-outline">{text}</span>
       </motion.div>
     </div>
   );
@@ -1061,99 +1065,8 @@ function Projects() {
     setActive(p);
   };
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)");
-    const upd = () => setIsMobile(mq.matches || window.matchMedia("(pointer: coarse)").matches);
-    upd();
-    mq.addEventListener("change", upd);
-    return () => mq.removeEventListener("change", upd);
-  }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const x = useTransform(scrollYProgress, [0, 1], [0, -maxX]);
-
-  if (isMobile) {
-    return (
-      <section id="projects" className="relative px-[5vw] py-[6vh] bg-cream">
-        <div className="mx-auto max-w-[1120px]">
-          <Eyebrow index="02" label={t.projectsEyebrow} />
-          <SplitReveal
-            key={t.projectsTitle}
-            text={t.projectsTitle}
-            className="font-display text-[clamp(2.3rem,5.2vw,4.25rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
-          />
-          <div className="mt-8 grid gap-4">
-            {projects.map((p) => {
-              const statusClass = p.statusTone === "lime" ? "warm-tag" : p.statusTone === "coral" ? "warm-tag" : "warm-tag";
-              return (
-                <article
-                  key={p.no}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => handleOpen(p)}
-                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleOpen(p); } }}
-                  className="warm-card flex cursor-pointer flex-col overflow-hidden p-6"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
-                    <span className={`inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider ${statusClass}`}>
-                      {(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}
-                      {p.status}
-                    </span>
-                  </div>
-                  <p className="mt-4 mb-2 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
-                  <h3 className="mb-3 font-sans text-xl font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink">{p.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
-                  <div className="mt-5 flex flex-wrap gap-2 border-t border-border/10 pt-4">
-                    {p.stack.map((s) => (
-                      <Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>
-                    ))}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-        <AnimatePresence>
-          {active && (
-            <motion.div role="dialog" aria-modal="true" aria-label={t.projectModal.title} className="fixed inset-0 z-[100] flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActive(null)}>
-              <div className="absolute inset-0 bg-cream/85 backdrop-blur-sm" />
-              <motion.div initial={{ y: 16, scale: 0.98, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }} exit={{ y: 8, scale: 0.98, opacity: 0 }} transition={{ type: "spring", stiffness: 380, damping: 24 }} onClick={(e) => e.stopPropagation()} className="warm-card relative w-full max-w-[520px] bg-surface p-6 text-left md:p-7">
-                <button onClick={() => setActive(null)} aria-label={t.projectModal.close} className="absolute right-3 top-3 flex h-8 w-8 cursor-pointer items-center justify-center border border-border/25 bg-cream text-ink hover:border-terracotta hover:text-terracotta"><X size={16} /></button>
-                <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{active.kind}</p>
-                <h3 className="mt-2 pr-8 font-display text-2xl font-normal uppercase leading-tight tracking-[0.14em] text-ink">{((active as { href?: string }).href ? (t.projectModal as { articleTitle: string }).articleTitle : t.projectModal.title)}</h3>
-                <p className="mt-2 inline-block bg-terracotta px-2.5 py-1.5 font-mono text-xs font-black uppercase leading-none tracking-[0.22em] text-white">{active.title}</p>
-                <p className="mt-3 text-sm font-medium leading-relaxed text-ink">{((active as { href?: string }).href ? (t.projectModal as { articleBody: string }).articleBody : t.projectModal.body)}</p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {(() => {
-                    const href = (active as { href?: string }).href;
-                    const hasArticle = typeof href === "string" && href.length > 0;
-                    if (hasArticle) {
-                      return (
-                        <>
-                          <motion.button onClick={() => { const h = href!; setActive(null); setDocHref(h); }} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]">{(t.projectModal as { readArticle: string }).readArticle} <ArrowUpRight size={14} /></motion.button>
-                          <motion.button onClick={async () => { try { const res = await fetch(href!); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href!.split("/").pop() || "artikel.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1200); } catch { window.open(href!, "_blank", "noopener,noreferrer"); } }} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30 hover:bg-white/5">{(t.projectModal as { download: string }).download} <Download size={14} /></motion.button>
-                          <motion.button onClick={handleCta} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-border/50 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:bg-border">{(t.projectModal as { articleCta: string }).articleCta} <ArrowUpRight size={14} /></motion.button>
-                          <motion.button onClick={() => setActive(null)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30">{t.projectModal.close}</motion.button>
-                        </>
-                      );
-                    }
-                    return (
-                      <>
-                        <motion.button onClick={handleCta} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]">{t.projectModal.cta} <ArrowUpRight size={14} /></motion.button>
-                        <motion.button onClick={() => setActive(null)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30">{t.projectModal.close}</motion.button>
-                      </>
-                    );
-                  })()}
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        {docHref && <CertificateViewer href={docHref} open={!!docHref} onClose={() => setDocHref(null)} kind="article" />}
-      </section>
-    );
-  }
 
   return (
     <section id="projects" ref={ref} className="relative h-[260vh]">
@@ -1438,10 +1351,7 @@ function ExpRow({
   const period = (e.period as { id: string; en: string })[lang] ?? (e.period as unknown as string);
   const role = (e.role as { id: string; en: string })[lang] ?? (e.role as unknown as string);
   const points = (Array.isArray(e.points) ? e.points : (e.points as { id: string[]; en: string[] })[lang]) as string[];
-  const isMobile = useIsMobile();
-  const io = useInViewActive();
-  const active = isMobile ? io.active : false;
-  // desktop: scroll-linked buttery (window 0.145), mobile: discrete observer -> CSS transition (murah, tidak per-frame)
+  // 100% desktop — no mobile optimize (scroll-linked MotionValue for all)
   const glow = useTransform(smooth, [dotPos - 0.16, dotPos - 0.015], [0, 1], { clamp: true });
   const dotScale = useTransform(glow, [0, 1], [1, 1.14]);
   const dotBg = useTransform(glow, [0, 1], ["rgba(255,251,245,0)", "rgba(224,122,95,0.08)"] as unknown as string[]);
@@ -1456,183 +1366,11 @@ function ExpRow({
   ]);
   const cardShadow = useTransform(glow, [0, 1], ["0 8px 24px rgba(28,25,23,0.06)", "0 8px 24px rgba(28,25,23,0.06), 0 0 20px rgba(224,122,95,0.08)"]);
   const [open, setOpen] = useState(false);
-  const cc = "280ms cubic-bezier(0.22,1,0.36,1)" as const;
-  const mobileDotStyle: React.CSSProperties = {
-    color: active ? "#E07A5F" : "#78716C",
-    backgroundColor: active ? "rgba(224,122,95,0.08)" : "rgba(255,251,245,0)",
-    filter: active ? "drop-shadow(0 0 10px rgba(224,122,95,0.12)) drop-shadow(0 0 22px rgba(224,122,95,0.12))" : "drop-shadow(0 0 0 rgba(247,255,60,0))",
-    transform: active ? "scale(1.14)" : "scale(1)",
-    transition: `color ${cc}, background-color ${cc}, filter ${cc}, transform ${cc}`,
-  };
-  const mobileHaloStyle: React.CSSProperties = {
-    opacity: active ? 0.75 : 0,
-    transition: `opacity ${cc}`,
-  };
-  const mobileCardStyle: React.CSSProperties = {
-    borderColor: active ? "#E07A5F" : "#E7E5E4",
-    boxShadow: active ? "0 8px 24px rgba(28,25,23,0.06), 0 0 20px rgba(224,122,95,0.08)" : "0 8px 24px rgba(28,25,23,0.06)",
-    transition: `border-color ${cc}, box-shadow ${cc}`,
-  };
-  const mobileIconStyle: React.CSSProperties = {
-    color: active ? "#E07A5F" : "#78716C",
-    transition: `color ${cc}`,
-  };
-  const mobileBulletBg = active ? "rgba(224,122,95,1)" : "rgba(120,113,108,0.25)";
-  // desktop: MotionValue-driven, mobile: CSS transition murah
-  const dotStyle = isMobile
-    ? (mobileDotStyle as unknown as Record<string, unknown>)
-    : ({ scale: dotScale, backgroundColor: dotBg, color: dotColor, filter: dotShadow } as unknown as Record<string, unknown>);
-  const cardStyle = isMobile
-    ? (mobileCardStyle as unknown as Record<string, unknown>)
-    : ({ borderColor: cardBorder, boxShadow: cardShadow } as unknown as Record<string, unknown>);
-  const haloStyle = isMobile ? (mobileHaloStyle as unknown as Record<string, unknown>) : ({ opacity: haloOpacity } as unknown as Record<string, unknown>);
-  const iconStyle = isMobile ? (mobileIconStyle as unknown as Record<string, unknown>) : ({ color: iconColor } as unknown as Record<string, unknown>);
-  const bulletStyle = isMobile ? ({ backgroundColor: mobileBulletBg } as unknown as Record<string, unknown>) : ({ backgroundColor: bulletBg } as unknown as Record<string, unknown>);
-  if (isMobile) {
-    return (
-      <div ref={io.ref} className={`relative flex w-full ${isLeft ? "md:justify-start" : "md:justify-end"} justify-end`}>
-        <span
-          data-dot
-          aria-hidden
-          className="pointer-events-none absolute left-[14px] top-8 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
-          style={mobileDotStyle}
-        >
-          <span className="pointer-events-none absolute -inset-3 rounded-md bg-terracotta/20 blur-[8px]" style={mobileHaloStyle} />
-          <ChipPixel size={26} />
-        </span>
-        <article
-          onClick={onJump}
-          className={`warm-card relative z-[2] w-[calc(100%-56px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
-          style={mobileCardStyle}
-        >
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0 flex-1">
-              <Tag tone={e.tone}>{period}</Tag>
-              <h3 className="mt-5 font-sans text-2xl font-semibold uppercase tracking-[0.06em] md:text-3xl">{role}</h3>
-              <p className="mt-1 text-muted">{e.org}</p>
-            </div>
-            <span className="shrink-0" style={mobileIconStyle}>
-              <Icon size={30} />
-            </span>
-          </div>
-          {/* Desktop: always expanded — viewer B replaces _blank tab */}
-          <div className="hidden sm:block">
-            <ul className="mt-6 space-y-2 border-t border-border pt-6">
-              {points.map((p) => (
-                <li key={p} className="flex gap-3 leading-relaxed text-muted">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: mobileBulletBg, transition: `background-color ${cc}` }} />
-                  {p}
-                </li>
-              ))}
-            </ul>
-            {(e as { certificateHref?: string }).certificateHref && (
-              <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-4">
-                <button
-                  type="button"
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    onOpenCert?.((e as { certificateHref: string }).certificateHref);
-                  }}
-                  className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]"
-                >
-                  {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
-                </button>
-                <button
-                  type="button"
-                  onClick={async (ev) => {
-                    ev.stopPropagation();
-                    const href = (e as { certificateHref: string }).certificateHref;
-                    try {
-                      const res = await fetch(href);
-                      const blob = await res.blob();
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = href.split("/").pop() || "sertifikat.pdf";
-                      document.body.appendChild(a);
-                      a.click();
-                      a.remove();
-                      setTimeout(() => URL.revokeObjectURL(url), 1000);
-                    } catch {
-                      window.open(href, "_blank", "noopener,noreferrer");
-                    }
-                  }}
-                                  className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5"
-                >
-                  {(t.experience as { download: string }).download} <Download size={12} />
-                </button>
-              </div>
-            )}
-          </div>
-          {/* Mobile: collapsed preview + brutalist toggle */}
-          <div className="sm:hidden">
-            {open ? (
-              <div className="overflow-hidden">
-                <ul className="mt-6 space-y-2 border-t border-border pt-6">
-                  {points.map((p) => (
-                    <li key={p} className="flex gap-3 leading-relaxed text-muted">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: mobileBulletBg, transition: `background-color ${cc}` }} />
-                      {p}
-                    </li>
-                  ))}
-                </ul>
-                {(e as { certificateHref?: string }).certificateHref && (
-                  <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
-                    <button
-                      type="button"
-                      onClick={(ev) => {
-                        ev.stopPropagation();
-                        onOpenCert?.((e as { certificateHref: string }).certificateHref);
-                      }}
-                      className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]"
-                    >
-                      {(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={async (ev) => {
-                        ev.stopPropagation();
-                        const href = (e as { certificateHref: string }).certificateHref;
-                        try {
-                          const res = await fetch(href);
-                          const blob = await res.blob();
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement("a");
-                          a.href = url;
-                          a.download = href.split("/").pop() || "sertifikat.pdf";
-                          document.body.appendChild(a);
-                          a.click();
-                          a.remove();
-                          setTimeout(() => URL.revokeObjectURL(url), 1000);
-                        } catch {
-                          window.open(href, "_blank", "noopener,noreferrer");
-                        }
-                      }}
-                                      className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5"
-                    >
-                      {(t.experience as { download: string }).download} <Download size={12} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <p className="mt-4 line-clamp-2 border-t border-border pt-4 text-sm leading-relaxed text-muted/80">{points[0]}</p>
-            )}
-            <button
-              type="button"
-              onClick={(ev) => {
-                ev.stopPropagation();
-                setOpen((v) => !v);
-              }}
-              className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 border px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest transition-colors ${open ? `border-border/20 bg-transparent text-ink hover:border-border/30` : `border-terracotta bg-terracotta text-white hover:bg-[#d46a52]`}`}
-            >
-              {open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}
-            </button>
-          </div>
-        </article>
-      </div>
-    );
-  }
+  const dotStyle = { scale: dotScale, backgroundColor: dotBg, color: dotColor, filter: dotShadow } as unknown as Record<string, unknown>;
+  const cardStyle = { borderColor: cardBorder, boxShadow: cardShadow } as unknown as Record<string, unknown>;
+  const haloStyle = { opacity: haloOpacity } as unknown as Record<string, unknown>;
+  const iconStyle = { color: iconColor } as unknown as Record<string, unknown>;
+  const bulletStyle = { backgroundColor: bulletBg } as unknown as Record<string, unknown>;
   return (
     <div className={`relative flex w-full ${isLeft ? "md:justify-start" : "md:justify-end"} justify-end`}>
       <motion.button
@@ -1646,12 +1384,12 @@ function ExpRow({
         <ChipPixel size={26} />
       </motion.button>
       <motion.article
-        initial={isMobile ? undefined : ({ opacity: 0, y: 16 } as unknown as Record<string, unknown>)}
-        whileInView={isMobile ? undefined : ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)}
+        initial={{ opacity: 0, y: 16 } as unknown as Record<string, unknown>}
+        whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.55, ease: EASE }}
         onClick={onJump}
-        whileHover={isMobile ? undefined : ({ y: -3, scale: 1.01 } as unknown as Record<string, unknown>)}
+        whileHover={{ y: -3, scale: 1.01 } as unknown as Record<string, unknown>}
         whileTap={{ scale: 0.98 }}
         style={cardStyle}
         className={`warm-card relative z-[2] w-[calc(100%-56px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`}
@@ -1926,7 +1664,6 @@ function Experience() {
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [dots, setDots] = useState<number[]>([0.22, 0.5, 0.78]);
   const [certHref, setCertHref] = useState<string | null>(null);
-  const isExpMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start 78%", "end 52%"] });
   const smooth = useSpring(scrollYProgress, { stiffness: 220, damping: 32, mass: 0.4 });
@@ -1977,32 +1714,17 @@ function Experience() {
         />
         <div ref={trackRef} className="relative mt-10">
           <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-border md:left-1/2" aria-hidden />
-          {/* warm pipe */}
-          {isExpMobile ? (
-            <motion.div
-              className="pointer-events-none absolute left-[14px] top-3 h-full w-[5px] origin-top -translate-x-1/2 bg-terracotta md:left-1/2"
-              style={
-                {
-                  scaleY: pipe,
-                  boxShadow: "0 0 10px rgba(224,122,95,0.35), 0 0 22px rgba(224,122,95,0.12)",
-                } as unknown as Record<string, unknown>
-              }
-              aria-hidden
-            />
-          ) : (
-            <>
-              <motion.div
-                className="pointer-events-none absolute left-[14px] top-3 w-[18px] origin-top -translate-x-1/2 bg-terracotta/18 blur-[8px] md:left-1/2"
-                style={{ scaleY: pipe, height: "100%" } as unknown as Record<string, unknown>}
-                aria-hidden
-              />
-              <motion.div
-                className="pointer-events-none absolute left-[14px] top-3 w-[5px] origin-top -translate-x-1/2 bg-terracotta md:left-1/2"
-                style={{ scaleY: pipe, height: "100%", boxShadow: "0 0 12px rgba(224,122,95,0.35), 0 0 26px rgba(224,122,95,0.18), 0 0 42px rgba(224,122,95,0.08)" } as unknown as Record<string, unknown>}
-                aria-hidden
-              />
-            </>
-          )}
+          {/* warm pipe — 100% desktop (no mobile split) */}
+          <motion.div
+            className="pointer-events-none absolute left-[14px] top-3 w-[18px] origin-top -translate-x-1/2 bg-terracotta/18 blur-[8px] md:left-1/2"
+            style={{ scaleY: pipe, height: "100%" } as unknown as Record<string, unknown>}
+            aria-hidden
+          />
+          <motion.div
+            className="pointer-events-none absolute left-[14px] top-3 w-[5px] origin-top -translate-x-1/2 bg-terracotta md:left-1/2"
+            style={{ scaleY: pipe, height: "100%", boxShadow: "0 0 12px rgba(224,122,95,0.35), 0 0 26px rgba(224,122,95,0.18), 0 0 42px rgba(224,122,95,0.08)" } as unknown as Record<string, unknown>}
+            aria-hidden
+          />
           <div className="flex flex-col gap-12 md:gap-16">
             {experience.map((e, i) => (
               <div key={(e.role as unknown as { id: string }).id ?? i} ref={(el) => { itemRefs.current[i] = el; }}>

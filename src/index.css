@@ -68,6 +68,15 @@
   letter-spacing: 0.08em;
   line-height: 1;
 }
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.35px var(--color-ink);
+  -webkit-text-fill-color: transparent;
+  paint-order: stroke fill;
+}
+@media (max-width: 640px) {
+  .text-outline { -webkit-text-stroke-width: 1.05px; }
+}
 
 /* Warm card — dark surface, soft shadow */
 .warm-card {
