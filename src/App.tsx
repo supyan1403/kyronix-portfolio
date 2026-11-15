@@ -295,14 +295,16 @@ function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yello
   );
 }
 
-/* ---------- Kinetic oversized title band — Warm Dark solid ink ---------- */
+/* ---------- Kinetic oversized title band — Warm Dark solid ink (big epic) ---------- */
 function KineticBand({ text, accent, reverse }: { text: string; accent?: string; reverse?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const x = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
   return (
-    <div ref={ref} className="overflow-hidden border-y border-border bg-ink py-4" aria-hidden>
-      <motion.div className="kinetic flex w-max items-center gap-8 whitespace-nowrap px-[5vw] font-display text-sm font-bold uppercase tracking-[0.2em] text-cream md:text-base" style={{ x }}>
+    <div ref={ref} className="overflow-hidden border-y border-border bg-ink py-6 md:py-7" aria-hidden>
+      <motion.div className="kinetic flex w-max items-center gap-10 whitespace-nowrap px-[4vw] font-display text-[clamp(1.35rem,3.4vw,2.6rem)] font-extrabold uppercase tracking-[0.12em] text-cream md:gap-14" style={{ x }}>
+        <span>{text}</span>
+        <span className="text-terracotta">{accent ?? "//"}</span>
         <span>{text}</span>
         <span className="text-terracotta">{accent ?? "//"}</span>
         <span>{text}</span>
