@@ -295,14 +295,14 @@ function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yello
   );
 }
 
-/* ---------- Kinetic oversized title band — Warm Dark solid ink (big epic) ---------- */
-function KineticBand({ text, accent, reverse }: { text: string; accent?: string; reverse?: boolean }) {
+/* ---------- Kinetic band — Warm Dark (tanpa putih) + tanpa reverse ---------- */
+function KineticBand({ text, accent }: { text: string; accent?: string; reverse?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
   return (
-    <div ref={ref} className="overflow-hidden border-y border-border bg-ink py-6 md:py-7" aria-hidden>
-      <motion.div className="kinetic flex w-max items-center gap-10 whitespace-nowrap px-[4vw] font-display text-[clamp(1.35rem,3.4vw,2.6rem)] font-extrabold uppercase tracking-[0.12em] text-cream md:gap-14" style={{ x }}>
+    <div ref={ref} className="overflow-hidden border-y border-border bg-surface py-6 md:py-7" aria-hidden>
+      <motion.div className="kinetic flex w-max items-center gap-10 whitespace-nowrap px-[4vw] font-display text-[clamp(1.35rem,3.4vw,2.6rem)] font-extrabold uppercase tracking-[0.12em] text-ink md:gap-14" style={{ x }}>
         <span>{text}</span>
         <span className="text-terracotta">{accent ?? "//"}</span>
         <span>{text}</span>
@@ -833,12 +833,10 @@ function Hero({ ready }: { ready: boolean }) {
   const ref = useRef<HTMLElement>(null);
   const FULL = "KYRONIX";
   const [typed, setTyped] = useState("");
-  const [typingDone, setTypingDone] = useState(false);
   useEffect(() => {
     if (!ready) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setTyped(FULL);
-      setTypingDone(true);
       return;
     }
     let idx = 0;
@@ -847,11 +845,10 @@ function Hero({ ready }: { ready: boolean }) {
       if (idx <= FULL.length) {
         setTyped(FULL.slice(0, idx));
         idx += 1;
-        if (idx <= FULL.length) tm = window.setTimeout(tick, idx === 1 ? 420 : 118 + Math.random() * 55) as unknown as number;
-        else setTypingDone(true);
+        if (idx <= FULL.length) tm = window.setTimeout(tick, idx === 0 ? 520 : 175 + Math.random() * 45) as unknown as number;
       }
     };
-    tm = window.setTimeout(tick, 360) as unknown as number;
+    tm = window.setTimeout(tick, 520) as unknown as number;
     return () => clearTimeout(tm);
   }, [ready]);
   // parallax: hero fades/lifts saat scroll ke section berikutnya
@@ -872,12 +869,10 @@ function Hero({ ready }: { ready: boolean }) {
         </motion.p>
         <h1 className="font-display text-[clamp(3.8rem,11vw,8.5rem)] font-[800] leading-[0.86] tracking-[0.08em] text-ink">
           <span>{typed}</span>
-          <span className={`ml-[3px] inline-block h-[0.78em] w-[4px] translate-y-[0.06em] bg-terracotta ${typingDone ? "blink" : "animate-pulse"}`} aria-hidden />
         </h1>
         <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.62 }}>
           {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
         </motion.p>
-        <motion.p className="max-w-[42ch] text-sm leading-relaxed tracking-[0.03em] text-muted/80 sm:text-[15px]" initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ duration: 0.7, delay: 0.78 }}>{lang === "id" ? "Fullstack yang mikir sistem dulu, syntax belakangan. Bikin produk yang rapi, cepat, dan enak dipakai." : "A fullstack who thinks systems first. Building tidy, fast, and pleasant products."}</motion.p>
         <motion.div initial={{ opacity: 0, y: 12 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, ease: EASE, delay: 0.9 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
           <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
           <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
@@ -2054,7 +2049,7 @@ function Lab() {
               className={`warm-card flex flex-col ${idx === 1 ? "md:p-9 md:-translate-y-4" : "p-7 md:p-8"}`}
             >
               <div className="flex items-center gap-3">
-                <span className={`inline-flex h-9 w-9 items-center justify-center border font-mono text-sm font-black text-white ${step.tone === "yellow" ? "border-terracotta bg-terracotta" : step.tone === "pink" ? "border-terracotta bg-terracotta" : "border-violet bg-violet"}`}>
+                <span className="inline-flex h-9 w-9 items-center justify-center border border-terracotta bg-terracotta font-mono text-sm font-black text-white">
                   {step.n}
                 </span>
                 <step.icon size={18} style={{ color: WARM.muted }} />
@@ -2152,11 +2147,11 @@ function App() {
         </div>
         <Stack />
       </div>
-      <KineticBand text={bands.selectedWork} reverse />
+      <KineticBand text={bands.selectedWork} />
       <Projects />
       <KineticBand text={bands.experience} />
       <Experience />
-      <KineticBand text={bands.howIBuild} reverse />
+      <KineticBand text={bands.howIBuild} />
       <Lab />
       <KineticBand text={bands.letsBuild} />
       <Contact />
