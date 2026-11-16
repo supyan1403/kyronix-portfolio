@@ -1140,6 +1140,28 @@ function Stack() {
   );
 }
 
+/* ---------- 3. Featured projects — warm-tagd builds — center-focus 10/10 ---------- */
+function ProjectStickyCard({ p, idx, progress, onOpen }: { p: (typeof projects)[number]; idx: number; progress: MotionValue<number>; onOpen: (pp: (typeof projects)[number]) => void }) {
+  const { lang } = useLang();
+  const low = useIsLowEnd();
+  const n = projects.length;
+  const center = (idx + 0.5) / n;
+  const span = 0.22;
+  const focus = useTransform(progress, [center - span, center, center + span], low ? [1, 1, 1] : [0.94, 1, 0.94], { clamp: true });
+  const focusY = useTransform(progress, [center - span, center, center + span], low ? [0, 0, 0] : [6, 0, 6], { clamp: true });
+  const glow = useTransform(progress, [center - span, center, center + span], [0, 1, 0], { clamp: true });
+  const accent = p.tone === "lime" ? "#E07A5F" : p.tone === "coral" ? "#E07A5F" : "#8FA89B";
+  const isHero = idx === 0;
+  return (
+    <motion.article role="button" tabIndex={0} onClick={() => onOpen(p)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 380, damping: 22 }} style={{ scale: focus, y: focusY, boxShadow: useTransform(glow, [0, 1], ["0 8px 24px rgba(28,25,23,0.06)", "0 12px 36px rgba(28,25,23,0.10), 0 0 28px " + accent + "22"]) as unknown as string, borderColor: useTransform(glow, [0, 1], ["#3A3632", accent]) as unknown as string } as unknown as Record<string, unknown>} className={"warm-card relative mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 will-change-transform " + (isHero ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7 border-terracotta/35" : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7")}>
+      {!isHero ? null : <span aria-hidden className="pointer-events-none absolute -right-[1px] -top-[1px] bg-terracotta px-2.5 py-1 font-mono text-[10px] font-black tracking-[0.16em] text-white">FEATURED</span>}
+      <div className="flex items-center justify-between"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span><span className={"inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 " + "warm-tag"}>{(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}<span className="break-words">{p.status}</span></span></div>
+      <div className="min-w-0 flex-1"><p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p><h3 data-text={p.title} className={"font-sans font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink " + (isHero ? "text-[2.05rem] md:text-[2.5rem]" : "text-[2rem] md:text-4xl")}>{p.title}</h3><p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p></div>
+      <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4"><div className="flex flex-1 flex-wrap gap-2 pr-2">{p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}</div><span className="flex h-10 w-10 shrink-0 items-center justify-center border border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white md:h-12 md:w-12"><ArrowUpRight size={18} /></span></div>
+    </motion.article>
+  );
+}
+
 /* ---------- 3. Featured projects — warm-tagd builds ---------- */
 const projects = [
   {
@@ -1229,16 +1251,17 @@ function Projects() {
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const low = useIsLowEnd();
-  const x = useTransform(scrollYProgress, [0, 1], [0, -maxX]);
+  const smoothX = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.6 });
+  const x = useTransform(smoothX, [0, 1], [0, -maxX]);
   const titleY = useTransform(scrollYProgress, [0, 0.35], low ? [0, 0] : [0, -40]);
-  const trackScale = useTransform(scrollYProgress, [0.4, 1], low ? [1, 1] : [1, 0.98]);
-  const trackOpacity = useTransform(scrollYProgress, [0.75, 1], low ? [1, 1] : [1, 0.92]);
+  const titleScale = useTransform(scrollYProgress, [0, 0.32], low ? [1, 1] : [1, 0.985]);
+  const orbScale = useTransform(scrollYProgress, [0, 1], low ? [1, 1] : [1, 1.22]);
 
   return (
-    <section id="projects" ref={ref} className="relative h-[260vh]">
+    <section id="projects" ref={ref} className="relative h-[300vh]">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-        <div className="orb right-[-10%] top-[20%] h-[420px] w-[420px] bg-terracotta/10" />
-        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="mx-auto mb-10 w-[min(1120px,90vw)] pt-16 will-change-transform">
+        <motion.div aria-hidden className="orb right-[-10%] top-[20%] h-[420px] w-[420px] bg-terracotta/10 will-change-transform" style={{ scale: orbScale } as unknown as Record<string, unknown>} />
+        <motion.div style={{ y: titleY, scale: titleScale } as unknown as Record<string, unknown>} className="mx-auto mb-10 w-[min(1120px,90vw)] pt-16 will-change-transform">
           <Eyebrow index="02" label={t.projectsEyebrow} />
           <div className="flex items-end justify-between gap-6">
             <SplitReveal
@@ -1246,52 +1269,28 @@ function Projects() {
               text={t.projectsTitle}
               className="font-display text-[clamp(2.3rem,5.2vw,4.25rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
             />
+            <span aria-hidden className="hidden font-mono text-[11px] tracking-[0.18em] text-muted md:inline-flex items-center gap-2"><span className="h-px w-8 bg-border" /> SCROLL → DRAG</span>
           </div>
         </motion.div>
         <motion.div
           ref={trackRef}
-          style={{ x, scale: trackScale, opacity: trackOpacity } as unknown as Record<string, unknown>}
-          className="flex w-max gap-4 py-4 pl-[5vw] pr-[5vw] md:gap-6 md:pl-[max(5vw,calc((100vw-1120px)/2))] md:pr-[10vw] will-change-transform"
+          style={{ x } as unknown as Record<string, unknown>}
+          className="flex w-max items-stretch gap-5 py-4 pl-[5vw] pr-[5vw] md:gap-7 md:pl-[max(5vw,calc((100vw-1120px)/2))] md:pr-[10vw] will-change-transform"
         >
           {projects.map((p, idx) => {
-            const { lang: _l } = { lang } as unknown as { lang: string };
-            void _l;
             return (
-              <motion.article
-                key={p.no}
-                role="button"
-                tabIndex={0}
-                onClick={() => handleOpen(p)}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleOpen(p); } }}
-                whileHover={{ y: -4, scale: 1.005 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 380, damping: 22 }}
-                className={`warm-card mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 ${idx === 0 ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7" : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7"}`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
-                  <span className={`inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 ${"warm-tag"}`}>
-                    {(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}
-                    <span className="break-words">{p.status}</span>
-                  </span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
-                  <h3 data-text={p.title} className="font-sans text-[2rem] font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink md:text-4xl">{p.title}</h3>
-                  <p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
-                </div>
-                <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
-                  <div className="flex flex-1 flex-wrap gap-2 pr-2">
-                    {p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}
-                  </div>
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white md:h-12 md:w-12"><ArrowUpRight size={18} /></span>
-                </div>
-              </motion.article>
+              <ProjectStickyCard key={p.no} p={p} idx={idx} progress={smoothX} onOpen={handleOpen} />
             );
           })}
         </motion.div>
-        <div className="mx-auto mt-10 h-px w-[min(1120px,90vw)] bg-border">
-          <motion.div className="h-full origin-left bg-terracotta" style={{ scaleX: scrollYProgress }} />
+        <div className="mx-auto mt-8 flex w-[min(1120px,90vw)] items-center gap-3">
+          <span className="font-mono text-[11px] tracking-[0.16em] text-muted tabular-nums">{String(1).padStart(2, "0")} — {String(projects.length).padStart(2, "0")}</span>
+          <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-border/40">
+            <motion.div className="h-full origin-left rounded-full bg-terracotta" style={{ scaleX: scrollYProgress, boxShadow: "0 0 10px rgba(224,122,95,0.4)" } as unknown as Record<string, unknown>} />
+          </div>
+          <motion.span className="font-mono text-[11px] font-bold tracking-[0.14em] text-terracotta tabular-nums" style={{ opacity: useTransform(scrollYProgress, [0, 0.15], [0.45, 1]) } as unknown as Record<string, unknown>}>
+            {useTransform(scrollYProgress, (v: number) => `${String(Math.min(projects.length, Math.max(1, Math.round(v * projects.length + 0.5))).toString().padStart(2, "0"))} / ${String(projects.length).padStart(2, "0")}`) as unknown as string}
+          </motion.span>
         </div>
       </div>
       <AnimatePresence>
