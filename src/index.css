@@ -52,7 +52,7 @@
 
 /* ===== WARM DARK — soft dark ===== */
 
-/* Hero soft grain — premium warm noise, no orb kasar */
+/* Hero soft grain — premium warm noise, no orb kasar — kept for optional use */
 .hero-grain {
   position: absolute;
   inset: 0;
@@ -173,7 +173,9 @@
 
 /* CRT off — warm has no scanlines */
 .scanlines-overlay { display: none; }
-.diagonal-stripes { display: none; }
+.diagonal-stripes { display: block; }
+
+/* Hero sama kayak opening — diagonal stripes warm */
 .grid-pattern { display: none; }
 
 /* Subtle warm grid — light on dark */
