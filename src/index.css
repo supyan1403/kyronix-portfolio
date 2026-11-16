@@ -69,6 +69,10 @@
   line-height: 1;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
+  will-change: transform;
+  transform: translateZ(0);
+  contain: layout paint;
+  backface-visibility: hidden;
 }
 .text-outline {
   color: transparent;
@@ -192,3 +196,15 @@
 
 a[href], button { cursor: pointer; }
 button:disabled, a[aria-disabled="true"] { cursor: default; }
+
+/* — low-end perf: keep all effects, but hint GPU & defer offscreen paint — */
+.warm-card, .kinetic, [data-dot], #projects [style*="transform"] {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+@media (max-width: 768px) {
+  /* offscreen sections: don't paint until near viewport — zero visual change, big fps win */
+  #stack, #lab, #experience, #contact { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+  /* Projects sticky is kept 100% desktop — but let browser skip its offscreen paint */
+  #projects { contain: layout style; }
+}

@@ -125,17 +125,19 @@ function scrollToId(id: string) {
   else el.scrollIntoView({ behavior: "smooth" });
 }
 
-/* ---------- Smooth scroll (Lenis) — desktop + mobile 100% ---------- */
+/* ---------- Smooth scroll (Lenis) — desktop + mobile 100% (tuned: keep smooth, lighter on low-end) ---------- */
 function useLenis() {
   useEffect(() => {
     const isCoarse = window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches;
     const lenis = new Lenis({
-      duration: isCoarse ? 1.05 : 1.25,
-      wheelMultiplier: isCoarse ? 0.95 : 0.9,
+      duration: isCoarse ? 0.9 : 1.25,
+      wheelMultiplier: isCoarse ? 0.92 : 0.9,
       smoothWheel: true,
       smoothTouch: true,
-      touchMultiplier: 1.6,
+      touchMultiplier: isCoarse ? 1.2 : 1.6,
       gestureOrientation: "vertical",
+      // lighter easing interpolation — less per-frame work, still smooth
+      easing: (t: number) => 1 - Math.pow(1 - t, 2.8),
     });
     lenisInstance = lenis;
     let raf = 0;
@@ -1099,8 +1101,10 @@ function Projects() {
       if (trackRef.current) setMaxX(Math.max(trackRef.current.scrollWidth - window.innerWidth, 0));
     };
     measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    let t: number | undefined;
+    const onResize = () => { window.clearTimeout(t); t = window.setTimeout(measure, 150) as unknown as number; };
+    window.addEventListener("resize", onResize, { passive: true } as AddEventListenerOptions);
+    return () => { window.removeEventListener("resize", onResize); window.clearTimeout(t); };
   }, []);
   useEffect(() => {
     if (!active) return;
@@ -1727,7 +1731,8 @@ function Experience() {
   const [certHref, setCertHref] = useState<string | null>(null);
 
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start 78%", "end 52%"] });
-  const smooth = useSpring(scrollYProgress, { stiffness: 220, damping: 32, mass: 0.4 });
+  // tuned lighter: slightly softer spring → fewer per-frame ticks, still buttery
+  const smooth = useSpring(scrollYProgress, { stiffness: 165, damping: 34, mass: 0.45 });
   const pipe = useTransform(smooth, [0, 1], [0, 1]);
 
   useLayoutEffect(() => {
