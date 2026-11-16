@@ -1006,7 +1006,7 @@ function Hero({ ready }: { ready: boolean }) {
                 className="absolute inset-y-0 w-[35%] bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-12deg]"
                 initial={{ x: "-120%" }}
                 animate={{ x: "320%" }}
-                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.7 }}
+                transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1], delay: 0.9 }}
               />
             </motion.span>
           )}
