@@ -80,7 +80,10 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 let lenisInstance: Lenis | null = null;
 
 function useIsMobile() {
-  const [v, setV] = useState(false);
+  const [v, setV] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try { return window.matchMedia("(max-width: 768px)").matches || window.matchMedia("(pointer: coarse)").matches; } catch { return false; }
+  });
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
     const upd = () => setV(mq.matches || window.matchMedia("(pointer: coarse)").matches);
@@ -92,7 +95,16 @@ function useIsMobile() {
 }
 
 function useIsLowEnd() {
-  const [v, setV] = useState(false);
+  const [v, setV] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const dm = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
+      const cores = navigator.hardwareConcurrency ?? 8;
+      const coarse = window.matchMedia("(pointer: coarse)").matches;
+      const low = (typeof dm === "number" ? dm <= 4 : false) || cores <= 4;
+      return coarse && low;
+    } catch { return false; }
+  });
   useEffect(() => {
     try {
       const dm = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
