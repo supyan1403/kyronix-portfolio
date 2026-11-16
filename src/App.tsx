@@ -824,13 +824,12 @@ const dict = {
     },
     stackEyebrow: "Perangkat Kerja",
     stackTitle: "PERANGKAT YANG SAYA PAKAI.",
-    stackDesc: "Dari perancangan hingga deployment — pipeline yang mengubah 12 PDF mentah menjadi sistem siap pakai.",
+    stackDesc: "Dari perancangan hingga deployment.",
     projectsEyebrow: "Dari Ide Jadi Nyata",
     projectsTitle: "DARI IDE JADI NYATA.",
     experience: {
       eyebrow: "Pengalaman",
       title: "PERJALANAN SAYA SEJAUH INI.",
-      hint: "Klik dot / kartu untuk lompat",
       viewCert: "Lihat Sertifikat",
       download: "Unduh",
       showDetail: "Lihat Detail ↓",
@@ -890,7 +889,6 @@ const dict = {
     experience: {
       eyebrow: "Experience",
       title: "MY JOURNEY SO FAR.",
-      hint: "Click dot / card to jump",
       viewCert: "View Certificate",
       download: "Download",
       showDetail: "View Detail ↓",
@@ -1113,7 +1111,6 @@ function Stack() {
   const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
   const openingGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const openingTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
-  const openingDescY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [18, -18]);
   const { scrollYProgress: stackProgress } = useScroll({ target: cardsRef, offset: ["start end", "end start"] });
   const stackY0 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [28, -28]);
   const stackY1 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [44, -36]);
@@ -1139,7 +1136,7 @@ function Stack() {
             whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
-            style={{ y: openingDescY, color: WARM.muted } as unknown as Record<string, unknown>}
+            style={{ y: openingTitleY, color: WARM.muted } as unknown as Record<string, unknown>}
             className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed will-change-transform"
           >
             {t.stackDesc}
@@ -1196,14 +1193,16 @@ function ProjectStickyCard({ p, idx, progress, onOpen }: { p: (typeof projects)[
   const focus = useTransform(progress, [center - span, center, center + span], low ? [1, 1, 1] : [0.94, 1, 0.94], { clamp: true });
   const focusY = useTransform(progress, [center - span, center, center + span], low ? [0, 0, 0] : [6, 0, 6], { clamp: true });
   const glow = useTransform(progress, [center - span, center, center + span], [0, 1, 0], { clamp: true });
-  const accent = p.tone === "lime" ? "#E07A5F" : p.tone === "coral" ? "#E07A5F" : "#8FA89B";
+  // border hijau hanya untuk selesai: RESEARCH DONE / LIVE NOW — lainnya tetap border netral
+  const isDone = p.status === "RESEARCH DONE" || p.status === "LIVE NOW";
+  const accent = isDone ? "#22c55e" : "#E07A5F";
   const isHero = idx === 0;
   return (
-    <motion.article role="button" tabIndex={0} onClick={() => onOpen(p)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 380, damping: 22 }} style={{ scale: focus, y: focusY, boxShadow: useTransform(glow, [0, 1], ["0 8px 24px rgba(28,25,23,0.06)", "0 12px 36px rgba(28,25,23,0.10), 0 0 28px " + accent + "22"]) as unknown as string, borderColor: useTransform(glow, [0, 1], ["#3A3632", accent]) as unknown as string } as unknown as Record<string, unknown>} className={"warm-card relative mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 will-change-transform " + (isHero ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7 border-terracotta/35" : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7")}>
-      {!isHero ? null : <span aria-hidden className="pointer-events-none absolute -right-[1px] -top-[1px] bg-terracotta px-2.5 py-1 font-mono text-[10px] font-black tracking-[0.16em] text-white">FEATURED</span>}
+    <motion.article role="button" tabIndex={0} onClick={() => onOpen(p)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 380, damping: 22 }} style={{ scale: focus, y: focusY, boxShadow: useTransform(glow, [0, 1], ["0 8px 24px rgba(28,25,23,0.06)", isDone ? "0 12px 36px rgba(28,25,23,0.10), 0 0 28px rgba(34,197,94,0.18)" : "0 12px 36px rgba(28,25,23,0.10), 0 0 28px rgba(224,122,95,0.22)"]) as unknown as string, borderColor: useTransform(glow, [0, 1], [isDone ? "rgba(34,197,94,0.55)" : "#3A3632", accent]) as unknown as string } as unknown as Record<string, unknown>} className={"warm-card relative mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 will-change-transform " + (isHero ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7 " + (isDone ? "border-green-500/55" : "border-border") : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7 " + (isDone ? "border-green-500/35" : ""))}>
+      {!isHero ? null : <span aria-hidden className={"pointer-events-none absolute -right-[1px] -top-[1px] px-2.5 py-1 font-mono text-[10px] font-black tracking-[0.16em] text-white " + (isDone ? "bg-green-600" : "bg-terracotta")}>FEATURED</span>}
       <div className="flex items-center justify-between"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span><span className={"inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 " + "warm-tag"}>{(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}<span className="break-words">{p.status}</span></span></div>
       <div className="min-w-0 flex-1"><p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p><h3 data-text={p.title} className={"font-sans font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink " + (isHero ? "text-[2.05rem] md:text-[2.5rem]" : "text-[2rem] md:text-4xl")}>{p.title}</h3><p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p></div>
-      <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4"><div className="flex flex-1 flex-wrap gap-2 pr-2">{p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}</div><span className="flex h-10 w-10 shrink-0 items-center justify-center border border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white md:h-12 md:w-12"><ArrowUpRight size={18} /></span></div>
+      <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4"><div className="flex flex-1 flex-wrap gap-2 pr-2">{p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}</div><span className={"flex h-10 w-10 shrink-0 items-center justify-center border md:h-12 md:w-12 " + (isDone ? "border-green-500/30 bg-transparent text-green-600 hover:bg-green-600 hover:text-white hover:border-green-600" : "border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white")}><ArrowUpRight size={18} /></span></div>
     </motion.article>
   );
 }
@@ -1261,7 +1260,6 @@ function ProjectsOpening() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const gridY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const titleY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [28, -32]);
-  const hintY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [16, -16]);
   return (
     <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-cream px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
@@ -1275,7 +1273,6 @@ function ProjectsOpening() {
             className="mx-auto font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
           />
         </motion.div>
-        <motion.span aria-hidden className="mx-auto mt-6 hidden font-mono text-[11px] tracking-[0.18em] text-muted md:inline-flex items-center gap-2 will-change-transform" style={{ y: hintY } as unknown as Record<string, unknown>}><span className="h-px w-8 bg-border" /> SCROLL → DRAG PADA KARTU</motion.span>
       </div>
     </section>
   );
@@ -1972,7 +1969,6 @@ function ExperienceOpening() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const gridY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const titleY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [28, -32]);
-  const hintY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [16, -16]);
   return (
     <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
@@ -1982,7 +1978,6 @@ function ExperienceOpening() {
           <Eyebrow index="03" label={t.experience.eyebrow} />
           <SplitReveal key={t.experience.title} text={t.experience.title} className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]" />
         </motion.div>
-        <motion.p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed will-change-transform" style={{ y: hintY, color: WARM.muted } as unknown as Record<string, unknown>}>{(t.experience as { hint: string }).hint}</motion.p>
       </div>
     </section>
   );
@@ -2074,11 +2069,9 @@ function Lab() {
     icon: ([Wrench, Cpu, Database] as const)[i]!,
     tone: (["violet", "yellow", "pink"] as const)[i]!,
   }));
-  const openingRef = useRef<HTMLElement>(null);
   const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
   const labGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const labTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
-  const labDescY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [16, -16]);
   return (
     <div id="lab" className="relative bg-cream overflow-x-clip">
       {/* Opening — full 100dvh EPIC */}
@@ -2095,7 +2088,7 @@ function Lab() {
             />
           </motion.div>
           <motion.p
-            style={{ y: labDescY, color: WARM.muted } as unknown as Record<string, unknown>}
+            style={{ y: labTitleY, color: WARM.muted } as unknown as Record<string, unknown>}
             initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 16, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
             whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
             viewport={{ once: true, amount: 0.4 }}
