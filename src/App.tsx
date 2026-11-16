@@ -1141,61 +1141,6 @@ function Stack() {
 }
 
 /* ---------- 3. Featured projects — warm-tagd builds ---------- */
-/* Transition Image Parallax — Ken Burns per card (scale 1.18→1.0 + y -8%→8%), no foto wajah, artifact warm overlay */
-function ProjectCard({ p, idx, onOpen }: { p: (typeof projects)[number]; idx: number; onOpen: (pp: (typeof projects)[number]) => void }) {
-  const { lang } = useLang();
-  const low = useIsLowEnd();
-  const cardRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: cardRef, offset: ["start end", "end start"] });
-  const imgScale = useTransform(scrollYProgress, [0, 1], low ? [1, 1] : [1.18, 1.0]);
-  const imgY = useTransform(scrollYProgress, [0, 1], low ? ["0%", "0%"] : ["-8%", "8%"]);
-  const imgMap: Record<string, string> = {
-    "01": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80&auto=format&fit=crop",
-    "02": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80&auto=format&fit=crop",
-    "03": "https://images.unsplash.com/photo-1451187580459-43490279c429?w=800&q=80&auto=format&fit=crop",
-    "04": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80&auto=format&fit=crop",
-  };
-  return (
-    <motion.article
-      ref={cardRef as unknown as React.RefObject<HTMLDivElement>}
-      role="button"
-      tabIndex={0}
-      onClick={() => onOpen(p)}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }}
-      whileHover={{ y: -4, scale: 1.005 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 380, damping: 22 }}
-      className={`warm-card mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 ${idx === 0 ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7" : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7"}`}
-    >
-      <div className="relative -mx-6 -mt-6 mb-5 overflow-hidden md:-mx-7 md:-mt-7">
-        <div className="aspect-[16/9] overflow-hidden bg-cream-deep">
-          <motion.img src={imgMap[p.no] ?? imgMap["01"]} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover will-change-transform" style={{ scale: imgScale, y: imgY } as unknown as Record<string, unknown>} />
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-[#1A1816]/28 mix-blend-multiply" />
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-cream via-transparent to-transparent opacity-60" />
-        </div>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
-        <span className={`inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 ${"warm-tag"}`}>
-          {(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}
-          <span className="break-words">{p.status}</span>
-        </span>
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
-        <h3 data-text={p.title} className="font-sans text-[2rem] font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink md:text-4xl">{p.title}</h3>
-        <p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
-      </div>
-      <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
-        <div className="flex flex-1 flex-wrap gap-2 pr-2">
-          {p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}
-        </div>
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white md:h-12 md:w-12"><ArrowUpRight size={18} /></span>
-      </div>
-    </motion.article>
-  );
-}
-
 const projects = [
   {
     no: "01",
@@ -1308,9 +1253,42 @@ function Projects() {
           style={{ x, scale: trackScale, opacity: trackOpacity } as unknown as Record<string, unknown>}
           className="flex w-max gap-4 py-4 pl-[5vw] pr-[5vw] md:gap-6 md:pl-[max(5vw,calc((100vw-1120px)/2))] md:pr-[10vw] will-change-transform"
         >
-          {projects.map((p, idx) => (
-            <ProjectCard key={p.no} p={p} idx={idx} onOpen={handleOpen} />
-          ))}
+          {projects.map((p, idx) => {
+            const { lang: _l } = { lang } as unknown as { lang: string };
+            void _l;
+            return (
+              <motion.article
+                key={p.no}
+                role="button"
+                tabIndex={0}
+                onClick={() => handleOpen(p)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleOpen(p); } }}
+                whileHover={{ y: -4, scale: 1.005 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 380, damping: 22 }}
+                className={`warm-card mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 ${idx === 0 ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7" : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7"}`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
+                  <span className={`inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 ${"warm-tag"}`}>
+                    {(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}
+                    <span className="break-words">{p.status}</span>
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
+                  <h3 data-text={p.title} className="font-sans text-[2rem] font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink md:text-4xl">{p.title}</h3>
+                  <p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
+                </div>
+                <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
+                  <div className="flex flex-1 flex-wrap gap-2 pr-2">
+                    {p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}
+                  </div>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white md:h-12 md:w-12"><ArrowUpRight size={18} /></span>
+                </div>
+              </motion.article>
+            );
+          })}
         </motion.div>
         <div className="mx-auto mt-10 h-px w-[min(1120px,90vw)] bg-border">
           <motion.div className="h-full origin-left bg-terracotta" style={{ scaleX: scrollYProgress }} />
