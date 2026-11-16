@@ -887,12 +887,14 @@ const dict = {
   },
 } as const;
 
-/* ---------- 1. Hero — Warm Dark Center + epic KYRONIX (daya tarik utama) + adaptive 60fps ---------- */
+/* ---------- 1. Hero — Warm Dark Center + epic KYRONIX (ringan di HP, magnet di desktop) ---------- */
 function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const t2 = dict[lang];
   const ref = useRef<HTMLElement>(null);
   const low = useIsLowEnd();
+  const isMobile = useIsMobile();
+  const light = isMobile;
   const FULL = "KYRONIX";
   const [typed, setTyped] = useState("");
   useEffect(() => {
@@ -915,22 +917,24 @@ function Hero({ ready }: { ready: boolean }) {
   }, [ready]);
   const done = typed.length === FULL.length;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, -90]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, light ? -28 : -90]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 0.97]);
-  const halftoneY = useTransform(scrollYProgress, [0, 1], [0, -40]);
-  const glowY = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, light ? 0.99 : 0.97]);
+  const halftoneY = useTransform(scrollYProgress, [0, 1], [0, light ? -12 : -40]);
+  const glowY = useTransform(scrollYProgress, [0, 1], [0, light ? -16 : -60]);
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
-      <motion.div aria-hidden className="absolute inset-0 halftone opacity-[0.04]" style={{ y: halftoneY }} />
-      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[720px] w-[980px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.09] blur-[70px]" style={{ y: glowY }} />
-      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[460px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sage/10 blur-[80px]" style={{ y: glowY }} />
-      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={{ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>} initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, filter: "blur(10px)" } as unknown as Record<string, unknown>)} animate={low ? (ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)) : (ready ? ({ opacity: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>))} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
+      {light ? null : <motion.div aria-hidden className="absolute inset-0 halftone opacity-[0.04]" style={{ y: halftoneY }} />}
+      {light ? null : <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[720px] w-[980px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.09] blur-[70px]" style={{ y: glowY }} />}
+      {light ? null : <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[460px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sage/10 blur-[80px]" style={{ y: glowY }} />}
+      {/* HP: satu glow ringan statis — hemat blur layer, tetap warm */}
+      {light ? <div aria-hidden className="pointer-events-none absolute left-1/2 top-[40%] h-[420px] w-[340px] max-w-[90vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/10 blur-[36px]" /> : null}
+      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={light ? ({ opacity: heroOpacity } as unknown as Record<string, unknown>) : ({ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>)} initial={light ? ({ opacity: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, filter: "blur(10px)" } as unknown as Record<string, unknown>)} animate={light ? ({ opacity: 1 } as unknown as Record<string, unknown>) : low ? (ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)) : (ready ? ({ opacity: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>))} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
         <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.35 }}>
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
           {t2.hero.hi}
         </motion.p>
-        {/* KYRONIX — hero magnet: per-letter stagger + blur → focus + subtle shine */}
+        {/* KYRONIX — magnet desktop, ringan HP (tanpa blur/shine berat) */}
         <h1 aria-label={FULL} className="relative inline-flex select-none flex-wrap justify-center font-display text-[clamp(3.8rem,11vw,8.5rem)] font-[800] leading-[0.86] tracking-[0.07em] text-ink">
           <span className="sr-only">{FULL}</span>
           <span aria-hidden className="inline-flex">
@@ -940,24 +944,34 @@ function Hero({ ready }: { ready: boolean }) {
               return (
                 <motion.span
                   key={i}
-                  initial={low ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)}
-                  animate={
-                    visible
-                      ? low
-                        ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
-                        : ({ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 } as unknown as Record<string, unknown>)
+                  initial={
+                    light
+                      ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)
                       : low
                         ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)
                         : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
                   }
-                  transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * 0.06 }}
-                  className="inline-block will-change-transform"
+                  animate={
+                    visible
+                      ? light
+                        ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
+                        : low
+                          ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
+                          : ({ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 } as unknown as Record<string, unknown>)
+                      : light
+                        ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)
+                        : low
+                          ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)
+                          : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
+                  }
+                  transition={{ duration: light ? 0.42 : 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * (light ? 0.035 : 0.06) }}
+                  className={light ? "inline-block" : "inline-block will-change-transform"}
                   style={{
-                    textShadow: visible ? "0 1px 0 rgba(245,239,230,0.06), 0 12px 32px rgba(224,122,95,0.18), 0 2px 18px rgba(0,0,0,0.25)" : undefined,
+                    textShadow: visible && !light ? "0 1px 0 rgba(245,239,230,0.06), 0 12px 32px rgba(224,122,95,0.18), 0 2px 18px rgba(0,0,0,0.25)" : undefined,
                   }}
                 >
                   {ch}
-                  {isLast && done && (
+                  {isLast && done && !light && (
                     <motion.span
                       aria-hidden
                       initial={{ opacity: 0 }}
@@ -970,8 +984,8 @@ function Hero({ ready }: { ready: boolean }) {
               );
             })}
           </span>
-          {/* shine sweep once done */}
-          {done && (
+          {/* shine sweep — desktop only (HP tanpa biar enteng) */}
+          {done && !light && (
             <motion.span
               aria-hidden
               className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -988,10 +1002,10 @@ function Hero({ ready }: { ready: boolean }) {
             </motion.span>
           )}
         </h1>
-        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
+        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
           {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
         </motion.p>
-        <motion.div initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
+        <motion.div initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
           <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
           <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
         </motion.div>
@@ -1948,11 +1962,11 @@ function Lab() {
     tone: (["violet", "yellow", "pink"] as const)[i]!,
   }));
   return (
-    <section id="lab" className="relative overflow-hidden px-[5vw] py-[14vh] bg-cream">
+    <section id="lab" className="relative overflow-hidden px-[4vw] sm:px-[5vw] py-[14vh] bg-cream">
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.5]" />
-      <div className="absolute left-[10%] top-[10%] h-[380px] w-[380px] rounded-none bg-terracotta/8 blur-[60px]" />
-      <div className="absolute right-[-5%] bottom-[0%] h-[420px] w-[420px] rounded-none bg-sage/10 blur-[60px]" />
-      <div className="relative mx-auto max-w-[1120px]">
+      <div className="absolute left-[10%] top-[10%] h-[380px] w-[380px] rounded-none bg-terracotta/8 blur-[60px] max-sm:hidden" />
+      <div className="absolute right-[-5%] bottom-[0%] h-[420px] w-[420px] rounded-none bg-sage/10 blur-[60px] max-sm:hidden" />
+      <div className="relative mx-auto max-w-[1120px] min-w-0">
         <Eyebrow index="04" label={t.labEyebrow} />
         <SplitReveal
           key={t.labTitle}
@@ -1969,7 +1983,7 @@ function Lab() {
         >
           {t.labDesc}
         </motion.p>
-        <div className="mt-10 grid gap-6 md:grid-cols-3 md:items-start">
+        <div className="mt-10 grid min-w-0 gap-6 md:grid-cols-3 md:items-start">
           {steps.map((step, idx) => (
             <motion.article
               key={step.n}
@@ -1978,7 +1992,7 @@ function Lab() {
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.6, ease: EASE, delay: 0.12 + idx * 0.1 }}
               whileHover={{ y: -4 }}
-              className={`warm-card flex flex-col ${idx === 1 ? "md:p-9 md:-translate-y-4" : "p-7 md:p-8"}`}
+              className={`warm-card flex min-w-0 flex-col ${idx === 1 ? "md:p-9 md:-translate-y-4" : "p-7 md:p-8"}`}
             >
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-9 w-9 items-center justify-center border border-terracotta bg-terracotta font-mono text-sm font-black text-white">
@@ -1986,9 +2000,9 @@ function Lab() {
                 </span>
                 <step.icon size={18} style={{ color: WARM.muted }} />
               </div>
-              <h3 className="mt-5 font-sans text-[1.7rem] font-semibold uppercase leading-none tracking-[0.06em] text-ink">{step.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed" style={{ color: WARM.muted }}>{step.desc}</p>
-              <div className="mt-6 flex flex-wrap gap-2">
+              <h3 className="mt-5 break-words font-sans text-[1.7rem] font-semibold uppercase leading-none tracking-[0.06em] text-ink">{step.title}</h3>
+              <p className="mt-3 break-words text-sm leading-relaxed" style={{ color: WARM.muted }}>{step.desc}</p>
+              <div className="mt-6 flex min-w-0 flex-wrap gap-2">
                 {step.tags.map((tag) => (
                   <Tag key={tag} tone={step.tone === "yellow" ? "yellow" : step.tone === "pink" ? "pink" : "violet"}>
                     {tag}
