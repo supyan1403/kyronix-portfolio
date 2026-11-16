@@ -518,13 +518,13 @@ const links = [
 function LangSwitch() {
   const { lang, setLang } = useLang();
   return (
-    <div className="inline-flex border border-border/30 bg-cream p-1">
+    <div className="inline-flex rounded-full border border-white/15 bg-surface p-1 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
       {(["id", "en"] as const).map((l) => (
         <button
           key={l}
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
-          className={`px-3 py-1 font-mono text-xs font-black uppercase tracking-widest transition-colors ${lang === l ? "bg-ink text-white" : "text-muted hover:text-ink"}`}
+          className={`rounded-full px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${lang === l ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}
         >
           {l === "id" ? "ID" : "EN"}
         </button>
