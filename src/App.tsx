@@ -91,6 +91,20 @@ function useIsMobile() {
   return v;
 }
 
+function useIsLowEnd() {
+  const [v, setV] = useState(false);
+  useEffect(() => {
+    try {
+      const dm = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
+      const cores = navigator.hardwareConcurrency ?? 8;
+      const coarse = window.matchMedia("(pointer: coarse)").matches;
+      const low = (typeof dm === "number" ? dm <= 4 : false) || cores <= 4;
+      setV(coarse && low);
+    } catch { setV(false); }
+  }, []);
+  return v;
+}
+
 function useInViewActive() {
   const ref = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
@@ -125,19 +139,21 @@ function scrollToId(id: string) {
   else el.scrollIntoView({ behavior: "smooth" });
 }
 
-/* ---------- Smooth scroll (Lenis) — desktop + mobile 100% (tuned: keep smooth, lighter on low-end) ---------- */
+/* ---------- Smooth scroll (Lenis) — adaptive 60fps: low-end lighter, keep smoothTouch ---------- */
 function useLenis() {
   useEffect(() => {
     const isCoarse = window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches;
+    const dm = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
+    const cores = navigator.hardwareConcurrency ?? 8;
+    const isLow = isCoarse && ((typeof dm === "number" ? dm <= 4 : false) || cores <= 4);
     const lenis = new Lenis({
-      duration: isCoarse ? 0.9 : 1.25,
+      duration: isLow ? 0.85 : isCoarse ? 0.9 : 1.25,
       wheelMultiplier: isCoarse ? 0.92 : 0.9,
       smoothWheel: true,
       smoothTouch: true,
-      touchMultiplier: isCoarse ? 1.2 : 1.6,
+      touchMultiplier: isLow ? 1.0 : isCoarse ? 1.2 : 1.6,
       gestureOrientation: "vertical",
-      // lighter easing interpolation — less per-frame work, still smooth
-      easing: (t: number) => 1 - Math.pow(1 - t, 2.8),
+      easing: (t: number) => 1 - Math.pow(1 - t, isLow ? 2.4 : 2.8),
     });
     lenisInstance = lenis;
     let raf = 0;
@@ -232,7 +248,7 @@ function Magnetic({
   );
 }
 
-/* ---------- Text reveal: split-word mask up ---------- */
+/* ---------- Text reveal: split-word mask up (adaptive: no blur on low-end) ---------- */
 function SplitReveal({
   text,
   className = "",
@@ -246,6 +262,7 @@ function SplitReveal({
   play?: boolean;
   as?: "h1" | "h2" | "h3";
 }) {
+  const low = useIsLowEnd();
   const words = text.split(" ");
   const MotionTag = motion[Tag];
   return (
@@ -261,7 +278,11 @@ function SplitReveal({
         <span className="mask-line mr-[0.25em]" key={i}>
           <motion.span
             className="inline-block"
-            variants={{ hidden: { y: "115%", opacity: 0, filter: "blur(6px)" }, show: { y: 0, opacity: 1, filter: "blur(0px)" } }}
+            variants={
+              low
+                ? ({ hidden: { y: "14px", opacity: 0 }, show: { y: 0, opacity: 1 } } as unknown as Record<string, unknown>)
+                : ({ hidden: { y: "115%", opacity: 0, filter: "blur(6px)" }, show: { y: 0, opacity: 1, filter: "blur(0px)" } } as unknown as Record<string, unknown>)
+            }
             transition={{ duration: 0.9, ease: EASE }}
           >
             {w}
@@ -839,11 +860,12 @@ const dict = {
   },
 } as const;
 
-/* ---------- 1. Hero — Warm Dark Center + epic KYRONIX (daya tarik utama) + scroll parallax ---------- */
+/* ---------- 1. Hero — Warm Dark Center + epic KYRONIX (daya tarik utama) + adaptive 60fps ---------- */
 function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const t2 = dict[lang];
   const ref = useRef<HTMLElement>(null);
+  const low = useIsLowEnd();
   const FULL = "KYRONIX";
   const [typed, setTyped] = useState("");
   useEffect(() => {
@@ -876,7 +898,7 @@ function Hero({ ready }: { ready: boolean }) {
       <motion.div aria-hidden className="absolute inset-0 halftone opacity-[0.04]" style={{ y: halftoneY }} />
       <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[720px] w-[980px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.09] blur-[70px]" style={{ y: glowY }} />
       <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[460px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sage/10 blur-[80px]" style={{ y: glowY }} />
-      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={{ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>} initial={{ opacity: 0, filter: "blur(10px)" }} animate={ready ? { opacity: 1, filter: "blur(0px)" } : {}} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
+      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={{ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>} initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, filter: "blur(10px)" } as unknown as Record<string, unknown>)} animate={low ? (ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)) : (ready ? ({ opacity: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>))} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
         <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.35 }}>
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
           {t2.hero.hi}
@@ -891,8 +913,16 @@ function Hero({ ready }: { ready: boolean }) {
               return (
                 <motion.span
                   key={i}
-                  initial={{ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 }}
-                  animate={visible ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 } : { opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 }}
+                  initial={low ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)}
+                  animate={
+                    visible
+                      ? low
+                        ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
+                        : ({ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 } as unknown as Record<string, unknown>)
+                      : low
+                        ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)
+                        : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
+                  }
                   transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * 0.06 }}
                   className="inline-block will-change-transform"
                   style={{
@@ -931,10 +961,10 @@ function Hero({ ready }: { ready: boolean }) {
             </motion.span>
           )}
         </h1>
-        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={{ opacity: 0, y: 12, filter: "blur(6px)" }} animate={ready ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}} transition={{ duration: 0.8, delay: 0.72 }}>
+        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
           {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
         </motion.p>
-        <motion.div initial={{ opacity: 0, y: 12, filter: "blur(6px)" }} animate={ready ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
+        <motion.div initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
           <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
           <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
         </motion.div>
@@ -989,6 +1019,7 @@ const stack = [
 function Stack() {
   const { lang } = useLang();
   const t = dict[lang];
+  const low = useIsLowEnd();
   return (
     <section id="stack" className="relative px-[5vw] py-[18vh] bg-cream">
       <div className="relative mx-auto max-w-[1120px]">
@@ -999,8 +1030,8 @@ function Stack() {
           className="max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.1] tracking-[0.02em]"
         />
         <motion.p
-          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+          whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
           className="mt-4 max-w-2xl text-lg leading-relaxed"
@@ -1015,8 +1046,8 @@ function Stack() {
             return (
               <motion.article
                 key={group.title}
-                initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
-                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                initial={low ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 18, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+                whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
                 viewport={{ once: true, amount: 0.25 }}
                 transition={{ duration: 0.65, ease: EASE, delay: i * 0.09 }}
                 whileHover={{ y: -4 }}
@@ -1809,6 +1840,7 @@ function Experience() {
 /* ---------- 5. How I Build — Systems over Syntax (Warm) ---------- */
 function Lab() {
   const { lang } = useLang();
+  const low = useIsLowEnd();
   const t = dict[lang];
   const steps = t.labSteps.map((s, i) => ({
     ...s,
@@ -1828,8 +1860,8 @@ function Lab() {
           className="max-w-3xl font-display text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
         />
         <motion.p
-          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+          whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
           className="mt-4 max-w-2xl leading-relaxed"
@@ -1841,8 +1873,8 @@ function Lab() {
           {steps.map((step, idx) => (
             <motion.article
               key={step.n}
-              initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              initial={low ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 16, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+              whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.6, ease: EASE, delay: 0.12 + idx * 0.1 }}
               whileHover={{ y: -4 }}
@@ -1874,6 +1906,7 @@ function Lab() {
 /* ---------- 6. Contact / footer (Retro) ---------- */
 function Contact() {
   const { lang } = useLang();
+  const low = useIsLowEnd();
   const t = dict[lang];
   const socials = [
     { label: "GitHub", href: "https://github.com/supyan1403" },
@@ -1892,8 +1925,8 @@ function Contact() {
           className="font-display text-[clamp(2.6rem,8.5vw,6.75rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
         />
         <motion.p
-          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+          whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.15 }}
           className="mx-auto mt-8 max-w-lg text-lg"
