@@ -1974,11 +1974,11 @@ function Lab() {
     tone: (["violet", "yellow", "pink"] as const)[i]!,
   }));
   return (
-    <section id="lab" className="relative overflow-hidden px-[4vw] sm:px-[5vw] py-[14vh] bg-cream">
+    <section id="lab" className="relative overflow-x-clip px-4 sm:px-[5vw] py-[14vh] bg-cream">
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.5]" />
-      <div className="absolute left-[10%] top-[10%] h-[380px] w-[380px] rounded-none bg-terracotta/8 blur-[60px] max-sm:hidden" />
-      <div className="absolute right-[-5%] bottom-[0%] h-[420px] w-[420px] rounded-none bg-sage/10 blur-[60px] max-sm:hidden" />
-      <div className="relative mx-auto max-w-[1120px] min-w-0">
+      <div aria-hidden className="pointer-events-none absolute left-[10%] top-[10%] h-[380px] w-[380px] rounded-none bg-terracotta/8 blur-[60px] max-sm:hidden" />
+      <div aria-hidden className="pointer-events-none absolute right-[-5%] bottom-[0%] h-[420px] w-[420px] rounded-none bg-sage/10 blur-[60px] max-sm:hidden" />
+      <div className="relative mx-auto w-full max-w-[1120px] min-w-0">
         <Eyebrow index="04" label={t.labEyebrow} />
         <SplitReveal
           key={t.labTitle}
@@ -1995,7 +1995,7 @@ function Lab() {
         >
           {t.labDesc}
         </motion.p>
-        <div className="mt-10 grid min-w-0 gap-6 md:grid-cols-3 md:items-start">
+        <div className="mt-10 grid w-full min-w-0 gap-4 sm:gap-6 md:grid-cols-3 md:items-start">
           {steps.map((step, idx) => (
             <motion.article
               key={step.n}
@@ -2004,17 +2004,17 @@ function Lab() {
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.6, ease: EASE, delay: 0.12 + idx * 0.1 }}
               whileHover={{ y: -4 }}
-              className={`warm-card flex min-w-0 flex-col ${idx === 1 ? "md:p-9 md:-translate-y-4" : "p-7 md:p-8"}`}
+              className={`warm-card flex w-full min-w-0 flex-col overflow-hidden break-words ${idx === 1 ? "p-5 sm:p-7 md:p-9 md:-translate-y-4" : "p-5 sm:p-7 md:p-8"}`}
             >
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-9 w-9 items-center justify-center border border-terracotta bg-terracotta font-mono text-sm font-black text-white">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-terracotta bg-terracotta font-mono text-sm font-black text-white">
                   {step.n}
                 </span>
-                <step.icon size={18} style={{ color: WARM.muted }} />
+                <step.icon size={18} className="shrink-0" style={{ color: WARM.muted }} />
               </div>
-              <h3 className="mt-5 break-words font-sans text-[1.7rem] font-semibold uppercase leading-none tracking-[0.06em] text-ink">{step.title}</h3>
-              <p className="mt-3 break-words text-sm leading-relaxed" style={{ color: WARM.muted }}>{step.desc}</p>
-              <div className="mt-6 flex min-w-0 flex-wrap gap-2">
+              <h3 className="mt-5 w-full break-words font-sans text-[clamp(1.4rem,6vw,1.7rem)] font-semibold uppercase leading-none tracking-[0.06em] text-ink [overflow-wrap:anywhere]">{step.title}</h3>
+              <p className="mt-3 w-full break-words text-sm leading-relaxed [overflow-wrap:anywhere]" style={{ color: WARM.muted }}>{step.desc}</p>
+              <div className="mt-6 flex min-w-0 flex-wrap gap-2 [overflow-wrap:anywhere]">
                 {step.tags.map((tag) => (
                   <Tag key={tag} tone={step.tone === "yellow" ? "yellow" : step.tone === "pink" ? "pink" : "violet"}>
                     {tag}
