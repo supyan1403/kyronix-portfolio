@@ -534,7 +534,6 @@ function LangSwitch() {
 
 function Nav({ ready }: { ready: boolean }) {
   const { lang } = useLang();
-  const { scrollYProgress } = useScroll();
   const [activeId, setActiveId] = useState("top");
   useEffect(() => {
     const ids = ["top", ...links.map((l) => l.id)];
@@ -543,7 +542,6 @@ function Nav({ ready }: { ready: boolean }) {
       const bandTop = vh * 0.45;
       const bandBottom = vh * 0.58;
       let best = "top";
-      // priority: element that straddles band center, else closest distance
       let bestMid: number | null = null;
       for (const id of ids) {
         const el = document.getElementById(id);
@@ -575,8 +573,6 @@ function Nav({ ready }: { ready: boolean }) {
     window.addEventListener("resize", pick);
     return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", pick); };
   }, []);
-  // garis WAJIB pas scroll: pakai progress mentah (tanpa spring lambat), section panjang otomatis melambat
-  const bar = scrollYProgress;
   const dots = [
     { id: "top", label: "SUPYAN SAURI", active: true },
     ...links.map((l) => ({ id: l.id, label: l.label[lang], active: false })),
@@ -591,10 +587,6 @@ function Nav({ ready }: { ready: boolean }) {
         className="fixed right-6 top-1/2 z-[90] hidden -translate-y-1/2 flex-col items-center gap-3.5 opacity-[0.78] transition-opacity duration-300 hover:opacity-100 md:flex"
       >
         <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[2px] -translate-x-1/2 bg-border/60" />
-        <motion.div
-          className="pointer-events-none absolute left-1/2 top-0 w-[2px] origin-top -translate-x-1/2 bg-terracotta shadow-[0_0_10px_rgba(224,122,95,0.35)]"
-          style={{ scaleY: bar, height: "100%" }}
-        />
         {dots.map((d, i) => {
           const isActive = activeId === d.id;
           return (
@@ -626,10 +618,6 @@ function Nav({ ready }: { ready: boolean }) {
         className="fixed bottom-5 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-2 opacity-[0.72] transition-opacity hover:opacity-100 active:opacity-100 md:hidden"
       >
         <div className="pointer-events-none absolute inset-x-3 top-1/2 h-[2px] -translate-y-1/2 bg-border/60" />
-        <motion.div
-          className="pointer-events-none absolute inset-x-3 top-1/2 h-[2px] origin-left -translate-y-1/2 bg-terracotta shadow-[0_0_10px_rgba(224,122,95,0.35)]"
-          style={{ scaleX: bar }}
-        />
         {dots.map((d, i) => {
           const isActive = activeId === d.id;
           return (
@@ -1120,7 +1108,12 @@ function Stack() {
   const { lang } = useLang();
   const t = dict[lang];
   const low = useIsLowEnd();
+  const openingRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
+  const openingGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
+  const openingTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
+  const openingDescY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [18, -18]);
   const { scrollYProgress: stackProgress } = useScroll({ target: cardsRef, offset: ["start end", "end start"] });
   const stackY0 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [28, -28]);
   const stackY1 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [44, -36]);
@@ -1128,28 +1121,31 @@ function Stack() {
   const stackYs = [stackY0, stackY1, stackY2] as const;
   return (
     <section id="stack" className="relative bg-cream overflow-x-clip">
-      {/* Opening — full 1 section text-only */}
-      <div className="relative flex min-h-[100dvh] items-center justify-center px-[5vw] py-[12vh]">
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+      {/* Opening — full 100dvh text-only EPIC */}
+      <section ref={openingRef} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]">
+        <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+        <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[420px] w-[420px] bg-terracotta/10 blur-[60px] will-change-transform max-sm:hidden" style={{ y: openingTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto max-w-[1120px] text-center">
-          <Eyebrow index="01" label={t.stackEyebrow} />
-          <SplitReveal
-            key={t.stackTitle}
-            text={t.stackTitle}
-            className="mx-auto max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.1] tracking-[0.02em]"
-          />
+          <motion.div style={{ y: openingTitleY } as unknown as Record<string, unknown>} className="will-change-transform">
+            <Eyebrow index="01" label={t.stackEyebrow} />
+            <SplitReveal
+              key={t.stackTitle}
+              text={t.stackTitle}
+              className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
+            />
+          </motion.div>
           <motion.p
-            initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+            initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 16, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
             whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
             viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
-            className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed"
-            style={{ color: WARM.muted }}
+            transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
+            style={{ y: openingDescY, color: WARM.muted } as unknown as Record<string, unknown>}
+            className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed will-change-transform"
           >
             {t.stackDesc}
           </motion.p>
         </div>
-      </div>
+      </section>
       {/* Cards-only — no title */}
       <div ref={cardsRef} className="relative px-[5vw] pb-[18vh]">
         <div className="relative mx-auto max-w-[1120px]">
@@ -1257,6 +1253,34 @@ const projects = [
   },
 ];
 
+function ProjectsOpening() {
+  const { lang } = useLang();
+  const t = dict[lang];
+  const low = useIsLowEnd();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const gridY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [44, -44]);
+  const titleY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [28, -32]);
+  const hintY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [16, -16]);
+  return (
+    <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-cream px-[5vw] py-[12vh]">
+      <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+      <motion.div aria-hidden className="pointer-events-none absolute -left-[8%] bottom-[12%] h-[420px] w-[520px] bg-sage/10 blur-[60px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
+      <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
+        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="will-change-transform">
+          <Eyebrow index="02" label={t.projectsEyebrow} />
+          <SplitReveal
+            key={t.projectsTitle}
+            text={t.projectsTitle}
+            className="mx-auto font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
+          />
+        </motion.div>
+        <motion.span aria-hidden className="mx-auto mt-6 hidden font-mono text-[11px] tracking-[0.18em] text-muted md:inline-flex items-center gap-2 will-change-transform" style={{ y: hintY } as unknown as Record<string, unknown>}><span className="h-px w-8 bg-border" /> SCROLL → DRAG PADA KARTU</motion.span>
+      </div>
+    </section>
+  );
+}
+
 function Projects() {
   const { lang } = useLang();
   const t = dict[lang];
@@ -1307,19 +1331,8 @@ function Projects() {
 
   return (
     <div id="projects">
-      {/* Projects Opening — full 1 section text-only */}
-      <section className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-cream px-[5vw] py-[12vh]">
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-        <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
-          <Eyebrow index="02" label={t.projectsEyebrow} />
-          <SplitReveal
-            key={t.projectsTitle}
-            text={t.projectsTitle}
-            className="mx-auto font-display text-[clamp(2.3rem,5.2vw,4.25rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
-          />
-          <span aria-hidden className="mx-auto mt-6 hidden font-mono text-[11px] tracking-[0.18em] text-muted md:inline-flex items-center gap-2"><span className="h-px w-8 bg-border" /> SCROLL → DRAG PADA KARTU</span>
-        </div>
-      </section>
+      {/* Projects Opening — full 100dvh EPIC */}
+      <ProjectsOpening />
       {/* Projects Track — cards-only h-[300vh] sticky */}
       <section ref={ref} className="relative h-[300vh]">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
@@ -1951,6 +1964,30 @@ function Experience() {
   const [dots, setDots] = useState<number[]>([0.22, 0.5, 0.78]);
   const [certHref, setCertHref] = useState<string | null>(null);
 
+function ExperienceOpening() {
+  const { lang } = useLang();
+  const t = dict[lang];
+  const low = useIsLowEnd();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const gridY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [44, -44]);
+  const titleY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [28, -32]);
+  const hintY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [16, -16]);
+  return (
+    <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]">
+      <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+      <motion.div aria-hidden className="pointer-events-none absolute -right-[8%] top-[22%] h-[440px] w-[520px] bg-terracotta/10 blur-[60px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
+      <div className="relative mx-auto max-w-[1120px] text-center">
+        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="will-change-transform">
+          <Eyebrow index="03" label={t.experience.eyebrow} />
+          <SplitReveal key={t.experience.title} text={t.experience.title} className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]" />
+        </motion.div>
+        <motion.p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed will-change-transform" style={{ y: hintY, color: WARM.muted } as unknown as Record<string, unknown>}>{(t.experience as { hint: string }).hint}</motion.p>
+      </div>
+    </section>
+  );
+}
+
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start 78%", "end 52%"] });
   // tuned lighter: slightly softer spring → fewer per-frame ticks, still buttery
   const smooth = useSpring(scrollYProgress, { stiffness: 165, damping: 34, mass: 0.45 });
@@ -1993,19 +2030,8 @@ function Experience() {
 
   return (
     <div id="experience" className="relative bg-cream overflow-x-clip">
-      {/* Opening — full 1 section text-only */}
-      <section className="relative flex min-h-[100dvh] items-center justify-center px-[5vw] py-[12vh] overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-        <div className="relative mx-auto max-w-[1120px] text-center">
-          <Eyebrow index="03" label={t.experience.eyebrow} />
-          <SplitReveal
-            key={t.experience.title}
-            text={t.experience.title}
-            className="mx-auto max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
-          />
-          <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed" style={{ color: WARM.muted }}>{(t.experience as { hint: string }).hint}</p>
-        </div>
-      </section>
+      {/* Opening — full 100dvh EPIC */}
+      <ExperienceOpening />
       {/* Timeline — cards-only */}
       <section ref={trackRef} className="relative px-[5vw] pb-[14vh] pt-4 md:pb-[14vh] overflow-x-clip">
       <motion.div style={{ opacity: expOpacity } as unknown as Record<string, unknown>} className="mx-auto max-w-[1120px] will-change-transform">
@@ -2048,25 +2074,33 @@ function Lab() {
     icon: ([Wrench, Cpu, Database] as const)[i]!,
     tone: (["violet", "yellow", "pink"] as const)[i]!,
   }));
+  const openingRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
+  const labGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
+  const labTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
+  const labDescY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [16, -16]);
   return (
     <div id="lab" className="relative bg-cream overflow-x-clip">
-      {/* Opening — full 1 section text-only */}
-      <section className="relative flex min-h-[100dvh] items-center justify-center px-4 sm:px-[5vw] py-[12vh] overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+      {/* Opening — full 100dvh EPIC */}
+      <section ref={openingRef} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-4 sm:px-[5vw] py-[12vh]">
+        <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: labGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+        <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] top-[16%] h-[420px] w-[520px] bg-sage/10 blur-[60px] max-sm:hidden" style={{ y: labTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto w-full max-w-[1120px] min-w-0 text-center">
-          <Eyebrow index="04" label={t.labEyebrow} />
-          <SplitReveal
-            key={t.labTitle}
-            text={t.labTitle}
-            className="mx-auto max-w-3xl font-display text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
-          />
+          <motion.div style={{ y: labTitleY } as unknown as Record<string, unknown>} className="will-change-transform">
+            <Eyebrow index="04" label={t.labEyebrow} />
+            <SplitReveal
+              key={t.labTitle}
+              text={t.labTitle}
+              className="mx-auto max-w-3xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
+            />
+          </motion.div>
           <motion.p
-            initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+            style={{ y: labDescY, color: WARM.muted } as unknown as Record<string, unknown>}
+            initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 16, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
             whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
             viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
-            className="mx-auto mt-4 max-w-2xl leading-relaxed"
-            style={{ color: WARM.muted }}
+            transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
+            className="mx-auto mt-6 max-w-2xl leading-relaxed will-change-transform"
           >
             {t.labDesc}
           </motion.p>
