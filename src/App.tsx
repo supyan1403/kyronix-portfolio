@@ -929,16 +929,18 @@ function Hero({ ready }: { ready: boolean }) {
   }, [ready]);
   const done = typed.length === FULL.length;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, light ? -28 : -90]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, light ? 0.99 : 0.97]);
-  const halftoneY = useTransform(scrollYProgress, [0, 1], [0, light ? -12 : -40]);
-  const glowY = useTransform(scrollYProgress, [0, 1], [0, light ? -16 : -60]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, light ? -28 : -160]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, light ? 0.99 : 0.92]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -30]);
+  const stripeY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -48]);
+  const taglineY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -24]);
+  const ctaY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -18]);
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
-      {/* bg: diagonal stripes 0.07 + Blueprint Grid terracotta/0.04 32px + Scanline 1px terracotta/0.12 sweep 4s */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "repeating-linear-gradient(-45deg, transparent 0 14px, rgba(232,17,45,0.5) 14px 16px)" }} />
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+      {/* epic parallax bg: stripes 0.5x + grid 0.3x + scanline */}
+      <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ y: stripeY, backgroundImage: "repeating-linear-gradient(-45deg, transparent 0 14px, rgba(232,17,45,0.5) 14px 16px)" } as unknown as Record<string, unknown>} />
+      <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute inset-y-0 w-[1px] bg-terracotta/0 max-sm:hidden" initial={{ left: "-2%", opacity: 0 }} animate={{ left: ["-2%", "102%"], opacity: [0, 0.85, 0.85, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatDelay: 2.2, delay: 1.2 }} style={{ boxShadow: "0 0 18px rgba(224,122,95,0.35), 0 0 42px rgba(224,122,95,0.14)", background: "linear-gradient(to bottom, transparent, rgba(224,122,95,0.9) 18%, rgba(224,122,95,0.9) 82%, transparent)" }} />
       {/* corner brackets blueprint — keep */}
       <div aria-hidden className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
@@ -1018,10 +1020,10 @@ function Hero({ ready }: { ready: boolean }) {
             </motion.span>
           )}
         </h1>
-        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
+        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" style={{ y: taglineY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
           {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
         </motion.p>
-        <motion.div initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
+        <motion.div style={{ y: ctaY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
           <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
           <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
         </motion.div>
@@ -1077,8 +1079,14 @@ function Stack() {
   const { lang } = useLang();
   const t = dict[lang];
   const low = useIsLowEnd();
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: stackProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const stackY0 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [28, -28]);
+  const stackY1 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [44, -36]);
+  const stackY2 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [60, -44]);
+  const stackYs = [stackY0, stackY1, stackY2] as const;
   return (
-    <section id="stack" className="relative px-[5vw] py-[18vh] bg-cream">
+    <section id="stack" ref={sectionRef} className="relative px-[5vw] py-[18vh] bg-cream overflow-x-clip">
       <div className="relative mx-auto max-w-[1120px]">
         <Eyebrow index="01" label={t.stackEyebrow} />
         <SplitReveal
@@ -1100,16 +1108,17 @@ function Stack() {
           {stack.map((group, i) => {
             const Icon = group.icon;
             const accentColor = group.tone === "lime" ? WARM.terracotta : group.tone === "coral" ? WARM.terracotta : WARM.sage;
+            const parY = stackYs[i as 0 | 1 | 2] ?? stackY0;
             return (
-              <motion.article
-                key={group.title}
-                initial={low ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 18, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
-                whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-                viewport={{ once: true, amount: 0.25 }}
-                transition={{ duration: 0.65, ease: EASE, delay: i * 0.09 }}
-                whileHover={{ y: -4 }}
-                className="warm-card p-7"
-              >
+              <motion.div key={group.title} style={{ y: parY } as unknown as Record<string, unknown>} className="will-change-transform">
+                <motion.article
+                  initial={low ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 18, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+                  whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={{ duration: 0.65, ease: EASE, delay: i * 0.09 }}
+                  whileHover={{ y: -4 }}
+                  className="warm-card p-7"
+                >
                 <div className="mb-5 flex items-center justify-between">
                   <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-cream">
                     <Icon size={18} style={{ color: accentColor }} />
@@ -1122,7 +1131,7 @@ function Stack() {
                     <span key={item} className="warm-tag">{item}</span>
                   ))}
                 </div>
-              </motion.article>
+              </motion.article></motion.div>
             );
           })}
         </div>
@@ -1132,6 +1141,61 @@ function Stack() {
 }
 
 /* ---------- 3. Featured projects — warm-tagd builds ---------- */
+/* Transition Image Parallax — Ken Burns per card (scale 1.18→1.0 + y -8%→8%), no foto wajah, artifact warm overlay */
+function ProjectCard({ p, idx, onOpen }: { p: (typeof projects)[number]; idx: number; onOpen: (pp: (typeof projects)[number]) => void }) {
+  const { lang } = useLang();
+  const low = useIsLowEnd();
+  const cardRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: cardRef, offset: ["start end", "end start"] });
+  const imgScale = useTransform(scrollYProgress, [0, 1], low ? [1, 1] : [1.18, 1.0]);
+  const imgY = useTransform(scrollYProgress, [0, 1], low ? ["0%", "0%"] : ["-8%", "8%"]);
+  const imgMap: Record<string, string> = {
+    "01": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80&auto=format&fit=crop",
+    "02": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80&auto=format&fit=crop",
+    "03": "https://images.unsplash.com/photo-1451187580459-43490279c429?w=800&q=80&auto=format&fit=crop",
+    "04": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80&auto=format&fit=crop",
+  };
+  return (
+    <motion.article
+      ref={cardRef as unknown as React.RefObject<HTMLDivElement>}
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpen(p)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }}
+      whileHover={{ y: -4, scale: 1.005 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 380, damping: 22 }}
+      className={`warm-card mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 ${idx === 0 ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7" : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7"}`}
+    >
+      <div className="relative -mx-6 -mt-6 mb-5 overflow-hidden md:-mx-7 md:-mt-7">
+        <div className="aspect-[16/9] overflow-hidden bg-cream-deep">
+          <motion.img src={imgMap[p.no] ?? imgMap["01"]} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover will-change-transform" style={{ scale: imgScale, y: imgY } as unknown as Record<string, unknown>} />
+          <div aria-hidden className="pointer-events-none absolute inset-0 bg-[#1A1816]/28 mix-blend-multiply" />
+          <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-cream via-transparent to-transparent opacity-60" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
+        <span className={`inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 ${"warm-tag"}`}>
+          {(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}
+          <span className="break-words">{p.status}</span>
+        </span>
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
+        <h3 data-text={p.title} className="font-sans text-[2rem] font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink md:text-4xl">{p.title}</h3>
+        <p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
+      </div>
+      <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
+        <div className="flex flex-1 flex-wrap gap-2 pr-2">
+          {p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}
+        </div>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white md:h-12 md:w-12"><ArrowUpRight size={18} /></span>
+      </div>
+    </motion.article>
+  );
+}
+
 const projects = [
   {
     no: "01",
@@ -1219,13 +1283,17 @@ function Projects() {
   };
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const low = useIsLowEnd();
   const x = useTransform(scrollYProgress, [0, 1], [0, -maxX]);
+  const titleY = useTransform(scrollYProgress, [0, 0.35], low ? [0, 0] : [0, -40]);
+  const trackScale = useTransform(scrollYProgress, [0.4, 1], low ? [1, 1] : [1, 0.98]);
+  const trackOpacity = useTransform(scrollYProgress, [0.75, 1], low ? [1, 1] : [1, 0.92]);
 
   return (
     <section id="projects" ref={ref} className="relative h-[260vh]">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
         <div className="orb right-[-10%] top-[20%] h-[420px] w-[420px] bg-terracotta/10" />
-        <div className="mx-auto mb-10 w-[min(1120px,90vw)] pt-16">
+        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="mx-auto mb-10 w-[min(1120px,90vw)] pt-16 will-change-transform">
           <Eyebrow index="02" label={t.projectsEyebrow} />
           <div className="flex items-end justify-between gap-6">
             <SplitReveal
@@ -1234,52 +1302,14 @@ function Projects() {
               className="font-display text-[clamp(2.3rem,5.2vw,4.25rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
             />
           </div>
-        </div>
+        </motion.div>
         <motion.div
           ref={trackRef}
-          style={{ x }}
-          className="flex w-max gap-4 py-4 pl-[5vw] pr-[5vw] md:gap-6 md:pl-[max(5vw,calc((100vw-1120px)/2))] md:pr-[10vw]"
+          style={{ x, scale: trackScale, opacity: trackOpacity } as unknown as Record<string, unknown>}
+          className="flex w-max gap-4 py-4 pl-[5vw] pr-[5vw] md:gap-6 md:pl-[max(5vw,calc((100vw-1120px)/2))] md:pr-[10vw] will-change-transform"
         >
           {projects.map((p, idx) => (
-            <motion.article
-              key={p.no}
-              role="button"
-              tabIndex={0}
-              onClick={() => handleOpen(p)}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleOpen(p); } }}
-              whileHover={{ y: -4, scale: 1.005 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 380, damping: 22 }}
-              className={`warm-card mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 ${
-                idx === 0
-                  ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7"
-                  : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7"
-              }`}
-            >
-              
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
-                  <span className={`inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 ${"warm-tag"}`}>
-                    {(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}
-                    <span className="break-words">{p.status}</span>
-                  </span>
-                </div>
-              <div className="min-w-0 flex-1">
-                <p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
-                <h3 data-text={p.title} className="font-sans text-[2rem] font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink md:text-4xl">{p.title}</h3>
-                <p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
-              </div>
-              <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
-                <div className="flex flex-1 flex-wrap gap-2 pr-2">
-                  {p.stack.map((s) => (
-                    <Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>
-                  ))}
-                </div>
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white md:h-12 md:w-12">
-                  <ArrowUpRight size={18} />
-                </span>
-              </div>
-            </motion.article>
+            <ProjectCard key={p.no} p={p} idx={idx} onOpen={handleOpen} />
           ))}
         </motion.div>
         <div className="mx-auto mt-10 h-px w-[min(1120px,90vw)] bg-border">
@@ -1895,6 +1925,7 @@ function Experience() {
   // tuned lighter: slightly softer spring → fewer per-frame ticks, still buttery
   const smooth = useSpring(scrollYProgress, { stiffness: 165, damping: 34, mass: 0.45 });
   const pipe = useTransform(smooth, [0, 1], [0, 1]);
+  const expOpacity = useTransform(smooth, [0, 1], [1, 0.92]);
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -1931,15 +1962,15 @@ function Experience() {
   };
 
   return (
-    <section id="experience" className="relative px-[5vw] py-[10vh] md:py-[14vh] bg-cream">
-      <div className="mx-auto max-w-[1120px]">
+    <section ref={trackRef} id="experience" className="relative px-[5vw] py-[10vh] md:py-[14vh] bg-cream overflow-x-clip">
+      <motion.div style={{ opacity: expOpacity } as unknown as Record<string, unknown>} className="mx-auto max-w-[1120px] will-change-transform">
         <Eyebrow index="03" label={t.experience.eyebrow} />
         <SplitReveal
           key={t.experience.title}
           text={t.experience.title}
           className="max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
         />
-        <div ref={trackRef} className="relative mt-10">
+        <div className="relative mt-10">
           <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-border md:left-1/2" aria-hidden />
           {/* warm pipe — 100% desktop (no mobile split) */}
           <motion.div
@@ -1960,7 +1991,7 @@ function Experience() {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
       <CertificateViewer href={certHref} open={!!certHref} onClose={() => setCertHref(null)} />
     </section>
   );
