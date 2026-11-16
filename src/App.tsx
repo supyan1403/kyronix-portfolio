@@ -538,24 +538,42 @@ function Nav({ ready }: { ready: boolean }) {
   const [activeId, setActiveId] = useState("top");
   useEffect(() => {
     const ids = ["top", ...links.map((l) => l.id)];
-    const getCenter = () => window.scrollY + window.innerHeight / 2;
     const pick = () => {
+      const vh = window.innerHeight;
+      const bandTop = vh * 0.45;
+      const bandBottom = vh * 0.58;
       let best = "top";
-      let bestDist = Infinity;
-      const cy = getCenter();
+      // priority: element that straddles band center, else closest distance
+      let bestMid: number | null = null;
       for (const id of ids) {
         const el = document.getElementById(id);
         if (!el) continue;
-        const top = el.getBoundingClientRect().top + window.scrollY;
-        const h = el.offsetHeight;
-        const center = top + h / 2;
-        // Projects h-[300vh] sticky: clamp ke sticky viewport center biar gak menang terus
-        const isSticky = id === "projects";
-        const eff = isSticky ? Math.min(center, top + window.innerHeight * 0.55) : center;
-        const d = Math.abs(eff - cy);
-        if (d < bestDist) { bestDist = d; best = id; }
+        // Projects h-[300vh]: pakai sentinel sticky, bukan section penuh
+        let r: DOMRect;
+        if (id === "projects") {
+          const sticky = el.querySelector<HTMLElement>(".sticky");
+          r = (sticky ?? el).getBoundingClientRect();
+        } else {
+          r = el.getBoundingClientRect();
+        }
+        const mid = (r.top + r.bottom) / 2;
+        const inBand = r.top <= bandBottom && r.bottom >= bandTop;
+        if (inBand) {
+          const d = Math.abs(mid - vh / 2);
+          if (bestMid === null || d < bestMid) { bestMid = d; best = id; }
+        }
       }
-      setActiveId(best);
+      if (bestMid !== null) { setActiveId(best); return; }
+      let b = "top"; let bd = Infinity; const cy = vh / 2;
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const r = (id === "projects" ? (el.querySelector<HTMLElement>(".sticky") ?? el) : el).getBoundingClientRect();
+        const mid = (r.top + r.bottom) / 2;
+        const d = Math.abs(mid - cy);
+        if (d < bd) { bd = d; b = id; }
+      }
+      setActiveId(b);
     };
     let raf = 0;
     const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(pick); };
@@ -576,11 +594,11 @@ function Nav({ ready }: { ready: boolean }) {
       {/* desktop: vertical right-6 center — pixel square dots */}
       <nav
         aria-label="Section navigation"
-        className="fixed right-6 top-1/2 z-[90] hidden -translate-y-1/2 flex-col items-center gap-3.5 opacity-[0.72] transition-opacity duration-300 hover:opacity-100 md:flex"
+        className="fixed right-6 top-1/2 z-[90] hidden -translate-y-1/2 flex-col items-center gap-3.5 opacity-[0.78] transition-opacity duration-300 hover:opacity-100 md:flex"
       >
-        <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border" />
+        <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[2px] -translate-x-1/2 bg-border/60" />
         <motion.div
-          className="pointer-events-none absolute left-1/2 top-0 w-px origin-top -translate-x-1/2 bg-terracotta"
+          className="pointer-events-none absolute left-1/2 top-0 w-[2px] origin-top -translate-x-1/2 bg-terracotta shadow-[0_0_10px_rgba(224,122,95,0.35)]"
           style={{ scaleY: bar, height: "100%" }}
         />
         {dots.map((d, i) => {
@@ -611,11 +629,11 @@ function Nav({ ready }: { ready: boolean }) {
       {/* mobile: horizontal bottom center — pixel square dots */}
       <nav
         aria-label="Section navigation"
-        className="fixed bottom-5 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-2 opacity-[0.62] transition-opacity hover:opacity-100 active:opacity-100 md:hidden"
+        className="fixed bottom-5 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-2 opacity-[0.72] transition-opacity hover:opacity-100 active:opacity-100 md:hidden"
       >
-        <div className="pointer-events-none absolute inset-x-3 top-1/2 h-px -translate-y-1/2 bg-border" />
+        <div className="pointer-events-none absolute inset-x-3 top-1/2 h-[2px] -translate-y-1/2 bg-border/60" />
         <motion.div
-          className="pointer-events-none absolute inset-x-3 top-1/2 h-px origin-left -translate-y-1/2 bg-terracotta"
+          className="pointer-events-none absolute inset-x-3 top-1/2 h-[2px] origin-left -translate-y-1/2 bg-terracotta shadow-[0_0_10px_rgba(224,122,95,0.35)]"
           style={{ scaleX: bar }}
         />
         {dots.map((d, i) => {
