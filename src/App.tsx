@@ -938,6 +938,28 @@ function Hero({ ready }: { ready: boolean }) {
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
       {/* samain opening: bg-cream flat + diagonal stripes 0.07 */}
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "repeating-linear-gradient(-45deg, transparent 0 14px, rgba(232,17,45,0.5) 14px 16px)" }} />
+      {/* watermark random banyak — tiled behind KYRONIX, static 0 JS */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none">
+        <span className="absolute left-[2%] top-[11%] rotate-[-8deg] font-display text-[clamp(1.7rem,3.6vw,2.8rem)] font-[800] tracking-[0.14em] text-ink/[0.04]">KYRONIX</span>
+        <span className="absolute left-[28%] top-[9%] rotate-[-8deg] font-display text-[clamp(0.7rem,1.2vw,0.95rem)] font-[700] tracking-[0.18em] text-ink/[0.035]">SYSTEMS OVER SYNTAX</span>
+        <span className="absolute right-[4%] top-[13%] rotate-[-8deg] font-display text-[clamp(1.5rem,3vw,2.4rem)] font-[800] tracking-[0.14em] text-ink/[0.035]">KYRONIX</span>
+        <span className="absolute left-[-1%] top-[28%] rotate-[-8deg] font-display text-[clamp(0.7rem,1.2vw,0.95rem)] font-[700] tracking-[0.18em] text-ink/[0.03]">SYSTEMS OVER SYNTAX</span>
+        <span className="absolute left-[26%] top-[31%] rotate-[-8deg] font-display text-[clamp(1.6rem,3.2vw,2.5rem)] font-[800] tracking-[0.14em] text-ink/[0.045]">KYRONIX</span>
+        <span className="absolute right-[6%] top-[30%] rotate-[-8deg] font-mono text-[clamp(0.65rem,1vw,0.85rem)] tracking-[0.16em] text-ink/[0.032]">01 — 08 // CORE</span>
+        <span className="absolute left-[5%] top-[52%] rotate-[-8deg] font-display text-[clamp(0.7rem,1.2vw,0.95rem)] font-[700] tracking-[0.18em] text-ink/[0.03]">SYSTEMS OVER SYNTAX</span>
+        <span className="absolute left-[36%] top-[54%] rotate-[-8deg] font-display text-[clamp(1.7rem,3.6vw,2.8rem)] font-[800] tracking-[0.14em] text-ink/[0.03]">KYRONIX</span>
+        <span className="absolute right-[-1%] top-[50%] rotate-[-8deg] font-display text-[clamp(1.4rem,2.8vw,2.2rem)] font-[800] tracking-[0.14em] text-ink/[0.035]">KYRONIX</span>
+        <span className="absolute left-[3%] top-[70%] rotate-[-8deg] font-display text-[clamp(1.5rem,3vw,2.4rem)] font-[800] tracking-[0.14em] text-ink/[0.04]">KYRONIX</span>
+        <span className="absolute left-[30%] top-[73%] rotate-[-8deg] font-mono text-[clamp(0.65rem,1vw,0.85rem)] tracking-[0.16em] text-ink/[0.03]">SYSTEMS OVER SYNTAX</span>
+        <span className="absolute right-[5%] top-[74%] rotate-[-8deg] font-display text-[clamp(0.7rem,1.2vw,0.95rem)] font-[700] tracking-[0.18em] text-ink/[0.035]">SYSTEMS OVER SYNTAX</span>
+        <span className="absolute left-[14%] top-[88%] rotate-[-8deg] font-display text-[clamp(0.9rem,1.6vw,1.2rem)] font-[800] tracking-[0.16em] text-ink/[0.032]">KYRONIX</span>
+        <span className="absolute right-[12%] top-[87%] rotate-[-8deg] font-display text-[clamp(1.4rem,2.8vw,2.2rem)] font-[800] tracking-[0.14em] text-ink/[0.03]">KYRONIX</span>
+      </div>
+      {/* corner brackets blueprint */}
+      <div aria-hidden className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
+      <div aria-hidden className="pointer-events-none absolute right-[24px] top-[88px] h-[22px] w-[22px] border-r-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:right-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
+      <div aria-hidden className="pointer-events-none absolute bottom-[24px] left-[24px] h-[22px] w-[22px] border-b-[1.5px] border-l-[1.5px] border-terracotta/20 max-sm:bottom-[16px] max-sm:left-[16px] max-sm:h-[18px] max-sm:w-[18px]" />
+      <div aria-hidden className="pointer-events-none absolute bottom-[24px] right-[24px] h-[22px] w-[22px] border-b-[1.5px] border-r-[1.5px] border-terracotta/20 max-sm:bottom-[16px] max-sm:right-[16px] max-sm:h-[18px] max-sm:w-[18px]" />
       <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={light ? ({ opacity: heroOpacity } as unknown as Record<string, unknown>) : ({ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>)} initial={light ? ({ opacity: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, filter: "blur(10px)" } as unknown as Record<string, unknown>)} animate={light ? ({ opacity: 1 } as unknown as Record<string, unknown>) : low ? (ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)) : (ready ? ({ opacity: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>))} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
         <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.35 }}>
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
@@ -976,7 +998,7 @@ function Hero({ ready }: { ready: boolean }) {
                   transition={{ duration: light ? 0.42 : 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * (light ? 0.035 : 0.06) }}
                   className={light ? "inline-block" : "inline-block will-change-transform"}
                   style={{
-                    textShadow: visible && !light ? "0 1px 0 rgba(245,239,230,0.06), 0 12px 32px rgba(224,122,95,0.18), 0 2px 18px rgba(0,0,0,0.25)" : undefined,
+                    textShadow: visible && !light ? "0 1px 0 rgba(245,239,230,0.08), 0 2px 0 #2e2b28, 0 4px 12px rgba(0,0,0,0.22), 0 12px 32px rgba(224,122,95,0.20), 0 0 36px rgba(224,122,95,0.08)" : undefined,
                   }}
                 >
                   {ch}
