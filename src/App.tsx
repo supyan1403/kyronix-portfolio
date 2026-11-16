@@ -1953,14 +1953,6 @@ function CertificateViewer({
   );
 }
 
-function Experience() {
-  const { lang } = useLang();
-  const t = dict[lang];
-  const trackRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [dots, setDots] = useState<number[]>([0.22, 0.5, 0.78]);
-  const [certHref, setCertHref] = useState<string | null>(null);
-
 function ExperienceOpening() {
   const { lang } = useLang();
   const t = dict[lang];
@@ -1982,6 +1974,14 @@ function ExperienceOpening() {
     </section>
   );
 }
+
+function Experience() {
+  const { lang } = useLang();
+  const t = dict[lang];
+  const trackRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [dots, setDots] = useState<number[]>([0.22, 0.5, 0.78]);
+  const [certHref, setCertHref] = useState<string | null>(null);
 
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start 78%", "end 52%"] });
   // tuned lighter: slightly softer spring → fewer per-frame ticks, still buttery
@@ -2069,6 +2069,7 @@ function Lab() {
     icon: ([Wrench, Cpu, Database] as const)[i]!,
     tone: (["violet", "yellow", "pink"] as const)[i]!,
   }));
+  const openingRef = useRef<HTMLElement>(null);
   const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
   const labGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const labTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
