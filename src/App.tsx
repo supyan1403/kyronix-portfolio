@@ -538,9 +538,31 @@ function Nav({ ready }: { ready: boolean }) {
   const [activeId, setActiveId] = useState("top");
   useEffect(() => {
     const ids = ["top", ...links.map((l) => l.id)];
-    const obs = new IntersectionObserver((entries) => { const v = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]; if (v) setActiveId(v.target.id); }, { rootMargin: "-42% 0px -42% 0px", threshold: [0.15, 0.4, 0.75] });
-    ids.forEach((id) => { const el = document.getElementById(id); if (el) obs.observe(el); });
-    return () => obs.disconnect();
+    const getCenter = () => window.scrollY + window.innerHeight / 2;
+    const pick = () => {
+      let best = "top";
+      let bestDist = Infinity;
+      const cy = getCenter();
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        const h = el.offsetHeight;
+        const center = top + h / 2;
+        // Projects h-[300vh] sticky: clamp ke sticky viewport center biar gak menang terus
+        const isSticky = id === "projects";
+        const eff = isSticky ? Math.min(center, top + window.innerHeight * 0.55) : center;
+        const d = Math.abs(eff - cy);
+        if (d < bestDist) { bestDist = d; best = id; }
+      }
+      setActiveId(best);
+    };
+    let raf = 0;
+    const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(pick); };
+    pick();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", pick);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", pick); };
   }, []);
   const bar = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.4 });
   const dots = [
