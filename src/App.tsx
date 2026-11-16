@@ -936,26 +936,11 @@ function Hero({ ready }: { ready: boolean }) {
   const glowY = useTransform(scrollYProgress, [0, 1], [0, light ? -16 : -60]);
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
-      {/* samain opening: bg-cream flat + diagonal stripes 0.07 */}
+      {/* bg: diagonal stripes 0.07 + Blueprint Grid terracotta/0.04 32px + Scanline 1px terracotta/0.12 sweep 4s */}
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "repeating-linear-gradient(-45deg, transparent 0 14px, rgba(232,17,45,0.5) 14px 16px)" }} />
-      {/* watermark random banyak — tiled behind KYRONIX, static 0 JS */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none">
-        <span className="absolute left-[2%] top-[11%] rotate-[-8deg] font-display text-[clamp(1.7rem,3.6vw,2.8rem)] font-[800] tracking-[0.14em] text-ink/[0.04]">KYRONIX</span>
-        <span className="absolute left-[28%] top-[9%] rotate-[-8deg] font-display text-[clamp(0.7rem,1.2vw,0.95rem)] font-[700] tracking-[0.18em] text-ink/[0.035]">SYSTEMS OVER SYNTAX</span>
-        <span className="absolute right-[4%] top-[13%] rotate-[-8deg] font-display text-[clamp(1.5rem,3vw,2.4rem)] font-[800] tracking-[0.14em] text-ink/[0.035]">KYRONIX</span>
-        <span className="absolute left-[-1%] top-[28%] rotate-[-8deg] font-display text-[clamp(0.7rem,1.2vw,0.95rem)] font-[700] tracking-[0.18em] text-ink/[0.03]">SYSTEMS OVER SYNTAX</span>
-        <span className="absolute left-[26%] top-[31%] rotate-[-8deg] font-display text-[clamp(1.6rem,3.2vw,2.5rem)] font-[800] tracking-[0.14em] text-ink/[0.045]">KYRONIX</span>
-        <span className="absolute right-[6%] top-[30%] rotate-[-8deg] font-mono text-[clamp(0.65rem,1vw,0.85rem)] tracking-[0.16em] text-ink/[0.032]">01 — 08 // CORE</span>
-        <span className="absolute left-[5%] top-[52%] rotate-[-8deg] font-display text-[clamp(0.7rem,1.2vw,0.95rem)] font-[700] tracking-[0.18em] text-ink/[0.03]">SYSTEMS OVER SYNTAX</span>
-        <span className="absolute left-[36%] top-[54%] rotate-[-8deg] font-display text-[clamp(1.7rem,3.6vw,2.8rem)] font-[800] tracking-[0.14em] text-ink/[0.03]">KYRONIX</span>
-        <span className="absolute right-[-1%] top-[50%] rotate-[-8deg] font-display text-[clamp(1.4rem,2.8vw,2.2rem)] font-[800] tracking-[0.14em] text-ink/[0.035]">KYRONIX</span>
-        <span className="absolute left-[3%] top-[70%] rotate-[-8deg] font-display text-[clamp(1.5rem,3vw,2.4rem)] font-[800] tracking-[0.14em] text-ink/[0.04]">KYRONIX</span>
-        <span className="absolute left-[30%] top-[73%] rotate-[-8deg] font-mono text-[clamp(0.65rem,1vw,0.85rem)] tracking-[0.16em] text-ink/[0.03]">SYSTEMS OVER SYNTAX</span>
-        <span className="absolute right-[5%] top-[74%] rotate-[-8deg] font-display text-[clamp(0.7rem,1.2vw,0.95rem)] font-[700] tracking-[0.18em] text-ink/[0.035]">SYSTEMS OVER SYNTAX</span>
-        <span className="absolute left-[14%] top-[88%] rotate-[-8deg] font-display text-[clamp(0.9rem,1.6vw,1.2rem)] font-[800] tracking-[0.16em] text-ink/[0.032]">KYRONIX</span>
-        <span className="absolute right-[12%] top-[87%] rotate-[-8deg] font-display text-[clamp(1.4rem,2.8vw,2.2rem)] font-[800] tracking-[0.14em] text-ink/[0.03]">KYRONIX</span>
-      </div>
-      {/* corner brackets blueprint */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+      <motion.div aria-hidden className="pointer-events-none absolute inset-y-0 w-[1px] bg-terracotta/0 max-sm:hidden" initial={{ left: "-2%", opacity: 0 }} animate={{ left: ["-2%", "102%"], opacity: [0, 0.85, 0.85, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatDelay: 2.2, delay: 1.2 }} style={{ boxShadow: "0 0 18px rgba(224,122,95,0.35), 0 0 42px rgba(224,122,95,0.14)", background: "linear-gradient(to bottom, transparent, rgba(224,122,95,0.9) 18%, rgba(224,122,95,0.9) 82%, transparent)" }} />
+      {/* corner brackets blueprint — keep */}
       <div aria-hidden className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
       <div aria-hidden className="pointer-events-none absolute right-[24px] top-[88px] h-[22px] w-[22px] border-r-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:right-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
       <div aria-hidden className="pointer-events-none absolute bottom-[24px] left-[24px] h-[22px] w-[22px] border-b-[1.5px] border-l-[1.5px] border-terracotta/20 max-sm:bottom-[16px] max-sm:left-[16px] max-sm:h-[18px] max-sm:w-[18px]" />
