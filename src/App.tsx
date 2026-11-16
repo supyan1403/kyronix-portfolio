@@ -1291,14 +1291,14 @@ function Projects() {
             exit={{ opacity: 0 }}
             onClick={() => setActive(null)}
           >
-            <div className="absolute inset-0 bg-cream/85 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-[#0f0e0d]/70 backdrop-blur-[2px] supports-[backdrop-filter]:bg-[#0f0e0d]/60 max-sm:backdrop-blur-none max-sm:bg-[#0f0e0d]/80" />
             <motion.div
               initial={{ y: 16, scale: 0.98, opacity: 0 }}
               animate={{ y: 0, scale: 1, opacity: 1 }}
               exit={{ y: 8, scale: 0.98, opacity: 0 }}
               transition={{ type: "spring", stiffness: 380, damping: 24 }}
               onClick={(e) => e.stopPropagation()}
-              className="warm-card relative w-full max-w-[520px] bg-surface p-6 text-left md:p-7"
+              className="warm-card relative w-full max-w-[520px] max-h-[85vh] overflow-auto bg-surface p-6 text-left md:p-7"
             >
               <button
                 onClick={() => setActive(null)}
@@ -1811,7 +1811,7 @@ function CertificateViewer({
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
-          <div className="absolute inset-0 bg-cream/90 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-[#0f0e0d]/75 backdrop-blur-[3px] supports-[backdrop-filter]:bg-[#0f0e0d]/65 max-sm:backdrop-blur-none max-sm:bg-[#0f0e0d]/85" />
           <motion.div
             initial={{ y: 16, scale: 0.98, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
