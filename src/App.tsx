@@ -455,8 +455,8 @@ function Intro({ onDone }: { onDone: () => void }) {
       {!leaving && (
         <motion.div
           className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-cream px-6"
-          exit={{ clipPath: "inset(0 0 100% 0)", y: "-3%", filter: "blur(8px)", scale: 1.02 }}
-          transition={{ duration: 1.05, ease: EASE }}
+          exit={{ clipPath: "inset(0 0 100% 0)", y: "-2%", filter: "blur(6px)", scale: 1.01 }}
+          transition={{ duration: 0.72, ease: EASE }}
           onClick={() => {
             document.documentElement.style.overflow = "";
             setLeaving(true);
@@ -493,10 +493,9 @@ function Intro({ onDone }: { onDone: () => void }) {
                 </p>
               )}
             </div>
-            <div className="mt-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
+            <div className="mt-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
               <span className={`h-2 w-2 rounded-full ${done ? "bg-terracotta live-dot" : "bg-[#fbbf24] animate-pulse"}`} />
-              {done ? <span className="text-terracotta">ready</span> : <span>typing...</span>}
-              <span>• click or ESC to skip</span>
+              {done ? <span className="text-terracotta">ready — click or ESC to skip</span> : <span>typing...</span>}
             </div>
           </div>
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-muted">SYSTEMS OVER SYNTAX</p>
@@ -536,6 +535,13 @@ function LangSwitch() {
 function Nav({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const { scrollYProgress } = useScroll();
+  const [activeId, setActiveId] = useState("top");
+  useEffect(() => {
+    const ids = ["top", ...links.map((l) => l.id)];
+    const obs = new IntersectionObserver((entries) => { const v = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]; if (v) setActiveId(v.target.id); }, { rootMargin: "-42% 0px -42% 0px", threshold: [0.15, 0.4, 0.75] });
+    ids.forEach((id) => { const el = document.getElementById(id); if (el) obs.observe(el); });
+    return () => obs.disconnect();
+  }, []);
   const bar = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.4 });
   const dots = [
     { id: "top", label: "SUPYAN SAURI", active: true },
@@ -544,10 +550,11 @@ function Nav({ ready }: { ready: boolean }) {
   // last dot (contact) highlight as hire
   return (
     <>
+      <a href="#top" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-terracotta focus:px-4 focus:py-2 focus:text-white">Skip to content</a>
       {/* desktop: vertical right-6 center — pixel square dots */}
       <nav
         aria-label="Section navigation"
-        className="fixed right-6 top-1/2 z-[90] hidden -translate-y-1/2 flex-col items-center gap-5 opacity-[0.25] transition-opacity duration-300 hover:opacity-100 md:flex"
+        className="fixed right-6 top-1/2 z-[90] hidden -translate-y-1/2 flex-col items-center gap-3.5 opacity-[0.72] transition-opacity duration-300 hover:opacity-100 md:flex"
       >
         <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border" />
         <motion.div
@@ -555,18 +562,19 @@ function Nav({ ready }: { ready: boolean }) {
           style={{ scaleY: bar, height: "100%" }}
         />
         {dots.map((d, i) => {
-          const isActive = i === 0 || i === dots.length - 1;
+          const isActive = activeId === d.id;
           return (
             <button
               key={d.id}
               onClick={() => scrollToId(d.id)}
               aria-label={d.label}
-              className="group relative flex items-center justify-center"
+              aria-current={isActive ? "true" : undefined}
+              className="group relative flex h-8 w-8 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
             >
               <span
                 className={`relative block border bg-cream transition-colors ${
                   isActive
-                    ? `h-3 w-3 rounded-full border-terracotta bg-terracotta group-hover:bg-terracotta group-hover:border-terracotta`
+                    ? `h-3 w-3 rounded-full border-terracotta bg-terracotta group-hover:bg-terracotta group-hover:border-terracotta shadow-[0_0_10px_rgba(224,122,95,0.35)]`
                     : `h-2.5 w-2.5 rounded-full border-border group-hover:border-terracotta group-hover:bg-terracotta`
                 }`}
               />
@@ -581,7 +589,7 @@ function Nav({ ready }: { ready: boolean }) {
       {/* mobile: horizontal bottom center — pixel square dots */}
       <nav
         aria-label="Section navigation"
-        className="fixed bottom-5 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-3 opacity-[0.4] transition-opacity hover:opacity-100 active:opacity-100 md:hidden"
+        className="fixed bottom-5 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-2 opacity-[0.62] transition-opacity hover:opacity-100 active:opacity-100 md:hidden"
       >
         <div className="pointer-events-none absolute inset-x-3 top-1/2 h-px -translate-y-1/2 bg-border" />
         <motion.div
@@ -589,13 +597,14 @@ function Nav({ ready }: { ready: boolean }) {
           style={{ scaleX: bar }}
         />
         {dots.map((d, i) => {
-          const isActive = i === 0 || i === dots.length - 1;
+          const isActive = activeId === d.id;
           return (
             <button
               key={d.id}
               onClick={() => scrollToId(d.id)}
               aria-label={d.label}
-              className="relative flex h-7 w-7 items-center justify-center"
+              aria-current={isActive ? "true" : undefined}
+              className="relative flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
             >
               <span
                 className={`relative block border bg-cream transition-colors ${
@@ -793,7 +802,7 @@ const dict = {
     },
     stackEyebrow: "Perangkat Kerja",
     stackTitle: "PERANGKAT YANG SAYA PAKAI.",
-    stackDesc: "Kumpulan teknologi yang saya gunakan untuk membangun sistem data, aplikasi web, dan riset — dari perancangan hingga deployment.",
+    stackDesc: "Dari perancangan hingga deployment — pipeline yang mengubah 12 PDF mentah menjadi sistem siap pakai.",
     projectsEyebrow: "Dari Ide Jadi Nyata",
     projectsTitle: "DARI IDE JADI NYATA.",
     experience: {
@@ -933,13 +942,11 @@ function Hero({ ready }: { ready: boolean }) {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, light ? 0.99 : 0.92]);
   const gridY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -30]);
-  const stripeY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -48]);
   const taglineY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -24]);
   const ctaY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -18]);
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
-      {/* epic parallax bg: stripes 0.5x + grid 0.3x + scanline */}
-      <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ y: stripeY, backgroundImage: "repeating-linear-gradient(-45deg, transparent 0 14px, rgba(232,17,45,0.5) 14px 16px)" } as unknown as Record<string, unknown>} />
+      {/* Hero: Blueprint Grid 32px + scanline — stripes cuma di Intro biar gak duplikat */}
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute inset-y-0 w-[1px] bg-terracotta/0 max-sm:hidden" initial={{ left: "-2%", opacity: 0 }} animate={{ left: ["-2%", "102%"], opacity: [0, 0.85, 0.85, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatDelay: 2.2, delay: 1.2 }} style={{ boxShadow: "0 0 18px rgba(224,122,95,0.35), 0 0 42px rgba(224,122,95,0.14)", background: "linear-gradient(to bottom, transparent, rgba(224,122,95,0.9) 18%, rgba(224,122,95,0.9) 82%, transparent)" }} />
       {/* corner brackets blueprint — keep */}
@@ -2016,7 +2023,7 @@ function Lab() {
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.6, ease: EASE, delay: 0.12 + idx * 0.1 }}
               whileHover={{ y: -4 }}
-              className={`warm-card flex w-full min-w-0 flex-col overflow-hidden break-words ${idx === 1 ? "p-5 sm:p-7 md:p-9 md:-translate-y-4" : "p-5 sm:p-7 md:p-8"}`}
+              className={`warm-card flex w-full min-w-0 flex-col overflow-hidden break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${idx === 1 ? "p-5 sm:p-7 md:p-9 md:-translate-y-4" : "p-5 sm:p-7 md:p-8"}`}
             >
               <div className="flex min-w-0 items-center gap-3">
                 <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-terracotta bg-terracotta font-mono text-sm font-black text-white">
@@ -2053,8 +2060,8 @@ function Contact() {
   return (
     <footer id="contact" className="relative overflow-hidden px-[5vw] pb-10 pt-[16vh] bg-cream">
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.4]" />
-      <div className="absolute left-[-5%] top-[10%] h-[460px] w-[460px] rounded-none bg-terracotta/8 blur-[60px]" />
-      <div className="absolute right-[-5%] top-[20%] h-[460px] w-[460px] rounded-none bg-violet/12 blur-[60px]" />
+      {/* grain mengganti orb duplikat Hero biar fase beda */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(245,239,230,0.9) 1px, transparent 0)", backgroundSize: "22px 22px" }} />
       <div className="relative mx-auto max-w-[1120px] text-center">
         <Eyebrow index="05" label={t.contactEyebrow} />
         <SplitReveal
@@ -2119,6 +2126,7 @@ function App() {
   const [ready, setReady] = useState(false);
   const [lang, setLang] = useState<Lang>("id");
   useLenis();
+  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   const bands = dict[lang].bands;
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
@@ -2127,21 +2135,11 @@ function App() {
       <GlowCursor />
       <Nav ready={ready} />
       <Hero ready={ready} />
-      <div className="relative">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[200px] bg-gradient-to-b from-cream/40 via-cream-deep/10 to-transparent"
-        />
-        <div className="relative">
-          <KineticBand text={bands.capabilities} />
-        </div>
-        <Stack />
-      </div>
+      <Stack />
       <KineticBand text={bands.selectedWork} reverse />
       <Projects />
       <KineticBand text={bands.experience} />
       <Experience />
-      <KineticBand text={bands.howIBuild} reverse />
       <Lab />
       <KineticBand text={bands.letsBuild} />
       <Contact />
