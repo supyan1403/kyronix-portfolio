@@ -788,7 +788,7 @@ const dict = {
     hero: {
       hi: "Halo, saya Supyan Sauri",
       ctaPrimary: "Hubungi Saya",
-      ctaSecondary: "Lihat Karya Terpilih",
+      ctaSecondary: "Jelajahi Hasil",
       tagline: "DARI IDE KE INFRA.",
     },
     stackEyebrow: "Perangkat Kerja",
@@ -848,7 +848,7 @@ const dict = {
     hero: {
       hi: "Hey — I'm Supyan Sauri",
       ctaPrimary: "Contact Me",
-      ctaSecondary: "View Builds",
+      ctaSecondary: "Explore Builds",
       tagline: "FROM IDEA TO INFRA.",
     },
     stackEyebrow: "My Toolkit",
@@ -936,11 +936,8 @@ function Hero({ ready }: { ready: boolean }) {
   const glowY = useTransform(scrollYProgress, [0, 1], [0, light ? -16 : -60]);
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
-      {light ? null : <motion.div aria-hidden className="absolute inset-0 halftone opacity-[0.04]" style={{ y: halftoneY }} />}
-      {light ? null : <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[720px] w-[980px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.09] blur-[70px]" style={{ y: glowY }} />}
-      {light ? null : <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] h-[460px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sage/10 blur-[80px]" style={{ y: glowY }} />}
-      {/* HP: satu glow ringan statis — hemat blur layer, tetap warm */}
-      {light ? <div aria-hidden className="pointer-events-none absolute left-1/2 top-[40%] h-[420px] w-[340px] max-w-[90vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/10 blur-[36px]" /> : null}
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-cream via-cream to-cream" />
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[46%] h-[560px] w-[900px] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta/[0.045] blur-[52px] max-sm:h-[380px] max-sm:w-[84vw] max-sm:bg-terracotta/[0.035] max-sm:blur-[28px]" />
       <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={light ? ({ opacity: heroOpacity } as unknown as Record<string, unknown>) : ({ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>)} initial={light ? ({ opacity: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, filter: "blur(10px)" } as unknown as Record<string, unknown>)} animate={light ? ({ opacity: 1 } as unknown as Record<string, unknown>) : low ? (ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)) : (ready ? ({ opacity: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>))} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
         <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.35 }}>
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
