@@ -157,8 +157,13 @@ function useLenis() {
     });
     lenisInstance = lenis;
     let raf = 0;
+    let last = 0;
     const loop = (t: number) => {
-      lenis.raf(t);
+      // low-end throttle: cap ~80hz work, keep smooth but fewer ticks
+      if (!isLow || t - last >= 12) {
+        lenis.raf(t);
+        last = t;
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -324,11 +329,33 @@ function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yello
   );
 }
 
-/* ---------- Kinetic band — tanpa BG (menyatu global) + solid 3× (selang-seling) ---------- */
+/* ---------- Kinetic band — tanpa BG solid 3× selang-seling (adaptive: scroll-linked desktop, CSS marquee low-end) ---------- */
 function KineticBand({ text, accent, reverse }: { text: string; accent?: string; reverse?: boolean }) {
+  const low = useIsLowEnd();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const x = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
+  // low-end: no 5× scroll listeners — pure CSS marquee (same look selang-seling via reverse direction)
+  if (low) {
+    return (
+      <div className="overflow-hidden bg-transparent py-7 md:py-9" aria-hidden>
+        <div
+          className={`kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.06em] text-ink md:gap-16 marquee-track ${reverse ? "[animation-direction:reverse]" : ""}`}
+          style={{ animationDuration: "28s" } as React.CSSProperties}
+        >
+          <span>{text}</span>
+          <span className="text-terracotta">{accent ?? "//"}</span>
+          <span>{text}</span>
+          <span className="text-terracotta">{accent ?? "//"}</span>
+          <span>{text}</span>
+          <span className="text-terracotta">{accent ?? "//"}</span>
+          <span>{text}</span>
+          <span className="text-terracotta">{accent ?? "//"}</span>
+          <span>{text}</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div ref={ref} className="overflow-hidden bg-transparent py-7 md:py-9" aria-hidden>
       <motion.div
@@ -1443,11 +1470,24 @@ function ExpRow({
 }) {
   const Icon = e.icon;
   const { lang } = useLang();
+  const low = useIsLowEnd();
   const t = dict[lang];
   const period = (e.period as { id: string; en: string })[lang] ?? (e.period as unknown as string);
   const role = (e.role as { id: string; en: string })[lang] ?? (e.role as unknown as string);
   const points = (Array.isArray(e.points) ? e.points : (e.points as { id: string[]; en: string[] })[lang]) as string[];
-  // 100% desktop — no mobile optimize (scroll-linked MotionValue for all)
+  // adaptive: desktop scroll-linked MotionValue (8 transforms), low-end CSS transition via IntersectionObserver
+  const ioRef = useRef<HTMLDivElement>(null);
+  const [lowActive, setLowActive] = useState(false);
+  useEffect(() => {
+    if (!low) return;
+    const el = ioRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setLowActive(entry.isIntersecting), { rootMargin: "-28% 0px -58% 0px", threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [low]);
+  const cc = "320ms cubic-bezier(0.22,1,0.36,1)" as const;
+  // desktop still buttery
   const glow = useTransform(smooth, [dotPos - 0.16, dotPos - 0.015], [0, 1], { clamp: true });
   const dotScale = useTransform(glow, [0, 1], [1, 1.14]);
   const dotBg = useTransform(glow, [0, 1], ["rgba(255,251,245,0)", "rgba(224,122,95,0.08)"] as unknown as string[]);
@@ -1462,6 +1502,66 @@ function ExpRow({
   ]);
   const cardShadow = useTransform(glow, [0, 1], ["0 8px 24px rgba(28,25,23,0.06)", "0 8px 24px rgba(28,25,23,0.06), 0 0 20px rgba(224,122,95,0.08)"]);
   const [open, setOpen] = useState(false);
+  if (low) {
+    const dotStyleLow: React.CSSProperties = {
+      color: lowActive ? "#E07A5F" : "#78716C",
+      backgroundColor: lowActive ? "rgba(224,122,95,0.08)" : "rgba(255,251,245,0)",
+      filter: lowActive ? "drop-shadow(0 0 10px rgba(224,122,95,0.12)) drop-shadow(0 0 22px rgba(224,122,95,0.12))" : "drop-shadow(0 0 0 rgba(247,255,60,0))",
+      transform: lowActive ? "scale(1.14)" : "scale(1)",
+      transition: `color ${cc}, background-color ${cc}, filter ${cc}, transform ${cc}`,
+    };
+    const cardStyleLow: React.CSSProperties = {
+      borderColor: lowActive ? "#E07A5F" : "#E7E5E4",
+      boxShadow: lowActive ? "0 8px 24px rgba(28,25,23,0.06), 0 0 20px rgba(224,122,95,0.08)" : "0 8px 24px rgba(28,25,23,0.06)",
+      transition: `border-color ${cc}, box-shadow ${cc}`,
+    };
+    const iconStyleLow: React.CSSProperties = { color: lowActive ? "#E07A5F" : "#78716C", transition: `color ${cc}` };
+    return (
+      <div ref={ioRef} className={`relative flex w-full ${isLeft ? "md:justify-start" : "md:justify-end"} justify-end`}>
+        <span data-dot aria-hidden className="absolute left-[14px] top-8 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] bg-transparent md:left-1/2 md:top-1/2" style={dotStyleLow}>
+          <span className="pointer-events-none absolute -inset-3 rounded-md bg-terracotta/20 blur-[8px]" style={{ opacity: lowActive ? 0.75 : 0, transition: `opacity ${cc}` }} />
+          <ChipPixel size={26} />
+        </span>
+        <article onClick={onJump} className={`warm-card relative z-[2] w-[calc(100%-56px)] shrink-0 cursor-pointer p-7 md:w-[520px] md:min-w-[520px] md:max-w-[520px] md:p-9 ${isLeft ? "md:mr-auto md:ml-0" : "md:ml-auto md:mr-0"}`} style={cardStyleLow}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <Tag tone={e.tone}>{period}</Tag>
+              <h3 className="mt-5 font-sans text-2xl font-semibold uppercase tracking-[0.06em] md:text-3xl">{role}</h3>
+              <p className="mt-1 text-muted">{e.org}</p>
+            </div>
+            <span className="shrink-0" style={iconStyleLow}><Icon size={30} /></span>
+          </div>
+          <div className="hidden sm:block">
+            <ul className="mt-6 space-y-2 border-t border-border pt-6">
+              {points.map((p) => (
+                <li key={p} className="flex gap-3 leading-relaxed text-muted">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: lowActive ? "rgba(224,122,95,1)" : "rgba(120,113,108,0.25)", transition: `background-color ${cc}` }} />
+                  {p}
+                </li>
+              ))}
+            </ul>
+            {(e as { certificateHref?: string }).certificateHref && (
+              <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-4">
+                <button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex items-center gap-2 bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button>
+                <button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5">{(t.experience as { download: string }).download} <Download size={12} /></button>
+              </div>
+            )}
+          </div>
+          <div className="sm:hidden">
+            {open ? (
+              <div className="overflow-hidden">
+                <ul className="mt-6 space-y-2 border-t border-border pt-6">
+                  {points.map((p) => (<li key={p} className="flex gap-3 leading-relaxed text-muted"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: lowActive ? "rgba(224,122,95,1)" : "rgba(120,113,108,0.25)", transition: `background-color ${cc}` }} />{p}</li>))}
+                </ul>
+                {(e as { certificateHref?: string }).certificateHref && (<div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4"><button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex cursor-pointer items-center gap-2 bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button><button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink">{(t.experience as { download: string }).download} <Download size={12} /></button></div>)}
+              </div>
+            ) : (<p className="mt-4 line-clamp-2 border-t border-border pt-4 text-sm leading-relaxed text-muted/80">{points[0]}</p>)}
+            <button type="button" onClick={(ev) => { ev.stopPropagation(); setOpen((v) => !v); }} className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 border px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest ${open ? "border-border/20 bg-transparent text-ink" : "border-terracotta bg-terracotta text-white hover:bg-[#d46a52]"}`}>{open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}</button>
+          </div>
+        </article>
+      </div>
+    );
+  }
   const dotStyle = { scale: dotScale, backgroundColor: dotBg, color: dotColor, filter: dotShadow } as unknown as Record<string, unknown>;
   const cardStyle = { borderColor: cardBorder, boxShadow: cardShadow } as unknown as Record<string, unknown>;
   const haloStyle = { opacity: haloOpacity } as unknown as Record<string, unknown>;
