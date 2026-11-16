@@ -191,13 +191,13 @@ function useLenis() {
 function GlowCursor() {
   const x = useMotionValue(-400);
   const y = useMotionValue(-400);
-  const sx = useSpring(x, { stiffness: 140, damping: 22, mass: 0.4 });
-  const sy = useSpring(y, { stiffness: 140, damping: 22, mass: 0.4 });
+  const sx = useSpring(x, { stiffness: 180, damping: 26, mass: 0.35 });
+  const sy = useSpring(y, { stiffness: 180, damping: 26, mass: 0.35 });
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return;
     const move = (e: MouseEvent) => {
-      x.set(e.clientX - 200);
-      y.set(e.clientY - 200);
+      x.set(e.clientX - 110);
+      y.set(e.clientY - 110);
     };
     window.addEventListener("mousemove", move);
     return () => window.removeEventListener("mousemove", move);
@@ -205,12 +205,12 @@ function GlowCursor() {
   return (
     <motion.div
       aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-[5] hidden h-[400px] w-[400px] rounded-full md:block"
+      className="pointer-events-none fixed left-0 top-0 z-[5] hidden h-[220px] w-[220px] rounded-full md:block"
       style={{
         x: sx,
         y: sy,
         background:
-          "radial-gradient(circle, rgba(224,122,95,0.07), rgba(143,168,155,0.06) 40%, transparent 70%)",
+          "radial-gradient(circle, rgba(224,122,95,0.045), rgba(143,168,155,0.035) 38%, transparent 68%)",
       }}
     />
   );
