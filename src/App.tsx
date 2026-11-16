@@ -548,14 +548,7 @@ function Nav({ ready }: { ready: boolean }) {
       for (const id of ids) {
         const el = document.getElementById(id);
         if (!el) continue;
-        // Projects h-[300vh]: pakai sentinel sticky, bukan section penuh
-        let r: DOMRect;
-        if (id === "projects") {
-          const sticky = el.querySelector<HTMLElement>(".sticky");
-          r = (sticky ?? el).getBoundingClientRect();
-        } else {
-          r = el.getBoundingClientRect();
-        }
+        const r = el.getBoundingClientRect();
         const mid = (r.top + r.bottom) / 2;
         const inBand = r.top <= bandBottom && r.bottom >= bandTop;
         if (inBand) {
@@ -568,7 +561,7 @@ function Nav({ ready }: { ready: boolean }) {
       for (const id of ids) {
         const el = document.getElementById(id);
         if (!el) continue;
-        const r = (id === "projects" ? (el.querySelector<HTMLElement>(".sticky") ?? el) : el).getBoundingClientRect();
+        const r = el.getBoundingClientRect();
         const mid = (r.top + r.bottom) / 2;
         const d = Math.abs(mid - cy);
         if (d < bd) { bd = d; b = id; }
@@ -582,7 +575,8 @@ function Nav({ ready }: { ready: boolean }) {
     window.addEventListener("resize", pick);
     return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", pick); };
   }, []);
-  const bar = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.4 });
+  // garis WAJIB pas scroll: pakai progress mentah (tanpa spring lambat), section panjang otomatis melambat
+  const bar = scrollYProgress;
   const dots = [
     { id: "top", label: "SUPYAN SAURI", active: true },
     ...links.map((l) => ({ id: l.id, label: l.label[lang], active: false })),
@@ -1126,32 +1120,40 @@ function Stack() {
   const { lang } = useLang();
   const t = dict[lang];
   const low = useIsLowEnd();
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: stackProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: stackProgress } = useScroll({ target: cardsRef, offset: ["start end", "end start"] });
   const stackY0 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [28, -28]);
   const stackY1 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [44, -36]);
   const stackY2 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [60, -44]);
   const stackYs = [stackY0, stackY1, stackY2] as const;
   return (
-    <section id="stack" ref={sectionRef} className="relative px-[5vw] py-[18vh] bg-cream overflow-x-clip">
-      <div className="relative mx-auto max-w-[1120px]">
-        <Eyebrow index="01" label={t.stackEyebrow} />
-        <SplitReveal
-          key={t.stackTitle}
-          text={t.stackTitle}
-          className="max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.1] tracking-[0.02em]"
-        />
-        <motion.p
-          initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
-          whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
-          className="mt-4 max-w-2xl text-lg leading-relaxed"
-          style={{ color: WARM.muted }}
-        >
-          {t.stackDesc}
-        </motion.p>
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
+    <section id="stack" className="relative bg-cream overflow-x-clip">
+      {/* Opening — full 1 section text-only */}
+      <div className="relative flex min-h-[100dvh] items-center justify-center px-[5vw] py-[12vh]">
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+        <div className="relative mx-auto max-w-[1120px] text-center">
+          <Eyebrow index="01" label={t.stackEyebrow} />
+          <SplitReveal
+            key={t.stackTitle}
+            text={t.stackTitle}
+            className="mx-auto max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.1] tracking-[0.02em]"
+          />
+          <motion.p
+            initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+            whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
+            className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed"
+            style={{ color: WARM.muted }}
+          >
+            {t.stackDesc}
+          </motion.p>
+        </div>
+      </div>
+      {/* Cards-only — no title */}
+      <div ref={cardsRef} className="relative px-[5vw] pb-[18vh]">
+        <div className="relative mx-auto max-w-[1120px]">
+          <div className="grid gap-6 md:grid-cols-3">
           {stack.map((group, i) => {
             const Icon = group.icon;
             const accentColor = group.tone === "lime" ? WARM.terracotta : group.tone === "coral" ? WARM.terracotta : WARM.sage;
@@ -1182,6 +1184,7 @@ function Stack() {
             );
           })}
         </div>
+      </div>
       </div>
     </section>
   );
@@ -1300,25 +1303,27 @@ function Projects() {
   const low = useIsLowEnd();
   const smoothX = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.6 });
   const x = useTransform(smoothX, [0, 1], [0, -maxX]);
-  const titleY = useTransform(scrollYProgress, [0, 0.35], low ? [0, 0] : [0, -40]);
-  const titleScale = useTransform(scrollYProgress, [0, 0.32], low ? [1, 1] : [1, 0.985]);
   const orbScale = useTransform(scrollYProgress, [0, 1], low ? [1, 1] : [1, 1.22]);
 
   return (
-    <section id="projects" ref={ref} className="relative h-[300vh]">
+    <div id="projects">
+      {/* Projects Opening — full 1 section text-only */}
+      <section className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-cream px-[5vw] py-[12vh]">
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+        <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
+          <Eyebrow index="02" label={t.projectsEyebrow} />
+          <SplitReveal
+            key={t.projectsTitle}
+            text={t.projectsTitle}
+            className="mx-auto font-display text-[clamp(2.3rem,5.2vw,4.25rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
+          />
+          <span aria-hidden className="mx-auto mt-6 hidden font-mono text-[11px] tracking-[0.18em] text-muted md:inline-flex items-center gap-2"><span className="h-px w-8 bg-border" /> SCROLL → DRAG PADA KARTU</span>
+        </div>
+      </section>
+      {/* Projects Track — cards-only h-[300vh] sticky */}
+      <section ref={ref} className="relative h-[300vh]">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
         <motion.div aria-hidden className="orb right-[-10%] top-[20%] h-[420px] w-[420px] bg-terracotta/10 will-change-transform" style={{ scale: orbScale } as unknown as Record<string, unknown>} />
-        <motion.div style={{ y: titleY, scale: titleScale } as unknown as Record<string, unknown>} className="mx-auto mb-10 w-[min(1120px,90vw)] pt-16 will-change-transform">
-          <Eyebrow index="02" label={t.projectsEyebrow} />
-          <div className="flex items-end justify-between gap-6">
-            <SplitReveal
-              key={t.projectsTitle}
-              text={t.projectsTitle}
-              className="font-display text-[clamp(2.3rem,5.2vw,4.25rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
-            />
-            <span aria-hidden className="hidden font-mono text-[11px] tracking-[0.18em] text-muted md:inline-flex items-center gap-2"><span className="h-px w-8 bg-border" /> SCROLL → DRAG</span>
-          </div>
-        </motion.div>
         <motion.div
           ref={trackRef}
           style={{ x } as unknown as Record<string, unknown>}
@@ -1472,7 +1477,8 @@ function Projects() {
         )}
       </AnimatePresence>
       {docHref && <CertificateViewer href={docHref} open={!!docHref} onClose={() => setDocHref(null)} kind="article" />}
-    </section>
+      </section>
+      </div>
   );
 }
 
@@ -1986,15 +1992,24 @@ function Experience() {
   };
 
   return (
-    <section ref={trackRef} id="experience" className="relative px-[5vw] py-[10vh] md:py-[14vh] bg-cream overflow-x-clip">
+    <div id="experience" className="relative bg-cream overflow-x-clip">
+      {/* Opening — full 1 section text-only */}
+      <section className="relative flex min-h-[100dvh] items-center justify-center px-[5vw] py-[12vh] overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+        <div className="relative mx-auto max-w-[1120px] text-center">
+          <Eyebrow index="03" label={t.experience.eyebrow} />
+          <SplitReveal
+            key={t.experience.title}
+            text={t.experience.title}
+            className="mx-auto max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
+          />
+          <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed" style={{ color: WARM.muted }}>{(t.experience as { hint: string }).hint}</p>
+        </div>
+      </section>
+      {/* Timeline — cards-only */}
+      <section ref={trackRef} className="relative px-[5vw] pb-[14vh] pt-4 md:pb-[14vh] overflow-x-clip">
       <motion.div style={{ opacity: expOpacity } as unknown as Record<string, unknown>} className="mx-auto max-w-[1120px] will-change-transform">
-        <Eyebrow index="03" label={t.experience.eyebrow} />
-        <SplitReveal
-          key={t.experience.title}
-          text={t.experience.title}
-          className="max-w-4xl font-display text-[clamp(2.4rem,6.2vw,4.75rem)] font-extrabold leading-[1.08] tracking-[0.02em]"
-        />
-        <div className="relative mt-10">
+        <div className="relative">
           <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-border md:left-1/2" aria-hidden />
           {/* warm pipe — 100% desktop (no mobile split) */}
           <motion.div
@@ -2017,7 +2032,8 @@ function Experience() {
         </div>
       </motion.div>
       <CertificateViewer href={certHref} open={!!certHref} onClose={() => setCertHref(null)} />
-    </section>
+      </section>
+      </div>
   );
 }
 
@@ -2033,28 +2049,36 @@ function Lab() {
     tone: (["violet", "yellow", "pink"] as const)[i]!,
   }));
   return (
-    <section id="lab" className="relative overflow-x-clip px-4 sm:px-[5vw] py-[14vh] bg-cream">
+    <div id="lab" className="relative bg-cream overflow-x-clip">
+      {/* Opening — full 1 section text-only */}
+      <section className="relative flex min-h-[100dvh] items-center justify-center px-4 sm:px-[5vw] py-[12vh] overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+        <div className="relative mx-auto w-full max-w-[1120px] min-w-0 text-center">
+          <Eyebrow index="04" label={t.labEyebrow} />
+          <SplitReveal
+            key={t.labTitle}
+            text={t.labTitle}
+            className="mx-auto max-w-3xl font-display text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
+          />
+          <motion.p
+            initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+            whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
+            className="mx-auto mt-4 max-w-2xl leading-relaxed"
+            style={{ color: WARM.muted }}
+          >
+            {t.labDesc}
+          </motion.p>
+        </div>
+      </section>
+      {/* Steps — cards-only */}
+      <section className="relative overflow-x-clip px-4 sm:px-[5vw] pb-[14vh] pt-4">
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.5]" />
       <div aria-hidden className="pointer-events-none absolute left-[10%] top-[10%] h-[380px] w-[380px] rounded-none bg-terracotta/8 blur-[60px] max-sm:hidden" />
       <div aria-hidden className="pointer-events-none absolute right-[-5%] bottom-[0%] h-[420px] w-[420px] rounded-none bg-sage/10 blur-[60px] max-sm:hidden" />
       <div className="relative mx-auto w-full max-w-[1120px] min-w-0">
-        <Eyebrow index="04" label={t.labEyebrow} />
-        <SplitReveal
-          key={t.labTitle}
-          text={t.labTitle}
-          className="max-w-3xl font-display text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
-        />
-        <motion.p
-          initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
-          whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.18 }}
-          className="mt-4 max-w-2xl leading-relaxed"
-          style={{ color: WARM.muted }}
-        >
-          {t.labDesc}
-        </motion.p>
-        <div className="mt-10 grid w-full min-w-0 gap-4 sm:gap-6 md:grid-cols-3 md:items-start">
+        <div className="grid w-full min-w-0 gap-4 sm:gap-6 md:grid-cols-3 md:items-start">
           {steps.map((step, idx) => (
             <motion.article
               key={step.n}
@@ -2084,7 +2108,8 @@ function Lab() {
           ))}
         </div>
       </div>
-    </section>
+      </section>
+      </div>
   );
 }
 
