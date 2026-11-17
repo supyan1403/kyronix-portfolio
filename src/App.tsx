@@ -1350,6 +1350,120 @@ function ProjectsOpening() {
   );
 }
 
+function KReveal({ onDone }: { onDone?: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [played, setPlayed] = useState(false);
+  const low = useIsLowEnd();
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rx = useTransform(mx, [-1, 1], [8, -8]);
+  const ry = useTransform(my, [-1, 1], [-7, 7]);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let done = false;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting && !done && !played) {
+          done = true;
+          setPlayed(true);
+          // lock cinematic 1.8s — skip if modal open
+          const hasModal = document.body.style.overflow === "hidden";
+          if (!hasModal) {
+            lenisInstance?.stop();
+            const prev = document.body.style.overflow;
+            document.body.style.overflow = "hidden";
+            setTimeout(() => {
+              document.body.style.overflow = prev;
+              lenisInstance?.start();
+              requestAnimationFrame(() => lenisInstance?.resize());
+              onDone?.();
+            }, 1880);
+          } else onDone?.();
+        }
+      },
+      { threshold: 0.35 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [played, onDone]);
+  if (low) return null;
+  if (!played) return <div ref={ref} aria-hidden className="h-[8px] w-full" />;
+  return (
+    <div ref={ref} className="relative flex h-[54dvh] items-center justify-center overflow-visible bg-transparent py-[4vh] md:h-[62dvh]" aria-hidden>
+      <motion.div
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/14 blur-[80px] max-sm:h-[380px] max-sm:w-[380px]"
+        initial={{ opacity: 0, scale: 0.7 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.55, ease: EASE }}
+      />
+      <motion.div
+        className="relative flex items-center justify-center"
+        style={{ perspective: 900 } as unknown as Record<string, unknown>}
+        onMouseMove={(e) => {
+          const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+          mx.set(((e.clientX - r.left) / r.width - 0.5) * 2);
+          my.set(((e.clientY - r.top) / r.height - 0.5) * 2);
+        }}
+        onMouseLeave={() => { mx.set(0); my.set(0); }}
+      >
+        <motion.img
+          src="/kyronix-k.webp"
+          alt=""
+          width={520}
+          height={528}
+          loading="eager"
+          draggable={false}
+          className="relative h-[min(42dvh,360px)] w-auto select-none md:h-[min(52dvh,440px)]"
+          style={{ rotateX: rx, rotateY: ry } as unknown as Record<string, unknown>}
+          initial={{ opacity: 0, scale: 0.88, rotateX: 18, rotateY: -14 }}
+          animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0 }}
+          transition={{ type: "spring", stiffness: 340, damping: 26, mass: 0.9 }}
+        />
+        {/* light sweep */}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0, 1, 1, 0] }}
+          transition={{ duration: 1.8, times: [0, 0.38, 0.45, 0.78, 1], ease: "easeInOut" }}
+          style={{ filter: "blur(0.5px)" }}
+        >
+          <motion.div
+            className="absolute inset-y-0 w-[42%] bg-gradient-to-r from-transparent via-white/55 to-transparent"
+            initial={{ x: "-120%" }}
+            animate={{ x: "240%" }}
+            transition={{ duration: 0.95, delay: 0.72, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transform: "skewX(-18deg)" }}
+          />
+        </motion.div>
+      </motion.div>
+      <motion.p
+        className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-muted/70 max-sm:bottom-[5%] max-sm:text-[10px]"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.55, duration: 0.55, ease: EASE }}
+      >
+        KYRONIX — K
+      </motion.p>
+      {/* out */}
+      <motion.div
+        className="pointer-events-none absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 0, 0, 1] }}
+        transition={{ duration: 1.88, times: [0, 0.72, 0.86, 1] }}
+      />
+      {/* tap to skip */}
+      <button
+        type="button"
+        aria-label="Skip"
+        onClick={() => { lenisInstance?.start(); document.body.style.overflow = ""; onDone?.(); setPlayed(false); }}
+        className="absolute inset-0 cursor-pointer border-0 bg-transparent p-0"
+      />
+    </div>
+  );
+}
+
 function Projects() {
   const { lang } = useLang();
   const t = dict[lang];
@@ -1390,6 +1504,7 @@ function Projects() {
     <div id="projects" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
+      <KReveal />
       {/* Bento — asymmetric editorial 8/4 + 7/5 (pecah template) */}
       <section className="relative px-[5vw] pb-[14vh] pt-3">
         <div className="mx-auto max-w-[1120px]">
