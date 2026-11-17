@@ -1468,6 +1468,35 @@ function Projects() {
   const [docHref, setDocHref] = useState<string | null>(null);
   const folders = (t as unknown as { folders: Record<ProjectFolder | "all", string> }).folders;
   const [activeFolder, setActiveFolder] = useState<ProjectFolder | "all" | null>(null);
+  // hash shareable tipis: /#research /#iot /#webapp /#all — tanpa router, keep canvas 1 lembar
+  useEffect(() => {
+    const raw = window.location.hash.replace(/^#/, "");
+    const valid = ["research", "iot", "webapp", "all"] as const;
+    if ((valid as readonly string[]).includes(raw)) setActiveFolder(raw as ProjectFolder | "all");
+  }, []);
+  useEffect(() => {
+    const valid = ["research", "iot", "webapp", "all"] as const;
+    if (activeFolder && (valid as readonly string[]).includes(activeFolder)) {
+      const url = `#${activeFolder}`;
+      if (window.location.hash !== url) history.pushState(null, "", url);
+    } else if (activeFolder === null && valid.some((v) => window.location.hash === `#${v}`)) {
+      history.pushState(null, "", window.location.pathname + window.location.search);
+    }
+  }, [activeFolder]);
+  useEffect(() => {
+    const valid = ["research", "iot", "webapp", "all"] as const;
+    const onPop = () => {
+      const raw = window.location.hash.replace(/^#/, "");
+      if ((valid as readonly string[]).includes(raw)) setActiveFolder(raw as ProjectFolder | "all");
+      else {
+        setActiveFolder(null);
+        if (active) setActive(null);
+        if (docHref) setDocHref(null);
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [active, docHref]);
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActive(null); };
