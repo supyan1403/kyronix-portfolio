@@ -602,9 +602,9 @@ function KPage({ onDone }: { onDone: () => void }) {
             onTouchEnd={() => { mx.set(0); my.set(0); }}
           >
             <motion.img
-              src="/kyronix-k.webp"
+              src="/letters/kyronix-k.webp"
               alt="KYRONIX K"
-              width={469}
+              width={512}
               height={520}
               loading="eager"
               decoding="async"
@@ -615,7 +615,7 @@ function KPage({ onDone }: { onDone: () => void }) {
               animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
               transition={{ type: "spring", stiffness: 320, damping: 12, mass: 0.95, delay: 0.28 } as unknown as Record<string, unknown>}
             />
-            {/* circuit — garis ditarik keliling K jadi K LOGO (heksa + node pulse) — base already K LOGO.webp, SVG draw pathLength for reveal + pulse */}
+            {/* circuit — garis ditarik keliling K jadi K LOGO (heksa + node pulse) — base clean (/letters), SVG ditarik jadi LOGO */}
             <motion.svg
               aria-hidden
               viewBox="0 0 520 560"
@@ -653,8 +653,8 @@ function KPage({ onDone }: { onDone: () => void }) {
               aria-hidden
               className="pointer-events-none absolute inset-0 overflow-hidden"
               style={{
-                WebkitMaskImage: "url(/kyronix-k.png)",
-                maskImage: "url(/kyronix-k.png)",
+                WebkitMaskImage: "url(/letters/kyronix-k.png)",
+                maskImage: "url(/letters/kyronix-k.png)",
                 WebkitMaskSize: "contain",
                 maskSize: "contain",
                 WebkitMaskRepeat: "no-repeat",
