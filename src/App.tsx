@@ -1357,6 +1357,7 @@ function Projects() {
   const [docHref, setDocHref] = useState<string | null>(null);
   useEffect(() => {
     if (!active) return;
+    const y = lenisInstance?.scroll ?? window.scrollY;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActive(null); };
     window.addEventListener("keydown", onKey);
     const sb = window.innerWidth - document.documentElement.clientWidth;
@@ -1372,7 +1373,14 @@ function Projects() {
       document.body.style.overflow = prevBodyOverflow;
       document.body.style.paddingRight = prevBodyPad;
       document.documentElement.style.overflow = prevHtmlOverflow;
-      lenisInstance?.start();
+      // restore scroll pos — tanpa ini Chrome HP jump ke 0 terlihat "restart ke opening"
+      if (lenisInstance) {
+        lenisInstance.start();
+        lenisInstance.scrollTo(y, { immediate: true });
+      } else {
+        window.scrollTo(0, y);
+      }
+      requestAnimationFrame(() => lenisInstance?.resize());
     };
   }, [active]);
   const handleOpen = (p: (typeof projects)[number]) => setActive(p);
@@ -1965,7 +1973,7 @@ function PdfBlobViewer({ href, title, failed, onFailed }: { href: string; title:
   void _isCoarse;
   if (pdfDoc) {
     return (
-      <div className="flex min-h-0 flex-1 flex-col overflow-auto bg-[#1A1816] p-2 sm:p-3">
+      <div className="flex min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#1A1816] p-2 sm:p-3 [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
         <div className="flex flex-col gap-3">
           {Array.from({ length: pdfDoc.numPages }, (_, i) => (
             <PdfPage key={i} pdfDoc={pdfDoc} pageNum={i + 1} />
@@ -2016,6 +2024,7 @@ function CertificateViewer({
   useEffect(() => setFailed(false), [href, open]);
   useEffect(() => {
     if (!open) return;
+    const y = lenisInstance?.scroll ?? window.scrollY;
     const prev = document.body.style.overflow;
     const prevHtml = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
@@ -2028,10 +2037,16 @@ function CertificateViewer({
     return () => {
       document.body.style.overflow = prev;
       document.documentElement.style.overflow = prevHtml;
-      lenisInstance?.start();
       window.removeEventListener("keydown", onKey);
+      if (lenisInstance) {
+        lenisInstance.start();
+        lenisInstance.scrollTo(y, { immediate: true });
+      } else {
+        window.scrollTo(0, y);
+      }
+      requestAnimationFrame(() => lenisInstance?.resize());
     };
-  }, [open, onClose]);
+  }, [open]);
   const doDownload = async () => {
     if (!href) return;
     try {
@@ -2058,7 +2073,7 @@ function CertificateViewer({
               role="dialog"
               aria-modal="true"
               aria-label={title}
-              className="fixed inset-0 z-[100] flex min-h-[100dvh] items-start justify-center overflow-y-auto overscroll-contain p-3 sm:items-center sm:p-4 md:p-6"
+              className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden p-3 sm:p-4 md:p-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -2071,7 +2086,7 @@ function CertificateViewer({
                 exit={{ y: 8, scale: 0.98, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 380, damping: 24 }}
                 onClick={(e) => e.stopPropagation()}
-                className="relative my-auto flex h-[min(92dvh,920px)] max-h-[92dvh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-border bg-surface shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]"
+                className="relative flex h-[min(92dvh,920px)] max-h-[92dvh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-border bg-surface shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]"
               >
             {/* header branded — bukan toolbar chrome */}
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-cream px-3 py-2.5 sm:px-4 sm:py-3">
@@ -2102,7 +2117,7 @@ function CertificateViewer({
               </div>
             </div>
             {/* pdf — Chrome HP fix: fetch blob → iframe blob:, object sering blok di Chrome Android */}
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#141414] p-2 sm:p-3">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#141414]">
               <PdfBlobViewer href={href} title={title} failed={failed} onFailed={() => setFailed(true)} />
               <div className="flex shrink-0 flex-col gap-2 border-t border-border/20 pt-2 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
                 <span className="max-sm:text-xs">{failed ? "Preview diblokir Chrome — buka tab baru di bawah." : "HP / iOS tidak preview? Pakai tombol di bawah."}</span>
