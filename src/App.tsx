@@ -1285,7 +1285,7 @@ const projects = [
   {
     no: "01",
     title: "Digital Twin Platform",
-    kind: "Spatial Modeling · Research — 800m² Plot",
+    kind: "Spatial Modeling · Research",
     desc: { id: "Riset pemodelan spasial & Digital Twin untuk lahan pertanian 800m² memakai Kriging & Random Forest.", en: "Spatial modeling & Digital Twin research for 800m2 agricultural plot using Kriging & Random Forest." } as const,
     stack: ["Kriging", "Random Forest", "GeoPandas", "Python"],
     status: "RESEARCH DONE",
