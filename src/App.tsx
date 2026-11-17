@@ -6,6 +6,7 @@ import type { MotionValue } from "motion/react";
 import {
   animate,
   motion,
+  useInView,
   useMotionValue,
   useMotionValueEvent,
   useMotionTemplate,
@@ -1452,23 +1453,16 @@ function Stack() {
         <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
         <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[420px] w-[420px] bg-terracotta/10 blur-[60px] will-change-transform max-sm:hidden" style={{ y: openingTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto max-w-[1120px] text-center">
-          <motion.div style={{ y: openingTitleY } as unknown as Record<string, unknown>} className="will-change-transform">
+          <motion.div style={{ y: openingTitleY } as unknown as Record<string, unknown>} initial={{ opacity: 0 } as unknown as Record<string, unknown>} whileInView={{ opacity: 1 } as unknown as Record<string, unknown>} viewport={{ amount: 0.35, margin: "0px 0px -12% 0px" }} transition={{ duration: 0.7, ease: EASE }} className="will-change-transform">
             <Eyebrow index="" label={t.stackEyebrow} />
             <SplitReveal
               key={t.stackTitle}
               text={t.stackTitle}
               className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
             />
-            <motion.p
-              style={{ y: openingTitleY, color: WARM.muted } as unknown as Record<string, unknown>}
-              initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
-              whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
-              viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
-              transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
-              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed will-change-transform sm:text-base"
-            >
+            <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: WARM.muted }}>
               {(t as unknown as { stackSubtitle: string }).stackSubtitle}
-            </motion.p>
+            </p>
           </motion.div>
         </div>
       </section>
@@ -1593,23 +1587,16 @@ function ProjectsOpening() {
     <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-visible bg-transparent px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
       <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] -bottom-[8%] h-[640px] w-[900px] bg-sage/10 blur-[90px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
-        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="will-change-transform">
+        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} initial={{ opacity: 0 } as unknown as Record<string, unknown>} whileInView={{ opacity: 1 } as unknown as Record<string, unknown>} viewport={{ amount: 0.35, margin: "0px 0px -12% 0px" }} transition={{ duration: 0.7, ease: EASE }} className="will-change-transform">
           <Eyebrow index="" label={t.projectsEyebrow} />
           <SplitReveal
             key={t.projectsTitle}
             text={t.projectsTitle}
             className="mx-auto font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
           />
-            <motion.p
-              style={{ y: titleY, color: WARM.muted } as unknown as Record<string, unknown>}
-              initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
-              whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
-              viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
-              transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
-              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed will-change-transform sm:text-base"
-            >
-              {(t as unknown as { projectsSubtitle: string }).projectsSubtitle}
-            </motion.p>
+          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: WARM.muted }}>
+            {(t as unknown as { projectsSubtitle: string }).projectsSubtitle}
+          </p>
         </motion.div>
       </div>
     </section>
@@ -2355,19 +2342,12 @@ function ExperienceOpening() {
     <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-visible px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
       <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] -top-[8%] h-[640px] w-[900px] bg-terracotta/10 blur-[90px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto max-w-[1120px] text-center">
-        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="will-change-transform">
+        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} initial={{ opacity: 0 } as unknown as Record<string, unknown>} whileInView={{ opacity: 1 } as unknown as Record<string, unknown>} viewport={{ amount: 0.35, margin: "0px 0px -12% 0px" }} transition={{ duration: 0.7, ease: EASE }} className="will-change-transform">
           <Eyebrow index="" label={t.experience.eyebrow} />
           <SplitReveal key={t.experience.title} text={t.experience.title} className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]" />
-          <motion.p
-            style={{ y: titleY, color: WARM.muted } as unknown as Record<string, unknown>}
-            initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
-            whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
-            viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
-            className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed will-change-transform sm:text-base"
-          >
+          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: WARM.muted }}>
             {(t.experience as unknown as { subtitle: string }).subtitle}
-          </motion.p>
+          </p>
         </motion.div>
       </div>
     </section>
@@ -2478,24 +2458,17 @@ function Lab() {
         <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: labGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
         <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] top-[16%] h-[420px] w-[520px] bg-sage/10 blur-[60px] max-sm:hidden" style={{ y: labTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto w-full max-w-[1120px] min-w-0 text-center">
-          <motion.div style={{ y: labTitleY } as unknown as Record<string, unknown>} className="will-change-transform">
+          <motion.div style={{ y: labTitleY } as unknown as Record<string, unknown>} initial={{ opacity: 0 } as unknown as Record<string, unknown>} whileInView={{ opacity: 1 } as unknown as Record<string, unknown>} viewport={{ amount: 0.35, margin: "0px 0px -12% 0px" }} transition={{ duration: 0.7, ease: EASE }} className="will-change-transform">
             <Eyebrow index="" label={t.labEyebrow} />
             <SplitReveal
               key={t.labTitle}
               text={t.labTitle}
               className="mx-auto max-w-3xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
             />
+            <p className="mx-auto mt-6 max-w-2xl leading-relaxed" style={{ color: WARM.muted }}>
+              {t.labDesc}
+            </p>
           </motion.div>
-          <motion.p
-            style={{ y: labTitleY, color: WARM.muted } as unknown as Record<string, unknown>}
-            initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
-            whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
-            viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
-            className="mx-auto mt-6 max-w-2xl leading-relaxed will-change-transform"
-          >
-            {t.labDesc}
-          </motion.p>
         </div>
       </section>
       {/* Steps — cards-only */}
