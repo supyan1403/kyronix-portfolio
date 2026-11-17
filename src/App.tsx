@@ -1008,7 +1008,7 @@ function Hero({ ready }: { ready: boolean }) {
   const taglineY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -24]);
   const ctaY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -18]);
   return (
-    <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-cream pt-24 sm:pt-28">
+    <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28">
       {/* Hero: Blueprint Grid 32px + scanline — stripes cuma di Intro biar gak duplikat */}
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute inset-y-0 w-[1px] bg-terracotta/0 max-sm:hidden" initial={{ left: "-2%", opacity: 0 }} animate={{ left: ["-2%", "102%"], opacity: [0, 0.85, 0.85, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatDelay: 2.2, delay: 1.2 }} style={{ boxShadow: "0 0 18px rgba(224,122,95,0.35), 0 0 42px rgba(224,122,95,0.14)", background: "linear-gradient(to bottom, transparent, rgba(224,122,95,0.9) 18%, rgba(224,122,95,0.9) 82%, transparent)" }} />
@@ -1022,8 +1022,8 @@ function Hero({ ready }: { ready: boolean }) {
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
           {t2.hero.hi}
         </motion.p>
-        {/* KYRONIX — magnet desktop, ringan HP (tanpa blur/shine berat) */}
-        <h1 aria-label={FULL} className="relative inline-flex select-none flex-wrap justify-center font-display text-[clamp(3.8rem,11vw,8.5rem)] font-[800] leading-[0.86] tracking-[0.07em] text-ink">
+        {/* KYRONIX — Impact dense condensed, ringan HP (tanpa blur/shine berat) */}
+        <h1 aria-label={FULL} className="relative inline-flex select-none flex-wrap justify-center font-[Anton] text-[clamp(4.2rem,12vw,9rem)] font-normal leading-[0.82] tracking-[0.02em] text-ink [font-stretch:condensed]" style={{ fontFamily: "var(--font-impact)" } as React.CSSProperties}>
           <span className="sr-only">{FULL}</span>
           <span aria-hidden className="inline-flex">
             {FULL.split("").map((ch, i) => {
@@ -1168,7 +1168,7 @@ function Stack() {
   const flatX = useTransform(flatProgress, [0, 1], low ? [0, 0] : [-12, 12]);
   const flatXRev = useTransform(flatProgress, [0, 1], low ? [0, 0] : [10, -10]);
   return (
-    <section id="stack" className="relative bg-cream overflow-x-clip">
+    <section id="stack" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh text-only EPIC */}
       <section ref={openingRef} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]">
         <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
@@ -1223,28 +1223,22 @@ function Stack() {
   );
 }
 
-/* ---------- 3. Featured projects — warm-tagd builds — center-focus 10/10 ---------- */
-function ProjectStickyCard({ p, idx, progress, onOpen }: { p: (typeof projects)[number]; idx: number; progress: MotionValue<number>; onOpen: (pp: (typeof projects)[number]) => void }) {
+/* ---------- 3. Featured projects — warm-tagd builds — carousel (canvas C: no 300vh) ---------- */
+function ProjectCard({ p, idx, isActive, onOpen }: { p: (typeof projects)[number]; idx: number; isActive?: boolean; onOpen: (pp: (typeof projects)[number]) => void }) {
   const { lang } = useLang();
-  const low = useIsLowEnd();
-  const n = projects.length;
-  const center = (idx + 0.5) / n;
-  const span = 0.22;
-  const focus = useTransform(progress, [center - span, center, center + span], low ? [1, 1, 1] : [0.94, 1, 0.94], { clamp: true });
-  const focusY = useTransform(progress, [center - span, center, center + span], low ? [0, 0, 0] : [6, 0, 6], { clamp: true });
-  const glow = useTransform(progress, [center - span, center, center + span], [0, 1, 0], { clamp: true });
-  // border hijau hanya untuk selesai: RESEARCH DONE / LIVE NOW — lainnya tetap border netral
   const isDone = p.status === "RESEARCH DONE" || p.status === "LIVE NOW";
-  const accent = isDone ? "#22c55e" : "#E07A5F";
   const isHero = idx === 0;
   return (
-    <motion.article role="button" tabIndex={0} onClick={() => onOpen(p)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 380, damping: 22 }} style={{ scale: focus, y: focusY, boxShadow: useTransform(glow, [0, 1], ["0 8px 24px rgba(28,25,23,0.06)", isDone ? "0 12px 36px rgba(28,25,23,0.10), 0 0 28px rgba(34,197,94,0.18)" : "0 12px 36px rgba(28,25,23,0.10), 0 0 28px rgba(224,122,95,0.22)"]) as unknown as string, borderColor: useTransform(glow, [0, 1], [isDone ? "rgba(34,197,94,0.55)" : "#3A3632", accent]) as unknown as string } as unknown as Record<string, unknown>} className={"warm-card relative mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 md:mx-0 will-change-transform " + (isHero ? "min-h-[500px] w-[calc(100vw-32px)] max-w-[580px] p-6 md:w-[580px] md:p-7 " + (isDone ? "border-green-500/55" : "border-border") : "min-h-[480px] w-[calc(100vw-40px)] max-w-[540px] p-5 md:w-[540px] md:p-7 " + (isDone ? "border-green-500/35" : ""))}>
+    <motion.article role="button" tabIndex={0} onClick={() => onOpen(p)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }} animate={{ scale: isActive === false ? 0.96 : 1, opacity: isActive === false ? 0.72 : 1 }} transition={{ type: "spring", stiffness: 380, damping: 22 }} className={"warm-card relative mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 will-change-transform " + (isHero ? "min-h-[500px] w-[min(92vw,580px)] p-6 md:p-7 " + (isDone ? "border-green-500/55" : "border-border") : "min-h-[480px] w-[min(88vw,540px)] p-5 md:p-7 " + (isDone ? "border-green-500/35" : ""))} style={{ borderColor: isDone ? "#22c55e" : undefined } as React.CSSProperties}>
       {!isHero ? null : <span aria-hidden className={"pointer-events-none absolute -right-[1px] -top-[1px] px-2.5 py-1 font-mono text-[10px] font-black tracking-[0.16em] text-white " + (isDone ? "bg-green-600" : "bg-terracotta")}>FEATURED</span>}
       <div className="flex items-center justify-between"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span><span className={"inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 " + "warm-tag"}>{(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}<span className="break-words">{p.status}</span></span></div>
       <div className="min-w-0 flex-1"><p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p><h3 data-text={p.title} className={"font-sans font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink " + (isHero ? "text-[2.05rem] md:text-[2.5rem]" : "text-[2rem] md:text-4xl")}>{p.title}</h3><p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p></div>
       <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4"><div className="flex flex-1 flex-wrap gap-2 pr-2">{p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}</div><span className={"flex h-10 w-10 shrink-0 items-center justify-center border md:h-12 md:w-12 " + (isDone ? "border-green-500/30 bg-transparent text-green-600 hover:bg-green-600 hover:text-white hover:border-green-600" : "border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white")}><ArrowUpRight size={18} /></span></div>
     </motion.article>
   );
+}
+function ProjectStickyCard(p: { p: (typeof projects)[number]; idx: number; progress: MotionValue<number>; onOpen: (pp: (typeof projects)[number]) => void }) {
+  return <ProjectCard p={p.p} idx={p.idx} onOpen={p.onOpen} />;
 }
 
 /* ---------- 3. Featured projects — warm-tagd builds ---------- */
@@ -1301,7 +1295,7 @@ function ProjectsOpening() {
   const gridY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const titleY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [28, -32]);
   return (
-    <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-cream px-[5vw] py-[12vh]">
+    <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute -left-[8%] bottom-[12%] h-[420px] w-[520px] bg-sage/10 blur-[60px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
@@ -1321,21 +1315,10 @@ function ProjectsOpening() {
 function Projects() {
   const { lang } = useLang();
   const t = dict[lang];
-  const ref = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [maxX, setMaxX] = useState(0);
   const [active, setActive] = useState<(typeof projects)[number] | null>(null);
   const [docHref, setDocHref] = useState<string | null>(null);
-  useEffect(() => {
-    const measure = () => {
-      if (trackRef.current) setMaxX(Math.max(trackRef.current.scrollWidth - window.innerWidth, 0));
-    };
-    measure();
-    let t: number | undefined;
-    const onResize = () => { window.clearTimeout(t); t = window.setTimeout(measure, 150) as unknown as number; };
-    window.addEventListener("resize", onResize, { passive: true } as AddEventListenerOptions);
-    return () => { window.removeEventListener("resize", onResize); window.clearTimeout(t); };
-  }, []);
+  const [cur, setCur] = useState(0);
+  const low = useIsLowEnd();
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActive(null); };
@@ -1356,45 +1339,63 @@ function Projects() {
       lenisInstance?.start();
     };
   }, [active]);
-  const handleOpen = (p: (typeof projects)[number]) => {
-    setActive(p);
-  };
+  // keyboard arrows when focused on carousel
+  useEffect(() => {
+    const onK = (e: KeyboardEvent) => {
+      if (active) return;
+      if (e.key === "ArrowRight") setCur((c) => Math.min(projects.length - 1, c + 1));
+      if (e.key === "ArrowLeft") setCur((c) => Math.max(0, c - 1));
+    };
+    window.addEventListener("keydown", onK);
+    return () => window.removeEventListener("keydown", onK);
+  }, [active]);
+  const handleOpen = (p: (typeof projects)[number]) => setActive(p);
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const low = useIsLowEnd();
-  const smoothX = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.6 });
-  const x = useTransform(smoothX, [0, 1], [0, -maxX]);
-  const orbScale = useTransform(scrollYProgress, [0, 1], low ? [1, 1] : [1, 1.22]);
+  const prev = () => setCur((c) => (c - 1 + projects.length) % projects.length);
+  const next = () => setCur((c) => (c + 1) % projects.length);
 
   return (
-    <div id="projects">
-      {/* Projects Opening — full 100dvh EPIC */}
+    <div id="projects" className="relative bg-transparent overflow-x-clip">
+      {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
-      {/* Projects Track — cards-only h-[300vh] sticky */}
-      <section ref={ref} className="relative h-[300vh]">
-      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-        <motion.div aria-hidden className="orb right-[-10%] top-[20%] h-[420px] w-[420px] bg-terracotta/10 will-change-transform" style={{ scale: orbScale } as unknown as Record<string, unknown>} />
-        <motion.div
-          ref={trackRef}
-          style={{ x } as unknown as Record<string, unknown>}
-          className="flex w-max items-stretch gap-5 py-4 pl-[5vw] pr-[5vw] md:gap-7 md:pl-[max(5vw,calc((100vw-1120px)/2))] md:pr-[10vw] will-change-transform"
-        >
-          {projects.map((p, idx) => {
-            return (
-              <ProjectStickyCard key={p.no} p={p} idx={idx} progress={smoothX} onOpen={handleOpen} />
-            );
-          })}
-        </motion.div>
-        <div className="mx-auto mt-8 flex w-[min(1120px,90vw)] items-center gap-3">
-          <span className="font-mono text-[11px] tracking-[0.16em] text-muted tabular-nums">{String(1).padStart(2, "0")} — {String(projects.length).padStart(2, "0")}</span>
-          <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-border/40">
-            <motion.div className="h-full origin-left rounded-full bg-terracotta" style={{ scaleX: scrollYProgress, boxShadow: "0 0 10px rgba(224,122,95,0.4)" } as unknown as Record<string, unknown>} />
+      {/* Carousel — canvas C: nempel di 1 halaman, bukan 300vh */}
+      <section className="relative px-[5vw] pb-[14vh] pt-2">
+        <div className="mx-auto max-w-[1120px]">
+          {/* track: draggable + snap center */}
+          <div className="relative overflow-hidden rounded-none">
+            <motion.div
+              className="flex items-stretch gap-5 md:gap-7 will-change-transform"
+              animate={{ x: `calc(50% - ${cur * 560 + 280}px - ${cur * 20}px)` }}
+              transition={{ type: "spring", stiffness: 260, damping: 30 }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.18}
+              onDragEnd={(_: unknown, info: { offset: { x: number } }) => {
+                if (low) return;
+                if (info.offset.x < -60) next();
+                else if (info.offset.x > 60) prev();
+              }}
+            >
+              {projects.map((p, idx) => (
+                <ProjectCard key={p.no} p={p} idx={idx} isActive={idx === cur} onOpen={handleOpen} />
+              ))}
+            </motion.div>
           </div>
-          <motion.span className="font-mono text-[11px] font-bold tracking-[0.14em] text-terracotta tabular-nums" style={{ opacity: useTransform(scrollYProgress, [0, 0.15], [0.45, 1]) } as unknown as Record<string, unknown>}>
-            {useTransform(scrollYProgress, (v: number) => `${String(Math.min(projects.length, Math.max(1, Math.round(v * projects.length + 0.5))).toString().padStart(2, "0"))} / ${String(projects.length).padStart(2, "0")}`) as unknown as string}
-          </motion.span>
+          {/* controls: arrows + dots + counter */}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={prev} aria-label="Previous" className="inline-flex h-10 w-10 items-center justify-center border border-border bg-surface text-ink hover:border-terracotta hover:text-terracotta">‹</button>
+              <button type="button" onClick={next} aria-label="Next" className="inline-flex h-10 w-10 items-center justify-center border border-border bg-surface text-ink hover:border-terracotta hover:text-terracotta">›</button>
+              <span className="ml-2 font-mono text-[11px] tracking-[0.16em] text-muted tabular-nums">{String(cur + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              {projects.map((_, i) => (
+                <button key={i} onClick={() => setCur(i)} aria-label={`Go to ${i + 1}`} className={`h-2 rounded-full transition-all ${i === cur ? "w-6 bg-terracotta" : "w-2 bg-border"}`} />
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
       <AnimatePresence>
         {active && (
           <motion.div
@@ -1527,7 +1528,6 @@ function Projects() {
         )}
       </AnimatePresence>
       {docHref && <CertificateViewer href={docHref} open={!!docHref} onClose={() => setDocHref(null)} kind="article" />}
-      </section>
       </div>
   );
 }
@@ -2064,7 +2064,7 @@ function Experience() {
   };
 
   return (
-    <div id="experience" className="relative bg-cream overflow-x-clip">
+    <div id="experience" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC */}
       <ExperienceOpening />
       {/* Timeline — cards-only */}
@@ -2114,7 +2114,7 @@ function Lab() {
   const labGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const labTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
   return (
-    <div id="lab" className="relative bg-cream overflow-x-clip">
+    <div id="lab" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC */}
       <section ref={openingRef} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-4 sm:px-[5vw] py-[12vh]">
         <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: labGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
@@ -2239,7 +2239,7 @@ function Contact() {
   };
 
   return (
-    <footer id="contact" className="relative overflow-hidden px-[5vw] pb-10 pt-[16vh] bg-cream">
+    <footer id="contact" className="relative overflow-hidden px-[5vw] pb-10 pt-[16vh] bg-transparent">
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.4]" />
       {/* grain mengganti orb duplikat Hero biar fase beda */}
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(245,239,230,0.9) 1px, transparent 0)", backgroundSize: "22px 22px" }} />
@@ -2429,11 +2429,14 @@ function App() {
   const bands = dict[lang].bands;
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
-      <main className="crt relative bg-cream">
+      <main className="crt relative bg-cream overflow-x-clip">
+        {/* canvas C: 1 lembar Grid 32px kontinu Hero → Contact */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} />
       <Intro onDone={() => setReady(true)} />
       <GlowCursor />
       <Nav ready={ready} />
       <Hero ready={ready} />
+      <KineticBand text={bands.capabilities} />
       <Stack />
       <KineticBand text={bands.selectedWork} reverse />
       <Projects />
