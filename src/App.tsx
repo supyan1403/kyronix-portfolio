@@ -1334,9 +1334,8 @@ function ProjectsOpening() {
   const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
   const titleY = useTransform(scrollYProgress, [0, 1], [14, -16]);
   return (
-    <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
-      <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-      <motion.div aria-hidden className="pointer-events-none absolute -left-[8%] bottom-[12%] h-[420px] w-[520px] bg-sage/10 blur-[60px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
+    <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-visible bg-transparent px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
+      <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] -bottom-[8%] h-[640px] w-[900px] bg-sage/10 blur-[90px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
         <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="will-change-transform">
           <Eyebrow index="02" label={t.projectsEyebrow} />
@@ -2054,9 +2053,8 @@ function ExperienceOpening() {
   const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
   const titleY = useTransform(scrollYProgress, [0, 1], [14, -16]);
   return (
-    <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-hidden px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
-      <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-      <motion.div aria-hidden className="pointer-events-none absolute -right-[8%] top-[22%] h-[440px] w-[520px] bg-terracotta/10 blur-[60px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
+    <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-visible px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
+      <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] -top-[8%] h-[640px] w-[900px] bg-terracotta/10 blur-[90px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto max-w-[1120px] text-center">
         <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="will-change-transform">
           <Eyebrow index="03" label={t.experience.eyebrow} />
