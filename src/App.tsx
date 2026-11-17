@@ -604,7 +604,6 @@ function KPage({ onDone }: { onDone: () => void }) {
             poster="/kyronix-k-video-poster.jpg"
             autoPlay
             muted
-            loop
             playsInline
             preload="auto"
             onEnded={finish}
