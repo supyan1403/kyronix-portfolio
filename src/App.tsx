@@ -596,19 +596,8 @@ function KPage({ onDone }: { onDone: () => void }) {
           aria-label="Lanjut ke portfolio — klik atau tekan Esc"
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") finish(); }}
         >
-          {/* poster layer — opaque hitam + poster eager, no flash stack — fade out pas video ready */}
-          <motion.img
-            src="/kyronix-k-video-poster.jpg"
-            alt=""
-            aria-hidden
-            loading="eager"
-            decoding="sync"
-            className="absolute inset-0 h-full w-full object-cover"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: canShowVideo ? 0 : 1 }}
-            transition={{ duration: 0.55, ease: EASE }}
-            style={{ backgroundColor: "#000" } as React.CSSProperties}
-          />
+          {/* frame 0 = hitam solid — nutup Stack, video fade in pas ready (tidak bocor) */}
+          <div aria-hidden className="absolute inset-0 bg-black" />
           <motion.video
             ref={videoRef}
             src="/kyronix-k-video.mp4"
