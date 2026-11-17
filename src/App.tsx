@@ -1142,10 +1142,10 @@ const stackGallery: { id: string; title: string; hint?: string; tiles: Tile[] }[
     tiles: [
       { label: "VS Code", src: "/icons/vscode.svg", brand: true, color: "#007ACC" },
       { label: "Git", Icon: SiGit, brand: true, color: "#F05032" },
-      { label: "GitHub", Icon: SiGithub, brand: true, color: "#181717" },
+      { label: "GitHub", Icon: SiGithub, brand: true, color: "#F5EFE6" },
       { label: "OpenCode", src: "/icons/opencode.svg", brand: true },
       { label: "Node.js", Icon: SiNodedotjs, brand: true, color: "#339933" },
-      { label: "Vercel", Icon: SiVercel, brand: true, color: "#000000" },
+      { label: "Vercel", Icon: SiVercel, brand: true, color: "#F5EFE6" },
       { label: "PostgreSQL", src: "/icons/postgresql.svg", brand: true, color: "#336791" },
     ],
   },
@@ -1218,11 +1218,11 @@ function Stack() {
                     whileHover={low ? undefined : { y: -2 }}
                     className="flex flex-col items-center gap-2.5 text-center"
                   >
-                    <span className={`inline-flex h-12 w-12 items-center justify-center rounded-xl border bg-white shadow-sm ${tile.src ? "p-2" : ""}`} style={{ borderColor: "#E7E5E4" } as React.CSSProperties}>
+                    <span className="inline-flex h-10 w-10 items-center justify-center">
                       {tile.src ? (
-                        <img src={tile.src} alt="" aria-hidden width={28} height={28} className="h-7 w-7 object-contain" loading="lazy" decoding="async" />
+                        <img src={tile.src} alt="" aria-hidden width={36} height={36} className={`object-contain ${tile.label === "OpenCode" ? "h-6 w-20 brightness-[3] contrast-[1.1]" : "h-9 w-9"}`} loading="lazy" decoding="async" />
                       ) : tile.Icon ? (
-                        <tile.Icon size={22} style={tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined} />
+                        <tile.Icon size={32} style={tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined} />
                       ) : null}
                     </span>
                     <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] leading-tight text-ink">{tile.label}</span>
