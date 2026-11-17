@@ -611,9 +611,9 @@ function KPage({ onDone }: { onDone: () => void }) {
               draggable={false}
               className="relative h-[min(46dvh,380px)] w-auto select-none will-change-transform md:h-[min(56dvh,460px)]"
               style={{ rotateX: rx, rotateY: ry, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-              initial={{ opacity: 0, scale: 0.24, rotateX: 22, rotateY: -18, filter: "blur(10px)" }}
-              animate={{ opacity: 1, scale: [0.28, 1.22, 0.94, 1.04, 1] as unknown as number, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
-              transition={{ duration: 1.72, times: [0, 0.42, 0.66, 0.84, 1], ease: [0.68, -0.55, 0.27, 1.55] } as unknown as Record<string, unknown>}
+              initial={{ opacity: 0, scale: 0.82, rotateX: 14, rotateY: -12, filter: "blur(10px)" }}
+              animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
+              transition={{ type: "spring", stiffness: 280, damping: 18, mass: 0.9 } as unknown as Record<string, unknown>}
             />
             {/* sweep — ngikut siluet K (mask), bukan kotak */}
             <motion.div
