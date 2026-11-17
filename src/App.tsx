@@ -611,23 +611,34 @@ function KPage({ onDone }: { onDone: () => void }) {
               draggable={false}
               className="relative h-[min(46dvh,380px)] w-auto select-none will-change-transform md:h-[min(56dvh,460px)]"
               style={{ rotateX: rx, rotateY: ry, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-              initial={{ opacity: 0, scale: 0.86, rotateX: 18, rotateY: -14, filter: "blur(6px)" }}
-              animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" }}
-              transition={{ type: "spring", stiffness: 300, damping: 26, mass: 0.9, delay: 0.12 }}
+              initial={{ opacity: 0, scale: 0.28, rotateX: 22, rotateY: -18, filter: "blur(8px)" }}
+              animate={{ opacity: 1, scale: [0.32, 1.28, 0.92, 1.06, 1] as unknown as number, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
+              transition={{ duration: 1.12, times: [0, 0.46, 0.68, 0.84, 1], ease: [0.68, -0.55, 0.27, 1.55] } as unknown as Record<string, unknown>}
             />
+            {/* sweep — ngikut siluet K (mask), bukan kotak */}
             <motion.div
               aria-hidden
               className="pointer-events-none absolute inset-0 overflow-hidden"
+              style={{
+                WebkitMaskImage: "url(/kyronix-k.png)",
+                maskImage: "url(/kyronix-k.png)",
+                WebkitMaskSize: "contain",
+                maskSize: "contain",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+                WebkitMaskPosition: "center",
+                maskPosition: "center",
+                filter: "blur(0.5px)",
+              } as React.CSSProperties}
               initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0, 1, 1, 0] }}
-              transition={{ duration: 1.82, times: [0, 0.36, 0.44, 0.76, 1], ease: "easeInOut" }}
-              style={{ filter: "blur(0.5px)" }}
+              animate={{ opacity: [0, 0, 1, 1, 0] } as unknown as Record<string, unknown>}
+              transition={{ duration: 1.82, times: [0, 0.36, 0.44, 0.76, 1], ease: "easeInOut" } as unknown as Record<string, unknown>}
             >
               <motion.div
-                className="absolute inset-y-0 w-[42%] bg-gradient-to-r from-transparent via-white/55 to-transparent"
-                initial={{ x: "-120%" }}
-                animate={{ x: "240%" }}
-                transition={{ duration: 0.95, delay: 0.72, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-y-0 w-[45%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
+                initial={{ x: "-130%" }}
+                animate={{ x: "260%" }}
+                transition={{ duration: 0.92, delay: 0.68, ease: [0.22, 1, 0.36, 1] }}
                 style={{ transform: "skewX(-18deg)" }}
               />
             </motion.div>
