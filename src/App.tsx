@@ -1350,35 +1350,6 @@ function ProjectsOpening() {
   );
 }
 
-/* ---------- 3b. Flow board — papan flow berjalan auto (project preview) ---------- */
-function FlowBoard() {
-  const items = projects.map((p) => ({ title: p.title, kind: p.kind, no: p.no }));
-  const loop = [...items, ...items];
-  return (
-    <div className="relative overflow-hidden border-y border-border/60 bg-surface py-3">
-      <div className="pointer-events-none absolute inset-0 opacity-20" style={{ backgroundImage: "repeating-linear-gradient(90deg, transparent 0 28px, rgba(224,122,95,0.12) 28px 29px)" }} />
-      <div className="marquee-track flex w-max items-center gap-6 px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
-        {loop.map((it, i) => (
-          <span key={`${it.no}-${i}`} className="inline-flex shrink-0 items-center gap-2">
-            <span className="rounded bg-cream-deep px-1.5 py-0.5 text-[10px] font-bold text-muted">{it.no}</span>
-            <span className="text-ink">{it.title}</span>
-            <span className="text-terracotta/60">·</span>
-            <span className="text-muted">{it.kind}</span>
-            <span className="mx-2 text-border">—</span>
-          </span>
-        ))}
-        {loop.map((it, i) => (
-          <span key={`dup-${it.no}-${i}`} className="inline-flex shrink-0 items-center gap-2" aria-hidden>
-            <span className="rounded bg-cream-deep px-1.5 py-0.5 text-[10px] font-bold text-muted">{it.no}</span>
-            <span className="text-ink">{it.title}</span>
-            <span className="mx-2 text-border">—</span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function Projects() {
   const { lang } = useLang();
   const t = dict[lang];
@@ -1411,8 +1382,6 @@ function Projects() {
     <div id="projects" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
-      {/* Flow board — auto running banner semua project */}
-      <FlowBoard />
       {/* Bento — hero 01 full + 3 cards compact (menarik, 0 klik, 1 viewport) */}
       <section className="relative px-[5vw] pb-[14vh] pt-6">
         <div className="mx-auto max-w-[1120px]">
