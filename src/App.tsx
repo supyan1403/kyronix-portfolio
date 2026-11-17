@@ -14,52 +14,28 @@ import {
   AnimatePresence,
 } from "motion/react";
 import {
-  Activity,
   ArrowDownRight,
   ArrowUpRight,
-  BarChart3,
   Check,
-  Code2,
   Copy,
-  Cpu,
   Database,
-  DatabaseZap,
   Download,
   Folder,
   FolderOpen,
-  GitBranch,
   GraduationCap,
-  Layers,
-  Lightbulb,
   Mail,
-  Monitor,
-  Palette,
-  Radio,
-  Route,
-  ScanEye,
-  Table2,
-  Terminal,
-  Wrench,
-  Workflow,
   X,
 } from "lucide-react";
-/* brand full-color icons — simple-icons via react-icons/si */
+/* brand full-color icons — simple-icons + local asseticon via react-icons/si (Draw.io kept via si) */
 import {
   SiArduino,
   SiDiagramsdotnet,
   SiEspressif,
-  SiFigma,
   SiGit,
   SiGithub,
-  SiJavascript,
   SiNodedotjs,
-  SiPandas,
-  SiPostgresql,
-  SiPython,
   SiTailwindcss,
-  SiTypescript,
   SiVercel,
-  SiVscodium,
 } from "react-icons/si";
 
 /* ---------- Utility: Warm Dark palette tokens ---------- */
@@ -1129,8 +1105,8 @@ function Hero({ ready }: { ready: boolean }) {
   );
 }
 
-/* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Gallery: folder + full-color brand icons, vibe-coder friendly 5 kategori tools) ---------- */
-type Tile = { label: string; Icon: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>; brand?: boolean; color?: string };
+/* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Gallery: folder + full-color brand icons, HANYA APLIKASI REAL) ---------- */
+type Tile = { label: string; Icon?: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>; src?: string; brand?: boolean; color?: string };
 const stackGallery: { id: string; title: string; hint?: string; icon: typeof Database; tone: "lime" | "violet" | "coral"; tiles: Tile[] }[] = [
   {
     id: "bahasa",
@@ -1139,10 +1115,9 @@ const stackGallery: { id: string; title: string; hint?: string; icon: typeof Dat
     icon: Code2,
     tone: "violet",
     tiles: [
-      { label: "Python", Icon: SiPython, brand: true, color: "#3776AB" },
-      { label: "JavaScript", Icon: SiJavascript, brand: true, color: "#F7DF1E" },
-      { label: "TypeScript", Icon: SiTypescript, brand: true, color: "#3178C6" },
-      { label: "SQL", Icon: Database, color: "#336791" },
+      { label: "Python", src: "/icons/python.svg", brand: true, color: "#3776AB" },
+      { label: "JavaScript", src: "/icons/javascript.svg", brand: true, color: "#F7DF1E" },
+      { label: "TypeScript", src: "/icons/typescript.svg", brand: true, color: "#3178C6" },
     ],
   },
   {
@@ -1151,7 +1126,7 @@ const stackGallery: { id: string; title: string; hint?: string; icon: typeof Dat
     icon: Palette,
     tone: "coral",
     tiles: [
-      { label: "Figma", Icon: SiFigma, brand: true, color: "#F24E1E" },
+      { label: "Figma", src: "/icons/figma.svg", brand: true, color: "#F24E1E" },
       { label: "Tailwind CSS", Icon: SiTailwindcss, brand: true, color: "#06B6D4" },
     ],
   },
@@ -1162,10 +1137,6 @@ const stackGallery: { id: string; title: string; hint?: string; icon: typeof Dat
     tone: "lime",
     tiles: [
       { label: "Draw.io", Icon: SiDiagramsdotnet, brand: true, color: "#F08705" },
-      { label: "System Architecture", Icon: Layers, color: "#7c3aed" },
-      { label: "System Flows", Icon: Workflow, color: "#E07A5F" },
-      { label: "API Routers", Icon: Route, color: "#8FA89B" },
-      { label: "Detection Systems", Icon: ScanEye, color: "#A8A298" },
     ],
   },
   {
@@ -1175,15 +1146,13 @@ const stackGallery: { id: string; title: string; hint?: string; icon: typeof Dat
     icon: Wrench,
     tone: "violet",
     tiles: [
-      { label: "VS Code", Icon: SiVscodium, brand: true, color: "#007ACC" },
+      { label: "VS Code", src: "/icons/vscode.svg", brand: true, color: "#007ACC" },
       { label: "Git", Icon: SiGit, brand: true, color: "#F05032" },
       { label: "GitHub", Icon: SiGithub, brand: true, color: "#181717" },
-      { label: "OpenCode CLI", Icon: Terminal, color: "#1A1816" },
+      { label: "OpenCode", src: "/icons/opencode.svg", brand: true },
       { label: "Node.js", Icon: SiNodedotjs, brand: true, color: "#339933" },
       { label: "Vercel", Icon: SiVercel, brand: true, color: "#000000" },
-      { label: "PostgreSQL", Icon: SiPostgresql, brand: true, color: "#4169E1" },
-      { label: "Pandas", Icon: SiPandas, brand: true, color: "#150458" },
-      { label: "ETL Pipelines", Icon: DatabaseZap, color: "#E07A5F" },
+      { label: "PostgreSQL", src: "/icons/postgresql.svg", brand: true, color: "#336791" },
     ],
   },
   {
@@ -1193,13 +1162,8 @@ const stackGallery: { id: string; title: string; hint?: string; icon: typeof Dat
     icon: Cpu,
     tone: "coral",
     tiles: [
-      { label: "ESP32", Icon: SiEspressif, brand: true, color: "#E7352C" },
       { label: "Arduino", Icon: SiArduino, brand: true, color: "#00979D" },
-      { label: "Sensors", Icon: Activity, color: "#E07A5F" },
-      { label: "MQTT", Icon: Radio, color: "#660066" },
-      { label: "Telemetry", Icon: BarChart3, color: "#8FA89B" },
-      { label: "Hardware Prototyping", Icon: Wrench, color: "#3A3632" },
-      { label: "Beginner Exploration", Icon: Lightbulb, color: "#F59E0B" },
+      { label: "ESP32", Icon: SiEspressif, brand: true, color: "#E7352C" },
     ],
   },
 ];
@@ -1301,7 +1265,6 @@ function Stack() {
                     className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
                   >
                     {group.tiles.map((tile, ti) => {
-                      const TIcon = tile.Icon;
                       return (
                         <motion.div
                           key={tile.label}
@@ -1314,11 +1277,12 @@ function Stack() {
                         >
                           <span aria-hidden className="pointer-events-none absolute left-1.5 top-1.5 h-2 w-2 border-l border-t border-border/50 group-hover/tile:border-terracotta/60" />
                           <span aria-hidden className="pointer-events-none absolute right-1.5 top-1.5 h-2 w-2 border-r border-t border-border/50 group-hover/tile:border-terracotta/60" />
-                          <span
-                            className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition-colors ${tile.brand ? "border-border bg-white" : "border-border bg-surface group-hover/tile:border-terracotta/30 group-hover/tile:bg-terracotta group-hover/tile:text-white"}`}
-                            style={tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined}
-                          >
-                            <TIcon size={20} className={tile.brand ? "" : "text-[inherit]"} style={tile.brand ? undefined : tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined} />
+                          <span className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border bg-white ${tile.src ? "p-1.5" : ""}`}>
+                            {tile.src ? (
+                              <img src={tile.src} alt="" aria-hidden width={28} height={28} className="h-7 w-7 object-contain" loading="lazy" decoding="async" />
+                            ) : tile.Icon ? (
+                              <tile.Icon size={20} style={tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined} />
+                            ) : null}
                           </span>
                           <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] leading-tight text-ink">{tile.label}</span>
                         </motion.div>
