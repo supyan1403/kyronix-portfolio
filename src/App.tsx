@@ -571,8 +571,8 @@ function KPage({ onDone }: { onDone: () => void }) {
     <AnimatePresence onExitComplete={handleExitComplete}>
       {!leaving && (
         <motion.div
-          className="fixed inset-0 z-[150] overflow-hidden bg-black"
-          initial={{ opacity: 1 }}
+          className="fixed inset-0 z-[150] flex flex-col items-center justify-center overflow-hidden bg-black px-6"
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, filter: "blur(10px)", scale: 1.03 }}
           transition={{ duration: 0.62, ease: EASE }}
@@ -582,18 +582,17 @@ function KPage({ onDone }: { onDone: () => void }) {
           aria-label="Lanjut ke portfolio — klik atau tekan Esc"
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") finish(); }}
         >
-          {/* frame 0 hitam solid anti-bocor Stack */}
+          {/* frame 0 hitam solid — fade in, bukan pop */}
           <div aria-hidden className="absolute inset-0 bg-black" />
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[720px] w-[720px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/12 blur-[88px] max-sm:h-[520px] max-sm:w-[520px] max-sm:blur-[64px]"
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/14 blur-[80px] max-sm:h-[380px] max-sm:w-[380px] max-sm:blur-[56px]"
             initial={{ opacity: 0, scale: 0.82 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.95, ease: EASE }}
           />
-          {/* K full page cover — tanpa kotak, BG image sudah transparent */}
           <motion.div
-            className="absolute inset-0 will-change-transform"
+            className="relative flex items-center justify-center will-change-transform"
             style={{ perspective: 900, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
             onMouseMove={(e) => onPointer(e.clientX, e.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect())}
             onMouseLeave={() => { mx.set(0); my.set(0); }}
@@ -612,21 +611,21 @@ function KPage({ onDone }: { onDone: () => void }) {
               loading="eager"
               decoding="async"
               draggable={false}
-              className="absolute inset-0 h-full w-full object-cover will-change-transform"
+              className="relative h-[min(52dvh,460px)] w-auto max-w-[min(86vw,620px)] select-none will-change-transform object-contain max-sm:h-[min(48dvh,360px)] max-sm:max-w-[88vw]"
               style={{ rotateX: rx, rotateY: ry, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-              initial={{ opacity: 0, scale: 0.96, filter: "blur(10px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>}
-              transition={{ type: "spring", stiffness: 320, damping: 14, mass: 0.95, delay: 0.18 } as unknown as Record<string, unknown>}
+              initial={{ opacity: 0, scale: 0.72, rotateX: 16, rotateY: -14, filter: "blur(14px)" }}
+              animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
+              transition={{ type: "spring", stiffness: 320, damping: 12, mass: 0.95, delay: 0.28 } as unknown as Record<string, unknown>}
             />
-            {/* sweep ngikut siluet K-PAGE2 transparent */}
+            {/* sweep ngikut siluet K-PAGE2 tanpa BG */}
             <motion.div
               aria-hidden
               className="pointer-events-none absolute inset-0 overflow-hidden"
               style={{
                 WebkitMaskImage: "url(/kyronix-k-page.png)",
                 maskImage: "url(/kyronix-k-page.png)",
-                WebkitMaskSize: "cover",
-                maskSize: "cover",
+                WebkitMaskSize: "contain",
+                maskSize: "contain",
                 WebkitMaskRepeat: "no-repeat",
                 maskRepeat: "no-repeat",
                 WebkitMaskPosition: "center",
@@ -647,7 +646,7 @@ function KPage({ onDone }: { onDone: () => void }) {
             </motion.div>
           </motion.div>
           <motion.p
-            className="pointer-events-none absolute bottom-[5%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-white/70 max-sm:bottom-[4%] max-sm:text-[10px]"
+            className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-white/70 max-sm:bottom-[5%] max-sm:text-[10px]"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.95, duration: 0.72, ease: EASE }}
