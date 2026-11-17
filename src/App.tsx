@@ -432,7 +432,8 @@ function KineticBand({ text, accent, reverse }: { text: string; accent?: string;
 function Intro({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
   const finish = () => {
-    document.documentElement.style.overflow = "";
+    // mount KPage di bawah Intro SEBELUM clip wipe — jangan buka overflow, biar stack tidak bocor saat Intro wipe
+    onDone();
     setLeaving(true);
   };
 
@@ -473,11 +474,11 @@ function Intro({ onDone }: { onDone: () => void }) {
     return () => clearTimeout(t);
   }, [lineIdx, charIdx, done]);
 
-  // ESC / click to skip
+  // ESC / click to skip — mount KPage dulu (onDone) biar stack tidak bocor saat Intro wipe
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        document.documentElement.style.overflow = "";
+        onDone();
         setLeaving(true);
       }
     };
@@ -486,14 +487,14 @@ function Intro({ onDone }: { onDone: () => void }) {
   }, []);
 
   return (
-    <AnimatePresence onExitComplete={onDone}>
+    <AnimatePresence>
       {!leaving && (
         <motion.div
           className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-cream px-6"
           exit={{ clipPath: "inset(0 0 100% 0)", y: "-2%", filter: "blur(6px)", scale: 1.01 }}
           transition={{ duration: 0.72, ease: EASE }}
           onClick={() => {
-            document.documentElement.style.overflow = "";
+            onDone();
             setLeaving(true);
           }}
         >
@@ -585,7 +586,7 @@ function KPage({ onDone }: { onDone: () => void }) {
       {!leaving && (
         <motion.div
           className="fixed inset-0 z-[150] overflow-hidden bg-black"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, filter: "blur(10px)", scale: 1.03 }}
           transition={{ duration: 0.62, ease: EASE }}
@@ -595,15 +596,18 @@ function KPage({ onDone }: { onDone: () => void }) {
           aria-label="Lanjut ke portfolio — klik atau tekan Esc"
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") finish(); }}
         >
-          {/* poster layer — fade out pas video ready (no stack awal hitam bocor) */}
+          {/* poster layer — opaque hitam + poster eager, no flash stack — fade out pas video ready */}
           <motion.img
             src="/kyronix-k-video-poster.jpg"
             alt=""
             aria-hidden
+            loading="eager"
+            decoding="sync"
             className="absolute inset-0 h-full w-full object-cover"
             initial={{ opacity: 1 }}
             animate={{ opacity: canShowVideo ? 0 : 1 }}
             transition={{ duration: 0.55, ease: EASE }}
+            style={{ backgroundColor: "#000" } as React.CSSProperties}
           />
           <motion.video
             ref={videoRef}
@@ -615,7 +619,7 @@ function KPage({ onDone }: { onDone: () => void }) {
             playsInline
             preload="auto"
             onEnded={finish}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover bg-black"
             initial={{ opacity: 0 }}
             animate={{ opacity: canShowVideo ? 1 : 0 }}
             transition={{ duration: 0.62, ease: EASE }}
