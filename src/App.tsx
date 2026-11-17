@@ -22,6 +22,8 @@ import {
   Cpu,
   Database,
   Download,
+  Folder,
+  FolderOpen,
   GraduationCap,
   Mail,
   Radio,
@@ -883,6 +885,12 @@ const dict = {
       howIBuild: "CARA KERJA",
       letsBuild: "HUBUNGI SAYA",
     },
+    folders: {
+      all: "Semua",
+      research: "Penelitian",
+      iot: "IoT Project",
+      webapp: "Web App",
+    },
     projectModal: {
       title: "Belum Tersedia",
       body: "Belum di-deploy. Tautan demo akan aktif setelah rilis.",
@@ -956,6 +964,12 @@ const dict = {
       experience: "EXPERIENCE",
       howIBuild: "HOW I WORK",
       letsBuild: "GET IN TOUCH",
+    },
+    folders: {
+      all: "All",
+      research: "Research",
+      iot: "IoT Project",
+      webapp: "Web App",
     },
     projectModal: {
       title: "Project Not Yet Available",
@@ -1223,16 +1237,16 @@ function Stack() {
   );
 }
 
-/* ---------- 3. Featured projects — warm-tagd builds — carousel (canvas C: no 300vh) ---------- */
-function ProjectCard({ p, idx, isActive, onOpen }: { p: (typeof projects)[number]; idx: number; isActive?: boolean; onOpen: (pp: (typeof projects)[number]) => void }) {
+/* ---------- 3. Featured projects — warm-tagd builds — folder gallery (canvas C: no carousel) ---------- */
+function ProjectCard({ p, idx, onOpen, compact }: { p: (typeof projects)[number]; idx: number; onOpen: (pp: (typeof projects)[number]) => void; compact?: boolean }) {
   const { lang } = useLang();
   const isDone = p.status === "RESEARCH DONE" || p.status === "LIVE NOW";
   const isHero = idx === 0;
   return (
-    <motion.article role="button" tabIndex={0} onClick={() => onOpen(p)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }} animate={{ scale: isActive === false ? 0.96 : 1, opacity: isActive === false ? 0.72 : 1 }} transition={{ type: "spring", stiffness: 380, damping: 22 }} className={"warm-card relative mx-auto flex shrink-0 cursor-pointer flex-col overflow-hidden pb-6 will-change-transform " + (isHero ? "min-h-[500px] w-[min(92vw,580px)] p-6 md:p-7 " + (isDone ? "border-green-500/55" : "border-border") : "min-h-[480px] w-[min(88vw,540px)] p-5 md:p-7 " + (isDone ? "border-green-500/35" : ""))} style={{ borderColor: isDone ? "#22c55e" : undefined } as React.CSSProperties}>
-      {!isHero ? null : <span aria-hidden className={"pointer-events-none absolute -right-[1px] -top-[1px] px-2.5 py-1 font-mono text-[10px] font-black tracking-[0.16em] text-white " + (isDone ? "bg-green-600" : "bg-terracotta")}>FEATURED</span>}
+    <motion.article role="button" tabIndex={0} onClick={() => onOpen(p)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 380, damping: 22 }} className={"warm-card relative flex cursor-pointer flex-col overflow-hidden pb-6 will-change-transform " + (compact ? "min-h-[420px] p-5 md:p-6" : isHero ? "min-h-[500px] p-6 md:p-7 " + (isDone ? "border-green-500/55" : "border-border") : "min-h-[480px] p-5 md:p-7 " + (isDone ? "border-green-500/35" : ""))} style={{ borderColor: isDone ? "#22c55e" : undefined } as React.CSSProperties}>
+      {!isHero || compact ? null : <span aria-hidden className={"pointer-events-none absolute -right-[1px] -top-[1px] px-2.5 py-1 font-mono text-[10px] font-black tracking-[0.16em] text-white " + (isDone ? "bg-green-600" : "bg-terracotta")}>FEATURED</span>}
       <div className="flex items-center justify-between"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span><span className={"inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 " + "warm-tag"}>{(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}<span className="break-words">{p.status}</span></span></div>
-      <div className="min-w-0 flex-1"><p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p><h3 data-text={p.title} className={"font-sans font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink " + (isHero ? "text-[2.05rem] md:text-[2.5rem]" : "text-[2rem] md:text-4xl")}>{p.title}</h3><p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p></div>
+      <div className="min-w-0 flex-1"><p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p><h3 data-text={p.title} className={"font-sans font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink " + (isHero && !compact ? "text-[2.05rem] md:text-[2.5rem]" : "text-[1.55rem] md:text-[1.85rem]")}>{p.title}</h3><p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p></div>
       <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4"><div className="flex flex-1 flex-wrap gap-2 pr-2">{p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}</div><span className={"flex h-10 w-10 shrink-0 items-center justify-center border md:h-12 md:w-12 " + (isDone ? "border-green-500/30 bg-transparent text-green-600 hover:bg-green-600 hover:text-white hover:border-green-600" : "border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white")}><ArrowUpRight size={18} /></span></div>
     </motion.article>
   );
@@ -1242,6 +1256,13 @@ function ProjectStickyCard(p: { p: (typeof projects)[number]; idx: number; progr
 }
 
 /* ---------- 3. Featured projects — warm-tagd builds ---------- */
+type ProjectFolder = "research" | "iot" | "webapp";
+const projectMeta: Record<string, { folder: ProjectFolder; Icon: typeof BarChart3 }> = {
+  "01": { folder: "research", Icon: BarChart3 },
+  "02": { folder: "iot", Icon: Cpu },
+  "03": { folder: "webapp", Icon: Database },
+  "04": { folder: "webapp", Icon: Database },
+};
 const projects = [
   {
     no: "01",
@@ -1317,8 +1338,8 @@ function Projects() {
   const t = dict[lang];
   const [active, setActive] = useState<(typeof projects)[number] | null>(null);
   const [docHref, setDocHref] = useState<string | null>(null);
-  const [cur, setCur] = useState(0);
-  const low = useIsLowEnd();
+  const folders = (t as unknown as { folders: Record<ProjectFolder | "all", string> }).folders;
+  const [activeFolder, setActiveFolder] = useState<ProjectFolder | "all">("all");
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActive(null); };
@@ -1339,61 +1360,46 @@ function Projects() {
       lenisInstance?.start();
     };
   }, [active]);
-  // keyboard arrows when focused on carousel
-  useEffect(() => {
-    const onK = (e: KeyboardEvent) => {
-      if (active) return;
-      if (e.key === "ArrowRight") setCur((c) => Math.min(projects.length - 1, c + 1));
-      if (e.key === "ArrowLeft") setCur((c) => Math.max(0, c - 1));
-    };
-    window.addEventListener("keydown", onK);
-    return () => window.removeEventListener("keydown", onK);
-  }, [active]);
   const handleOpen = (p: (typeof projects)[number]) => setActive(p);
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
-  const prev = () => setCur((c) => (c - 1 + projects.length) % projects.length);
-  const next = () => setCur((c) => (c + 1) % projects.length);
+  const visible = activeFolder === "all" ? projects : projects.filter((p) => projectMeta[p.no]?.folder === activeFolder);
+  const pill = (key: ProjectFolder | "all", label: string) => (
+    <button key={key} type="button" onClick={() => setActiveFolder(key)} className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition-colors ${activeFolder === key ? "border-terracotta bg-terracotta text-white" : "border-border bg-transparent text-muted hover:border-ink hover:text-ink"}`}>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${activeFolder === key ? "bg-white/20 text-white" : "bg-border/30 text-muted"}`}>{key === "all" ? projects.length : projects.filter((p) => projectMeta[p.no]?.folder === key).length}</span></button>
+  );
+  const folderCard = (key: ProjectFolder, label: string, Icon: typeof Folder, desc: string) => {
+    const count = projects.filter((p) => projectMeta[p.no]?.folder === key).length;
+    const active = activeFolder === key;
+    return (
+      <button key={key} type="button" onClick={() => setActiveFolder(key)} className={`group relative flex flex-col text-left transition-all ${active ? "scale-[1.02]" : "hover:-translate-y-1"}`}>
+        <span className={`inline-flex w-fit items-center gap-2 rounded-t-xl border border-b-0 px-4 py-2 font-mono text-[10px] font-black uppercase tracking-widest ${active ? "border-terracotta bg-terracotta text-white" : "border-border bg-surface text-muted group-hover:border-terracotta/40 group-hover:text-ink"}`}><span className={`flex h-7 w-7 items-center justify-center rounded-lg ${active ? "bg-white/20" : "bg-cream-deep text-terracotta"}`}>{active ? <FolderOpen size={14} /> : <Folder size={14} />}</span>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${active ? "bg-white/20" : "bg-border/20"}`}>{count}</span></span>
+        <span className={`warm-card flex flex-1 flex-col p-5 ${active ? "border-terracotta ring-2 ring-terracotta/20" : ""}`}><span className="flex items-center gap-2 font-mono text-[11px] tracking-widest text-muted"><Icon size={14} className="text-terracotta" />{count} {count === 1 ? "project" : "projects"}</span><span className="mt-2 text-sm leading-relaxed text-muted">{desc}</span></span>
+      </button>
+    );
+  };
 
   return (
     <div id="projects" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
-      {/* Carousel — canvas C: nempel di 1 halaman, bukan 300vh */}
+      {/* Folder gallery — 3 folders + filter + grid */}
       <section className="relative px-[5vw] pb-[14vh] pt-2">
         <div className="mx-auto max-w-[1120px]">
-          {/* track: draggable + snap center */}
-          <div className="relative overflow-hidden rounded-none">
-            <motion.div
-              className="flex items-stretch gap-5 md:gap-7 will-change-transform"
-              animate={{ x: `calc(50% - ${cur * 560 + 280}px - ${cur * 20}px)` }}
-              transition={{ type: "spring", stiffness: 260, damping: 30 }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.18}
-              onDragEnd={(_: unknown, info: { offset: { x: number } }) => {
-                if (low) return;
-                if (info.offset.x < -60) next();
-                else if (info.offset.x > 60) prev();
-              }}
-            >
-              {projects.map((p, idx) => (
-                <ProjectCard key={p.no} p={p} idx={idx} isActive={idx === cur} onOpen={handleOpen} />
-              ))}
-            </motion.div>
+          <div className="flex flex-wrap gap-2">{pill("all", folders.all)}{pill("research", folders.research)}{pill("iot", folders.iot)}{pill("webapp", folders.webapp)}</div>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {folderCard("research", folders.research, BarChart3, lang === "id" ? "Riset & Digital Twin — lahan 800m2" : "Research & Digital Twin — 800m2 plot")}
+            {folderCard("iot", folders.iot, Cpu, lang === "id" ? "Perangkat fisik & otomasi" : "Hardware & automation")}
+            {folderCard("webapp", folders.webapp, Database, lang === "id" ? "ETL, pipeline & aplikasi web" : "ETL, pipelines & web apps")}
           </div>
-          {/* controls: arrows + dots + counter */}
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <button type="button" onClick={prev} aria-label="Previous" className="inline-flex h-10 w-10 items-center justify-center border border-border bg-surface text-ink hover:border-terracotta hover:text-terracotta">‹</button>
-              <button type="button" onClick={next} aria-label="Next" className="inline-flex h-10 w-10 items-center justify-center border border-border bg-surface text-ink hover:border-terracotta hover:text-terracotta">›</button>
-              <span className="ml-2 font-mono text-[11px] tracking-[0.16em] text-muted tabular-nums">{String(cur + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {projects.map((_, i) => (
-                <button key={i} onClick={() => setCur(i)} aria-label={`Go to ${i + 1}`} className={`h-2 rounded-full transition-all ${i === cur ? "w-6 bg-terracotta" : "w-2 bg-border"}`} />
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            <AnimatePresence mode="popLayout">
+              {visible.map((p, idx) => (
+                <motion.div key={p.no} layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, delay: idx * 0.04 }}>
+                  <ProjectCard p={p} idx={projects.indexOf(p)} onOpen={handleOpen} compact />
+                </motion.div>
               ))}
-            </div>
+            </AnimatePresence>
           </div>
+          {visible.length === 0 ? <p className="mt-6 text-center font-mono text-xs text-muted">{lang === "id" ? "Belum ada proyek di folder ini." : "No projects in this folder yet."}</p> : null}
         </div>
       </section>
       <AnimatePresence>
