@@ -837,7 +837,6 @@ const dict = {
     },
     stackEyebrow: "Perangkat Kerja",
     stackTitle: "PERANGKAT YANG SAYA PAKAI.",
-    stackDesc: "Dari perancangan hingga deployment.",
     projectsEyebrow: "Dari Ide Jadi Nyata",
     projectsTitle: "DARI IDE JADI NYATA.",
     experience: {
@@ -912,7 +911,6 @@ const dict = {
     },
     stackEyebrow: "My Toolkit",
     stackTitle: "MY TOOLKIT.",
-    stackDesc: "The technologies I use to build data systems, web apps, and research — from design to deployment.",
     projectsEyebrow: "From Idea To Real",
     projectsTitle: "FROM IDEA TO REAL.",
     experience: {
@@ -1138,7 +1136,6 @@ const stackGallery: { id: string; title: string; hint?: string; tiles: Tile[] }[
   {
     id: "tools",
     title: "Tools & Workflow",
-    hint: "Senjata Vibe Coding",
     tiles: [
       { label: "VS Code", src: "/icons/vscode.svg", brand: true, color: "#007ACC" },
       { label: "Git", Icon: SiGit, brand: true, color: "#F05032" },
@@ -1152,7 +1149,6 @@ const stackGallery: { id: string; title: string; hint?: string; tiles: Tile[] }[
   {
     id: "iot",
     title: "IoT & Hardware",
-    hint: "Lagi Eksplor",
     tiles: [
       { label: "Arduino", Icon: SiArduino, brand: true, color: "#00979D" },
       { label: "ESP32", Icon: SiEspressif, brand: true, color: "#E7352C" },
@@ -1187,16 +1183,6 @@ function Stack() {
               className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
             />
           </motion.div>
-          <motion.p
-            initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 16, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
-            whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
-            style={{ y: openingTitleY, color: WARM.muted } as unknown as Record<string, unknown>}
-            className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed will-change-transform"
-          >
-            {t.stackDesc}
-          </motion.p>
         </div>
       </section>
       {/* Flat — tanpa kartu, icon nempel langsung di bg-cream — fade horizontal + parallax */}
@@ -1205,10 +1191,7 @@ function Stack() {
           {stackGallery.map((g, gi) => (
             <motion.div key={g.id} className="space-y-4 will-change-transform" style={{ x: (gi % 2 === 0 ? flatX : flatXRev) } as unknown as Record<string, unknown>}>
               <div className="flex items-baseline justify-between gap-3 border-b border-border/10 pb-3">
-                <div className="flex flex-wrap items-baseline gap-2">
-                  <span className="font-sans text-[13px] font-semibold uppercase tracking-[0.06em] text-ink">{g.title}</span>
-                  {g.hint ? <span className="font-mono text-[11px] tracking-wide text-muted">· {g.hint}</span> : null}
-                </div>
+                <span className="font-sans text-[13px] font-semibold uppercase tracking-[0.06em] text-ink">{g.title}</span>
                 <span className="shrink-0 font-mono text-[11px] tracking-widest text-muted">{g.tiles.length} items</span>
               </div>
               <div className={`grid gap-5 ${g.tiles.length === 1 ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-6" : g.tiles.length <= 3 ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-5" : "grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7"}`}>
