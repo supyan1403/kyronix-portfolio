@@ -848,6 +848,22 @@ const dict = {
     contactEyebrow: "Kontak",
     contactTitle: "HUBUNGI SAYA",
     contactDesc: "Terbuka untuk kolaborasi di bidang data engineering dan riset.",
+    contactForm: {
+      name: "Nama",
+      email: "Email",
+      subject: "Subjek (opsional)",
+      phone: "No HP (opsional)",
+      message: "Pesan",
+      send: "Kirim Pesan",
+      sending: "Mengirim…",
+      success: "Terkirim! Saya akan balas via email.",
+      error: "Gagal kirim. Coba lagi atau email langsung.",
+      namePh: "Nama kamu",
+      emailPh: "email@contoh.com",
+      subjectPh: "Butuh bantuan ETL / Web / IoT",
+      phonePh: "08xxxxxxxxxx",
+      messagePh: "Ceritakan kebutuhanmu… (min 10 karakter)",
+    },
     backToTop: "Kembali ke atas ↑",
     downloadCv: "Unduh CV",
     bands: {
@@ -907,6 +923,22 @@ const dict = {
     contactEyebrow: "Contact",
     contactTitle: "GET IN TOUCH",
     contactDesc: "Open to collaboration in data engineering and research.",
+    contactForm: {
+      name: "Name",
+      email: "Email",
+      subject: "Subject (optional)",
+      phone: "Phone (optional)",
+      message: "Message",
+      send: "Send Message",
+      sending: "Sending…",
+      success: "Sent! I'll reply via email.",
+      error: "Failed to send. Try again or email directly.",
+      namePh: "Your name",
+      emailPh: "you@example.com",
+      subjectPh: "Need help with ETL / Web / IoT",
+      phonePh: "+62…",
+      messagePh: "Tell me what you need… (min 10 chars)",
+    },
     backToTop: "Back to top ↑",
     downloadCv: "Download CV",
     bands: {
@@ -2147,7 +2179,7 @@ function Lab() {
 function Contact() {
   const { lang } = useLang();
   const low = useIsLowEnd();
-  const t = dict[lang];
+  const t = dict[lang] as typeof dict["id"] & { contactForm: { name: string; email: string; subject: string; phone: string; message: string; send: string; sending: string; success: string; error: string; namePh: string; emailPh: string; subjectPh: string; phonePh: string; messagePh: string } };
   const email = "supyansauri47@gmail.com";
   const [copied, setCopied] = useState(false);
   const copyEmail = async () => {
@@ -2157,6 +2189,49 @@ function Contact() {
       setTimeout(() => setCopied(false), 2000);
     } catch {}
   };
+  const [f, setF] = useState({ name: "", email: "", subject: "", phone: "", message: "", _gotcha: "" });
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [msg, setMsg] = useState("");
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
+
+  // load turnstile once if key exists
+  useEffect(() => {
+    if (!siteKey) return;
+    if (document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]')) return;
+    const s = document.createElement("script");
+    s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    s.async = true; s.defer = true;
+    document.head.appendChild(s);
+  }, [siteKey]);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (f._gotcha) { setStatus("success"); setMsg(t.contactForm.success); return; }
+    if (!f.name.trim() || f.name.trim().length < 2) { setStatus("error"); setMsg(lang === "id" ? "Nama minimal 2 huruf." : "Name too short."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) { setStatus("error"); setMsg(lang === "id" ? "Email tidak valid." : "Invalid email."); return; }
+    if (!f.message.trim() || f.message.trim().length < 10) { setStatus("error"); setMsg(lang === "id" ? "Pesan minimal 10 karakter." : "Message too short."); return; }
+    setStatus("loading"); setMsg("");
+    let turnstileToken = "";
+    try {
+      const w = window as unknown as { turnstile?: { getResponse: (id?: string) => string } };
+      turnstileToken = w.turnstile?.getResponse() ?? (document.querySelector<HTMLInputElement>('input[name="cf-turnstile-response"]')?.value ?? "");
+    } catch {}
+    try {
+      const r = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...f, turnstileToken }),
+      });
+      const j = (await r.json()) as { ok?: boolean; error?: string };
+      if (!r.ok || !j.ok) throw new Error(j.error || "Gagal");
+      setStatus("success"); setMsg(t.contactForm.success);
+      setF({ name: "", email: "", subject: "", phone: "", message: "", _gotcha: "" });
+      try { (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset(); } catch {}
+    } catch (err) {
+      setStatus("error"); setMsg(err instanceof Error ? err.message : t.contactForm.error);
+    }
+  };
+
   return (
     <footer id="contact" className="relative overflow-hidden px-[5vw] pb-10 pt-[16vh] bg-cream">
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.4]" />
@@ -2198,6 +2273,116 @@ function Contact() {
             {copied ? (lang === "id" ? "Tersalin!" : "Copied!") : email}
           </button>
         </motion.div>
+        {/* container form — kirim langsung tanpa buka mail app */}
+        <motion.form
+          onSubmit={onSubmit}
+          noValidate
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
+          className="mx-auto mt-8 w-full max-w-[640px] text-left"
+        >
+          <div className="warm-card p-5 sm:p-6">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em]" style={{ color: WARM.muted }}>
+              {lang === "id" ? "Atau kirim langsung dari sini — masuk ke inbox saya" : "Or send directly — lands in my inbox"}
+            </p>
+            {/* honeypot — hidden dari user, bot isi = block */}
+            <input
+              type="text"
+              name="_gotcha"
+              value={f._gotcha}
+              onChange={(e) => setF({ ...f, _gotcha: e.target.value })}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden
+              className="hidden"
+            />
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <label className="flex flex-col gap-1.5">
+                <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: WARM.muted }}>{t.contactForm.name} *</span>
+                <input
+                  value={f.name}
+                  onChange={(e) => setF({ ...f, name: e.target.value })}
+                  placeholder={t.contactForm.namePh}
+                  required
+                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: WARM.muted }}>{t.contactForm.email} *</span>
+                <input
+                  type="email"
+                  value={f.email}
+                  onChange={(e) => setF({ ...f, email: e.target.value })}
+                  placeholder={t.contactForm.emailPh}
+                  required
+                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: WARM.muted }}>{t.contactForm.subject}</span>
+                <input
+                  value={f.subject}
+                  onChange={(e) => setF({ ...f, subject: e.target.value })}
+                  placeholder={t.contactForm.subjectPh}
+                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: WARM.muted }}>{t.contactForm.phone}</span>
+                <input
+                  value={f.phone}
+                  onChange={(e) => setF({ ...f, phone: e.target.value })}
+                  placeholder={t.contactForm.phonePh}
+                  inputMode="tel"
+                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                />
+              </label>
+            </div>
+            <label className="mt-3 flex flex-col gap-1.5">
+              <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: WARM.muted }}>{t.contactForm.message} *</span>
+              <textarea
+                value={f.message}
+                onChange={(e) => setF({ ...f, message: e.target.value })}
+                placeholder={t.contactForm.messagePh}
+                required
+                rows={4}
+                className="min-h-[110px] w-full resize-y rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+              />
+            </label>
+
+            {siteKey ? (
+              <div className="mt-4 flex justify-start">
+                <div className="cf-turnstile" data-sitekey={siteKey} data-theme="dark" />
+              </div>
+            ) : null}
+
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="warm-btn primary disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {status === "loading" ? t.contactForm.sending : t.contactForm.send} <Mail size={16} />
+              </button>
+              {status !== "idle" ? (
+                <span
+                  role="status"
+                  aria-live="polite"
+                  className={`font-mono text-xs ${status === "success" ? "text-green-600" : status === "error" ? "text-terracotta" : "text-muted"}`}
+                >
+                  {status === "success" ? msg : status === "error" ? msg : ""}
+                </span>
+              ) : null}
+            </div>
+            {!siteKey ? (
+              <p className="mt-2 font-mono text-[11px] leading-relaxed" style={{ color: WARM.muted }}>
+                {lang === "id" ? "Tanpa Turnstile di dev — set VITE_TURNSTILE_SITE_KEY untuk aktifkan anti-bot di prod." : "No Turnstile in dev — set VITE_TURNSTILE_SITE_KEY to enable anti-bot in prod."}
+              </p>
+            ) : null}
+          </div>
+        </motion.form>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
