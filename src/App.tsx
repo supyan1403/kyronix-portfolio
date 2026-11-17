@@ -280,7 +280,7 @@ function Magnetic({
   );
 }
 
-/* ---------- Text reveal: split-word mask up (adaptive: no blur on low-end) ---------- */
+/* ---------- Text reveal: split-word mask up + reverse replay (amount:0.45, amount:0) ---------- */
 function SplitReveal({
   text,
   className = "",
@@ -297,12 +297,13 @@ function SplitReveal({
   const low = useIsLowEnd();
   const words = text.split(" ");
   const MotionTag = motion[Tag];
+  const onceMode = play === undefined;
   return (
     <MotionTag
       className={className}
       initial="hidden"
-      {...(play === undefined
-        ? { whileInView: "show", viewport: { once: true, amount: 0.6 } }
+      {...(onceMode
+        ? { whileInView: "show", viewport: { amount: 0.45, margin: "0px 0px -10% 0px" } }
         : { animate: play ? "show" : "hidden" })}
       transition={{ staggerChildren: 0.07, delayChildren: delay }}
     >
@@ -330,7 +331,7 @@ function Eyebrow({ index, label }: { index: string; label: string }) {
     <motion.p
       initial={{ opacity: 0, x: -20 }}
       whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
+      viewport={{ amount: 0.5, margin: "0px 0px -12% 0px" }}
       transition={{ duration: 0.9, ease: EASE }}
       className="mb-5 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em]"
       style={{ color: WARM.muted }}
@@ -390,7 +391,7 @@ function KineticBand({ text, accent, reverse }: { text: string; accent?: string;
         style={{ x }}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }}
         transition={{ duration: 0.7, ease: EASE }}
       >
         <span>{text}</span>
@@ -1015,12 +1016,12 @@ function Hero({ ready }: { ready: boolean }) {
   }, [ready]);
   const done = typed.length === FULL.length;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, light ? -28 : -160]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, light ? -48 : -160]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, light ? 0.99 : 0.92]);
-  const gridY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -30]);
-  const taglineY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -24]);
-  const ctaY = useTransform(scrollYProgress, [0, 1], [0, light ? 0 : -18]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, light ? 0.97 : 0.92]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [0, light ? -14 : -30]);
+  const taglineY = useTransform(scrollYProgress, [0, 1], [0, light ? -10 : -24]);
+  const ctaY = useTransform(scrollYProgress, [0, 1], [0, light ? -8 : -18]);
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28">
       {/* Hero: Blueprint Grid 32px + scanline — stripes cuma di Intro biar gak duplikat */}
@@ -1036,10 +1037,10 @@ function Hero({ ready }: { ready: boolean }) {
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
           {t2.hero.hi}
         </motion.p>
-        {/* KYRONIX — Impact dense condensed, ringan HP (tanpa blur/shine berat) */}
-        <h1 aria-label={FULL} className="relative inline-flex select-none flex-wrap justify-center font-[Anton] text-[clamp(4.2rem,12vw,9rem)] font-normal leading-[0.82] tracking-[0.02em] text-ink [font-stretch:condensed]" style={{ fontFamily: "var(--font-impact)" } as React.CSSProperties}>
+        {/* KYRONIX — Impact dense condensed renggang */}
+        <h1 aria-label={FULL} className="relative inline-flex select-none flex-wrap justify-center font-[Anton] text-[clamp(4.2rem,12vw,9rem)] font-normal leading-[0.82] tracking-[0.14em] text-ink [font-stretch:condensed]" style={{ fontFamily: "var(--font-impact)", letterSpacing: "0.12em" } as React.CSSProperties}>
           <span className="sr-only">{FULL}</span>
-          <span aria-hidden className="inline-flex">
+          <span aria-hidden className="inline-flex gap-[0.09em]">
             {FULL.split("").map((ch, i) => {
               const visible = i < typed.length;
               const isLast = i === FULL.length - 1;
@@ -1172,15 +1173,14 @@ const stackGallery: { id: string; title: Record<Lang, string>; tiles: Tile[] }[]
 function Stack() {
   const { lang } = useLang();
   const t = dict[lang];
-  const low = useIsLowEnd();
   const openingRef = useRef<HTMLElement>(null);
   const flatRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
   const { scrollYProgress: flatProgress } = useScroll({ target: flatRef, offset: ["start end", "end start"] });
-  const openingGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
-  const openingTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
-  const flatX = useTransform(flatProgress, [0, 1], low ? [0, 0] : [-12, 12]);
-  const flatXRev = useTransform(flatProgress, [0, 1], low ? [0, 0] : [10, -10]);
+  const openingGridY = useTransform(openingProgress, [0, 1], [22, -22]);
+  const openingTitleY = useTransform(openingProgress, [0, 1], [14, -14]);
+  const flatX = useTransform(flatProgress, [0, 1], [-12, 12]);
+  const flatXRev = useTransform(flatProgress, [0, 1], [10, -10]);
   return (
     <section id="stack" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh text-only EPIC */}
@@ -1211,11 +1211,11 @@ function Stack() {
                 {g.tiles.map((tile, ti) => (
                   <motion.div
                     key={tile.label}
-                    initial={low ? ({ opacity: 0, x: -12 } as unknown as Record<string, unknown>) : ({ opacity: 0, x: -18, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
-                    whileInView={low ? ({ opacity: 1, x: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, x: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-                    viewport={{ once: true, amount: 0.3 }}
+                    initial={{ opacity: 0, x: -12 } as unknown as Record<string, unknown>}
+                    whileInView={{ opacity: 1, x: 0 } as unknown as Record<string, unknown>}
+                    viewport={{ amount: 0.3, margin: "0px 0px -8% 0px" }}
                     transition={{ duration: 0.55, delay: ti * 0.06, ease: EASE }}
-                    whileHover={low ? undefined : { y: -2 }}
+                    whileHover={{ y: -2 }}
                     className="flex flex-col items-center gap-2.5 text-center will-change-transform"
                   >
                     <span className="inline-flex h-10 w-10 items-center justify-center">
@@ -1237,7 +1237,22 @@ function Stack() {
   );
 }
 
-/* ---------- 3. Featured projects — warm-tagd builds — folder gallery (canvas C: no carousel) ---------- */
+/* ---------- 3. Featured projects — warm-card folder container + flow board ---------- */
+function FolderContainer({ label, count, Icon, desc, active, onClick }: { label: string; count: number; Icon: typeof Folder; desc: string; active: boolean; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} aria-pressed={active} className={`group w-full text-left transition-all ${active ? "scale-[1.02]" : "hover:-translate-y-1"}`}>
+      <span className={`inline-flex w-fit items-center gap-2 rounded-t-xl border border-b-0 px-4 py-2 font-mono text-[10px] font-black uppercase tracking-widest ${active ? "border-terracotta bg-terracotta text-white" : "border-border bg-surface text-muted group-hover:border-terracotta/40 group-hover:text-ink"}`}>
+        <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${active ? "bg-white/20" : "bg-cream-deep text-terracotta"}`}>{active ? <FolderOpen size={14} /> : <Folder size={14} />}</span>
+        {label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${active ? "bg-white/20" : "bg-border/20"}`}>{count}</span>
+      </span>
+      <span className={`warm-card flex flex-col p-5 ${active ? "border-terracotta ring-2 ring-terracotta/20" : ""}`}>
+        <span className="flex items-center gap-2 font-mono text-[11px] tracking-widest text-muted"><Icon size={14} className="text-terracotta" />{count} {count === 1 ? "project" : "projects"}</span>
+        <span className="mt-2 text-sm leading-relaxed text-muted">{desc}</span>
+        <span className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] font-bold uppercase tracking-widest text-terracotta">{active ? "Buka" : "Klik buka"} <ArrowUpRight size={12} /></span>
+      </span>
+    </button>
+  );
+}
 function ProjectCard({ p, idx, onOpen, compact }: { p: (typeof projects)[number]; idx: number; onOpen: (pp: (typeof projects)[number]) => void; compact?: boolean }) {
   const { lang } = useLang();
   const isDone = p.status === "RESEARCH DONE" || p.status === "LIVE NOW";
@@ -1310,11 +1325,10 @@ const projects = [
 function ProjectsOpening() {
   const { lang } = useLang();
   const t = dict[lang];
-  const low = useIsLowEnd();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const gridY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [44, -44]);
-  const titleY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [28, -32]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
+  const titleY = useTransform(scrollYProgress, [0, 1], [14, -16]);
   return (
     <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
@@ -1330,6 +1344,35 @@ function ProjectsOpening() {
         </motion.div>
       </div>
     </section>
+  );
+}
+
+/* ---------- 3b. Flow board — papan flow berjalan auto (project preview) ---------- */
+function FlowBoard() {
+  const items = projects.map((p) => ({ title: p.title, kind: p.kind, no: p.no }));
+  const loop = [...items, ...items];
+  return (
+    <div className="relative overflow-hidden border-y border-border/60 bg-surface py-3">
+      <div className="pointer-events-none absolute inset-0 opacity-20" style={{ backgroundImage: "repeating-linear-gradient(90deg, transparent 0 28px, rgba(224,122,95,0.12) 28px 29px)" }} />
+      <div className="marquee-track flex w-max items-center gap-6 px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
+        {loop.map((it, i) => (
+          <span key={`${it.no}-${i}`} className="inline-flex shrink-0 items-center gap-2">
+            <span className="rounded bg-cream-deep px-1.5 py-0.5 text-[10px] font-bold text-muted">{it.no}</span>
+            <span className="text-ink">{it.title}</span>
+            <span className="text-terracotta/60">·</span>
+            <span className="text-muted">{it.kind}</span>
+            <span className="mx-2 text-border">—</span>
+          </span>
+        ))}
+        {loop.map((it, i) => (
+          <span key={`dup-${it.no}-${i}`} className="inline-flex shrink-0 items-center gap-2" aria-hidden>
+            <span className="rounded bg-cream-deep px-1.5 py-0.5 text-[10px] font-bold text-muted">{it.no}</span>
+            <span className="text-ink">{it.title}</span>
+            <span className="mx-2 text-border">—</span>
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -1366,30 +1409,23 @@ function Projects() {
   const pill = (key: ProjectFolder | "all", label: string) => (
     <button key={key} type="button" onClick={() => setActiveFolder(key)} className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition-colors ${activeFolder === key ? "border-terracotta bg-terracotta text-white" : "border-border bg-transparent text-muted hover:border-ink hover:text-ink"}`}>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${activeFolder === key ? "bg-white/20 text-white" : "bg-border/30 text-muted"}`}>{key === "all" ? projects.length : projects.filter((p) => projectMeta[p.no]?.folder === key).length}</span></button>
   );
-  const folderCard = (key: ProjectFolder, label: string, Icon: typeof Folder, desc: string) => {
-    const count = projects.filter((p) => projectMeta[p.no]?.folder === key).length;
-    const active = activeFolder === key;
-    return (
-      <button key={key} type="button" onClick={() => setActiveFolder(key)} className={`group relative flex flex-col text-left transition-all ${active ? "scale-[1.02]" : "hover:-translate-y-1"}`}>
-        <span className={`inline-flex w-fit items-center gap-2 rounded-t-xl border border-b-0 px-4 py-2 font-mono text-[10px] font-black uppercase tracking-widest ${active ? "border-terracotta bg-terracotta text-white" : "border-border bg-surface text-muted group-hover:border-terracotta/40 group-hover:text-ink"}`}><span className={`flex h-7 w-7 items-center justify-center rounded-lg ${active ? "bg-white/20" : "bg-cream-deep text-terracotta"}`}>{active ? <FolderOpen size={14} /> : <Folder size={14} />}</span>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${active ? "bg-white/20" : "bg-border/20"}`}>{count}</span></span>
-        <span className={`warm-card flex flex-1 flex-col p-5 ${active ? "border-terracotta ring-2 ring-terracotta/20" : ""}`}><span className="flex items-center gap-2 font-mono text-[11px] tracking-widest text-muted"><Icon size={14} className="text-terracotta" />{count} {count === 1 ? "project" : "projects"}</span><span className="mt-2 text-sm leading-relaxed text-muted">{desc}</span></span>
-      </button>
-    );
-  };
 
   return (
     <div id="projects" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
-      {/* Folder gallery — 3 folders + filter + grid */}
-      <section className="relative px-[5vw] pb-[14vh] pt-2">
+      {/* Flow board — auto running banner semua project */}
+      <FlowBoard />
+      {/* Folder gallery — 3 folder kontainer kartu: klik folder baru muncul grid project di dalamnya */}
+      <section className="relative px-[5vw] pb-[14vh] pt-6">
         <div className="mx-auto max-w-[1120px]">
           <div className="flex flex-wrap gap-2">{pill("all", folders.all)}{pill("research", folders.research)}{pill("iot", folders.iot)}{pill("webapp", folders.webapp)}</div>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {folderCard("research", folders.research, BarChart3, lang === "id" ? "Riset & Digital Twin — lahan 800m2" : "Research & Digital Twin — 800m2 plot")}
-            {folderCard("iot", folders.iot, Cpu, lang === "id" ? "Perangkat fisik & otomasi" : "Hardware & automation")}
-            {folderCard("webapp", folders.webapp, Database, lang === "id" ? "ETL, pipeline & aplikasi web" : "ETL, pipelines & web apps")}
+            <FolderContainer label={folders.research} count={projects.filter((p) => projectMeta[p.no]?.folder === "research").length} Icon={BarChart3} desc={lang === "id" ? "Riset & Digital Twin — lahan 800m2" : "Research & Digital Twin — 800m2 plot"} active={activeFolder === "research"} onClick={() => setActiveFolder("research")} />
+            <FolderContainer label={folders.iot} count={projects.filter((p) => projectMeta[p.no]?.folder === "iot").length} Icon={Cpu} desc={lang === "id" ? "Perangkat fisik & otomasi" : "Hardware & automation"} active={activeFolder === "iot"} onClick={() => setActiveFolder("iot")} />
+            <FolderContainer label={folders.webapp} count={projects.filter((p) => projectMeta[p.no]?.folder === "webapp").length} Icon={Database} desc={lang === "id" ? "ETL, pipeline & aplikasi web" : "ETL, pipelines & web apps"} active={activeFolder === "webapp"} onClick={() => setActiveFolder("webapp")} />
           </div>
+          {/* grid hanya muncul setelah klik folder (atau All = semua) */}
           <div className="mt-8 grid gap-5 md:grid-cols-2">
             <AnimatePresence mode="popLayout">
               {visible.map((p, idx) => (
@@ -1728,7 +1764,7 @@ function ExpRow({
       <motion.article
         initial={{ opacity: 0, y: 16 } as unknown as Record<string, unknown>}
         whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
         transition={{ duration: 0.55, ease: EASE }}
         onClick={onJump}
         whileHover={{ y: -3, scale: 1.01 } as unknown as Record<string, unknown>}
@@ -1941,7 +1977,7 @@ function CertificateViewer({
             exit={{ y: 8, scale: 0.98, opacity: 0 }}
             transition={{ type: "spring", stiffness: 380, damping: 24 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative flex h-[min(90vh,920px)] max-h-[90vh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-border bg-surface shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]"
+            className="relative flex h-[min(92dvh,920px)] max-h-[92dvh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-border bg-surface shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]"
           >
             {/* header branded — bukan toolbar chrome */}
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-cream px-3 py-2.5 sm:px-4 sm:py-3">
@@ -1971,25 +2007,37 @@ function CertificateViewer({
                 </button>
               </div>
             </div>
-            {/* pdf — FitH + object fallback jika Chrome viewer diblok; XFO SAMEORIGIN + CSP object-src 'self' */}
-            <div className="flex flex-1 flex-col items-center justify-center overflow-auto bg-[#141414] p-2 sm:p-3">
-              <object
-                data={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
-                type="application/pdf"
-                className="h-full w-full min-h-[52vh] border border-border bg-white"
-                aria-label={title}
-              >
-                <iframe
-                  src={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
-                  title={title}
-                  className="h-full w-full min-h-[52vh] border-0 bg-white"
-                  loading="lazy"
-                  allow="fullscreen"
-                />
-              </object>
-              <div className="mt-2 flex w-full items-center justify-between gap-2 border-t border-border/20 pt-2 font-mono text-[11px] text-muted">
-                <span>Gagal load viewer? Pakai tombol Unduh PDF di atas.</span>
-                <a href={href} target="_blank" rel="noreferrer" className="border border-terracotta bg-terracotta px-3 py-1.5 font-bold uppercase tracking-widest text-white hover:bg-[#d46a52]">Buka Tab Baru</a>
+            {/* pdf — mobile: native scroll, desktop: object/iframe */}
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#141414] p-2 sm:p-3">
+              {/* mobile: langsung pakai iframe full tinggi + link fallback besar */}
+              <div className="flex flex-1 flex-col gap-2 overflow-auto">
+                <div className="min-h-[62dvh] flex-1 sm:min-h-[52vh]">
+                  <object
+                    data={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
+                    type="application/pdf"
+                    className="hidden h-full min-h-[62dvh] w-full border border-border bg-white sm:block sm:min-h-[52vh]"
+                    aria-label={title}
+                  >
+                    <iframe
+                      src={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
+                      title={title}
+                      className="h-full w-full min-h-[62dvh] border-0 bg-white sm:min-h-[52vh]"
+                      loading="lazy"
+                      allow="fullscreen"
+                    />
+                  </object>
+                  <iframe
+                    src={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
+                    title={title}
+                    className="h-[62dvh] w-full border border-border bg-white sm:hidden"
+                    loading="lazy"
+                    allow="fullscreen"
+                  />
+                </div>
+                <div className="flex flex-col gap-2 border-t border-border/20 pt-2 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
+                  <span className="max-sm:text-xs">HP / iOS tidak preview? Pakai tombol di bawah.</span>
+                  <a href={href} target="_blank" rel="noreferrer" className="inline-flex justify-center border border-terracotta bg-terracotta px-4 py-2.5 text-center font-bold uppercase tracking-widest text-white hover:bg-[#d46a52] max-sm:w-full">Buka PDF Di Tab Baru ↗</a>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -2002,11 +2050,10 @@ function CertificateViewer({
 function ExperienceOpening() {
   const { lang } = useLang();
   const t = dict[lang];
-  const low = useIsLowEnd();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const gridY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [44, -44]);
-  const titleY = useTransform(scrollYProgress, [0, 1], low ? [0, 0] : [28, -32]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
+  const titleY = useTransform(scrollYProgress, [0, 1], [14, -16]);
   return (
     <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
@@ -2108,7 +2155,6 @@ function Experience() {
 /* ---------- 5. How I Build — Systems over Syntax (Warm) ---------- */
 function Lab() {
   const { lang } = useLang();
-  const low = useIsLowEnd();
   const t = dict[lang];
   const steps = t.labSteps.map((s, i) => ({
     ...s,
@@ -2117,8 +2163,8 @@ function Lab() {
   }));
   const openingRef = useRef<HTMLElement>(null);
   const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
-  const labGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
-  const labTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
+  const labGridY = useTransform(openingProgress, [0, 1], [22, -22]);
+  const labTitleY = useTransform(openingProgress, [0, 1], [14, -14]);
   return (
     <div id="lab" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC */}
@@ -2136,9 +2182,9 @@ function Lab() {
           </motion.div>
           <motion.p
             style={{ y: labTitleY, color: WARM.muted } as unknown as Record<string, unknown>}
-            initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 16, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
-            whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-            viewport={{ once: true, amount: 0.4 }}
+            initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
+            whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
+            viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
             transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
             className="mx-auto mt-6 max-w-2xl leading-relaxed will-change-transform"
           >
@@ -2156,9 +2202,9 @@ function Lab() {
           {steps.map((step, idx) => (
             <motion.article
               key={step.n}
-              initial={low ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 16, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
-              whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-              viewport={{ once: true, amount: 0.25 }}
+              initial={{ opacity: 0, y: 14 } as unknown as Record<string, unknown>}
+              whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
+              viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }}
               transition={{ duration: 0.6, ease: EASE, delay: 0.12 + idx * 0.1 }}
               whileHover={{ y: -4 }}
               className={`warm-card flex w-full min-w-0 flex-col overflow-hidden break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${idx === 1 ? "p-5 sm:p-7 md:p-9 md:-translate-y-4" : "p-5 sm:p-7 md:p-8"}`}
@@ -2257,9 +2303,9 @@ function Contact() {
           className="font-display text-[clamp(2.6rem,8.5vw,6.75rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
         />
         <motion.p
-          initial={low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
-          whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-          viewport={{ once: true, amount: 0.4 }}
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.15 }}
           className="mx-auto mt-8 max-w-lg text-lg"
           style={{ color: WARM.muted }}
@@ -2269,7 +2315,7 @@ function Contact() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
+          viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.22 }}
           className="mt-10 flex flex-wrap justify-center gap-3"
         >
@@ -2291,7 +2337,7 @@ function Contact() {
           noValidate
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
           className="mx-auto mt-8 w-full max-w-[640px] text-left"
         >
@@ -2398,7 +2444,7 @@ function Contact() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.26 }}
           className="mt-4 flex flex-wrap justify-center gap-3"
         >
