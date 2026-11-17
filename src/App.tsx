@@ -1383,16 +1383,7 @@ function Projects() {
       requestAnimationFrame(() => lenisInstance?.resize());
     };
   }, [active]);
-  const handleOpen = (p: (typeof projects)[number]) => {
-    // HP: kalau ada artikel PDF, langsung buka tab baru — anti modal scroll bug
-    const href = (p as { href?: string }).href;
-    const isCoarse = typeof window !== "undefined" && (window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768);
-    if (isCoarse && typeof href === "string" && href.length > 0) {
-      window.open(href, "_blank", "noopener,noreferrer");
-      return;
-    }
-    setActive(p);
-  };
+  const handleOpen = (p: (typeof projects)[number]) => setActive(p);
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
 
   return (
