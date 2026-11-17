@@ -1382,17 +1382,21 @@ function Projects() {
     <div id="projects" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
-      {/* Bento — hero 01 full + 3 cards compact (menarik, 0 klik, 1 viewport) */}
+      {/* Bento — asymmetric editorial 8/4 + 7/5 (pecah template) */}
       <section className="relative px-[5vw] pb-[14vh] pt-6">
         <div className="mx-auto max-w-[1120px]">
-          <div className="grid gap-5">
-            {/* hero — Digital Twin 01 col-span penuh */}
-            <ProjectCard p={projects[0]} idx={0} onOpen={handleOpen} />
-            {/* trio — 02, 03, 04 */}
-            <div className="grid gap-5 md:grid-cols-3">
-              {projects.slice(1).map((p) => (
-                <ProjectCard key={p.no} p={p} idx={projects.indexOf(p)} onOpen={handleOpen} compact />
-              ))}
+          <div className="grid gap-5 md:grid-cols-12 md:items-stretch">
+            <div className="md:col-span-8 flex flex-col [&>article]:flex-1 [&>article]:!min-h-[520px] [&>article]:!h-full">
+              <ProjectCard p={projects[0]} idx={0} onOpen={handleOpen} />
+            </div>
+            <div className="md:col-span-4 flex flex-col [&>article]:flex-1 [&>article]:!h-full md:[&>article]:!min-h-[520px]">
+              <ProjectCard p={projects[1]} idx={1} onOpen={handleOpen} compact />
+            </div>
+            <div className="md:col-span-7 flex flex-col [&>article]:flex-1 [&>article]:!h-full md:[&>article]:!min-h-[440px]">
+              <ProjectCard p={projects[2]} idx={2} onOpen={handleOpen} compact />
+            </div>
+            <div className="md:col-span-5 flex flex-col [&>article]:flex-1 [&>article]:!h-full md:[&>article]:!min-h-[440px]">
+              <ProjectCard p={projects[3]} idx={3} onOpen={handleOpen} compact />
             </div>
           </div>
         </div>
