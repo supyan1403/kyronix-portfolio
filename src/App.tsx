@@ -14,18 +14,33 @@ import {
   AnimatePresence,
 } from "motion/react";
 import {
+  Activity,
   ArrowDownRight,
   ArrowUpRight,
   BarChart3,
   Check,
+  Code2,
   Copy,
   Cpu,
   Database,
+  DatabaseZap,
   Download,
+  Folder,
+  FolderOpen,
+  GitBranch,
   GraduationCap,
+  Layers,
+  Lightbulb,
   Mail,
+  Monitor,
+  Palette,
   Radio,
+  Route,
+  ScanEye,
+  Table2,
+  Terminal,
   Wrench,
+  Workflow,
   X,
 } from "lucide-react";
 
@@ -1096,43 +1111,54 @@ function Hero({ ready }: { ready: boolean }) {
   );
 }
 
-/* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Vibe Coder) ---------- */
-const stack = [
+/* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Gallery: folder + icon tiles) ---------- */
+type Tile = { label: string; Icon: typeof Database };
+const stackGallery: { id: string; title: string; icon: typeof Database; tone: "lime" | "violet" | "coral"; tiles: Tile[] }[] = [
   {
-    icon: Database,
+    id: "data",
     title: "Data & System Flow",
-    tone: "lime" as const,
-    items: [
-      "SYSTEM ARCHITECTURE",
-      "DRAW.IO DIAGRAMS",
-      "OPENCODE CLI",
-      "PYTHON DATA & ETL",
-      "POSTGRESQL / SQL",
-      "ETL PIPELINES",
-      "PANDAS",
-      "DETECTION SYSTEMS",
+    icon: Database,
+    tone: "lime",
+    tiles: [
+      { label: "System Architecture", Icon: Layers },
+      { label: "Draw.io Diagrams", Icon: Workflow },
+      { label: "OpenCode CLI", Icon: Terminal },
+      { label: "Python", Icon: Code2 },
+      { label: "PostgreSQL", Icon: Database },
+      { label: "ETL Pipelines", Icon: DatabaseZap },
+      { label: "Pandas", Icon: Table2 },
+      { label: "Detection Systems", Icon: ScanEye },
     ],
   },
   {
-    icon: Wrench,
+    id: "dev",
     title: "Dev & Web Workflow",
-    tone: "violet" as const,
-    items: [
-      "OPENCODE CLI",
-      "PYTHON AUTOMATION",
-      "REACT LEARNING STAGE",
-      "TAILWIND CSS",
-      "API ROUTERS",
-      "GIT / GITHUB",
-      "VS CODE",
-      "FIGMA",
+    icon: Wrench,
+    tone: "violet",
+    tiles: [
+      { label: "Python Automation", Icon: Terminal },
+      { label: "React", Icon: Code2 },
+      { label: "Tailwind CSS", Icon: Palette },
+      { label: "API Routers", Icon: Route },
+      { label: "Git / GitHub", Icon: GitBranch },
+      { label: "VS Code", Icon: Monitor },
+      { label: "Figma", Icon: Palette },
+      { label: "OpenCode CLI", Icon: Terminal },
     ],
   },
   {
-    icon: Cpu,
+    id: "iot",
     title: "IoT & Hardware — Learning & Exploring",
-    tone: "coral" as const,
-    items: ["BEGINNER EXPLORATION", "ESP32", "SENSORS & ACTUATORS", "MQTT", "TELEMETRY DATA", "HARDWARE PROTOTYPING"],
+    icon: Cpu,
+    tone: "coral",
+    tiles: [
+      { label: "ESP32", Icon: Cpu },
+      { label: "Sensors & Actuators", Icon: Activity },
+      { label: "MQTT", Icon: Radio },
+      { label: "Telemetry Data", Icon: BarChart3 },
+      { label: "Hardware Prototyping", Icon: Wrench },
+      { label: "Beginner Exploration", Icon: Lightbulb },
+    ],
   },
 ];
 
@@ -1141,15 +1167,11 @@ function Stack() {
   const t = dict[lang];
   const low = useIsLowEnd();
   const openingRef = useRef<HTMLElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
   const openingGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const openingTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
-  const { scrollYProgress: stackProgress } = useScroll({ target: cardsRef, offset: ["start end", "end start"] });
-  const stackY0 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [28, -28]);
-  const stackY1 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [44, -36]);
-  const stackY2 = useTransform(stackProgress, [0, 1], low ? [0, 0] : [60, -44]);
-  const stackYs = [stackY0, stackY1, stackY2] as const;
+  const [active, setActive] = useState(0);
+  const group = stackGallery[active] ?? stackGallery[0]!;
   return (
     <section id="stack" className="relative bg-cream overflow-x-clip">
       {/* Opening — full 100dvh text-only EPIC */}
@@ -1177,41 +1199,92 @@ function Stack() {
           </motion.p>
         </div>
       </section>
-      {/* Cards-only — no title */}
-      <div ref={cardsRef} className="relative px-[5vw] pb-[18vh]">
+      {/* Gallery — folder tabs left + icon tiles right (R.DEV 404: galeri_006.jpg) */}
+      <div className="relative px-[5vw] pb-[18vh]">
         <div className="relative mx-auto max-w-[1120px]">
-          <div className="grid gap-6 md:grid-cols-3">
-          {stack.map((group, i) => {
-            const Icon = group.icon;
-            const accentColor = group.tone === "lime" ? WARM.terracotta : group.tone === "coral" ? WARM.terracotta : WARM.sage;
-            const parY = stackYs[i as 0 | 1 | 2] ?? stackY0;
-            return (
-              <motion.div key={group.title} style={{ y: parY } as unknown as Record<string, unknown>} className="will-change-transform">
-                <motion.article
-                  initial={low ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 18, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
-                  whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-                  viewport={{ once: true, amount: 0.25 }}
-                  transition={{ duration: 0.65, ease: EASE, delay: i * 0.09 }}
-                  whileHover={{ y: -4 }}
-                  className="warm-card p-7"
-                >
-                <div className="mb-5 flex items-center justify-between">
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-cream">
-                    <Icon size={18} style={{ color: accentColor }} />
-                  </span>
-                  <span className="font-mono text-xs tracking-widest text-muted">0{i + 1}</span>
+          <div className="flex flex-col gap-6 lg:flex-row lg:gap-6">
+            {/* folder list — vertical desktop, scroll horizontal mobile */}
+            <div className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:min-w-[280px] lg:max-w-[320px] lg:overflow-visible scrollbar-none">
+              {stackGallery.map((g, idx) => {
+                const isActive = idx === active;
+                const FolderIcon = isActive ? FolderOpen : Folder;
+                return (
+                  <button
+                    key={g.id}
+                    onClick={() => setActive(idx)}
+                    aria-selected={isActive}
+                    role="tab"
+                    className={`group relative flex shrink-0 items-center justify-between gap-3 border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
+                      isActive
+                        ? "border-terracotta bg-terracotta/10 text-ink"
+                        : "border-border/60 bg-surface text-muted hover:border-border hover:text-ink"
+                    }`}
+                    style={{ borderRadius: 12 } as React.CSSProperties}
+                  >
+                    <span className="flex min-w-0 items-center gap-3">
+                      <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${isActive ? "border-terracotta/30 bg-terracotta text-white" : "border-border bg-cream text-muted"}`}>
+                        <FolderIcon size={16} />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block font-sans text-[13px] font-semibold uppercase leading-tight tracking-[0.04em] truncate">{g.title}</span>
+                        <span className="block font-mono text-[11px] tracking-wide text-muted">{g.tiles.length} technologies</span>
+                      </span>
+                    </span>
+                    <span className={`hidden shrink-0 font-mono text-xs lg:inline ${isActive ? "text-terracotta" : "text-muted/60"}`}>0{idx + 1}</span>
+                    {isActive ? <span aria-hidden className="pointer-events-none absolute -right-[7px] top-1/2 hidden h-3 w-3 -translate-y-1/2 rotate-45 border-r border-t border-terracotta bg-terracotta/10 lg:block" /> : null}
+                  </button>
+                );
+              })}
+            </div>
+            {/* tiles grid — corner brackets like R.DEV 404 blueprint */}
+            <div className="relative flex-1 min-w-0">
+              <div aria-hidden className="pointer-events-none absolute -left-1 -top-1 h-4 w-4 border-l border-t border-border/40" />
+              <div aria-hidden className="pointer-events-none absolute -right-1 -top-1 h-4 w-4 border-r border-t border-border/40" />
+              <div aria-hidden className="pointer-events-none absolute -left-1 -bottom-1 h-4 w-4 border-l border-b border-border/40" />
+              <div aria-hidden className="pointer-events-none absolute -right-1 -bottom-1 h-4 w-4 border-r border-b border-border/40" />
+              <div className="warm-card p-4 sm:p-5">
+                <div className="mb-3 flex items-center justify-between gap-3 border-b border-border/10 pb-3">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
+                    {group.title} — {group.tiles.length} items
+                  </p>
+                  <span className="font-mono text-[11px] tracking-widest text-muted">0{active + 1} / 0{stackGallery.length}</span>
                 </div>
-                <h3 className="mb-3 font-sans text-lg font-semibold uppercase leading-tight tracking-[0.06em] text-ink">{group.title}</h3>
-                <div className="flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <span key={item} className="warm-tag">{item}</span>
-                  ))}
-                </div>
-              </motion.article></motion.div>
-            );
-          })}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={group.id}
+                    initial={low ? ({ opacity: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)}
+                    animate={low ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)}
+                    exit={low ? ({ opacity: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: -8 } as unknown as Record<string, unknown>)}
+                    transition={{ duration: 0.28, ease: EASE }}
+                    className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+                  >
+                    {group.tiles.map((tile, ti) => {
+                      const TIcon = tile.Icon;
+                      return (
+                        <motion.div
+                          key={tile.label}
+                          initial={low ? ({ opacity: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 8, filter: "blur(4px)" } as unknown as Record<string, unknown>)}
+                          animate={low ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
+                          transition={{ duration: 0.35, delay: ti * 0.04, ease: EASE }}
+                          whileHover={low ? undefined : { y: -2 }}
+                          className="group/tile relative flex flex-col items-center justify-center gap-3 border border-border bg-cream px-3 py-6 text-center transition-colors hover:border-terracotta hover:bg-cream focus-within:border-terracotta focus-within:ring-2 focus-within:ring-terracotta/20"
+                          style={{ borderRadius: 12 } as React.CSSProperties}
+                        >
+                          <span aria-hidden className="pointer-events-none absolute left-1.5 top-1.5 h-2 w-2 border-l border-t border-border/50 group-hover/tile:border-terracotta/60" />
+                          <span aria-hidden className="pointer-events-none absolute right-1.5 top-1.5 h-2 w-2 border-r border-t border-border/50 group-hover/tile:border-terracotta/60" />
+                          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-muted transition-colors group-hover/tile:border-terracotta/30 group-hover/tile:bg-terracotta group-hover/tile:text-white">
+                            <TIcon size={20} />
+                          </span>
+                          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] leading-tight text-ink">{tile.label}</span>
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
       </div>
     </section>
   );
