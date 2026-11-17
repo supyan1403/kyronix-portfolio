@@ -540,6 +540,112 @@ function Intro({ onDone }: { onDone: () => void }) {
   );
 }
 
+/* ---------- K — dedicated page after boot (3D everywhere, mobile optimized) ---------- */
+function KPage({ onDone }: { onDone: () => void }) {
+  const [leaving, setLeaving] = useState(false);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rx = useTransform(mx, [-1, 1], [8, -8]);
+  const ry = useTransform(my, [-1, 1], [-7, 7]);
+  const finish = () => setLeaving(true);
+  useEffect(() => {
+    document.documentElement.style.overflow = "hidden";
+    lenisInstance?.stop();
+    const t = window.setTimeout(finish, 1820);
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
+    window.addEventListener("keydown", onKey);
+    return () => { window.clearTimeout(t); window.removeEventListener("keydown", onKey); };
+  }, []);
+  const handleExitComplete = () => {
+    document.documentElement.style.overflow = "";
+    lenisInstance?.start();
+    requestAnimationFrame(() => lenisInstance?.resize());
+    onDone();
+  };
+  const onPointer = (clientX: number, clientY: number, rect: DOMRect) => {
+    mx.set(((clientX - rect.left) / rect.width - 0.5) * 2);
+    my.set(((clientY - rect.top) / rect.height - 0.5) * 2);
+  };
+  return (
+    <AnimatePresence onExitComplete={handleExitComplete}>
+      {!leaving && (
+        <motion.div
+          className="fixed inset-0 z-[150] flex flex-col items-center justify-center bg-cream px-6 overflow-hidden"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, filter: "blur(8px)", scale: 1.02 }}
+          transition={{ duration: 0.42, ease: EASE }}
+          onClick={finish}
+          role="button"
+          tabIndex={0}
+          aria-label="Lanjut ke portfolio — klik atau tekan Esc"
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") finish(); }}
+        >
+          {/* Grid 32px kontinu kanvas */}
+          <div aria-hidden className="pointer-events-none absolute inset-0" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} />
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/14 blur-[80px] max-sm:h-[380px] max-sm:w-[380px] max-sm:blur-[56px]"
+            initial={{ opacity: 0, scale: 0.78 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.62, ease: EASE }}
+          />
+          <motion.div
+            className="relative flex items-center justify-center will-change-transform"
+            style={{ perspective: 900, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
+            onMouseMove={(e) => onPointer(e.clientX, e.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect())}
+            onMouseLeave={() => { mx.set(0); my.set(0); }}
+            onTouchMove={(e) => {
+              const t = e.touches[0];
+              if (!t) return;
+              onPointer(t.clientX, t.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect());
+            }}
+            onTouchEnd={() => { mx.set(0); my.set(0); }}
+          >
+            <motion.img
+              src="/kyronix-k.webp"
+              alt="KYRONIX K"
+              width={520}
+              height={528}
+              loading="eager"
+              decoding="async"
+              draggable={false}
+              className="relative h-[min(46dvh,380px)] w-auto select-none will-change-transform md:h-[min(56dvh,460px)]"
+              style={{ rotateX: rx, rotateY: ry, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
+              initial={{ opacity: 0, scale: 0.86, rotateX: 18, rotateY: -14, filter: "blur(6px)" }}
+              animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 26, mass: 0.9, delay: 0.12 }}
+            />
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0, 1, 1, 0] }}
+              transition={{ duration: 1.82, times: [0, 0.36, 0.44, 0.76, 1], ease: "easeInOut" }}
+              style={{ filter: "blur(0.5px)" }}
+            >
+              <motion.div
+                className="absolute inset-y-0 w-[42%] bg-gradient-to-r from-transparent via-white/55 to-transparent"
+                initial={{ x: "-120%" }}
+                animate={{ x: "240%" }}
+                transition={{ duration: 0.95, delay: 0.72, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transform: "skewX(-18deg)" }}
+              />
+            </motion.div>
+          </motion.div>
+          <motion.p
+            className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-muted/70 max-sm:bottom-[5%] max-sm:text-[10px]"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55, duration: 0.55, ease: EASE }}
+          >
+            KYRONIX — K — tap / Esc to skip
+          </motion.p>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 /* ---------- Nav ---------- */
 const links = [
   { id: "stack", label: { id: "Stack", en: "Stack" } },
@@ -1350,120 +1456,6 @@ function ProjectsOpening() {
   );
 }
 
-function KReveal({ onDone }: { onDone?: () => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [played, setPlayed] = useState(false);
-  const low = useIsLowEnd();
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rx = useTransform(mx, [-1, 1], [8, -8]);
-  const ry = useTransform(my, [-1, 1], [-7, 7]);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    let done = false;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting && !done && !played) {
-          done = true;
-          setPlayed(true);
-          // lock cinematic 1.8s — skip if modal open
-          const hasModal = document.body.style.overflow === "hidden";
-          if (!hasModal) {
-            lenisInstance?.stop();
-            const prev = document.body.style.overflow;
-            document.body.style.overflow = "hidden";
-            setTimeout(() => {
-              document.body.style.overflow = prev;
-              lenisInstance?.start();
-              requestAnimationFrame(() => lenisInstance?.resize());
-              onDone?.();
-            }, 1880);
-          } else onDone?.();
-        }
-      },
-      { threshold: 0.35 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [played, onDone]);
-  if (low) return null;
-  if (!played) return <div ref={ref} aria-hidden className="h-[8px] w-full" />;
-  return (
-    <div ref={ref} className="relative flex h-[54dvh] items-center justify-center overflow-visible bg-transparent py-[4vh] md:h-[62dvh]" aria-hidden>
-      <motion.div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/14 blur-[80px] max-sm:h-[380px] max-sm:w-[380px]"
-        initial={{ opacity: 0, scale: 0.7 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.55, ease: EASE }}
-      />
-      <motion.div
-        className="relative flex items-center justify-center"
-        style={{ perspective: 900 } as unknown as Record<string, unknown>}
-        onMouseMove={(e) => {
-          const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
-          mx.set(((e.clientX - r.left) / r.width - 0.5) * 2);
-          my.set(((e.clientY - r.top) / r.height - 0.5) * 2);
-        }}
-        onMouseLeave={() => { mx.set(0); my.set(0); }}
-      >
-        <motion.img
-          src="/kyronix-k.webp"
-          alt=""
-          width={520}
-          height={528}
-          loading="eager"
-          draggable={false}
-          className="relative h-[min(42dvh,360px)] w-auto select-none md:h-[min(52dvh,440px)]"
-          style={{ rotateX: rx, rotateY: ry } as unknown as Record<string, unknown>}
-          initial={{ opacity: 0, scale: 0.88, rotateX: 18, rotateY: -14 }}
-          animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0 }}
-          transition={{ type: "spring", stiffness: 340, damping: 26, mass: 0.9 }}
-        />
-        {/* light sweep */}
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 overflow-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0, 1, 1, 0] }}
-          transition={{ duration: 1.8, times: [0, 0.38, 0.45, 0.78, 1], ease: "easeInOut" }}
-          style={{ filter: "blur(0.5px)" }}
-        >
-          <motion.div
-            className="absolute inset-y-0 w-[42%] bg-gradient-to-r from-transparent via-white/55 to-transparent"
-            initial={{ x: "-120%" }}
-            animate={{ x: "240%" }}
-            transition={{ duration: 0.95, delay: 0.72, ease: [0.22, 1, 0.36, 1] }}
-            style={{ transform: "skewX(-18deg)" }}
-          />
-        </motion.div>
-      </motion.div>
-      <motion.p
-        className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-muted/70 max-sm:bottom-[5%] max-sm:text-[10px]"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.55, duration: 0.55, ease: EASE }}
-      >
-        KYRONIX — K
-      </motion.p>
-      {/* out */}
-      <motion.div
-        className="pointer-events-none absolute inset-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 0, 0, 1] }}
-        transition={{ duration: 1.88, times: [0, 0.72, 0.86, 1] }}
-      />
-      {/* tap to skip */}
-      <button
-        type="button"
-        aria-label="Skip"
-        onClick={() => { lenisInstance?.start(); document.body.style.overflow = ""; onDone?.(); setPlayed(false); }}
-        className="absolute inset-0 cursor-pointer border-0 bg-transparent p-0"
-      />
-    </div>
-  );
-}
-
 function Projects() {
   const { lang } = useLang();
   const t = dict[lang];
@@ -1504,7 +1496,6 @@ function Projects() {
     <div id="projects" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
-      <KReveal />
       {/* Bento — asymmetric editorial 8/4 + 7/5 (pecah template) */}
       <section className="relative px-[5vw] pb-[14vh] pt-3">
         <div className="mx-auto max-w-[1120px]">
@@ -2619,17 +2610,19 @@ function Contact() {
 }
 
 function App() {
-  const [ready, setReady] = useState(false);
+  const [phase, setPhase] = useState<"intro" | "k" | "ready">("intro");
   const [lang, setLang] = useState<Lang>("id");
   useLenis();
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   const bands = dict[lang].bands;
+  const ready = phase === "ready";
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
       <main className="crt relative bg-cream overflow-x-clip">
         {/* canvas C: 1 lembar Grid 32px kontinu Hero → Contact */}
         <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} />
-      <Intro onDone={() => setReady(true)} />
+      <Intro onDone={() => setPhase("k")} />
+      {phase === "k" && <KPage onDone={() => setPhase("ready")} />}
       <GlowCursor />
       <Nav ready={ready} />
       <Hero ready={ready} />
