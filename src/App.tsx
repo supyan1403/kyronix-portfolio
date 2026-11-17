@@ -1877,66 +1877,124 @@ function ExpRow({
   );
 }
 
-function PdfBlobViewer({ href, title, failed, onFailed }: { href: string; title: string; failed: boolean; onFailed: () => void }) {
-  const isCoarse = useIsMobile();
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+function PdfPage({ pdfDoc, pageNum }: { pdfDoc: { getPage: (n: number) => Promise<unknown> }; pageNum: number }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(pageNum <= 2);
   useEffect(() => {
-    if (isCoarse) { setLoading(false); return; }
+    if (visible) return;
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); io.disconnect(); } }, { rootMargin: "900px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [visible]);
+  useEffect(() => {
+    if (!visible) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     let cancelled = false;
-    let url: string | null = null;
+    (pdfDoc.getPage(pageNum) as Promise<{ getViewport: (o: { scale: number }) => { width: number; height: number }; render: (o: { canvasContext: CanvasRenderingContext2D; viewport: unknown; canvas: HTMLCanvasElement }) => { promise: Promise<void> } }>).then((page) => {
+      if (cancelled) return;
+      const isMobile = typeof window !== "undefined" ? window.innerWidth < 640 : false;
+      const scale = isMobile ? 1.2 : 1.45;
+      const viewport = page.getViewport({ scale });
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+      canvas.width = (viewport as { width: number }).width * dpr;
+      canvas.height = (viewport as { height: number }).height * dpr;
+      (canvas.style as unknown as { width: string; height: string }).width = "100%";
+      (canvas.style as unknown as { height: string }).height = "auto";
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      page.render({ canvasContext: ctx, viewport, canvas } as unknown as { canvasContext: CanvasRenderingContext2D; viewport: unknown }).promise.catch(() => {});
+    });
+    return () => { cancelled = true; };
+  }, [visible, pdfDoc, pageNum]);
+  return (
+    <div ref={wrapRef} className="mx-auto w-full max-w-[820px] bg-white shadow-[0_2px_16px_rgba(0,0,0,0.28)]">
+      <canvas ref={canvasRef} className="block h-auto w-full" />
+      {!visible && <div className="flex h-[420px] items-center justify-center bg-white font-mono text-xs text-muted">Memuat hal {pageNum}...</div>}
+    </div>
+  );
+}
+
+function PdfBlobViewer({ href, title, failed, onFailed }: { href: string; title: string; failed: boolean; onFailed: () => void }) {
+  const _isCoarse = useIsMobile();
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [pdfDoc, setPdfDoc] = useState<{ numPages: number; getPage: (n: number) => Promise<unknown>; destroy: () => void } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [pdfErr, setPdfErr] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    let doc: { destroy: () => void } | null = null;
+    let bUrl: string | null = null;
     setLoading(true);
+    setPdfErr(false);
+    setPdfDoc(null);
     setBlobUrl(null);
-    fetch(href)
-      .then((r) => {
-        if (!r.ok) throw new Error(`fetch ${r.status}`);
-        return r.blob();
-      })
-      .then((blob) => {
+    (async () => {
+      try {
+        const pdfjs = await import("pdfjs-dist");
+        const workerSrc = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default as string;
+        (pdfjs as unknown as { GlobalWorkerOptions: { workerSrc: string } }).GlobalWorkerOptions.workerSrc = workerSrc;
+        const data = await fetch(href).then((r) => {
+          if (!r.ok) throw new Error(String(r.status));
+          return r.arrayBuffer();
+        });
         if (cancelled) return;
-        url = URL.createObjectURL(blob);
-        setBlobUrl(url);
+        const ab = data.slice(0);
+        // keep blobUrl for desktop fallback iframe if pdfjs fails
+        bUrl = URL.createObjectURL(new Blob([ab], { type: "application/pdf" }));
+        setBlobUrl(bUrl);
+        const task = (pdfjs as unknown as { getDocument: (o: { data: ArrayBuffer }) => { promise: Promise<{ numPages: number; getPage: (n: number) => Promise<unknown>; destroy: () => void }> } }).getDocument({ data: ab });
+        const d = await task.promise;
+        if (cancelled) { d.destroy(); return; }
+        doc = d;
+        setPdfDoc(d);
         setLoading(false);
-      })
-      .catch(() => {
+      } catch {
         if (cancelled) return;
+        setPdfErr(true);
         setLoading(false);
-        onFailed();
-      });
-    return () => {
-      cancelled = true;
-      if (url) URL.revokeObjectURL(url);
-    };
-  }, [href, onFailed, isCoarse]);
-  if (isCoarse) {
+        if (!bUrl) onFailed();
+      }
+    })();
+    return () => { cancelled = true; if (doc) doc.destroy(); if (bUrl) URL.revokeObjectURL(bUrl); };
+  }, [href, onFailed]);
+  void _isCoarse;
+  if (pdfDoc) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 bg-cream px-6 py-10 text-center">
-        <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-cream-deep text-terracotta"><FileText size={28} /></span>
-        <div className="space-y-1">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-terracotta">PDF — KYRONIX</p>
-          <p className="mx-auto max-w-[22ch] break-words font-mono text-xs font-bold uppercase tracking-widest text-ink">{title}</p>
-          <p className="font-mono text-[11px] text-muted">Chrome HP blok preview — buka tab baru.</p>
+      <div className="flex min-h-0 flex-1 flex-col overflow-auto bg-[#1A1816] p-2 sm:p-3">
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: pdfDoc.numPages }, (_, i) => (
+            <PdfPage key={i} pdfDoc={pdfDoc} pageNum={i + 1} />
+          ))}
         </div>
-        <a href={href} target="_blank" rel="noreferrer" className="mt-2 inline-flex bg-terracotta px-6 py-3.5 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">Buka PDF Di Tab Baru ↗</a>
+        <p className="mt-3 text-center font-mono text-[11px] text-muted">{pdfDoc.numPages} halaman — scroll</p>
       </div>
     );
   }
   if (loading) {
     return <div className="flex min-h-[62dvh] flex-1 items-center justify-center border border-border bg-white px-4 font-mono text-xs text-muted sm:min-h-[52vh]">Memuat PDF…</div>;
   }
-  if (failed || !blobUrl) {
+  if (pdfErr || failed) {
     return (
       <div className="flex min-h-[62dvh] flex-1 flex-col items-center justify-center gap-3 border border-border bg-cream p-6 text-center sm:min-h-[52vh]">
         <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-cream-deep text-terracotta"><FileText size={22} /></span>
-        <p className="font-mono text-xs leading-relaxed text-muted">Preview diblokir — pakai tombol di bawah.</p>
+        <p className="font-mono text-xs leading-relaxed text-muted">Preview gagal — buka tab baru di bawah.</p>
+        <a href={href} target="_blank" rel="noreferrer" className="inline-flex border border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">Buka PDF ↗</a>
       </div>
     );
   }
-  return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <iframe src={blobUrl} title={title} className="h-[62dvh] w-full flex-1 border border-border bg-white sm:h-full sm:min-h-[52vh]" />
-    </div>
-  );
+  if (!pdfDoc && blobUrl) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <iframe src={blobUrl} title={title} className="h-[62dvh] w-full flex-1 border border-border bg-white sm:h-full sm:min-h-[52vh]" />
+      </div>
+    );
+  }
+  return <div className="flex min-h-[62dvh] flex-1 items-center justify-center border border-border bg-white px-4 font-mono text-xs text-muted sm:min-h-[52vh]">Memuat PDF...</div>;
 }
 
 function CertificateViewer({
