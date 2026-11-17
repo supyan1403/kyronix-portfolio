@@ -1272,72 +1272,7 @@ function FolderContainer({ label, count, Icon, desc, active, onClick }: { label:
     </button>
   );
 }
-function FolderProjectsModal({ folder, open, onClose, onOpen }: { folder: ProjectFolder | "all" | null; open: boolean; onClose: () => void; onOpen: (p: (typeof projects)[number]) => void }) {
-  const { lang } = useLang();
-  const items = folder === null ? [] : folder === "all" ? projects : projects.filter((p) => projectMeta[p.no]?.folder === folder);
-  const tFolders = dict[lang].folders as Record<string, string>;
-  const label = folder ? (tFolders[folder] ?? folder) : "";
-  const folderDesc: Record<string, { id: string; en: string }> = {
-    research: { id: "Riset & Digital Twin — lahan 800m2, Kriging & Random Forest", en: "Research & Digital Twin — 800m2 plot, Kriging & Random Forest" },
-    iot: { id: "Perangkat fisik & otomasi — ESP32, sensor & jadwal pakan", en: "Hardware & automation — ESP32, sensors & feeding schedule" },
-    webapp: { id: "ETL, pipeline & aplikasi web — PostgreSQL & automation", en: "ETL, pipelines & web apps — PostgreSQL & automation" },
-    all: { id: "Semua project — riset, IoT & web app", en: "All projects — research, IoT & web apps" },
-  };
-  const desc = folder ? (folderDesc[folder]?.[lang] ?? "") : "";
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", onKey);
-    const sb = window.innerWidth - document.documentElement.clientWidth;
-    const prevBodyOverflow = document.body.style.overflow;
-    const prevBodyPad = document.body.style.paddingRight;
-    const prevHtmlOverflow = document.documentElement.style.overflow;
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-    if (sb > 0) document.body.style.paddingRight = `${sb}px`;
-    lenisInstance?.stop();
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevBodyOverflow;
-      document.body.style.paddingRight = prevBodyPad;
-      document.documentElement.style.overflow = prevHtmlOverflow;
-      lenisInstance?.start();
-    };
-  }, [open, onClose]);
-  return (
-    <AnimatePresence>
-      {open && folder && (
-        <motion.div role="dialog" aria-modal="true" aria-label={label} className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
-          <div className="absolute inset-0 bg-[#0f0e0d]/75 backdrop-blur-[3px] supports-[backdrop-filter]:bg-[#0f0e0d]/65 max-sm:backdrop-blur-none max-sm:bg-[#0f0e0d]/85" />
-          <motion.div initial={{ y: 16, scale: 0.98, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }} exit={{ y: 8, scale: 0.98, opacity: 0 }} transition={{ type: "spring", stiffness: 380, damping: 24 }} onClick={(e) => e.stopPropagation()} className="relative flex max-h-[92dvh] w-[min(96vw,1120px)] max-w-[1120px] flex-col overflow-hidden border border-border bg-cream shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]">
-            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-4 py-3 sm:px-5 sm:py-4">
-              <div className="min-w-0 flex items-center gap-3">
-                <span className="hidden h-9 w-9 items-center justify-center rounded-lg bg-terracotta text-white sm:inline-flex"><FolderOpen size={16} /></span>
-                <div className="min-w-0">
-                  <p className="truncate font-mono text-[11px] uppercase tracking-[0.18em] text-terracotta">{label} — {items.length} project{items.length === 1 ? "" : "s"}</p>
-                  <p className="truncate text-sm font-medium leading-tight text-muted">{desc}</p>
-                </div>
-              </div>
-              <button onClick={onClose} aria-label="Tutup" className="flex h-9 w-9 shrink-0 items-center justify-center border border-border bg-transparent text-ink hover:border-terracotta hover:text-terracotta"><X size={16} /></button>
-            </div>
-            <div className="min-h-0 flex-1 overflow-auto bg-cream p-4 sm:p-5 md:p-6">
-              <div className="grid gap-5 md:grid-cols-2">
-                {items.map((p) => (
-                  <ProjectCard key={p.no} p={p} idx={projects.indexOf(p)} onOpen={onOpen} compact />
-                ))}
-              </div>
-              {items.length === 0 ? <p className="py-10 text-center font-mono text-xs text-muted">{lang === "id" ? "Belum ada proyek di folder ini." : "No projects in this folder yet."}</p> : null}
-            </div>
-            <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border/20 bg-surface px-4 py-3 font-mono text-[11px] text-muted">
-              <span className="hidden sm:inline">Klik kartu untuk lihat detail</span>
-              <button onClick={onClose} className="inline-flex w-full justify-center border border-border bg-transparent px-4 py-2 text-center font-bold uppercase tracking-widest text-ink hover:border-terracotta hover:text-terracotta sm:w-auto">Tutup</button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
+
 function ProjectCard({ p, idx, onOpen, compact }: { p: (typeof projects)[number]; idx: number; onOpen: (pp: (typeof projects)[number]) => void; compact?: boolean }) {
   const { lang } = useLang();
   const isDone = p.status === "RESEARCH DONE" || p.status === "LIVE NOW";
@@ -1468,35 +1403,6 @@ function Projects() {
   const [docHref, setDocHref] = useState<string | null>(null);
   const folders = (t as unknown as { folders: Record<ProjectFolder | "all", string> }).folders;
   const [activeFolder, setActiveFolder] = useState<ProjectFolder | "all" | null>(null);
-  // hash shareable tipis: /#research /#iot /#webapp /#all — tanpa router, keep canvas 1 lembar
-  useEffect(() => {
-    const raw = window.location.hash.replace(/^#/, "");
-    const valid = ["research", "iot", "webapp", "all"] as const;
-    if ((valid as readonly string[]).includes(raw)) setActiveFolder(raw as ProjectFolder | "all");
-  }, []);
-  useEffect(() => {
-    const valid = ["research", "iot", "webapp", "all"] as const;
-    if (activeFolder && (valid as readonly string[]).includes(activeFolder)) {
-      const url = `#${activeFolder}`;
-      if (window.location.hash !== url) history.pushState(null, "", url);
-    } else if (activeFolder === null && valid.some((v) => window.location.hash === `#${v}`)) {
-      history.pushState(null, "", window.location.pathname + window.location.search);
-    }
-  }, [activeFolder]);
-  useEffect(() => {
-    const valid = ["research", "iot", "webapp", "all"] as const;
-    const onPop = () => {
-      const raw = window.location.hash.replace(/^#/, "");
-      if ((valid as readonly string[]).includes(raw)) setActiveFolder(raw as ProjectFolder | "all");
-      else {
-        setActiveFolder(null);
-        if (active) setActive(null);
-        if (docHref) setDocHref(null);
-      }
-    };
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-  }, [active, docHref]);
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActive(null); };
@@ -1517,14 +1423,10 @@ function Projects() {
       lenisInstance?.start();
     };
   }, [active]);
-  // Opsi A: ganti modal, jangan numpuk — klik kartu tutup folder dulu baru buka detail (detail -> pdf juga ganti)
-  const handleOpen = (p: (typeof projects)[number]) => {
-    setActiveFolder(null);
-    setTimeout(() => setActive(p), 180);
-  };
+  const handleOpen = (p: (typeof projects)[number]) => setActive(p);
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
   const pill = (key: ProjectFolder | "all", label: string) => (
-    <button key={key} type="button" onClick={() => setActiveFolder(key)} className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition-colors ${activeFolder === key ? "border-terracotta bg-terracotta text-white" : "border-border bg-transparent text-muted hover:border-ink hover:text-ink"}`}>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${activeFolder === key ? "bg-white/20 text-white" : "bg-border/30 text-muted"}`}>{key === "all" ? projects.length : projects.filter((p) => projectMeta[p.no]?.folder === key).length}</span></button>
+    <button key={key} type="button" onClick={() => setActiveFolder((prev) => (prev === key ? null : key))} className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition-colors ${activeFolder === key ? "border-terracotta bg-terracotta text-white" : "border-border bg-transparent text-muted hover:border-ink hover:text-ink"}`}>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${activeFolder === key ? "bg-white/20 text-white" : "bg-border/30 text-muted"}`}>{key === "all" ? projects.length : projects.filter((p) => projectMeta[p.no]?.folder === key).length}</span></button>
   );
 
   return (
@@ -1533,19 +1435,44 @@ function Projects() {
       <ProjectsOpening />
       {/* Flow board — auto running banner semua project */}
       <FlowBoard />
-      {/* Folder gallery — 3 kartu besar kontainer: klik buka modal per kategori */}
+      {/* Folder gallery — 3 kartu besar inline: klik expand grid di bawahnya */}
       <section className="relative px-[5vw] pb-[14vh] pt-6">
         <div className="mx-auto max-w-[1120px]">
           <div className="flex flex-wrap gap-2">{pill("all", folders.all)}{pill("research", folders.research)}{pill("iot", folders.iot)}{pill("webapp", folders.webapp)}</div>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <FolderContainer label={folders.research} count={projects.filter((p) => projectMeta[p.no]?.folder === "research").length} Icon={BarChart3} desc={lang === "id" ? "Riset & Digital Twin — lahan 800m2" : "Research & Digital Twin — 800m2 plot"} active={false} onClick={() => setActiveFolder("research")} />
-            <FolderContainer label={folders.iot} count={projects.filter((p) => projectMeta[p.no]?.folder === "iot").length} Icon={Cpu} desc={lang === "id" ? "Perangkat fisik & otomasi" : "Hardware & automation"} active={false} onClick={() => setActiveFolder("iot")} />
-            <FolderContainer label={folders.webapp} count={projects.filter((p) => projectMeta[p.no]?.folder === "webapp").length} Icon={Database} desc={lang === "id" ? "ETL, pipeline & aplikasi web" : "ETL, pipelines & web apps"} active={false} onClick={() => setActiveFolder("webapp")} />
+            <FolderContainer label={folders.research} count={projects.filter((p) => projectMeta[p.no]?.folder === "research").length} Icon={BarChart3} desc={lang === "id" ? "Riset & Digital Twin — lahan 800m2" : "Research & Digital Twin — 800m2 plot"} active={activeFolder === "research"} onClick={() => setActiveFolder((prev) => (prev === "research" ? null : "research"))} />
+            <FolderContainer label={folders.iot} count={projects.filter((p) => projectMeta[p.no]?.folder === "iot").length} Icon={Cpu} desc={lang === "id" ? "Perangkat fisik & otomasi" : "Hardware & automation"} active={activeFolder === "iot"} onClick={() => setActiveFolder((prev) => (prev === "iot" ? null : "iot"))} />
+            <FolderContainer label={folders.webapp} count={projects.filter((p) => projectMeta[p.no]?.folder === "webapp").length} Icon={Database} desc={lang === "id" ? "ETL, pipeline & aplikasi web" : "ETL, pipelines & web apps"} active={activeFolder === "webapp"} onClick={() => setActiveFolder((prev) => (prev === "webapp" ? null : "webapp"))} />
           </div>
-          <p className="mt-6 text-center font-mono text-[11px] uppercase tracking-widest text-muted">{lang === "id" ? "Klik kartu untuk lihat project di kategori tersebut" : "Click a card to view projects in that category"}</p>
+          <AnimatePresence mode="wait">
+            {activeFolder === null ? (
+              <motion.p key="placeholder" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28 }} className="mt-6 rounded-xl border border-dashed border-border bg-surface/60 px-6 py-8 text-center font-mono text-xs uppercase tracking-widest text-muted">
+                {lang === "id" ? "Pilih folder di atas untuk lihat project" : "Select a folder above to view projects"} — <span className="text-terracotta">klik kartu</span>
+              </motion.p>
+            ) : (
+              <motion.div key="grid" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.35, ease: EASE }} className="overflow-hidden">
+                <div className="mt-8 grid gap-5 md:grid-cols-2">
+                  {(() => {
+                    const visible = activeFolder === "all" ? projects : projects.filter((p) => projectMeta[p.no]?.folder === activeFolder);
+                    return (
+                      <>
+                        <AnimatePresence mode="popLayout">
+                          {visible.map((p, idx) => (
+                            <motion.div key={p.no} layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, delay: idx * 0.04 }}>
+                              <ProjectCard p={p} idx={projects.indexOf(p)} onOpen={handleOpen} compact />
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                        {visible.length === 0 ? <p className="mt-6 text-center font-mono text-xs text-muted">{lang === "id" ? "Belum ada proyek di folder ini." : "No projects in this folder yet."}</p> : null}
+                      </>
+                    );
+                  })()}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
-      <FolderProjectsModal folder={activeFolder} open={activeFolder !== null} onClose={() => setActiveFolder(null)} onOpen={handleOpen} />
       <AnimatePresence>
         {active && (
           <motion.div
