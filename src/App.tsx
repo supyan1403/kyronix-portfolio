@@ -543,6 +543,8 @@ function Intro({ onDone }: { onDone: () => void }) {
 /* ---------- K — dedicated page after boot (video fullscreen cover) ---------- */
 function KPage({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
+  const [canShowVideo, setCanShowVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const finish = () => setLeaving(true);
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
@@ -551,6 +553,26 @@ function KPage({ onDone }: { onDone: () => void }) {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
     window.addEventListener("keydown", onKey);
     return () => { window.clearTimeout(t); window.removeEventListener("keydown", onKey); };
+  }, []);
+  // gate video fade until HAVE_ENOUGH_DATA — jaga-jaga poster belum siap atau buffering, jangan bocor hitam/putih
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const mark = () => setCanShowVideo(true);
+    const onCanPlay = () => {
+      // auto play promise: jika block, tetap show poster fade
+      v.play().catch(() => {});
+      mark();
+    };
+    if (v.readyState >= 3) mark();
+    v.addEventListener("canplay", onCanPlay, { once: true });
+    v.addEventListener("playing", mark, { once: true });
+    const fallback = window.setTimeout(mark, 2000);
+    return () => {
+      v.removeEventListener("canplay", onCanPlay);
+      v.removeEventListener("playing", mark);
+      window.clearTimeout(fallback);
+    };
   }, []);
   const handleExitComplete = () => {
     document.documentElement.style.overflow = "";
@@ -563,7 +585,8 @@ function KPage({ onDone }: { onDone: () => void }) {
       {!leaving && (
         <motion.div
           className="fixed inset-0 z-[150] overflow-hidden bg-black"
-          initial={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           exit={{ opacity: 0, filter: "blur(10px)", scale: 1.03 }}
           transition={{ duration: 0.62, ease: EASE }}
           onClick={finish}
@@ -572,7 +595,18 @@ function KPage({ onDone }: { onDone: () => void }) {
           aria-label="Lanjut ke portfolio — klik atau tekan Esc"
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") finish(); }}
         >
-          <video
+          {/* poster layer — fade out pas video ready (no stack awal hitam bocor) */}
+          <motion.img
+            src="/kyronix-k-video-poster.jpg"
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: canShowVideo ? 0 : 1 }}
+            transition={{ duration: 0.55, ease: EASE }}
+          />
+          <motion.video
+            ref={videoRef}
             src="/kyronix-k-video.mp4"
             poster="/kyronix-k-video-poster.jpg"
             autoPlay
@@ -582,15 +616,18 @@ function KPage({ onDone }: { onDone: () => void }) {
             preload="auto"
             onEnded={finish}
             className="absolute inset-0 h-full w-full object-cover"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: canShowVideo ? 1 : 0 }}
+            transition={{ duration: 0.62, ease: EASE }}
           />
           {/* subtle grid + vignette biar tetap KYRONIX, tapi video full */}
-          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.18) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.18) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} />
+          <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.18) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.18) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.55, delay: 0.35 }} />
           <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20" />
           <motion.p
             className="pointer-events-none absolute bottom-[5%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-white/80 drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)]"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45, duration: 0.72, ease: EASE }}
+            transition={{ delay: 0.55, duration: 0.72, ease: EASE }}
           >
             KYRONIX — tap / Esc to skip
           </motion.p>
