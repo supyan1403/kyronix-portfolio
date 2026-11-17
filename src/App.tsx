@@ -23,6 +23,7 @@ import {
   Cpu,
   Database,
   Download,
+  FileText,
   Folder,
   FolderOpen,
   GraduationCap,
@@ -1877,9 +1878,11 @@ function ExpRow({
 }
 
 function PdfBlobViewer({ href, title, failed, onFailed }: { href: string; title: string; failed: boolean; onFailed: () => void }) {
+  const isCoarse = useIsMobile();
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    if (isCoarse) { setLoading(false); return; }
     let cancelled = false;
     let url: string | null = null;
     setLoading(true);
@@ -1904,15 +1907,28 @@ function PdfBlobViewer({ href, title, failed, onFailed }: { href: string; title:
       cancelled = true;
       if (url) URL.revokeObjectURL(url);
     };
-  }, [href, onFailed]);
+  }, [href, onFailed, isCoarse]);
+  if (isCoarse) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 bg-cream px-6 py-10 text-center">
+        <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-cream-deep text-terracotta"><FileText size={28} /></span>
+        <div className="space-y-1">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-terracotta">PDF — KYRONIX</p>
+          <p className="mx-auto max-w-[22ch] break-words font-mono text-xs font-bold uppercase tracking-widest text-ink">{title}</p>
+          <p className="font-mono text-[11px] text-muted">Chrome HP blok preview — buka tab baru.</p>
+        </div>
+        <a href={href} target="_blank" rel="noreferrer" className="mt-2 inline-flex bg-terracotta px-6 py-3.5 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">Buka PDF Di Tab Baru ↗</a>
+      </div>
+    );
+  }
   if (loading) {
     return <div className="flex min-h-[62dvh] flex-1 items-center justify-center border border-border bg-white px-4 font-mono text-xs text-muted sm:min-h-[52vh]">Memuat PDF…</div>;
   }
   if (failed || !blobUrl) {
     return (
-      <div className="flex min-h-[62dvh] flex-1 flex-col items-center justify-center gap-3 border border-border bg-white p-6 text-center sm:min-h-[52vh]">
-        <p className="font-mono text-xs leading-relaxed text-muted">Preview diblokir Chrome HP — pakai “Buka PDF Di Tab Baru” di bawah.</p>
-        <a href={href} target="_blank" rel="noreferrer" className="inline-flex border border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">Buka PDF ↗</a>
+      <div className="flex min-h-[62dvh] flex-1 flex-col items-center justify-center gap-3 border border-border bg-cream p-6 text-center sm:min-h-[52vh]">
+        <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-cream-deep text-terracotta"><FileText size={22} /></span>
+        <p className="font-mono text-xs leading-relaxed text-muted">Preview diblokir — pakai tombol di bawah.</p>
       </div>
     );
   }
