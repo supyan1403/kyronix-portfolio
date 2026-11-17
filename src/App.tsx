@@ -43,6 +43,24 @@ import {
   Workflow,
   X,
 } from "lucide-react";
+/* brand full-color icons — simple-icons via react-icons/si */
+import {
+  SiArduino,
+  SiDiagramsdotnet,
+  SiEspressif,
+  SiFigma,
+  SiGit,
+  SiGithub,
+  SiJavascript,
+  SiNodedotjs,
+  SiPandas,
+  SiPostgresql,
+  SiPython,
+  SiTailwindcss,
+  SiTypescript,
+  SiVercel,
+  SiVscodium,
+} from "react-icons/si";
 
 /* ---------- Utility: Warm Dark palette tokens ---------- */
 const WARM = {
@@ -1111,53 +1129,77 @@ function Hero({ ready }: { ready: boolean }) {
   );
 }
 
-/* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Gallery: folder + icon tiles) ---------- */
-type Tile = { label: string; Icon: typeof Database };
-const stackGallery: { id: string; title: string; icon: typeof Database; tone: "lime" | "violet" | "coral"; tiles: Tile[] }[] = [
+/* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Gallery: folder + full-color brand icons, vibe-coder friendly 5 kategori tools) ---------- */
+type Tile = { label: string; Icon: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>; brand?: boolean; color?: string };
+const stackGallery: { id: string; title: string; hint?: string; icon: typeof Database; tone: "lime" | "violet" | "coral"; tiles: Tile[] }[] = [
   {
-    id: "data",
-    title: "Data & System Flow",
-    icon: Database,
-    tone: "lime",
+    id: "bahasa",
+    title: "Bahasa",
+    hint: "AI yang Tulis",
+    icon: Code2,
+    tone: "violet",
     tiles: [
-      { label: "System Architecture", Icon: Layers },
-      { label: "Draw.io Diagrams", Icon: Workflow },
-      { label: "OpenCode CLI", Icon: Terminal },
-      { label: "Python", Icon: Code2 },
-      { label: "PostgreSQL", Icon: Database },
-      { label: "ETL Pipelines", Icon: DatabaseZap },
-      { label: "Pandas", Icon: Table2 },
-      { label: "Detection Systems", Icon: ScanEye },
+      { label: "Python", Icon: SiPython, brand: true, color: "#3776AB" },
+      { label: "JavaScript", Icon: SiJavascript, brand: true, color: "#F7DF1E" },
+      { label: "TypeScript", Icon: SiTypescript, brand: true, color: "#3178C6" },
+      { label: "SQL", Icon: Database, color: "#336791" },
     ],
   },
   {
-    id: "dev",
-    title: "Dev & Web Workflow",
+    id: "desain",
+    title: "Desain",
+    icon: Palette,
+    tone: "coral",
+    tiles: [
+      { label: "Figma", Icon: SiFigma, brand: true, color: "#F24E1E" },
+      { label: "Tailwind CSS", Icon: SiTailwindcss, brand: true, color: "#06B6D4" },
+    ],
+  },
+  {
+    id: "rancangan",
+    title: "Rancangan Sistem & Diagram",
+    icon: Layers,
+    tone: "lime",
+    tiles: [
+      { label: "Draw.io", Icon: SiDiagramsdotnet, brand: true, color: "#F08705" },
+      { label: "System Architecture", Icon: Layers, color: "#7c3aed" },
+      { label: "System Flows", Icon: Workflow, color: "#E07A5F" },
+      { label: "API Routers", Icon: Route, color: "#8FA89B" },
+      { label: "Detection Systems", Icon: ScanEye, color: "#A8A298" },
+    ],
+  },
+  {
+    id: "tools",
+    title: "Tools & Workflow",
+    hint: "Senjata Vibe Coding",
     icon: Wrench,
     tone: "violet",
     tiles: [
-      { label: "Python Automation", Icon: Terminal },
-      { label: "React", Icon: Code2 },
-      { label: "Tailwind CSS", Icon: Palette },
-      { label: "API Routers", Icon: Route },
-      { label: "Git / GitHub", Icon: GitBranch },
-      { label: "VS Code", Icon: Monitor },
-      { label: "Figma", Icon: Palette },
-      { label: "OpenCode CLI", Icon: Terminal },
+      { label: "VS Code", Icon: SiVscodium, brand: true, color: "#007ACC" },
+      { label: "Git", Icon: SiGit, brand: true, color: "#F05032" },
+      { label: "GitHub", Icon: SiGithub, brand: true, color: "#181717" },
+      { label: "OpenCode CLI", Icon: Terminal, color: "#1A1816" },
+      { label: "Node.js", Icon: SiNodedotjs, brand: true, color: "#339933" },
+      { label: "Vercel", Icon: SiVercel, brand: true, color: "#000000" },
+      { label: "PostgreSQL", Icon: SiPostgresql, brand: true, color: "#4169E1" },
+      { label: "Pandas", Icon: SiPandas, brand: true, color: "#150458" },
+      { label: "ETL Pipelines", Icon: DatabaseZap, color: "#E07A5F" },
     ],
   },
   {
     id: "iot",
-    title: "IoT & Hardware — Learning & Exploring",
+    title: "IoT & Hardware",
+    hint: "Lagi Eksplor",
     icon: Cpu,
     tone: "coral",
     tiles: [
-      { label: "ESP32", Icon: Cpu },
-      { label: "Sensors & Actuators", Icon: Activity },
-      { label: "MQTT", Icon: Radio },
-      { label: "Telemetry Data", Icon: BarChart3 },
-      { label: "Hardware Prototyping", Icon: Wrench },
-      { label: "Beginner Exploration", Icon: Lightbulb },
+      { label: "ESP32", Icon: SiEspressif, brand: true, color: "#E7352C" },
+      { label: "Arduino", Icon: SiArduino, brand: true, color: "#00979D" },
+      { label: "Sensors", Icon: Activity, color: "#E07A5F" },
+      { label: "MQTT", Icon: Radio, color: "#660066" },
+      { label: "Telemetry", Icon: BarChart3, color: "#8FA89B" },
+      { label: "Hardware Prototyping", Icon: Wrench, color: "#3A3632" },
+      { label: "Beginner Exploration", Icon: Lightbulb, color: "#F59E0B" },
     ],
   },
 ];
@@ -1226,8 +1268,8 @@ function Stack() {
                         <FolderIcon size={16} />
                       </span>
                       <span className="min-w-0">
-                        <span className="block font-sans text-[13px] font-semibold uppercase leading-tight tracking-[0.04em] truncate">{g.title}</span>
-                        <span className="block font-mono text-[11px] tracking-wide text-muted">{g.tiles.length} technologies</span>
+                        <span className="block font-sans text-[13px] font-semibold uppercase leading-tight tracking-[0.04em] truncate">{g.title}{g.hint ? ` — ${g.hint}` : ""}</span>
+                        <span className="block font-mono text-[11px] tracking-wide text-muted">{g.tiles.length} technologies{g.hint ? ` · ${g.hint}` : ""}</span>
                       </span>
                     </span>
                     <span className={`hidden shrink-0 font-mono text-xs lg:inline ${isActive ? "text-terracotta" : "text-muted/60"}`}>0{idx + 1}</span>
@@ -1272,8 +1314,11 @@ function Stack() {
                         >
                           <span aria-hidden className="pointer-events-none absolute left-1.5 top-1.5 h-2 w-2 border-l border-t border-border/50 group-hover/tile:border-terracotta/60" />
                           <span aria-hidden className="pointer-events-none absolute right-1.5 top-1.5 h-2 w-2 border-r border-t border-border/50 group-hover/tile:border-terracotta/60" />
-                          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-muted transition-colors group-hover/tile:border-terracotta/30 group-hover/tile:bg-terracotta group-hover/tile:text-white">
-                            <TIcon size={20} />
+                          <span
+                            className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition-colors ${tile.brand ? "border-border bg-white" : "border-border bg-surface group-hover/tile:border-terracotta/30 group-hover/tile:bg-terracotta group-hover/tile:text-white"}`}
+                            style={tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined}
+                          >
+                            <TIcon size={20} className={tile.brand ? "" : "text-[inherit]"} style={tile.brand ? undefined : tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined} />
                           </span>
                           <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] leading-tight text-ink">{tile.label}</span>
                         </motion.div>
