@@ -1488,7 +1488,11 @@ function Projects() {
       lenisInstance?.start();
     };
   }, [active]);
-  const handleOpen = (p: (typeof projects)[number]) => setActive(p);
+  // Opsi A: ganti modal, jangan numpuk — klik kartu tutup folder dulu baru buka detail (detail -> pdf juga ganti)
+  const handleOpen = (p: (typeof projects)[number]) => {
+    setActiveFolder(null);
+    setTimeout(() => setActive(p), 180);
+  };
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
   const pill = (key: ProjectFolder | "all", label: string) => (
     <button key={key} type="button" onClick={() => setActiveFolder(key)} className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition-colors ${activeFolder === key ? "border-terracotta bg-terracotta text-white" : "border-border bg-transparent text-muted hover:border-ink hover:text-ink"}`}>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${activeFolder === key ? "bg-white/20 text-white" : "bg-border/30 text-muted"}`}>{key === "all" ? projects.length : projects.filter((p) => projectMeta[p.no]?.folder === key).length}</span></button>
@@ -1562,7 +1566,7 @@ function Projects() {
                           onClick={() => {
                             const h = href!;
                             setActive(null);
-                            setDocHref(h);
+                            setTimeout(() => setDocHref(h), 180);
                           }}
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
