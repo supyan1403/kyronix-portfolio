@@ -540,7 +540,7 @@ function Intro({ onDone }: { onDone: () => void }) {
   );
 }
 
-/* ---------- K — dedicated page after boot (video 10s, poster fallback) ---------- */
+/* ---------- K — dedicated page after boot (video fullscreen cover) ---------- */
 function KPage({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
   const finish = () => setLeaving(true);
@@ -562,7 +562,7 @@ function KPage({ onDone }: { onDone: () => void }) {
     <AnimatePresence onExitComplete={handleExitComplete}>
       {!leaving && (
         <motion.div
-          className="fixed inset-0 z-[150] flex flex-col items-center justify-center bg-cream px-6 overflow-hidden"
+          className="fixed inset-0 z-[150] overflow-hidden bg-black"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, filter: "blur(10px)", scale: 1.03 }}
           transition={{ duration: 0.62, ease: EASE }}
@@ -572,37 +572,22 @@ function KPage({ onDone }: { onDone: () => void }) {
           aria-label="Lanjut ke portfolio — klik atau tekan Esc"
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") finish(); }}
         >
-          {/* Grid 32px kontinu kanvas */}
-          <div aria-hidden className="pointer-events-none absolute inset-0" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} />
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/14 blur-[80px] max-sm:h-[380px] max-sm:w-[380px] max-sm:blur-[56px]"
-            initial={{ opacity: 0, scale: 0.82 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.95, ease: EASE }}
+          <video
+            src="/kyronix-k-video.mp4"
+            poster="/kyronix-k-video-poster.jpg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onEnded={finish}
+            className="absolute inset-0 h-full w-full object-cover"
           />
-          <motion.div
-            className="relative flex items-center justify-center will-change-transform"
-            style={{ perspective: 900, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-            initial={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>}
-            transition={{ duration: 0.62, ease: EASE, delay: 0.12 }}
-          >
-            <video
-              src="/kyronix-k-video.mp4"
-              poster="/kyronix-k-video-poster.jpg"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              onEnded={finish}
-              className="relative h-[min(52dvh,420px)] max-h-[56dvh] w-auto max-w-[min(92vw,720px)] select-none rounded-[14px] object-contain shadow-[0_12px_40px_rgba(0,0,0,0.28)] md:h-[min(58dvh,560px)] md:max-w-[min(88vw,860px)]"
-              style={{ transform: "translateZ(0)" } as React.CSSProperties}
-            />
-          </motion.div>
+          {/* subtle grid + vignette biar tetap KYRONIX, tapi video full */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.18) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.18) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} />
+          <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20" />
           <motion.p
-            className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-muted/70 max-sm:bottom-[5%] max-sm:text-[10px]"
+            className="pointer-events-none absolute bottom-[5%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-white/80 drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)]"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45, duration: 0.72, ease: EASE }}
