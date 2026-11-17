@@ -17,6 +17,8 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   BarChart3,
+  Check,
+  Copy,
   Cpu,
   Database,
   Download,
@@ -2146,10 +2148,15 @@ function Contact() {
   const { lang } = useLang();
   const low = useIsLowEnd();
   const t = dict[lang];
-  const socials = [
-    { label: "GitHub", href: "https://github.com/supyan1403" },
-    { label: "Email", href: "mailto:supyansauri47@gmail.com" },
-  ];
+  const email = "supyansauri47@gmail.com";
+  const [copied, setCopied] = useState(false);
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
   return (
     <footer id="contact" className="relative overflow-hidden px-[5vw] pb-10 pt-[16vh] bg-cream">
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.4]" />
@@ -2177,31 +2184,39 @@ function Contact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.22 }}
-          className="mt-10 flex flex-wrap justify-center gap-4"
+          className="mt-10 flex flex-wrap justify-center gap-3"
         >
-          <Magnetic href="/cv.pdf" variant="primary">
-            {t.downloadCv} <Download size={16} />
+          <Magnetic href={`mailto:${email}`} variant="primary">
+            <Mail size={16} /> {lang === "id" ? "Email Saya" : "Email Me"}
           </Magnetic>
+          <button
+            onClick={copyEmail}
+            aria-live="polite"
+            className="warm-btn ghost inline-flex items-center gap-2"
+          >
+            {copied ? <Check size={16} /> : <Copy size={16} />}
+            {copied ? (lang === "id" ? "Tersalin!" : "Copied!") : email}
+          </button>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.28 }}
-          className="mt-16 flex flex-wrap justify-center gap-3"
+          transition={{ duration: 0.6, ease: EASE, delay: 0.26 }}
+          className="mt-4 flex flex-wrap justify-center gap-3"
         >
-          {socials.map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              target="_blank"
-              rel="noreferrer"
-              className="warm-btn secondary"
-              style={{ boxShadow: `0 4px 16px rgba(28,25,23,0.08)` } as React.CSSProperties}
-            >
-              {s.label} ↗
-            </a>
-          ))}
+          <Magnetic href="/cv.pdf" variant="ghost">
+            {t.downloadCv} <Download size={16} />
+          </Magnetic>
+          <a
+            href="https://github.com/supyan1403"
+            target="_blank"
+            rel="noreferrer"
+            className="warm-btn ghost"
+            style={{ boxShadow: `0 4px 16px rgba(28,25,23,0.08)` } as React.CSSProperties}
+          >
+            GitHub ↗
+          </a>
         </motion.div>
         <div className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t border-border/10 pt-6 font-mono text-xs uppercase tracking-widest" style={{ color: WARM.muted }}>
           <p>© 2025 Supyan Sauri</p>
