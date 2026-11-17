@@ -1254,21 +1254,12 @@ function Stack() {
   );
 }
 
-/* ---------- 3. Featured projects — warm-card folder container + flow board ---------- */
-function FolderContainer({ label, count, Icon, desc, active, onClick }: { label: string; count: number; Icon: typeof Folder; desc: string; active: boolean; onClick: () => void }) {
+/* ---------- 3. Featured projects — navtab folder ---------- */
+function FolderTab({ label, count, Icon, active, onClick }: { label: string; count: number; Icon: typeof Folder; active: boolean; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} aria-pressed={active} className={`group flex w-full flex-col text-left transition-all ${active ? "scale-[1.01]" : "hover:-translate-y-1.5"}`}>
-      <span className={`inline-flex w-fit items-center gap-2 rounded-t-xl border border-b-0 px-4 py-2 font-mono text-[10px] font-black uppercase tracking-widest ${active ? "border-terracotta bg-terracotta text-white" : "border-border bg-surface text-muted group-hover:border-terracotta/40 group-hover:text-ink"}`}>
-        <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${active ? "bg-white/20" : "bg-cream-deep text-terracotta"}`}>{active ? <FolderOpen size={14} /> : <Folder size={14} />}</span>
-        {label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${active ? "bg-white/20" : "bg-border/20"}`}>{count}</span>
-      </span>
-      <span className={`warm-card flex min-h-[420px] flex-1 flex-col p-6 md:min-h-[460px] md:p-7 ${active ? "border-terracotta ring-2 ring-terracotta/20" : ""}`}>
-        <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-cream-deep text-terracotta md:h-16 md:w-16"><Icon size={28} /></span>
-        <span className="mt-6 font-sans text-xl font-bold uppercase tracking-[0.06em] text-ink md:text-2xl">{label}</span>
-        <span className="mt-2 flex items-center gap-2 font-mono text-[11px] tracking-widest text-muted"><span className="h-1.5 w-1.5 rounded-full bg-terracotta" />{count} {count === 1 ? "project" : "projects"}</span>
-        <span className="mt-3 flex-1 text-sm leading-relaxed text-muted">{desc}</span>
-        <span className="mt-6 inline-flex items-center gap-1.5 self-start rounded-lg border border-terracotta/15 bg-terracotta/10 px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-terracotta group-hover:bg-terracotta group-hover:text-white">Lihat project <ArrowUpRight size={14} /></span>
-      </span>
+    <button type="button" role="tab" aria-selected={active} onClick={onClick} className={`inline-flex items-center gap-2 rounded-t-xl border border-b-0 px-4 py-2.5 font-mono text-[11px] font-black uppercase tracking-widest transition-colors ${active ? "border-terracotta bg-terracotta text-white" : "border-border bg-surface text-muted hover:border-terracotta/40 hover:text-ink"}`}>
+      <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${active ? "bg-white/20" : "bg-cream-deep text-terracotta"}`}>{active ? <FolderOpen size={14} /> : <Icon size={14} />}</span>
+      {label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${active ? "bg-white/20" : "bg-border/20"}`}>{count}</span>
     </button>
   );
 }
@@ -1425,9 +1416,6 @@ function Projects() {
   }, [active]);
   const handleOpen = (p: (typeof projects)[number]) => setActive(p);
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
-  const pill = (key: ProjectFolder | "all", label: string) => (
-    <button key={key} type="button" onClick={() => setActiveFolder((prev) => (prev === key ? null : key))} className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition-colors ${activeFolder === key ? "border-terracotta bg-terracotta text-white" : "border-border bg-transparent text-muted hover:border-ink hover:text-ink"}`}>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${activeFolder === key ? "bg-white/20 text-white" : "bg-border/30 text-muted"}`}>{key === "all" ? projects.length : projects.filter((p) => projectMeta[p.no]?.folder === key).length}</span></button>
-  );
 
   return (
     <div id="projects" className="relative bg-transparent overflow-x-clip">
@@ -1435,15 +1423,16 @@ function Projects() {
       <ProjectsOpening />
       {/* Flow board — auto running banner semua project */}
       <FlowBoard />
-      {/* Folder gallery — 3 kartu besar inline: klik expand grid di bawahnya */}
+      {/* Folder — navtab + single warm-card container (hemat tinggi, 1 kontainer) */}
       <section className="relative px-[5vw] pb-[14vh] pt-6">
         <div className="mx-auto max-w-[1120px]">
-          <div className="flex flex-wrap gap-2">{pill("all", folders.all)}{pill("research", folders.research)}{pill("iot", folders.iot)}{pill("webapp", folders.webapp)}</div>
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <FolderContainer label={folders.research} count={projects.filter((p) => projectMeta[p.no]?.folder === "research").length} Icon={BarChart3} desc={lang === "id" ? "Riset & Digital Twin — lahan 800m2" : "Research & Digital Twin — 800m2 plot"} active={activeFolder === "research"} onClick={() => setActiveFolder((prev) => (prev === "research" ? null : "research"))} />
-            <FolderContainer label={folders.iot} count={projects.filter((p) => projectMeta[p.no]?.folder === "iot").length} Icon={Cpu} desc={lang === "id" ? "Perangkat fisik & otomasi" : "Hardware & automation"} active={activeFolder === "iot"} onClick={() => setActiveFolder((prev) => (prev === "iot" ? null : "iot"))} />
-            <FolderContainer label={folders.webapp} count={projects.filter((p) => projectMeta[p.no]?.folder === "webapp").length} Icon={Database} desc={lang === "id" ? "ETL, pipeline & aplikasi web" : "ETL, pipelines & web apps"} active={activeFolder === "webapp"} onClick={() => setActiveFolder((prev) => (prev === "webapp" ? null : "webapp"))} />
+          <div role="tablist" aria-label="Folder projects" className="flex flex-wrap gap-2">
+            <FolderTab label={folders.all} count={projects.length} Icon={Folder} active={activeFolder === "all"} onClick={() => setActiveFolder((prev) => (prev === "all" ? null : "all"))} />
+            <FolderTab label={folders.research} count={projects.filter((p) => projectMeta[p.no]?.folder === "research").length} Icon={BarChart3} active={activeFolder === "research"} onClick={() => setActiveFolder((prev) => (prev === "research" ? null : "research"))} />
+            <FolderTab label={folders.iot} count={projects.filter((p) => projectMeta[p.no]?.folder === "iot").length} Icon={Cpu} active={activeFolder === "iot"} onClick={() => setActiveFolder((prev) => (prev === "iot" ? null : "iot"))} />
+            <FolderTab label={folders.webapp} count={projects.filter((p) => projectMeta[p.no]?.folder === "webapp").length} Icon={Database} active={activeFolder === "webapp"} onClick={() => setActiveFolder((prev) => (prev === "webapp" ? null : "webapp"))} />
           </div>
+          <div className="warm-card mt-3 p-5 md:p-6">
           <AnimatePresence mode="wait">
             {activeFolder === null ? (
               <motion.p key="placeholder" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28 }} className="mt-6 rounded-xl border border-dashed border-border bg-surface/60 px-6 py-8 text-center font-mono text-xs uppercase tracking-widest text-muted">
@@ -1471,6 +1460,7 @@ function Projects() {
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </div>
       </section>
       <AnimatePresence>
