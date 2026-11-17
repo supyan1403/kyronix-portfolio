@@ -1107,11 +1107,10 @@ function Hero({ ready }: { ready: boolean }) {
 
 /* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Gallery: folder + full-color brand icons, HANYA APLIKASI REAL) ---------- */
 type Tile = { label: string; Icon?: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>; src?: string; brand?: boolean; color?: string };
-const stackGallery: { id: string; title: string; hint?: string; tiles: Tile[] }[] = [
+const stackGallery: { id: string; title: Record<Lang, string>; tiles: Tile[] }[] = [
   {
     id: "bahasa",
-    title: "Bahasa",
-    hint: "AI yang Tulis",
+    title: { id: "Bahasa", en: "Languages" },
     tiles: [
       { label: "Python", src: "/icons/python.svg", brand: true, color: "#3776AB" },
       { label: "JavaScript", src: "/icons/javascript.svg", brand: true, color: "#F7DF1E" },
@@ -1120,7 +1119,7 @@ const stackGallery: { id: string; title: string; hint?: string; tiles: Tile[] }[
   },
   {
     id: "desain",
-    title: "Desain",
+    title: { id: "Desain", en: "Design" },
     tiles: [
       { label: "Figma", src: "/icons/figma.svg", brand: true, color: "#F24E1E" },
       { label: "Tailwind CSS", Icon: SiTailwindcss, brand: true, color: "#06B6D4" },
@@ -1128,14 +1127,14 @@ const stackGallery: { id: string; title: string; hint?: string; tiles: Tile[] }[
   },
   {
     id: "rancangan",
-    title: "Rancangan Sistem & Diagram",
+    title: { id: "Rancangan Sistem & Diagram", en: "System Design & Diagrams" },
     tiles: [
       { label: "Draw.io", Icon: SiDiagramsdotnet, brand: true, color: "#F08705" },
     ],
   },
   {
     id: "tools",
-    title: "Tools & Workflow",
+    title: { id: "Tools & Workflow", en: "Tools & Workflow" },
     tiles: [
       { label: "VS Code", src: "/icons/vscode.svg", brand: true, color: "#007ACC" },
       { label: "Git", Icon: SiGit, brand: true, color: "#F05032" },
@@ -1148,7 +1147,7 @@ const stackGallery: { id: string; title: string; hint?: string; tiles: Tile[] }[
   },
   {
     id: "iot",
-    title: "IoT & Hardware",
+    title: { id: "IoT & Hardware", en: "IoT & Hardware" },
     tiles: [
       { label: "Arduino", Icon: SiArduino, brand: true, color: "#00979D" },
       { label: "ESP32", Icon: SiEspressif, brand: true, color: "#E7352C" },
@@ -1191,7 +1190,7 @@ function Stack() {
           {stackGallery.map((g, gi) => (
             <motion.div key={g.id} className="space-y-4 will-change-transform" style={{ x: (gi % 2 === 0 ? flatX : flatXRev) } as unknown as Record<string, unknown>}>
               <div className="flex items-baseline justify-between gap-3 border-b border-border/10 pb-3">
-                <span className="font-sans text-[13px] font-semibold uppercase tracking-[0.06em] text-ink">{g.title}</span>
+                <span className="font-sans text-[13px] font-semibold uppercase tracking-[0.06em] text-ink">{g.title[lang]}</span>
                 <span className="shrink-0 font-mono text-[11px] tracking-widest text-muted">{g.tiles.length} items</span>
               </div>
               <div className={`grid gap-5 ${g.tiles.length === 1 ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-6" : g.tiles.length <= 3 ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-5" : "grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7"}`}>
