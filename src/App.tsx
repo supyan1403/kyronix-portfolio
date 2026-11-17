@@ -16,14 +16,21 @@ import {
 import {
   ArrowDownRight,
   ArrowUpRight,
+  BarChart3,
   Check,
+  Code2,
   Copy,
+  Cpu,
   Database,
   Download,
   Folder,
   FolderOpen,
   GraduationCap,
+  Layers,
   Mail,
+  Palette,
+  Radio,
+  Wrench,
   X,
 } from "lucide-react";
 /* brand full-color icons — simple-icons + local asseticon via react-icons/si (Draw.io kept via si) */
