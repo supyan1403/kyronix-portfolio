@@ -541,39 +541,21 @@ function Intro({ onDone }: { onDone: () => void }) {
   );
 }
 
-/* ---------- K — dedicated page after boot (video fullscreen cover) ---------- */
+/* ---------- K — dedicated page after boot (K-PAGE2 3D copper, bg hitam) ---------- */
 function KPage({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
-  const [canShowVideo, setCanShowVideo] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rx = useTransform(mx, [-1, 1], [8, -8]);
+  const ry = useTransform(my, [-1, 1], [-7, 7]);
   const finish = () => setLeaving(true);
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
     lenisInstance?.stop();
-    const t = window.setTimeout(finish, 10500);
+    const t = window.setTimeout(finish, 2950);
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
     window.addEventListener("keydown", onKey);
     return () => { window.clearTimeout(t); window.removeEventListener("keydown", onKey); };
-  }, []);
-  // gate video fade until HAVE_ENOUGH_DATA — jaga-jaga poster belum siap atau buffering, jangan bocor hitam/putih
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    const mark = () => setCanShowVideo(true);
-    const onCanPlay = () => {
-      // auto play promise: jika block, tetap show poster fade
-      v.play().catch(() => {});
-      mark();
-    };
-    if (v.readyState >= 3) mark();
-    v.addEventListener("canplay", onCanPlay, { once: true });
-    v.addEventListener("playing", mark, { once: true });
-    const fallback = window.setTimeout(mark, 2000);
-    return () => {
-      v.removeEventListener("canplay", onCanPlay);
-      v.removeEventListener("playing", mark);
-      window.clearTimeout(fallback);
-    };
   }, []);
   const handleExitComplete = () => {
     document.documentElement.style.overflow = "";
@@ -581,11 +563,15 @@ function KPage({ onDone }: { onDone: () => void }) {
     requestAnimationFrame(() => lenisInstance?.resize());
     onDone();
   };
+  const onPointer = (clientX: number, clientY: number, rect: DOMRect) => {
+    mx.set(((clientX - rect.left) / rect.width - 0.5) * 2);
+    my.set(((clientY - rect.top) / rect.height - 0.5) * 2);
+  };
   return (
     <AnimatePresence onExitComplete={handleExitComplete}>
       {!leaving && (
         <motion.div
-          className="fixed inset-0 z-[150] overflow-hidden bg-black"
+          className="fixed inset-0 z-[150] flex flex-col items-center justify-center overflow-hidden bg-black px-6"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, filter: "blur(10px)", scale: 1.03 }}
@@ -596,30 +582,74 @@ function KPage({ onDone }: { onDone: () => void }) {
           aria-label="Lanjut ke portfolio — klik atau tekan Esc"
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") finish(); }}
         >
-          {/* frame 0 = hitam solid — nutup Stack, video fade in pas ready (tidak bocor) */}
+          {/* frame 0 hitam solid anti-bocor Stack */}
           <div aria-hidden className="absolute inset-0 bg-black" />
-          <motion.video
-            ref={videoRef}
-            src="/kyronix-k-video.mp4"
-            poster="/kyronix-k-video-poster.jpg"
-            autoPlay
-            muted
-            playsInline
-            preload="auto"
-            onEnded={finish}
-            className="absolute inset-0 h-full w-full object-cover bg-black"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: canShowVideo ? 1 : 0 }}
-            transition={{ duration: 0.62, ease: EASE }}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/14 blur-[80px] max-sm:h-[380px] max-sm:w-[380px] max-sm:blur-[56px]"
+            initial={{ opacity: 0, scale: 0.82 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.95, ease: EASE }}
           />
-          {/* subtle grid + vignette biar tetap KYRONIX, tapi video full */}
-          <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.18) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.18) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.55, delay: 0.35 }} />
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20" />
+          <motion.div
+            className="relative flex items-center justify-center will-change-transform"
+            style={{ perspective: 900, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
+            onMouseMove={(e) => onPointer(e.clientX, e.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect())}
+            onMouseLeave={() => { mx.set(0); my.set(0); }}
+            onTouchMove={(e) => {
+              const t = e.touches[0];
+              if (!t) return;
+              onPointer(t.clientX, t.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect());
+            }}
+            onTouchEnd={() => { mx.set(0); my.set(0); }}
+          >
+            <motion.img
+              src="/kyronix-k-page.webp"
+              alt="KYRONIX K"
+              width={1024}
+              height={1024}
+              loading="eager"
+              decoding="async"
+              draggable={false}
+              className="relative h-[min(62dvh,560px)] w-auto max-w-[min(92vw,720px)] select-none will-change-transform object-contain max-sm:h-[min(54dvh,420px)]"
+              style={{ rotateX: rx, rotateY: ry, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
+              initial={{ opacity: 0, scale: 0.72, rotateX: 16, rotateY: -14, filter: "blur(14px)" }}
+              animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
+              transition={{ type: "spring", stiffness: 320, damping: 12, mass: 0.95, delay: 0.28 } as unknown as Record<string, unknown>}
+            />
+            {/* sweep ngikut siluet K-PAGE2 */}
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 overflow-hidden"
+              style={{
+                WebkitMaskImage: "url(/kyronix-k-page.png)",
+                maskImage: "url(/kyronix-k-page.png)",
+                WebkitMaskSize: "contain",
+                maskSize: "contain",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+                WebkitMaskPosition: "center",
+                maskPosition: "center",
+                filter: "blur(0.5px)",
+              } as React.CSSProperties}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0, 1, 1, 0] } as unknown as Record<string, unknown>}
+              transition={{ duration: 2.95, times: [0, 0.52, 0.58, 0.84, 1], ease: "easeInOut" } as unknown as Record<string, unknown>}
+            >
+              <motion.div
+                className="absolute inset-y-0 w-[45%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
+                initial={{ x: "-130%" }}
+                animate={{ x: "260%" }}
+                transition={{ duration: 1.15, delay: 1.42, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transform: "skewX(-18deg)" }}
+              />
+            </motion.div>
+          </motion.div>
           <motion.p
-            className="pointer-events-none absolute bottom-[5%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-white/80 drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)]"
+            className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-white/70 max-sm:bottom-[5%] max-sm:text-[10px]"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.55, duration: 0.72, ease: EASE }}
+            transition={{ delay: 0.95, duration: 0.72, ease: EASE }}
           >
             KYRONIX — tap / Esc to skip
           </motion.p>
