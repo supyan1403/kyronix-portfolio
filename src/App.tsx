@@ -384,7 +384,7 @@ function KineticBand({ text, accent, reverse }: { text: string; accent?: string;
   // low-end: no 5× scroll listeners — pure CSS marquee (same look selang-seling via reverse direction)
   if (low) {
     return (
-      <div className="overflow-hidden bg-transparent py-7 md:py-9" aria-hidden>
+      <div className="overflow-hidden bg-transparent py-4 md:py-6" aria-hidden>
         <div
           className={`kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.06em] text-ink md:gap-16 marquee-track ${reverse ? "[animation-direction:reverse]" : ""}`}
           style={{ animationDuration: "28s" } as React.CSSProperties}
@@ -403,7 +403,7 @@ function KineticBand({ text, accent, reverse }: { text: string; accent?: string;
     );
   }
   return (
-    <div ref={ref} className="overflow-hidden bg-transparent py-7 md:py-9" aria-hidden>
+    <div ref={ref} className="overflow-hidden bg-transparent py-4 md:py-6" aria-hidden>
       <motion.div
         className="kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.06em] text-ink md:gap-16"
         style={{ x }}
@@ -1334,7 +1334,7 @@ function ProjectsOpening() {
   const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
   const titleY = useTransform(scrollYProgress, [0, 1], [14, -16]);
   return (
-    <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
+    <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute -left-[8%] bottom-[12%] h-[420px] w-[520px] bg-sage/10 blur-[60px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
@@ -1384,7 +1384,7 @@ function Projects() {
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
       {/* Bento — asymmetric editorial 8/4 + 7/5 (pecah template) */}
-      <section className="relative px-[5vw] pb-[14vh] pt-6">
+      <section className="relative px-[5vw] pb-[14vh] pt-3">
         <div className="mx-auto max-w-[1120px]">
           <div className="grid gap-5 md:grid-cols-12 md:items-stretch">
             <div className="md:col-span-8 flex flex-col [&>article]:flex-1 [&>article]:!min-h-[520px] [&>article]:!h-full">
@@ -2054,7 +2054,7 @@ function ExperienceOpening() {
   const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
   const titleY = useTransform(scrollYProgress, [0, 1], [14, -16]);
   return (
-    <section ref={ref} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]">
+    <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-hidden px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute -right-[8%] top-[22%] h-[440px] w-[520px] bg-terracotta/10 blur-[60px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto max-w-[1120px] text-center">
@@ -2120,7 +2120,7 @@ function Experience() {
       {/* Opening — full 100dvh EPIC */}
       <ExperienceOpening />
       {/* Timeline — cards-only */}
-      <section ref={trackRef} className="relative px-[5vw] pb-[14vh] pt-4 md:pb-[14vh] overflow-x-clip">
+      <section ref={trackRef} className="relative px-[5vw] pb-[14vh] pt-3 md:pb-[14vh] overflow-x-clip">
       <motion.div style={{ opacity: expOpacity } as unknown as Record<string, unknown>} className="mx-auto max-w-[1120px] will-change-transform">
         <div className="relative">
           <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-border md:left-1/2" aria-hidden />
