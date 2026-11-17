@@ -166,31 +166,48 @@ function scrollToId(id: string) {
   else el.scrollIntoView({ behavior: "smooth" });
 }
 
-/* ---------- Smooth scroll (Lenis) — adaptive 60fps: low-end lighter, keep smoothTouch ---------- */
+/* ---------- Smooth scroll (Lenis) — desktop smooth, HP native biar ga sendat ---------- */
 function useLenis() {
   useEffect(() => {
     const isCoarse = window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches;
+    // HP: jangan hijack touch — pakai scroll native Chrome (compositor thread, fling 120hz mulus)
+    // Lenis tetap hidup untuk scrollToId(programmatic) tapi smoothTouch OFF
+    if (isCoarse) {
+      const lenis = new Lenis({
+        duration: 0.9,
+        smoothWheel: false,
+        smoothTouch: false,
+        gestureOrientation: "vertical",
+        touchMultiplier: 1,
+      });
+      lenisInstance = lenis;
+      let raf = 0;
+      const loop = (t: number) => {
+        lenis.raf(t);
+        raf = requestAnimationFrame(loop);
+      };
+      raf = requestAnimationFrame(loop);
+      return () => {
+        cancelAnimationFrame(raf);
+        lenis.destroy();
+        lenisInstance = null;
+      };
+    }
     const dm = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
     const cores = navigator.hardwareConcurrency ?? 8;
-    const isLow = isCoarse && ((typeof dm === "number" ? dm <= 4 : false) || cores <= 4);
+    const isLow = (typeof dm === "number" ? dm <= 4 : false) || cores <= 4;
     const lenis = new Lenis({
-      duration: isLow ? 0.85 : isCoarse ? 0.9 : 1.25,
-      wheelMultiplier: isCoarse ? 0.92 : 0.9,
+      duration: isLow ? 1.0 : 1.25,
+      wheelMultiplier: 0.9,
       smoothWheel: true,
-      smoothTouch: true,
-      touchMultiplier: isLow ? 1.0 : isCoarse ? 1.2 : 1.6,
+      smoothTouch: false,
       gestureOrientation: "vertical",
-      easing: (t: number) => 1 - Math.pow(1 - t, isLow ? 2.4 : 2.8),
+      easing: (t: number) => 1 - Math.pow(1 - t, 2.8),
     });
     lenisInstance = lenis;
     let raf = 0;
-    let last = 0;
     const loop = (t: number) => {
-      // low-end throttle: cap ~80hz work, keep smooth but fewer ticks
-      if (!isLow || t - last >= 12) {
-        lenis.raf(t);
-        last = t;
-      }
+      lenis.raf(t);
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
