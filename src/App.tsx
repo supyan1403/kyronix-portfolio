@@ -551,7 +551,7 @@ function KPage({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
     lenisInstance?.stop();
-    const t = window.setTimeout(finish, 1820);
+    const t = window.setTimeout(finish, 2950);
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
     window.addEventListener("keydown", onKey);
     return () => { window.clearTimeout(t); window.removeEventListener("keydown", onKey); };
@@ -572,8 +572,8 @@ function KPage({ onDone }: { onDone: () => void }) {
         <motion.div
           className="fixed inset-0 z-[150] flex flex-col items-center justify-center bg-cream px-6 overflow-hidden"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, filter: "blur(8px)", scale: 1.02 }}
-          transition={{ duration: 0.42, ease: EASE }}
+          exit={{ opacity: 0, filter: "blur(10px)", scale: 1.03 }}
+          transition={{ duration: 0.62, ease: EASE }}
           onClick={finish}
           role="button"
           tabIndex={0}
@@ -585,9 +585,9 @@ function KPage({ onDone }: { onDone: () => void }) {
           <motion.div
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/14 blur-[80px] max-sm:h-[380px] max-sm:w-[380px] max-sm:blur-[56px]"
-            initial={{ opacity: 0, scale: 0.78 }}
+            initial={{ opacity: 0, scale: 0.82 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.62, ease: EASE }}
+            transition={{ duration: 0.95, ease: EASE }}
           />
           <motion.div
             className="relative flex items-center justify-center will-change-transform"
@@ -611,9 +611,9 @@ function KPage({ onDone }: { onDone: () => void }) {
               draggable={false}
               className="relative h-[min(46dvh,380px)] w-auto select-none will-change-transform md:h-[min(56dvh,460px)]"
               style={{ rotateX: rx, rotateY: ry, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-              initial={{ opacity: 0, scale: 0.28, rotateX: 22, rotateY: -18, filter: "blur(8px)" }}
-              animate={{ opacity: 1, scale: [0.32, 1.28, 0.92, 1.06, 1] as unknown as number, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
-              transition={{ duration: 1.12, times: [0, 0.46, 0.68, 0.84, 1], ease: [0.68, -0.55, 0.27, 1.55] } as unknown as Record<string, unknown>}
+              initial={{ opacity: 0, scale: 0.24, rotateX: 22, rotateY: -18, filter: "blur(10px)" }}
+              animate={{ opacity: 1, scale: [0.28, 1.22, 0.94, 1.04, 1] as unknown as number, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
+              transition={{ duration: 1.72, times: [0, 0.42, 0.66, 0.84, 1], ease: [0.68, -0.55, 0.27, 1.55] } as unknown as Record<string, unknown>}
             />
             {/* sweep — ngikut siluet K (mask), bukan kotak */}
             <motion.div
@@ -632,22 +632,22 @@ function KPage({ onDone }: { onDone: () => void }) {
               } as React.CSSProperties}
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 0, 1, 1, 0] } as unknown as Record<string, unknown>}
-              transition={{ duration: 1.82, times: [0, 0.36, 0.44, 0.76, 1], ease: "easeInOut" } as unknown as Record<string, unknown>}
+              transition={{ duration: 2.95, times: [0, 0.52, 0.58, 0.84, 1], ease: "easeInOut" } as unknown as Record<string, unknown>}
             >
               <motion.div
                 className="absolute inset-y-0 w-[45%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
                 initial={{ x: "-130%" }}
                 animate={{ x: "260%" }}
-                transition={{ duration: 0.92, delay: 0.68, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 1.15, delay: 1.12, ease: [0.22, 1, 0.36, 1] }}
                 style={{ transform: "skewX(-18deg)" }}
               />
             </motion.div>
           </motion.div>
           <motion.p
             className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-muted/70 max-sm:bottom-[5%] max-sm:text-[10px]"
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.55, duration: 0.55, ease: EASE }}
+            transition={{ delay: 0.95, duration: 0.72, ease: EASE }}
           >
             KYRONIX — K — tap / Esc to skip
           </motion.p>
