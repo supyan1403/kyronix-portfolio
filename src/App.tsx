@@ -1382,7 +1382,7 @@ function Projects() {
   const [active, setActive] = useState<(typeof projects)[number] | null>(null);
   const [docHref, setDocHref] = useState<string | null>(null);
   const folders = (t as unknown as { folders: Record<ProjectFolder | "all", string> }).folders;
-  const [activeFolder, setActiveFolder] = useState<ProjectFolder | "all">("all");
+  const [activeFolder, setActiveFolder] = useState<ProjectFolder | "all" | null>(null);
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActive(null); };
@@ -1405,10 +1405,11 @@ function Projects() {
   }, [active]);
   const handleOpen = (p: (typeof projects)[number]) => setActive(p);
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
-  const visible = activeFolder === "all" ? projects : projects.filter((p) => projectMeta[p.no]?.folder === activeFolder);
+  const visible = activeFolder === null ? [] : activeFolder === "all" ? projects : projects.filter((p) => projectMeta[p.no]?.folder === activeFolder);
   const pill = (key: ProjectFolder | "all", label: string) => (
-    <button key={key} type="button" onClick={() => setActiveFolder(key)} className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition-colors ${activeFolder === key ? "border-terracotta bg-terracotta text-white" : "border-border bg-transparent text-muted hover:border-ink hover:text-ink"}`}>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${activeFolder === key ? "bg-white/20 text-white" : "bg-border/30 text-muted"}`}>{key === "all" ? projects.length : projects.filter((p) => projectMeta[p.no]?.folder === key).length}</span></button>
+    <button key={key} type="button" onClick={() => setActiveFolder((prev) => (prev === key ? null : key))} className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition-colors ${activeFolder === key ? "border-terracotta bg-terracotta text-white" : "border-border bg-transparent text-muted hover:border-ink hover:text-ink"}`}>{label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${activeFolder === key ? "bg-white/20 text-white" : "bg-border/30 text-muted"}`}>{key === "all" ? projects.length : projects.filter((p) => projectMeta[p.no]?.folder === key).length}</span></button>
   );
+  const toggleFolder = (key: ProjectFolder) => setActiveFolder((prev) => (prev === key ? null : key));
 
   return (
     <div id="projects" className="relative bg-transparent overflow-x-clip">
@@ -1421,21 +1422,30 @@ function Projects() {
         <div className="mx-auto max-w-[1120px]">
           <div className="flex flex-wrap gap-2">{pill("all", folders.all)}{pill("research", folders.research)}{pill("iot", folders.iot)}{pill("webapp", folders.webapp)}</div>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <FolderContainer label={folders.research} count={projects.filter((p) => projectMeta[p.no]?.folder === "research").length} Icon={BarChart3} desc={lang === "id" ? "Riset & Digital Twin — lahan 800m2" : "Research & Digital Twin — 800m2 plot"} active={activeFolder === "research"} onClick={() => setActiveFolder("research")} />
-            <FolderContainer label={folders.iot} count={projects.filter((p) => projectMeta[p.no]?.folder === "iot").length} Icon={Cpu} desc={lang === "id" ? "Perangkat fisik & otomasi" : "Hardware & automation"} active={activeFolder === "iot"} onClick={() => setActiveFolder("iot")} />
-            <FolderContainer label={folders.webapp} count={projects.filter((p) => projectMeta[p.no]?.folder === "webapp").length} Icon={Database} desc={lang === "id" ? "ETL, pipeline & aplikasi web" : "ETL, pipelines & web apps"} active={activeFolder === "webapp"} onClick={() => setActiveFolder("webapp")} />
+            <FolderContainer label={folders.research} count={projects.filter((p) => projectMeta[p.no]?.folder === "research").length} Icon={BarChart3} desc={lang === "id" ? "Riset & Digital Twin — lahan 800m2" : "Research & Digital Twin — 800m2 plot"} active={activeFolder === "research"} onClick={() => toggleFolder("research")} />
+            <FolderContainer label={folders.iot} count={projects.filter((p) => projectMeta[p.no]?.folder === "iot").length} Icon={Cpu} desc={lang === "id" ? "Perangkat fisik & otomasi" : "Hardware & automation"} active={activeFolder === "iot"} onClick={() => toggleFolder("iot")} />
+            <FolderContainer label={folders.webapp} count={projects.filter((p) => projectMeta[p.no]?.folder === "webapp").length} Icon={Database} desc={lang === "id" ? "ETL, pipeline & aplikasi web" : "ETL, pipelines & web apps"} active={activeFolder === "webapp"} onClick={() => toggleFolder("webapp")} />
           </div>
-          {/* grid hanya muncul setelah klik folder (atau All = semua) */}
-          <div className="mt-8 grid gap-5 md:grid-cols-2">
-            <AnimatePresence mode="popLayout">
-              {visible.map((p, idx) => (
-                <motion.div key={p.no} layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, delay: idx * 0.04 }}>
-                  <ProjectCard p={p} idx={projects.indexOf(p)} onOpen={handleOpen} compact />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-          {visible.length === 0 ? <p className="mt-6 text-center font-mono text-xs text-muted">{lang === "id" ? "Belum ada proyek di folder ini." : "No projects in this folder yet."}</p> : null}
+          <AnimatePresence mode="wait">
+            {activeFolder === null ? (
+              <motion.p key="placeholder" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28 }} className="mt-8 rounded-xl border border-dashed border-border bg-surface/60 px-6 py-8 text-center font-mono text-xs uppercase tracking-widest text-muted">
+                {lang === "id" ? "Pilih folder di atas untuk lihat project" : "Select a folder above to view projects"} — <span className="text-terracotta">klik kartu</span>
+              </motion.p>
+            ) : (
+              <motion.div key="grid" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.35, ease: EASE }} className="overflow-hidden">
+                <div className="mt-8 grid gap-5 md:grid-cols-2">
+                  <AnimatePresence mode="popLayout">
+                    {visible.map((p, idx) => (
+                      <motion.div key={p.no} layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, delay: idx * 0.04 }}>
+                        <ProjectCard p={p} idx={projects.indexOf(p)} onOpen={handleOpen} compact />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+                {visible.length === 0 ? <p className="mt-6 text-center font-mono text-xs text-muted">{lang === "id" ? "Belum ada proyek di folder ini." : "No projects in this folder yet."}</p> : null}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
       <AnimatePresence>
@@ -1910,6 +1920,53 @@ function ExpRow({
   );
 }
 
+function PdfBlobViewer({ href, title, failed, onFailed }: { href: string; title: string; failed: boolean; onFailed: () => void }) {
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let cancelled = false;
+    let url: string | null = null;
+    setLoading(true);
+    setBlobUrl(null);
+    fetch(href)
+      .then((r) => {
+        if (!r.ok) throw new Error(`fetch ${r.status}`);
+        return r.blob();
+      })
+      .then((blob) => {
+        if (cancelled) return;
+        url = URL.createObjectURL(blob);
+        setBlobUrl(url);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLoading(false);
+        onFailed();
+      });
+    return () => {
+      cancelled = true;
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [href, onFailed]);
+  if (loading) {
+    return <div className="flex min-h-[62dvh] flex-1 items-center justify-center border border-border bg-white px-4 font-mono text-xs text-muted sm:min-h-[52vh]">Memuat PDF…</div>;
+  }
+  if (failed || !blobUrl) {
+    return (
+      <div className="flex min-h-[62dvh] flex-1 flex-col items-center justify-center gap-3 border border-border bg-white p-6 text-center sm:min-h-[52vh]">
+        <p className="font-mono text-xs leading-relaxed text-muted">Preview diblokir Chrome HP — pakai “Buka PDF Di Tab Baru” di bawah.</p>
+        <a href={href} target="_blank" rel="noreferrer" className="inline-flex border border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">Buka PDF ↗</a>
+      </div>
+    );
+  }
+  return (
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <iframe src={blobUrl} title={title} className="h-[62dvh] w-full flex-1 border border-border bg-white sm:h-full sm:min-h-[52vh]" />
+    </div>
+  );
+}
+
 function CertificateViewer({
   href,
   open,
@@ -1925,10 +1982,14 @@ function CertificateViewer({
   const t = dict[lang];
   const title = href ? href.split("/").pop()?.replace(".pdf", "") ?? (kind === "article" ? "Artikel" : "Sertifikat") : "";
   const headerEyebrow = kind === "article" ? "Artikel — KYRONIX" : "Sertifikat — KYRONIX";
+  const [failed, setFailed] = useState(false);
+  useEffect(() => setFailed(false), [href, open]);
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
+    const prevHtml = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     lenisInstance?.stop();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -1936,6 +1997,7 @@ function CertificateViewer({
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
+      document.documentElement.style.overflow = prevHtml;
       lenisInstance?.start();
       window.removeEventListener("keydown", onKey);
     };
@@ -1944,6 +2006,7 @@ function CertificateViewer({
     if (!href) return;
     try {
       const res = await fetch(href);
+      if (!res.ok) throw new Error("fetch pdf failed");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -2007,37 +2070,12 @@ function CertificateViewer({
                 </button>
               </div>
             </div>
-            {/* pdf — mobile: native scroll, desktop: object/iframe */}
+            {/* pdf — Chrome HP fix: fetch blob → iframe blob:, object sering blok di Chrome Android */}
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#141414] p-2 sm:p-3">
-              {/* mobile: langsung pakai iframe full tinggi + link fallback besar */}
-              <div className="flex flex-1 flex-col gap-2 overflow-auto">
-                <div className="min-h-[62dvh] flex-1 sm:min-h-[52vh]">
-                  <object
-                    data={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
-                    type="application/pdf"
-                    className="hidden h-full min-h-[62dvh] w-full border border-border bg-white sm:block sm:min-h-[52vh]"
-                    aria-label={title}
-                  >
-                    <iframe
-                      src={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
-                      title={title}
-                      className="h-full w-full min-h-[62dvh] border-0 bg-white sm:min-h-[52vh]"
-                      loading="lazy"
-                      allow="fullscreen"
-                    />
-                  </object>
-                  <iframe
-                    src={`${href}#view=FitH&toolbar=0&navpanes=0&statusbar=0`}
-                    title={title}
-                    className="h-[62dvh] w-full border border-border bg-white sm:hidden"
-                    loading="lazy"
-                    allow="fullscreen"
-                  />
-                </div>
-                <div className="flex flex-col gap-2 border-t border-border/20 pt-2 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
-                  <span className="max-sm:text-xs">HP / iOS tidak preview? Pakai tombol di bawah.</span>
-                  <a href={href} target="_blank" rel="noreferrer" className="inline-flex justify-center border border-terracotta bg-terracotta px-4 py-2.5 text-center font-bold uppercase tracking-widest text-white hover:bg-[#d46a52] max-sm:w-full">Buka PDF Di Tab Baru ↗</a>
-                </div>
+              <PdfBlobViewer href={href} title={title} failed={failed} onFailed={() => setFailed(true)} />
+              <div className="flex shrink-0 flex-col gap-2 border-t border-border/20 pt-2 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
+                <span className="max-sm:text-xs">{failed ? "Preview diblokir Chrome — buka tab baru di bawah." : "HP / iOS tidak preview? Pakai tombol di bawah."}</span>
+                <a href={href} target="_blank" rel="noreferrer" className="inline-flex justify-center border border-terracotta bg-terracotta px-4 py-2.5 text-center font-bold uppercase tracking-widest text-white hover:bg-[#d46a52] max-sm:w-full">Buka PDF Di Tab Baru ↗</a>
               </div>
             </div>
           </motion.div>
