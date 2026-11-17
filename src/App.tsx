@@ -1165,9 +1165,13 @@ function Stack() {
   const t = dict[lang];
   const low = useIsLowEnd();
   const openingRef = useRef<HTMLElement>(null);
+  const flatRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: flatProgress } = useScroll({ target: flatRef, offset: ["start end", "end start"] });
   const openingGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const openingTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
+  const flatX = useTransform(flatProgress, [0, 1], low ? [0, 0] : [-12, 12]);
+  const flatXRev = useTransform(flatProgress, [0, 1], low ? [0, 0] : [10, -10]);
   return (
     <section id="stack" className="relative bg-cream overflow-x-clip">
       {/* Opening — full 100dvh text-only EPIC */}
@@ -1195,11 +1199,11 @@ function Stack() {
           </motion.p>
         </div>
       </section>
-      {/* Flat — tanpa kartu, icon nempel langsung di bg-cream */}
-      <div className="relative px-[5vw] pb-[18vh]">
+      {/* Flat — tanpa kartu, icon nempel langsung di bg-cream — fade horizontal + parallax */}
+      <div ref={flatRef} className="relative px-[5vw] pb-[18vh]">
         <div className="relative mx-auto max-w-[1120px] space-y-12">
-          {stackGallery.map((g) => (
-            <div key={g.id} className="space-y-4">
+          {stackGallery.map((g, gi) => (
+            <motion.div key={g.id} className="space-y-4 will-change-transform" style={{ x: (gi % 2 === 0 ? flatX : flatXRev) } as unknown as Record<string, unknown>}>
               <div className="flex items-baseline justify-between gap-3 border-b border-border/10 pb-3">
                 <div className="flex flex-wrap items-baseline gap-2">
                   <span className="font-sans text-[13px] font-semibold uppercase tracking-[0.06em] text-ink">{g.title}</span>
@@ -1211,12 +1215,12 @@ function Stack() {
                 {g.tiles.map((tile, ti) => (
                   <motion.div
                     key={tile.label}
-                    initial={low ? ({ opacity: 0, y: 6 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 8, filter: "blur(4px)" } as unknown as Record<string, unknown>)}
-                    whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
+                    initial={low ? ({ opacity: 0, x: -12 } as unknown as Record<string, unknown>) : ({ opacity: 0, x: -18, filter: "blur(6px)" } as unknown as Record<string, unknown>)}
+                    whileInView={low ? ({ opacity: 1, x: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, x: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
                     viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.4, delay: ti * 0.04, ease: EASE }}
+                    transition={{ duration: 0.55, delay: ti * 0.06, ease: EASE }}
                     whileHover={low ? undefined : { y: -2 }}
-                    className="flex flex-col items-center gap-2.5 text-center"
+                    className="flex flex-col items-center gap-2.5 text-center will-change-transform"
                   >
                     <span className="inline-flex h-10 w-10 items-center justify-center">
                       {tile.src ? (
@@ -1229,7 +1233,7 @@ function Stack() {
                   </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
