@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import Lenis from "lenis";
 import type { MotionValue } from "motion/react";
@@ -1401,27 +1402,29 @@ function Projects() {
           </div>
         </div>
       </section>
-      <AnimatePresence>
-        {active && (
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label={t.projectModal.title}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setActive(null)}
-          >
-            <div className="absolute inset-0 bg-[#0f0e0d]/70 backdrop-blur-[2px] supports-[backdrop-filter]:bg-[#0f0e0d]/60 max-sm:backdrop-blur-none max-sm:bg-[#0f0e0d]/80" />
-            <motion.div
-              initial={{ y: 16, scale: 0.98, opacity: 0 }}
-              animate={{ y: 0, scale: 1, opacity: 1 }}
-              exit={{ y: 8, scale: 0.98, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 380, damping: 24 }}
-              onClick={(e) => e.stopPropagation()}
-              className="warm-card relative w-full max-w-[520px] max-h-[85vh] overflow-auto bg-surface p-6 text-left md:p-7"
-            >
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {active && (
+              <motion.div
+                role="dialog"
+                aria-modal="true"
+                aria-label={t.projectModal.title}
+                className="fixed inset-0 z-[100] flex min-h-[100dvh] items-start justify-center overflow-y-auto overscroll-contain p-3 sm:items-center sm:p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setActive(null)}
+              >
+                <div aria-hidden className="fixed inset-0 bg-[#0f0e0d]/70 backdrop-blur-[2px] supports-[backdrop-filter]:bg-[#0f0e0d]/60 max-sm:backdrop-blur-none max-sm:bg-[#0f0e0d]/80" />
+                <motion.div
+                  initial={{ y: 16, scale: 0.98, opacity: 0 }}
+                  animate={{ y: 0, scale: 1, opacity: 1 }}
+                  exit={{ y: 8, scale: 0.98, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 24 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="warm-card relative my-auto w-full max-w-[520px] max-h-[85dvh] overflow-auto bg-surface p-6 text-left max-sm:max-h-[88dvh] md:p-7"
+                >
               <button
                 onClick={() => setActive(null)}
                 aria-label={t.projectModal.close}
@@ -1528,10 +1531,12 @@ function Projects() {
                   );
                 })()}
               </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
       {docHref && <CertificateViewer href={docHref} open={!!docHref} onClose={() => setDocHref(null)} kind="article" />}
       </div>
   );
@@ -1973,28 +1978,29 @@ function CertificateViewer({
       window.open(href, "_blank", "noopener,noreferrer");
     }
   };
-  return (
-    <AnimatePresence>
-      {open && href && (
-        <motion.div
-          role="dialog"
-          aria-modal="true"
-          aria-label={title}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-        >
-          <div className="absolute inset-0 bg-[#0f0e0d]/75 backdrop-blur-[3px] supports-[backdrop-filter]:bg-[#0f0e0d]/65 max-sm:backdrop-blur-none max-sm:bg-[#0f0e0d]/85" />
-          <motion.div
-            initial={{ y: 16, scale: 0.98, opacity: 0 }}
-            animate={{ y: 0, scale: 1, opacity: 1 }}
-            exit={{ y: 8, scale: 0.98, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 380, damping: 24 }}
-            onClick={(e) => e.stopPropagation()}
-            className="relative flex h-[min(92dvh,920px)] max-h-[92dvh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-border bg-surface shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]"
-          >
+  return typeof document !== "undefined"
+    ? createPortal(
+        <AnimatePresence>
+          {open && href && (
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label={title}
+              className="fixed inset-0 z-[100] flex min-h-[100dvh] items-start justify-center overflow-y-auto overscroll-contain p-3 sm:items-center sm:p-4 md:p-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={onClose}
+            >
+              <div aria-hidden className="fixed inset-0 bg-[#0f0e0d]/75 backdrop-blur-[3px] supports-[backdrop-filter]:bg-[#0f0e0d]/65 max-sm:backdrop-blur-none max-sm:bg-[#0f0e0d]/85" />
+              <motion.div
+                initial={{ y: 16, scale: 0.98, opacity: 0 }}
+                animate={{ y: 0, scale: 1, opacity: 1 }}
+                exit={{ y: 8, scale: 0.98, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 380, damping: 24 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative my-auto flex h-[min(92dvh,920px)] max-h-[92dvh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-border bg-surface shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]"
+              >
             {/* header branded — bukan toolbar chrome */}
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-cream px-3 py-2.5 sm:px-4 sm:py-3">
               <div className="min-w-0 flex items-center gap-2.5">
@@ -2034,8 +2040,10 @@ function CertificateViewer({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
-  );
+    </AnimatePresence>,
+        document.body
+      )
+    : null;
 }
 
 function ExperienceOpening() {
