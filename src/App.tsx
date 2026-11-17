@@ -611,9 +611,9 @@ function KPage({ onDone }: { onDone: () => void }) {
               draggable={false}
               className="relative h-[min(46dvh,380px)] w-auto select-none will-change-transform md:h-[min(56dvh,460px)]"
               style={{ rotateX: rx, rotateY: ry, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-              initial={{ opacity: 0, scale: 0.82, rotateX: 14, rotateY: -12, filter: "blur(10px)" }}
+              initial={{ opacity: 0, scale: 0.72, rotateX: 16, rotateY: -14, filter: "blur(14px)" }}
               animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
-              transition={{ type: "spring", stiffness: 280, damping: 18, mass: 0.9 } as unknown as Record<string, unknown>}
+              transition={{ type: "spring", stiffness: 320, damping: 12, mass: 0.95, delay: 0.28 } as unknown as Record<string, unknown>}
             />
             {/* sweep — ngikut siluet K (mask), bukan kotak */}
             <motion.div
@@ -638,7 +638,7 @@ function KPage({ onDone }: { onDone: () => void }) {
                 className="absolute inset-y-0 w-[45%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
                 initial={{ x: "-130%" }}
                 animate={{ x: "260%" }}
-                transition={{ duration: 1.15, delay: 1.12, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 1.15, delay: 1.42, ease: [0.22, 1, 0.36, 1] }}
                 style={{ transform: "skewX(-18deg)" }}
               />
             </motion.div>
