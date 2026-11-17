@@ -16,21 +16,12 @@ import {
 import {
   ArrowDownRight,
   ArrowUpRight,
-  BarChart3,
   Check,
-  Code2,
   Copy,
-  Cpu,
   Database,
   Download,
-  Folder,
-  FolderOpen,
   GraduationCap,
-  Layers,
   Mail,
-  Palette,
-  Radio,
-  Wrench,
   X,
 } from "lucide-react";
 /* brand full-color icons — simple-icons + local asseticon via react-icons/si (Draw.io kept via si) */
@@ -1114,13 +1105,11 @@ function Hero({ ready }: { ready: boolean }) {
 
 /* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Gallery: folder + full-color brand icons, HANYA APLIKASI REAL) ---------- */
 type Tile = { label: string; Icon?: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>; src?: string; brand?: boolean; color?: string };
-const stackGallery: { id: string; title: string; hint?: string; icon: typeof Database; tone: "lime" | "violet" | "coral"; tiles: Tile[] }[] = [
+const stackGallery: { id: string; title: string; hint?: string; tiles: Tile[] }[] = [
   {
     id: "bahasa",
     title: "Bahasa",
     hint: "AI yang Tulis",
-    icon: Code2,
-    tone: "violet",
     tiles: [
       { label: "Python", src: "/icons/python.svg", brand: true, color: "#3776AB" },
       { label: "JavaScript", src: "/icons/javascript.svg", brand: true, color: "#F7DF1E" },
@@ -1130,8 +1119,6 @@ const stackGallery: { id: string; title: string; hint?: string; icon: typeof Dat
   {
     id: "desain",
     title: "Desain",
-    icon: Palette,
-    tone: "coral",
     tiles: [
       { label: "Figma", src: "/icons/figma.svg", brand: true, color: "#F24E1E" },
       { label: "Tailwind CSS", Icon: SiTailwindcss, brand: true, color: "#06B6D4" },
@@ -1140,8 +1127,6 @@ const stackGallery: { id: string; title: string; hint?: string; icon: typeof Dat
   {
     id: "rancangan",
     title: "Rancangan Sistem & Diagram",
-    icon: Layers,
-    tone: "lime",
     tiles: [
       { label: "Draw.io", Icon: SiDiagramsdotnet, brand: true, color: "#F08705" },
     ],
@@ -1150,8 +1135,6 @@ const stackGallery: { id: string; title: string; hint?: string; icon: typeof Dat
     id: "tools",
     title: "Tools & Workflow",
     hint: "Senjata Vibe Coding",
-    icon: Wrench,
-    tone: "violet",
     tiles: [
       { label: "VS Code", src: "/icons/vscode.svg", brand: true, color: "#007ACC" },
       { label: "Git", Icon: SiGit, brand: true, color: "#F05032" },
@@ -1166,8 +1149,6 @@ const stackGallery: { id: string; title: string; hint?: string; icon: typeof Dat
     id: "iot",
     title: "IoT & Hardware",
     hint: "Lagi Eksplor",
-    icon: Cpu,
-    tone: "coral",
     tiles: [
       { label: "Arduino", Icon: SiArduino, brand: true, color: "#00979D" },
       { label: "ESP32", Icon: SiEspressif, brand: true, color: "#E7352C" },
@@ -1183,8 +1164,6 @@ function Stack() {
   const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
   const openingGridY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [44, -44]);
   const openingTitleY = useTransform(openingProgress, [0, 1], low ? [0, 0] : [28, -28]);
-  const [active, setActive] = useState(0);
-  const group = stackGallery[active] ?? stackGallery[0]!;
   return (
     <section id="stack" className="relative bg-cream overflow-x-clip">
       {/* Opening — full 100dvh text-only EPIC */}
@@ -1212,94 +1191,42 @@ function Stack() {
           </motion.p>
         </div>
       </section>
-      {/* Gallery — folder tabs left + icon tiles right (R.DEV 404: galeri_006.jpg) */}
+      {/* Flat — tanpa kartu, icon nempel langsung di bg-cream */}
       <div className="relative px-[5vw] pb-[18vh]">
-        <div className="relative mx-auto max-w-[1120px]">
-          <div className="flex flex-col gap-6 lg:flex-row lg:gap-6">
-            {/* folder list — vertical desktop, scroll horizontal mobile */}
-            <div className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:min-w-[280px] lg:max-w-[320px] lg:overflow-visible scrollbar-none">
-              {stackGallery.map((g, idx) => {
-                const isActive = idx === active;
-                const FolderIcon = isActive ? FolderOpen : Folder;
-                return (
-                  <button
-                    key={g.id}
-                    onClick={() => setActive(idx)}
-                    aria-selected={isActive}
-                    role="tab"
-                    className={`group relative flex shrink-0 items-center justify-between gap-3 border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
-                      isActive
-                        ? "border-terracotta bg-terracotta/10 text-ink"
-                        : "border-border/60 bg-surface text-muted hover:border-border hover:text-ink"
-                    }`}
-                    style={{ borderRadius: 12 } as React.CSSProperties}
-                  >
-                    <span className="flex min-w-0 items-center gap-3">
-                      <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${isActive ? "border-terracotta/30 bg-terracotta text-white" : "border-border bg-cream text-muted"}`}>
-                        <FolderIcon size={16} />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block font-sans text-[13px] font-semibold uppercase leading-tight tracking-[0.04em] truncate">{g.title}{g.hint ? ` — ${g.hint}` : ""}</span>
-                        <span className="block font-mono text-[11px] tracking-wide text-muted">{g.tiles.length} technologies{g.hint ? ` · ${g.hint}` : ""}</span>
-                      </span>
-                    </span>
-                    <span className={`hidden shrink-0 font-mono text-xs lg:inline ${isActive ? "text-terracotta" : "text-muted/60"}`}>0{idx + 1}</span>
-                    {isActive ? <span aria-hidden className="pointer-events-none absolute -right-[7px] top-1/2 hidden h-3 w-3 -translate-y-1/2 rotate-45 border-r border-t border-terracotta bg-terracotta/10 lg:block" /> : null}
-                  </button>
-                );
-              })}
-            </div>
-            {/* tiles grid — corner brackets like R.DEV 404 blueprint */}
-            <div className="relative flex-1 min-w-0">
-              <div aria-hidden className="pointer-events-none absolute -left-1 -top-1 h-4 w-4 border-l border-t border-border/40" />
-              <div aria-hidden className="pointer-events-none absolute -right-1 -top-1 h-4 w-4 border-r border-t border-border/40" />
-              <div aria-hidden className="pointer-events-none absolute -left-1 -bottom-1 h-4 w-4 border-l border-b border-border/40" />
-              <div aria-hidden className="pointer-events-none absolute -right-1 -bottom-1 h-4 w-4 border-r border-b border-border/40" />
-              <div className="warm-card p-4 sm:p-5">
-                <div className="mb-3 flex items-center justify-between gap-3 border-b border-border/10 pb-3">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
-                    {group.title} — {group.tiles.length} items
-                  </p>
-                  <span className="font-mono text-[11px] tracking-widest text-muted">0{active + 1} / 0{stackGallery.length}</span>
+        <div className="relative mx-auto max-w-[1120px] space-y-12">
+          {stackGallery.map((g) => (
+            <div key={g.id} className="space-y-4">
+              <div className="flex items-baseline justify-between gap-3 border-b border-border/10 pb-3">
+                <div className="flex flex-wrap items-baseline gap-2">
+                  <span className="font-sans text-[13px] font-semibold uppercase tracking-[0.06em] text-ink">{g.title}</span>
+                  {g.hint ? <span className="font-mono text-[11px] tracking-wide text-muted">· {g.hint}</span> : null}
                 </div>
-                <AnimatePresence mode="wait">
+                <span className="shrink-0 font-mono text-[11px] tracking-widest text-muted">{g.tiles.length} items</span>
+              </div>
+              <div className={`grid gap-5 ${g.tiles.length === 1 ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-6" : g.tiles.length <= 3 ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-5" : "grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7"}`}>
+                {g.tiles.map((tile, ti) => (
                   <motion.div
-                    key={group.id}
-                    initial={low ? ({ opacity: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)}
-                    animate={low ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)}
-                    exit={low ? ({ opacity: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: -8 } as unknown as Record<string, unknown>)}
-                    transition={{ duration: 0.28, ease: EASE }}
-                    className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+                    key={tile.label}
+                    initial={low ? ({ opacity: 0, y: 6 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 8, filter: "blur(4px)" } as unknown as Record<string, unknown>)}
+                    whileInView={low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.4, delay: ti * 0.04, ease: EASE }}
+                    whileHover={low ? undefined : { y: -2 }}
+                    className="flex flex-col items-center gap-2.5 text-center"
                   >
-                    {group.tiles.map((tile, ti) => {
-                      return (
-                        <motion.div
-                          key={tile.label}
-                          initial={low ? ({ opacity: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 8, filter: "blur(4px)" } as unknown as Record<string, unknown>)}
-                          animate={low ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)}
-                          transition={{ duration: 0.35, delay: ti * 0.04, ease: EASE }}
-                          whileHover={low ? undefined : { y: -2 }}
-                          className="group/tile relative flex flex-col items-center justify-center gap-3 border border-border bg-cream px-3 py-6 text-center transition-colors hover:border-terracotta hover:bg-cream focus-within:border-terracotta focus-within:ring-2 focus-within:ring-terracotta/20"
-                          style={{ borderRadius: 12 } as React.CSSProperties}
-                        >
-                          <span aria-hidden className="pointer-events-none absolute left-1.5 top-1.5 h-2 w-2 border-l border-t border-border/50 group-hover/tile:border-terracotta/60" />
-                          <span aria-hidden className="pointer-events-none absolute right-1.5 top-1.5 h-2 w-2 border-r border-t border-border/50 group-hover/tile:border-terracotta/60" />
-                          <span className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border bg-white ${tile.src ? "p-1.5" : ""}`}>
-                            {tile.src ? (
-                              <img src={tile.src} alt="" aria-hidden width={28} height={28} className="h-7 w-7 object-contain" loading="lazy" decoding="async" />
-                            ) : tile.Icon ? (
-                              <tile.Icon size={20} style={tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined} />
-                            ) : null}
-                          </span>
-                          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] leading-tight text-ink">{tile.label}</span>
-                        </motion.div>
-                      );
-                    })}
+                    <span className={`inline-flex h-12 w-12 items-center justify-center rounded-xl border bg-white shadow-sm ${tile.src ? "p-2" : ""}`} style={{ borderColor: "#E7E5E4" } as React.CSSProperties}>
+                      {tile.src ? (
+                        <img src={tile.src} alt="" aria-hidden width={28} height={28} className="h-7 w-7 object-contain" loading="lazy" decoding="async" />
+                      ) : tile.Icon ? (
+                        <tile.Icon size={22} style={tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined} />
+                      ) : null}
+                    </span>
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] leading-tight text-ink">{tile.label}</span>
                   </motion.div>
-                </AnimatePresence>
+                ))}
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
