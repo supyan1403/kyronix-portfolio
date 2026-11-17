@@ -1778,7 +1778,13 @@ function ExpRow({
                 type="button"
                 onClick={(ev) => {
                   ev.stopPropagation();
-                  onOpenCert?.((e as { certificateHref: string }).certificateHref);
+                  const href = (e as { certificateHref: string }).certificateHref;
+                  const isCoarse = typeof window !== "undefined" && (window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768);
+                  if (isCoarse) {
+                    window.open(href, "_blank", "noopener,noreferrer");
+                    return;
+                  }
+                  onOpenCert?.(href);
                 }}
                 className="inline-flex items-center gap-2 bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]"
               >
@@ -1836,7 +1842,13 @@ function ExpRow({
                       type="button"
                       onClick={(ev) => {
                         ev.stopPropagation();
-                        onOpenCert?.((e as { certificateHref: string }).certificateHref);
+                        const href = (e as { certificateHref: string }).certificateHref;
+                        const isCoarse = typeof window !== "undefined" && (window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768);
+                        if (isCoarse) {
+                          window.open(href, "_blank", "noopener,noreferrer");
+                          return;
+                        }
+                        onOpenCert?.(href);
                       }}
                       className="inline-flex cursor-pointer items-center gap-2 border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]"
                     >
