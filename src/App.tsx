@@ -1254,15 +1254,7 @@ function Stack() {
   );
 }
 
-/* ---------- 3. Featured projects — navtab folder ---------- */
-function FolderTab({ label, count, Icon, active, onClick }: { label: string; count: number; Icon: typeof Folder; active: boolean; onClick: () => void }) {
-  return (
-    <button type="button" role="tab" aria-selected={active} onClick={onClick} className={`inline-flex items-center gap-2 rounded-t-xl border border-b-0 px-4 py-2.5 font-mono text-[11px] font-black uppercase tracking-widest transition-colors ${active ? "border-terracotta bg-terracotta text-white" : "border-border bg-surface text-muted hover:border-terracotta/40 hover:text-ink"}`}>
-      <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${active ? "bg-white/20" : "bg-cream-deep text-terracotta"}`}>{active ? <FolderOpen size={14} /> : <Icon size={14} />}</span>
-      {label} <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${active ? "bg-white/20" : "bg-border/20"}`}>{count}</span>
-    </button>
-  );
-}
+/* ---------- 3. Featured projects — Bento Featured ---------- */
 
 function ProjectCard({ p, idx, onOpen, compact }: { p: (typeof projects)[number]; idx: number; onOpen: (pp: (typeof projects)[number]) => void; compact?: boolean }) {
   const { lang } = useLang();
@@ -1392,8 +1384,6 @@ function Projects() {
   const t = dict[lang];
   const [active, setActive] = useState<(typeof projects)[number] | null>(null);
   const [docHref, setDocHref] = useState<string | null>(null);
-  const folders = (t as unknown as { folders: Record<ProjectFolder | "all", string> }).folders;
-  const [activeFolder, setActiveFolder] = useState<ProjectFolder | "all" | null>(null);
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActive(null); };
@@ -1423,43 +1413,18 @@ function Projects() {
       <ProjectsOpening />
       {/* Flow board — auto running banner semua project */}
       <FlowBoard />
-      {/* Folder — navtab + single warm-card container (hemat tinggi, 1 kontainer) */}
+      {/* Bento — hero 01 full + 3 cards compact (menarik, 0 klik, 1 viewport) */}
       <section className="relative px-[5vw] pb-[14vh] pt-6">
         <div className="mx-auto max-w-[1120px]">
-          <div role="tablist" aria-label="Folder projects" className="flex flex-wrap gap-2">
-            <FolderTab label={folders.all} count={projects.length} Icon={Folder} active={activeFolder === "all"} onClick={() => setActiveFolder((prev) => (prev === "all" ? null : "all"))} />
-            <FolderTab label={folders.research} count={projects.filter((p) => projectMeta[p.no]?.folder === "research").length} Icon={BarChart3} active={activeFolder === "research"} onClick={() => setActiveFolder((prev) => (prev === "research" ? null : "research"))} />
-            <FolderTab label={folders.iot} count={projects.filter((p) => projectMeta[p.no]?.folder === "iot").length} Icon={Cpu} active={activeFolder === "iot"} onClick={() => setActiveFolder((prev) => (prev === "iot" ? null : "iot"))} />
-            <FolderTab label={folders.webapp} count={projects.filter((p) => projectMeta[p.no]?.folder === "webapp").length} Icon={Database} active={activeFolder === "webapp"} onClick={() => setActiveFolder((prev) => (prev === "webapp" ? null : "webapp"))} />
-          </div>
-          <div className="warm-card mt-3 p-5 md:p-6">
-          <AnimatePresence mode="wait">
-            {activeFolder === null ? (
-              <motion.p key="placeholder" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28 }} className="mt-6 rounded-xl border border-dashed border-border bg-surface/60 px-6 py-8 text-center font-mono text-xs uppercase tracking-widest text-muted">
-                {lang === "id" ? "Pilih folder di atas untuk lihat project" : "Select a folder above to view projects"} — <span className="text-terracotta">klik kartu</span>
-              </motion.p>
-            ) : (
-              <motion.div key="grid" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.35, ease: EASE }} className="overflow-hidden">
-                <div className="mt-8 grid gap-5 md:grid-cols-2">
-                  {(() => {
-                    const visible = activeFolder === "all" ? projects : projects.filter((p) => projectMeta[p.no]?.folder === activeFolder);
-                    return (
-                      <>
-                        <AnimatePresence mode="popLayout">
-                          {visible.map((p, idx) => (
-                            <motion.div key={p.no} layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28, delay: idx * 0.04 }}>
-                              <ProjectCard p={p} idx={projects.indexOf(p)} onOpen={handleOpen} compact />
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
-                        {visible.length === 0 ? <p className="mt-6 text-center font-mono text-xs text-muted">{lang === "id" ? "Belum ada proyek di folder ini." : "No projects in this folder yet."}</p> : null}
-                      </>
-                    );
-                  })()}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div className="grid gap-5">
+            {/* hero — Digital Twin 01 col-span penuh */}
+            <ProjectCard p={projects[0]} idx={0} onOpen={handleOpen} />
+            {/* trio — 02, 03, 04 */}
+            <div className="grid gap-5 md:grid-cols-3">
+              {projects.slice(1).map((p) => (
+                <ProjectCard key={p.no} p={p} idx={projects.indexOf(p)} onOpen={handleOpen} compact />
+              ))}
+            </div>
           </div>
         </div>
       </section>
