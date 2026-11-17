@@ -9,7 +9,7 @@
   --color-ink: #F5EFE6;
   --color-muted: #A8A298;
   --color-border: #3A3632;
-  --color-terracotta: #E07A5F;
+  --color-terracotta: #C4713C;
   --color-terracotta-light: #3D2A24;
   --color-sage: #8FA89B;
   --color-sage-light: #2A3330;
@@ -136,15 +136,15 @@
   transition: transform 150ms, background 150ms, color 150ms, box-shadow 150ms, border-color 150ms;
 }
 .warm-btn.primary {
-  background: var(--color-ink);
-  color: var(--color-cream);
-  border: 1.5px solid var(--color-ink);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  background: linear-gradient(135deg, #B85E2E 0%, #C4713C 45%, #E07A5F 100%);
+  color: white;
+  border: 1.5px solid #B85E2E;
+  box-shadow: 0 8px 24px rgba(184,94,46,0.28);
 }
 .warm-btn.primary:hover {
-  background: #E8DED0;
+  background: linear-gradient(135deg, #A84F24 0%, #B85E2E 45%, #D46A52 100%);
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 28px rgba(184,94,46,0.32);
 }
 .warm-btn.ghost {
   background: transparent;

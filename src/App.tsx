@@ -52,7 +52,7 @@ const WARM = {
   ink: "#F5EFE6",
   muted: "#A8A298",
   border: "#3A3632",
-  terracotta: "#E07A5F",
+  terracotta: "#C4713C",
   sage: "#8FA89B",
   sageDeep: "#6B8A7A",
   violet: "#7c3aed",
@@ -292,7 +292,7 @@ function Magnetic({
       whileTap={{ scale: 0.96 }}
       transition={{ type: "spring", stiffness: 420, damping: 22 }}
       style={{ x: sx, y: sy }}
-      className={`inline-flex w-auto justify-center items-center gap-2 self-center rounded-xl border px-6 py-3 font-mono text-[11px] font-black uppercase tracking-[0.14em] sm:px-7 sm:py-3.5 sm:text-sm cursor-pointer ${variant === "primary" ? `border-ink bg-terracotta text-white shadow-[0_4px_16px_rgba(28,25,23,0.08)]` : `border-border bg-surface text-ink shadow-[0_4px_16px_rgba(28,25,23,0.08)]`}`}
+      className={`inline-flex w-auto justify-center items-center gap-2 self-center rounded-xl border px-6 py-3 font-mono text-[11px] font-black uppercase tracking-[0.14em] sm:px-7 sm:py-3.5 sm:text-sm cursor-pointer ${variant === "primary" ? `border-[#B85E2E] bg-gradient-to-br from-[#B85E2E] to-[#E07A5F] text-white shadow-[0_8px_24px_rgba(184,94,46,0.28)]` : `border-border bg-surface text-ink shadow-[0_4px_16px_rgba(28,25,23,0.08)]`}`}
     >
       {children}
     </motion.a>
@@ -355,7 +355,6 @@ function Eyebrow({ index, label }: { index: string; label: string }) {
       className="mb-5 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em]"
       style={{ color: WARM.muted }}
     >
-      <span style={{ color: WARM.terracotta }}>{index}</span>
       <ChipPixel size={14} className="text-terracotta/60" />
       {label}
     </motion.p>
@@ -980,18 +979,21 @@ const dict = {
       eyebrow: "Profil",
       title: "DI BALIK KYRONIX.",
       name: "Supyan Sauri",
-      role: "System Architect — Data • IoT • Web",
-      bio: "Membangun sistem dari ide ke infra: riset, data engineering, dan otomasi yang rapi dan teruji. Fokus pada hasil yang bisa dipakai, bukan sekadar demo.",
+      role: "Data Engineering — Data Science — Data Analytics",
+      bio: "Saya Supyan Sauri dari Tasikmalaya, Jawa Barat, Indonesia. Bergerak di Data Engineering, Data Science, dan Data Analytics, dengan ketertarikan pada riset berbasis pemodelan untuk memahami persoalan secara terstruktur.",
       ctaPrimary: "Hubungi Saya",
       ctaSecondary: "Unduh CV",
     },
-    stackEyebrow: "Perangkat Kerja",
-    stackTitle: "PERANGKAT YANG SAYA PAKAI.",
-    projectsEyebrow: "Dari Ide Jadi Nyata",
-    projectsTitle: "DARI IDE JADI NYATA.",
+    stackEyebrow: "Ekosistem Kerja",
+    stackTitle: "PERANGKAT YANG SAYA ANDALKAN.",
+    stackSubtitle: "Berbagai perangkat dan teknologi pilihan yang diandalkan dalam mendukung cara saya mengeksplorasi setiap gagasan.",
+    projectsEyebrow: "Karya Terpilih",
+    projectsTitle: "IDE YANG MENJADI KARYA.",
+    projectsSubtitle: "Kumpulan konsep, tahap pengerjaan, dan hasil akhir yang merefleksikan cara saya menerjemahkan gagasan menjadi solusi.",
     experience: {
-      eyebrow: "Pengalaman",
+      eyebrow: "Rekam Jejak",
       title: "PERJALANAN SAYA SEJAUH INI.",
+      subtitle: "Rekam jejak langkah dan proses yang saya jalani sejauh ini untuk terus berkembang secara berkelanjutan.",
       viewCert: "Lihat Sertifikat",
       download: "Unduh",
       showDetail: "Lihat Detail ↓",
@@ -999,11 +1001,11 @@ const dict = {
     },
     labEyebrow: "Cara Kerja",
     labTitle: "CARA SAYA BEKERJA.",
-    labDesc: "Alur kerja saya sederhana: memahami kebutuhan, membangun solusinya, dan memastikan hasilnya bisa dipakai.",
+    labDesc: "Memahami masalah secara presisi, merancang solusi yang andal, dan memastikan eksekusi yang berdampak nyata.",
     labSteps: [
-      { n: "01", title: "Pahami", desc: "Mendengarkan kebutuhan dan memetakan alurnya sebelum nulis kode.", tags: ["ARSITEKTUR SISTEM", "ALUR SISTEM"] },
-      { n: "02", title: "Rakit", desc: "Merakit sistem dengan otomasi yang rapi dan teruji.", tags: ["OTOMASI PYTHON", "ROUTER API"] },
-      { n: "03", title: "Jalankan", desc: "Deploy, pantau, dan pastikan jalan mulus di production.", tags: ["PIPELINE ETL", "POSTGRESQL", "KYRONIX.MY.ID"] },
+      { title: "Pahami", desc: "Mendengarkan kebutuhan dan memetakan alurnya sebelum nulis kode.", tags: ["ARSITEKTUR SISTEM", "ALUR SISTEM"] },
+      { title: "Rakit", desc: "Merakit sistem dengan otomasi yang rapi dan teruji.", tags: ["OTOMASI PYTHON", "ROUTER API"] },
+      { title: "Jalankan", desc: "Deploy, pantau, dan pastikan jalan mulus di production.", tags: ["PIPELINE ETL", "POSTGRESQL", "KYRONIX.MY.ID"] },
     ],
     contactEyebrow: "Kontak",
     contactTitle: "HUBUNGI SAYA",
@@ -1069,18 +1071,21 @@ const dict = {
       eyebrow: "Profile",
       title: "BEHIND KYRONIX.",
       name: "Supyan Sauri",
-      role: "System Architect — Data • IoT • Web",
-      bio: "Building systems from idea to infra: research, data engineering, and clean, tested automation. Focused on usable outcomes, not just demos.",
+      role: "Data Engineering — Data Science — Data Analytics",
+      bio: "I'm Supyan Sauri from Tasikmalaya, West Java, Indonesia. Working in Data Engineering, Data Science, and Data Analytics, with an interest in modeling-based research to understand problems structurally.",
       ctaPrimary: "Contact Me",
       ctaSecondary: "Download CV",
     },
-    stackEyebrow: "My Toolkit",
-    stackTitle: "MY TOOLKIT.",
-    projectsEyebrow: "From Idea To Real",
-    projectsTitle: "FROM IDEA TO REAL.",
+    stackEyebrow: "Work Ecosystem",
+    stackTitle: "MY TRUSTED TOOLKIT.",
+    stackSubtitle: "A curated set of tools and technologies I rely on to explore every idea.",
+    projectsEyebrow: "Selected Works",
+    projectsTitle: "IDEAS INTO WORKS.",
+    projectsSubtitle: "A collection of concepts, build phases, and final outcomes reflecting how I turn ideas into solutions.",
     experience: {
-      eyebrow: "Experience",
+      eyebrow: "Track Record",
       title: "MY JOURNEY SO FAR.",
+      subtitle: "A record of steps and processes I've taken so far to keep growing sustainably.",
       viewCert: "View Certificate",
       download: "Download",
       showDetail: "View Detail ↓",
@@ -1088,11 +1093,11 @@ const dict = {
     },
     labEyebrow: "How I Work",
     labTitle: "HOW I WORK.",
-    labDesc: "My workflow is simple: understand the need, build the solution, and make sure it works in practice.",
+    labDesc: "Understanding problems precisely, designing reliable solutions, and ensuring execution delivers real impact.",
     labSteps: [
-      { n: "01", title: "Understand", desc: "Listening to needs and mapping the flow before writing code.", tags: ["SYSTEM ARCHITECTURE", "SYSTEM FLOWS"] },
-      { n: "02", title: "Assemble", desc: "Assembling the system with clean, tested automation.", tags: ["PYTHON AUTOMATION", "API ROUTERS"] },
-      { n: "03", title: "Run", desc: "Deploy, monitor, and make sure it runs smoothly in production.", tags: ["ETL PIPELINES", "POSTGRESQL", "KYRONIX.MY.ID"] },
+      { title: "Understand", desc: "Listening to needs and mapping the flow before writing code.", tags: ["SYSTEM ARCHITECTURE", "SYSTEM FLOWS"] },
+      { title: "Assemble", desc: "Assembling the system with clean, tested automation.", tags: ["PYTHON AUTOMATION", "API ROUTERS"] },
+      { title: "Run", desc: "Deploy, monitor, and make sure it runs smoothly in production.", tags: ["ETL PIPELINES", "POSTGRESQL", "KYRONIX.MY.ID"] },
     ],
     contactEyebrow: "Contact",
     contactTitle: "GET IN TOUCH",
@@ -1331,7 +1336,7 @@ function Profile() {
             transition={{ duration: 0.7, ease: EASE }}
             className="warm-card relative flex flex-col gap-5 p-6 md:col-span-7 md:p-8"
           >
-            <Eyebrow index="01.5" label={t.eyebrow} />
+            <Eyebrow index="" label={t.eyebrow} />
             <h2 className="font-display text-[clamp(2rem,5.2vw,3.2rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink">{t.title}</h2>
             <div className="space-y-3">
               <p className="font-sans text-lg font-bold tracking-[0.04em] text-ink">{t.name}</p>
@@ -1360,18 +1365,18 @@ function Profile() {
             <div className="grid grid-cols-3 gap-3 pt-2">
               <div className="rounded-xl border border-border/40 bg-cream px-3 py-3 text-center">
                 <p className="font-mono text-[10px] uppercase tracking-widest text-muted">Fokus</p>
-                <p className="mt-1 font-sans text-sm font-bold text-ink">Data • IoT • Web</p>
+                <p className="mt-1 font-sans text-sm font-bold text-ink">Data • Analitik • Riset</p>
               </div>
               <div className="rounded-xl border border-border/40 bg-cream px-3 py-3 text-center">
                 <p className="font-mono text-[10px] uppercase tracking-widest text-muted">Lokasi</p>
-                <p className="mt-1 font-sans text-sm font-bold text-ink">Indonesia</p>
+                <p className="mt-1 font-sans text-sm font-bold text-ink">Tasikmalaya</p>
               </div>
               <div className="rounded-xl border border-border/40 bg-cream px-3 py-3 text-center">
                 <p className="font-mono text-[10px] uppercase tracking-widest text-muted">Status</p>
                 <p className="mt-1 inline-flex items-center justify-center gap-1 font-sans text-sm font-bold text-terracotta"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> Open</p>
               </div>
             </div>
-            <p className="font-mono text-[11px] leading-relaxed text-muted">Terbuka untuk kolaborasi riset & data engineering. Hubungi untuk diskusi kebutuhan ETL, IoT, atau web.</p>
+            <p className="font-mono text-[11px] leading-relaxed text-muted">Terbuka untuk kolaborasi riset dan pengembangan berbasis data. Model yang rapi, hasil yang bisa dipakai.</p>
           </motion.div>
         </div>
       </div>
@@ -1448,12 +1453,22 @@ function Stack() {
         <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[420px] w-[420px] bg-terracotta/10 blur-[60px] will-change-transform max-sm:hidden" style={{ y: openingTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto max-w-[1120px] text-center">
           <motion.div style={{ y: openingTitleY } as unknown as Record<string, unknown>} className="will-change-transform">
-            <Eyebrow index="01" label={t.stackEyebrow} />
+            <Eyebrow index="" label={t.stackEyebrow} />
             <SplitReveal
               key={t.stackTitle}
               text={t.stackTitle}
               className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
             />
+            <motion.p
+              style={{ y: openingTitleY, color: WARM.muted } as unknown as Record<string, unknown>}
+              initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
+              whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
+              viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
+              transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
+              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed will-change-transform sm:text-base"
+            >
+              {(t as unknown as { stackSubtitle: string }).stackSubtitle}
+            </motion.p>
           </motion.div>
         </div>
       </section>
@@ -1579,12 +1594,22 @@ function ProjectsOpening() {
       <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] -bottom-[8%] h-[640px] w-[900px] bg-sage/10 blur-[90px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
         <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="will-change-transform">
-          <Eyebrow index="02" label={t.projectsEyebrow} />
+          <Eyebrow index="" label={t.projectsEyebrow} />
           <SplitReveal
             key={t.projectsTitle}
             text={t.projectsTitle}
             className="mx-auto font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
           />
+            <motion.p
+              style={{ y: titleY, color: WARM.muted } as unknown as Record<string, unknown>}
+              initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
+              whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
+              viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
+              transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
+              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed will-change-transform sm:text-base"
+            >
+              {(t as unknown as { projectsSubtitle: string }).projectsSubtitle}
+            </motion.p>
         </motion.div>
       </div>
     </section>
@@ -2331,8 +2356,18 @@ function ExperienceOpening() {
       <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] -top-[8%] h-[640px] w-[900px] bg-terracotta/10 blur-[90px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto max-w-[1120px] text-center">
         <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="will-change-transform">
-          <Eyebrow index="03" label={t.experience.eyebrow} />
+          <Eyebrow index="" label={t.experience.eyebrow} />
           <SplitReveal key={t.experience.title} text={t.experience.title} className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]" />
+          <motion.p
+            style={{ y: titleY, color: WARM.muted } as unknown as Record<string, unknown>}
+            initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
+            whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
+            viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
+            className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed will-change-transform sm:text-base"
+          >
+            {(t.experience as unknown as { subtitle: string }).subtitle}
+          </motion.p>
         </motion.div>
       </div>
     </section>
@@ -2444,7 +2479,7 @@ function Lab() {
         <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] top-[16%] h-[420px] w-[520px] bg-sage/10 blur-[60px] max-sm:hidden" style={{ y: labTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto w-full max-w-[1120px] min-w-0 text-center">
           <motion.div style={{ y: labTitleY } as unknown as Record<string, unknown>} className="will-change-transform">
-            <Eyebrow index="04" label={t.labEyebrow} />
+            <Eyebrow index="" label={t.labEyebrow} />
             <SplitReveal
               key={t.labTitle}
               text={t.labTitle}
@@ -2472,7 +2507,7 @@ function Lab() {
         <div className="grid w-full min-w-0 gap-4 sm:gap-6 md:grid-cols-3 md:items-start">
           {steps.map((step, idx) => (
             <motion.article
-              key={step.n}
+              key={step.title}
               initial={{ opacity: 0, y: 14 } as unknown as Record<string, unknown>}
               whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
               viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }}
@@ -2481,10 +2516,9 @@ function Lab() {
               className={`warm-card flex w-full min-w-0 flex-col overflow-hidden break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${idx === 1 ? "p-5 sm:p-7 md:p-9 md:-translate-y-4" : "p-5 sm:p-7 md:p-8"}`}
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-terracotta bg-terracotta font-mono text-sm font-black text-white">
-                  {step.n}
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-terracotta bg-terracotta text-white">
+                  <step.icon size={18} />
                 </span>
-                <step.icon size={18} className="shrink-0" style={{ color: WARM.muted }} />
               </div>
               <h3 className="mt-5 w-full break-words font-sans text-[clamp(1.4rem,6vw,1.7rem)] font-semibold uppercase leading-none tracking-[0.06em] text-ink [overflow-wrap:anywhere]">{step.title}</h3>
               <p className="mt-3 w-full break-words text-sm leading-relaxed [overflow-wrap:anywhere]" style={{ color: WARM.muted }}>{step.desc}</p>
@@ -2566,56 +2600,36 @@ function Contact() {
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.4]" />
       {/* grain mengganti orb duplikat Hero biar fase beda */}
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(245,239,230,0.9) 1px, transparent 0)", backgroundSize: "22px 22px" }} />
-      <div className="relative mx-auto max-w-[1120px] text-center">
-        <Eyebrow index="05" label={t.contactEyebrow} />
-        <SplitReveal
-          key={t.contactTitle}
-          text={t.contactTitle}
-          className="font-display text-[clamp(2.6rem,8.5vw,6.75rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
-        />
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.15 }}
-          className="mx-auto mt-8 max-w-lg text-lg"
-          style={{ color: WARM.muted }}
-        >
-          {t.contactDesc}
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.22 }}
-          className="mt-10 flex flex-wrap justify-center gap-3"
-        >
-          <Magnetic href={`mailto:${email}`} variant="primary">
-            <Mail size={16} /> {lang === "id" ? "Email Saya" : "Email Me"}
-          </Magnetic>
-          <button
-            onClick={copyEmail}
-            aria-live="polite"
-            className="warm-btn ghost inline-flex items-center gap-2"
+      <div className="relative mx-auto max-w-[1120px]">
+        <div className="text-center">
+          <Eyebrow index="" label={t.contactEyebrow} />
+          <SplitReveal
+            key={t.contactTitle}
+            text={t.contactTitle}
+            className="font-display text-[clamp(2.6rem,8.5vw,6.75rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.15 }}
+            className="mx-auto mt-8 max-w-lg text-lg"
+            style={{ color: WARM.muted }}
           >
-            {copied ? <Check size={16} /> : <Copy size={16} />}
-            {copied ? (lang === "id" ? "Tersalin!" : "Copied!") : email}
-          </button>
-        </motion.div>
-        {/* container form — kirim langsung tanpa buka mail app */}
-        <motion.form
-          onSubmit={onSubmit}
-          noValidate
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
-          className="mx-auto mt-8 w-full max-w-[640px] text-left"
-        >
-          <div className="warm-card p-5 sm:p-6">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em]" style={{ color: WARM.muted }}>
-              {lang === "id" ? "Atau kirim langsung dari sini — masuk ke inbox saya" : "Or send directly — lands in my inbox"}
-            </p>
+            {t.contactDesc}
+          </motion.p>
+        </div>
+        <div className="mt-10 grid gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-start">
+          <motion.form
+            onSubmit={onSubmit}
+            noValidate
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
+            className="w-full text-left"
+          >
+            <div className="warm-card p-5 sm:p-6">
             {/* honeypot — hidden dari user, bot isi = block */}
             <input
               type="text"
@@ -2627,15 +2641,14 @@ function Contact() {
               aria-hidden
               className="hidden"
             />
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <label className="flex flex-col gap-1.5">
                 <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: WARM.muted }}>{t.contactForm.name} *</span>
                 <input
                   value={f.name}
                   onChange={(e) => setF({ ...f, name: e.target.value })}
-                  placeholder={t.contactForm.namePh}
                   required
-                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
                 />
               </label>
               <label className="flex flex-col gap-1.5">
@@ -2644,9 +2657,8 @@ function Contact() {
                   type="email"
                   value={f.email}
                   onChange={(e) => setF({ ...f, email: e.target.value })}
-                  placeholder={t.contactForm.emailPh}
                   required
-                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
                 />
               </label>
               <label className="flex flex-col gap-1.5">
@@ -2654,8 +2666,7 @@ function Contact() {
                 <input
                   value={f.subject}
                   onChange={(e) => setF({ ...f, subject: e.target.value })}
-                  placeholder={t.contactForm.subjectPh}
-                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
                 />
               </label>
               <label className="flex flex-col gap-1.5">
@@ -2663,9 +2674,8 @@ function Contact() {
                 <input
                   value={f.phone}
                   onChange={(e) => setF({ ...f, phone: e.target.value })}
-                  placeholder={t.contactForm.phonePh}
                   inputMode="tel"
-                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                  className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
                 />
               </label>
             </div>
@@ -2674,10 +2684,9 @@ function Contact() {
               <textarea
                 value={f.message}
                 onChange={(e) => setF({ ...f, message: e.target.value })}
-                placeholder={t.contactForm.messagePh}
                 required
                 rows={4}
-                className="min-h-[110px] w-full resize-y rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                className="min-h-[110px] w-full resize-y rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
               />
             </label>
 
@@ -2705,33 +2714,40 @@ function Contact() {
                 </span>
               ) : null}
             </div>
-            {!siteKey ? (
-              <p className="mt-2 font-mono text-[11px] leading-relaxed" style={{ color: WARM.muted }}>
-                {lang === "id" ? "Tanpa Turnstile di dev — set VITE_TURNSTILE_SITE_KEY untuk aktifkan anti-bot di prod." : "No Turnstile in dev — set VITE_TURNSTILE_SITE_KEY to enable anti-bot in prod."}
-              </p>
-            ) : null}
           </div>
         </motion.form>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.26 }}
-          className="mt-4 flex flex-wrap justify-center gap-3"
-        >
-          <Magnetic href="/cv.pdf" variant="ghost">
-            {t.downloadCv} <Download size={16} />
-          </Magnetic>
-          <a
-            href="https://github.com/supyan1403"
-            target="_blank"
-            rel="noreferrer"
-            className="warm-btn ghost"
-            style={{ boxShadow: `0 4px 16px rgba(28,25,23,0.08)` } as React.CSSProperties}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 0.6, ease: EASE, delay: 0.26 }}
+            className="flex flex-col gap-3 md:sticky md:top-28"
           >
-            GitHub ↗
-          </a>
-        </motion.div>
+            <Magnetic href={`mailto:${email}`} variant="primary">
+              <Mail size={16} /> {lang === "id" ? "Email Saya" : "Email Me"}
+            </Magnetic>
+            <button
+              onClick={copyEmail}
+              aria-live="polite"
+              className="warm-btn ghost inline-flex items-center gap-2 justify-center"
+            >
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              {copied ? (lang === "id" ? "Tersalin!" : "Copied!") : email}
+            </button>
+            <Magnetic href="/cv.pdf" variant="ghost">
+              {t.downloadCv} <Download size={16} />
+            </Magnetic>
+            <a
+              href="https://github.com/supyan1403"
+              target="_blank"
+              rel="noreferrer"
+              className="warm-btn ghost justify-center"
+              style={{ boxShadow: `0 4px 16px rgba(28,25,23,0.08)` } as React.CSSProperties}
+            >
+              GitHub ↗
+            </a>
+          </motion.div>
+        </div>
         <div className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t border-border/10 pt-6 font-mono text-xs uppercase tracking-widest" style={{ color: WARM.muted }}>
           <p>© 2025 Supyan Sauri</p>
           <p>KYRONIX</p>
