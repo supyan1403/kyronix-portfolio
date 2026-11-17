@@ -1220,7 +1220,7 @@ function Stack() {
                   >
                     <span className="inline-flex h-10 w-10 items-center justify-center">
                       {tile.src ? (
-                        <img src={tile.src} alt="" aria-hidden width={36} height={36} className={`object-contain ${tile.label === "OpenCode" ? "h-6 w-20 brightness-[3] contrast-[1.1]" : "h-9 w-9"}`} loading="lazy" decoding="async" />
+                        <img src={tile.src} alt="" aria-hidden width={36} height={36} className="h-9 w-9 object-contain" loading="lazy" decoding="async" />
                       ) : tile.Icon ? (
                         <tile.Icon size={32} style={tile.color ? ({ color: tile.color } as React.CSSProperties) : undefined} />
                       ) : null}
