@@ -604,8 +604,8 @@ function KPage({ onDone }: { onDone: () => void }) {
             <motion.img
               src="/kyronix-k.webp"
               alt="KYRONIX K"
-              width={520}
-              height={528}
+              width={469}
+              height={520}
               loading="eager"
               decoding="async"
               draggable={false}
@@ -615,6 +615,39 @@ function KPage({ onDone }: { onDone: () => void }) {
               animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
               transition={{ type: "spring", stiffness: 320, damping: 12, mass: 0.95, delay: 0.28 } as unknown as Record<string, unknown>}
             />
+            {/* circuit — garis ditarik keliling K jadi K LOGO (heksa + node pulse) — base already K LOGO.webp, SVG draw pathLength for reveal + pulse */}
+            <motion.svg
+              aria-hidden
+              viewBox="0 0 520 560"
+              fill="none"
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[min(58dvh,520px)] w-auto -translate-x-1/2 -translate-y-1/2 overflow-visible md:h-[min(68dvh,600px)]"
+              style={{ filter: "drop-shadow(0 0 8px rgba(224,122,95,0.35))" } as React.CSSProperties}
+            >
+              {/* hexagon outer — pathLength ditarik */}
+              <motion.path
+                d="M260 18 L456 132 L456 428 L260 542 L64 428 L64 132 Z"
+                stroke="#E07A5F"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={0.9}
+                pathLength={0}
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 0.95 } as unknown as Record<string, unknown>}
+                transition={{ duration: 1.15, delay: 1.42, ease: [0.22, 1, 0.36, 1] } as unknown as Record<string, unknown>}
+              />
+              {/* branch lines — staggered */}
+              <motion.path d="M260 18 L260 56 M456 132 L420 150 M456 428 L400 400 M260 542 L260 500 M64 428 L110 400 M64 132 L110 150" stroke="#E07A5F" strokeWidth="1.1" strokeLinecap="round" opacity={0.75} pathLength={0} initial={{ pathLength: 0 }} animate={{ pathLength: 1 } as unknown as Record<string, unknown>} transition={{ duration: 0.85, delay: 1.55, ease: [0.22, 1, 0.36, 1] } as unknown as Record<string, unknown>} />
+              {/* nodes — scale + pulse */}
+              {[
+                [260, 18], [456, 132], [456, 428], [260, 542], [64, 428], [64, 132],
+              ].map(([cx, cy], i) => (
+                <motion.g key={i} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 } as unknown as Record<string, unknown>} transition={{ duration: 0.45, delay: 1.85 + i * 0.09, ease: EASE } as unknown as Record<string, unknown>}>
+                  <circle cx={cx} cy={cy} r="6.5" stroke="#E07A5F" strokeWidth="1.1" fill="none" opacity={0.9} />
+                  <motion.circle cx={cx} cy={cy} r="3.2" fill="#E07A5F" animate={{ scale: [1, 1.45, 1], opacity: [0.95, 0.45, 0.95] } as unknown as Record<string, unknown>} transition={{ duration: 1.8, repeat: Infinity, delay: 2.1 + i * 0.12, ease: "easeInOut" } as unknown as Record<string, unknown>} />
+                </motion.g>
+              ))}
+            </motion.svg>
             {/* sweep — ngikut siluet K (mask), bukan kotak */}
             <motion.div
               aria-hidden
@@ -974,6 +1007,15 @@ const dict = {
       ctaSecondary: "Jelajahi Hasil",
       tagline: "DARI IDE KE INFRA.",
     },
+    profile: {
+      eyebrow: "Profil",
+      title: "DI BALIK KYRONIX.",
+      name: "Supyan Sauri",
+      role: "System Architect — Data • IoT • Web",
+      bio: "Membangun sistem dari ide ke infra: riset, data engineering, dan otomasi yang rapi dan teruji. Fokus pada hasil yang bisa dipakai, bukan sekadar demo.",
+      ctaPrimary: "Hubungi Saya",
+      ctaSecondary: "Unduh CV",
+    },
     stackEyebrow: "Perangkat Kerja",
     stackTitle: "PERANGKAT YANG SAYA PAKAI.",
     projectsEyebrow: "Dari Ide Jadi Nyata",
@@ -1053,6 +1095,15 @@ const dict = {
       ctaPrimary: "Contact Me",
       ctaSecondary: "Explore Builds",
       tagline: "FROM IDEA TO INFRA.",
+    },
+    profile: {
+      eyebrow: "Profile",
+      title: "BEHIND KYRONIX.",
+      name: "Supyan Sauri",
+      role: "System Architect — Data • IoT • Web",
+      bio: "Building systems from idea to infra: research, data engineering, and clean, tested automation. Focused on usable outcomes, not just demos.",
+      ctaPrimary: "Contact Me",
+      ctaSecondary: "Download CV",
     },
     stackEyebrow: "My Toolkit",
     stackTitle: "MY TOOLKIT.",
@@ -1188,10 +1239,6 @@ function Hero({ ready }: { ready: boolean }) {
       <div aria-hidden className="pointer-events-none absolute bottom-[24px] left-[24px] h-[22px] w-[22px] border-b-[1.5px] border-l-[1.5px] border-terracotta/20 max-sm:bottom-[16px] max-sm:left-[16px] max-sm:h-[18px] max-sm:w-[18px]" />
       <div aria-hidden className="pointer-events-none absolute bottom-[24px] right-[24px] h-[22px] w-[22px] border-b-[1.5px] border-r-[1.5px] border-terracotta/20 max-sm:bottom-[16px] max-sm:right-[16px] max-sm:h-[18px] max-sm:w-[18px]" />
       <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={light ? ({ opacity: heroOpacity } as unknown as Record<string, unknown>) : ({ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>)} initial={light ? ({ opacity: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, filter: "blur(10px)" } as unknown as Record<string, unknown>)} animate={light ? ({ opacity: 1 } as unknown as Record<string, unknown>) : low ? (ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)) : (ready ? ({ opacity: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>))} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
-        <motion.p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-muted shadow-sm" initial={{ opacity: 0, y: 8 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.35 }}>
-          <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
-          {t2.hero.hi}
-        </motion.p>
         {/* KYRONIX — image 3D tembaga persis K/R/O/... (notch puzzle) + sweep ngikut siluet */}
         <motion.div
           aria-label={FULL}
@@ -1296,6 +1343,69 @@ function Hero({ ready }: { ready: boolean }) {
           <span>Scroll</span><span className="h-7 w-px bg-border"><motion.i className="block h-3 w-px bg-terracotta" animate={{ y: [0, 14, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }} /></span>
         </motion.button>
       </motion.div>
+    </section>
+  );
+}
+
+/* ---------- 1.5 Profile — new area below Hero before Tools ---------- */
+function Profile() {
+  const { lang } = useLang();
+  const t = dict[lang].profile;
+  return (
+    <section id="profile" className="relative overflow-x-clip bg-transparent py-14 sm:py-20">
+      <div className="mx-auto max-w-[1120px] px-[5vw]">
+        <div className="grid gap-6 md:grid-cols-12 md:gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 0.7, ease: EASE }}
+            className="warm-card relative flex flex-col gap-5 p-6 md:col-span-7 md:p-8"
+          >
+            <Eyebrow index="01.5" label={t.eyebrow} />
+            <h2 className="font-display text-[clamp(2rem,5.2vw,3.2rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink">{t.title}</h2>
+            <div className="space-y-3">
+              <p className="font-sans text-lg font-bold tracking-[0.04em] text-ink">{t.name}</p>
+              <p className="font-mono text-xs uppercase tracking-[0.18em] text-terracotta">{t.role}</p>
+              <p className="max-w-[52ch] font-sans text-[15px] leading-relaxed text-muted">{t.bio}</p>
+            </div>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t.ctaPrimary} <Mail size={16} /></Magnetic>
+              <Magnetic href="/cv.pdf" variant="ghost">{t.ctaSecondary} <Download size={16} /></Magnetic>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
+            className="warm-card flex flex-col gap-4 p-6 md:col-span-5 md:p-8"
+          >
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-cream-deep font-mono text-xs font-black text-ink">SS</span>
+              <div>
+                <p className="font-sans text-sm font-bold text-ink">Supyan Sauri</p>
+                <p className="font-mono text-[11px] uppercase tracking-widest text-muted">KYRONIX • Systems over Syntax</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-3 pt-2">
+              <div className="rounded-xl border border-border/40 bg-cream px-3 py-3 text-center">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-muted">Fokus</p>
+                <p className="mt-1 font-sans text-sm font-bold text-ink">Data • IoT • Web</p>
+              </div>
+              <div className="rounded-xl border border-border/40 bg-cream px-3 py-3 text-center">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-muted">Lokasi</p>
+                <p className="mt-1 font-sans text-sm font-bold text-ink">Indonesia</p>
+              </div>
+              <div className="rounded-xl border border-border/40 bg-cream px-3 py-3 text-center">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-muted">Status</p>
+                <p className="mt-1 inline-flex items-center justify-center gap-1 font-sans text-sm font-bold text-terracotta"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> Open</p>
+              </div>
+            </div>
+            <p className="font-mono text-[11px] leading-relaxed text-muted">Terbuka untuk kolaborasi riset & data engineering. Hubungi untuk diskusi kebutuhan ETL, IoT, atau web.</p>
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 }
@@ -2682,6 +2792,7 @@ function App() {
       <GlowCursor />
       <Nav ready={ready} />
       <Hero ready={ready} />
+      <Profile />
       <KineticBand text={bands.capabilities} />
       <Stack />
       <KineticBand text={bands.selectedWork} reverse />
