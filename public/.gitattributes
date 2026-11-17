@@ -6,3 +6,6 @@ kyronix-k-retro.webp -filter -diff -merge -text
 *.png -filter -diff -merge -text
 *.webp -filter -diff -merge -text
 *.pdf -filter -diff -merge -text
+*.jpg -filter -diff -merge -text
+*.jpeg -filter -diff -merge -text
+*.mp4 -filter -diff -merge -text
