@@ -602,9 +602,9 @@ function KPage({ onDone }: { onDone: () => void }) {
             onTouchEnd={() => { mx.set(0); my.set(0); }}
           >
             <motion.img
-              src="/letters/kyronix-k.webp"
+              src="/kyronix-k.webp"
               alt="KYRONIX K"
-              width={512}
+              width={469}
               height={520}
               loading="eager"
               decoding="async"
@@ -615,46 +615,14 @@ function KPage({ onDone }: { onDone: () => void }) {
               animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
               transition={{ type: "spring", stiffness: 320, damping: 12, mass: 0.95, delay: 0.28 } as unknown as Record<string, unknown>}
             />
-            {/* circuit — garis ditarik keliling K jadi K LOGO (heksa + node pulse) — base clean (/letters), SVG ditarik jadi LOGO */}
-            <motion.svg
-              aria-hidden
-              viewBox="0 0 520 560"
-              fill="none"
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[min(58dvh,520px)] w-auto -translate-x-1/2 -translate-y-1/2 overflow-visible md:h-[min(68dvh,600px)]"
-              style={{ filter: "drop-shadow(0 0 8px rgba(224,122,95,0.35))" } as React.CSSProperties}
-            >
-              {/* hexagon outer — pathLength ditarik */}
-              <motion.path
-                d="M260 18 L456 132 L456 428 L260 542 L64 428 L64 132 Z"
-                stroke="#E07A5F"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                opacity={0.9}
-                pathLength={0}
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.95 } as unknown as Record<string, unknown>}
-                transition={{ duration: 1.15, delay: 1.42, ease: [0.22, 1, 0.36, 1] } as unknown as Record<string, unknown>}
-              />
-              {/* branch lines — staggered */}
-              <motion.path d="M260 18 L260 56 M456 132 L420 150 M456 428 L400 400 M260 542 L260 500 M64 428 L110 400 M64 132 L110 150" stroke="#E07A5F" strokeWidth="1.1" strokeLinecap="round" opacity={0.75} pathLength={0} initial={{ pathLength: 0 }} animate={{ pathLength: 1 } as unknown as Record<string, unknown>} transition={{ duration: 0.85, delay: 1.55, ease: [0.22, 1, 0.36, 1] } as unknown as Record<string, unknown>} />
-              {/* nodes — scale + pulse */}
-              {[
-                [260, 18], [456, 132], [456, 428], [260, 542], [64, 428], [64, 132],
-              ].map(([cx, cy], i) => (
-                <motion.g key={i} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 } as unknown as Record<string, unknown>} transition={{ duration: 0.45, delay: 1.85 + i * 0.09, ease: EASE } as unknown as Record<string, unknown>}>
-                  <circle cx={cx} cy={cy} r="6.5" stroke="#E07A5F" strokeWidth="1.1" fill="none" opacity={0.9} />
-                  <motion.circle cx={cx} cy={cy} r="3.2" fill="#E07A5F" animate={{ scale: [1, 1.45, 1], opacity: [0.95, 0.45, 0.95] } as unknown as Record<string, unknown>} transition={{ duration: 1.8, repeat: Infinity, delay: 2.1 + i * 0.12, ease: "easeInOut" } as unknown as Record<string, unknown>} />
-                </motion.g>
-              ))}
-            </motion.svg>
+            {/* K Page original K LOGO — garis circuit asli di image, tak perlu SVG tarik */}
             {/* sweep — ngikut siluet K (mask), bukan kotak */}
             <motion.div
               aria-hidden
               className="pointer-events-none absolute inset-0 overflow-hidden"
               style={{
-                WebkitMaskImage: "url(/letters/kyronix-k.png)",
-                maskImage: "url(/letters/kyronix-k.png)",
+                WebkitMaskImage: "url(/kyronix-k.png)",
+                maskImage: "url(/kyronix-k.png)",
                 WebkitMaskSize: "contain",
                 maskSize: "contain",
                 WebkitMaskRepeat: "no-repeat",
