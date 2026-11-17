@@ -1122,7 +1122,7 @@ const dict = {
   },
 } as const;
 
-/* ---------- 1. Hero — Warm Dark Center + epic KYRONIX (ringan di HP, magnet di desktop) ---------- */
+/* ---------- 1. Hero — Warm Dark Center + epic KYRONIX 3D block tembaga persis K ---------- */
 function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const t2 = dict[lang];
@@ -1131,6 +1131,11 @@ function Hero({ ready }: { ready: boolean }) {
   const isMobile = useIsMobile();
   const light = isMobile;
   const FULL = "KYRONIX";
+  // tilt 3D persis KPage — HP = laptop (onTouch + onMouse)
+  const heroMx = useMotionValue(0);
+  const heroMy = useMotionValue(0);
+  const heroRx = useTransform(heroMy, [-1, 1], [5, -5]);
+  const heroRy = useTransform(heroMx, [-1, 1], [-6, 6]);
   const [typed, setTyped] = useState("");
   useEffect(() => {
     if (!ready) return;
@@ -1159,7 +1164,22 @@ function Hero({ ready }: { ready: boolean }) {
   const taglineY = useTransform(scrollYProgress, [0, 1], [0, light ? -10 : -24]);
   const ctaY = useTransform(scrollYProgress, [0, 1], [0, light ? -8 : -18]);
   return (
-    <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28">
+    <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28"
+      onMouseMove={(e) => {
+        const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        heroMx.set(((e.clientX - r.left) / r.width - 0.5) * 2);
+        heroMy.set(((e.clientY - r.top) / r.height - 0.5) * 2);
+      }}
+      onMouseLeave={() => { heroMx.set(0); heroMy.set(0); }}
+      onTouchMove={(e) => {
+        const t = e.touches[0];
+        if (!t) return;
+        const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        heroMx.set(((t.clientX - r.left) / r.width - 0.5) * 2);
+        heroMy.set(((t.clientY - r.top) / r.height - 0.5) * 2);
+      }}
+      onTouchEnd={() => { heroMx.set(0); heroMy.set(0); }}
+    >
       {/* Hero: Blueprint Grid 32px + scanline — stripes cuma di Intro biar gak duplikat */}
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       {/* corner brackets blueprint — keep */}
@@ -1172,13 +1192,20 @@ function Hero({ ready }: { ready: boolean }) {
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
           {t2.hero.hi}
         </motion.p>
-        {/* KYRONIX — Impact dense condensed renggang */}
-        <h1 aria-label={FULL} className="relative inline-flex select-none flex-wrap justify-center font-[Anton] text-[clamp(4.2rem,12vw,9rem)] font-normal leading-[0.82] tracking-[0.14em] text-ink [font-stretch:condensed]" style={{ fontFamily: "var(--font-impact)", letterSpacing: "0.12em" } as React.CSSProperties}>
+        {/* KYRONIX — 3D block tembaga persis K (Anton extrude) */}
+        <motion.h1
+          aria-label={FULL}
+          className="relative inline-flex select-none flex-wrap justify-center font-[Anton] text-[clamp(4.2rem,12vw,9rem)] font-normal leading-[0.82] tracking-[0.14em] will-change-transform [font-stretch:condensed]"
+          style={{ fontFamily: "var(--font-impact)", letterSpacing: "0.12em", perspective: 800, transformStyle: "preserve-3d", rotateX: heroRx, rotateY: heroRy, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
+        >
           <span className="sr-only">{FULL}</span>
           <span aria-hidden className="inline-flex gap-[0.09em]">
             {FULL.split("").map((ch, i) => {
               const visible = i < typed.length;
               const isLast = i === FULL.length - 1;
+              // extrude persis K — front terracotta, depth lapis, HP lapis dikit (optimize)
+              const extrudeFull = "0 -1px 0 rgba(245,239,230,0.55), 1px 1px 0 #D46A52, 2px 2px 0 #C05E48, 3px 3px 0 #A85A46, 4px 4px 0 #8E4A3A, 5px 5px 0 #2e2b28, 6px 6px 0 #1A1816, 0 12px 28px rgba(0,0,0,0.28), 0 28px 36px rgba(224,122,95,0.18)";
+              const extrudeMobile = "0 -1px 0 rgba(245,239,230,0.45), 1px 1px 0 #D46A52, 2px 2px 0 #C05E48, 3px 3px 0 #2e2b28, 4px 4px 0 #1A1816, 0 10px 22px rgba(0,0,0,0.24), 0 22px 28px rgba(224,122,95,0.14)";
               return (
                 <motion.span
                   key={i}
@@ -1203,27 +1230,29 @@ function Hero({ ready }: { ready: boolean }) {
                           : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
                   }
                   transition={{ duration: light ? 0.42 : 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * (light ? 0.035 : 0.06) }}
-                  className={light ? "inline-block" : "inline-block will-change-transform"}
+                  className={light ? "inline-block text-terracotta" : "inline-block will-change-transform text-terracotta"}
                   style={{
-                    textShadow: visible && !light ? "0 1px 0 rgba(245,239,230,0.08), 0 2px 0 #2e2b28, 0 4px 12px rgba(0,0,0,0.22), 0 12px 32px rgba(224,122,95,0.20), 0 0 36px rgba(224,122,95,0.08)" : undefined,
-                  }}
+                    color: visible ? "#E07A5F" : "transparent",
+                    WebkitTextStroke: visible ? "0.5px rgba(245,239,230,0.10)" : undefined,
+                    textShadow: visible ? (isMobile ? extrudeMobile : extrudeFull) : undefined,
+                  } as unknown as Record<string, unknown>}
                 >
                   {ch}
-                  {isLast && done && !light && (
+                  {isLast && done && (
                     <motion.span
                       aria-hidden
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.35, duration: 0.6 }}
-                      className="pointer-events-none absolute -inset-x-3 -top-2 bottom-0 -z-10 bg-gradient-to-r from-transparent via-terracotta/12 to-transparent blur-[14px]"
+                      className="pointer-events-none absolute -inset-x-3 -top-2 bottom-0 -z-10 bg-gradient-to-r from-transparent via-terracotta/16 to-transparent blur-[14px]"
                     />
                   )}
                 </motion.span>
               );
             })}
           </span>
-          {/* shine sweep — desktop only (HP tanpa biar enteng) */}
-          {done && !light && (
+          {/* sweep —HP juga jalan (optimize) */}
+          {done && (
             <motion.span
               aria-hidden
               className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -1232,14 +1261,14 @@ function Hero({ ready }: { ready: boolean }) {
               transition={{ delay: 0.5, duration: 0.4 }}
             >
               <motion.span
-                className="absolute inset-y-0 w-[35%] bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-12deg]"
+                className="absolute inset-y-0 w-[35%] bg-gradient-to-r from-transparent via-white/12 to-transparent skew-x-[-12deg]"
                 initial={{ x: "-120%" }}
                 animate={{ x: "320%" }}
                 transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1], delay: 0.9 }}
               />
             </motion.span>
           )}
-        </h1>
+        </motion.h1>
         <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" style={{ y: taglineY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
           {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
         </motion.p>
