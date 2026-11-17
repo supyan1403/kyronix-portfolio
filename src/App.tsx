@@ -540,18 +540,14 @@ function Intro({ onDone }: { onDone: () => void }) {
   );
 }
 
-/* ---------- K — dedicated page after boot (3D everywhere, mobile optimized) ---------- */
+/* ---------- K — dedicated page after boot (video 10s, poster fallback) ---------- */
 function KPage({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rx = useTransform(mx, [-1, 1], [8, -8]);
-  const ry = useTransform(my, [-1, 1], [-7, 7]);
   const finish = () => setLeaving(true);
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
     lenisInstance?.stop();
-    const t = window.setTimeout(finish, 2950);
+    const t = window.setTimeout(finish, 10500);
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
     window.addEventListener("keydown", onKey);
     return () => { window.clearTimeout(t); window.removeEventListener("keydown", onKey); };
@@ -561,10 +557,6 @@ function KPage({ onDone }: { onDone: () => void }) {
     lenisInstance?.start();
     requestAnimationFrame(() => lenisInstance?.resize());
     onDone();
-  };
-  const onPointer = (clientX: number, clientY: number, rect: DOMRect) => {
-    mx.set(((clientX - rect.left) / rect.width - 0.5) * 2);
-    my.set(((clientY - rect.top) / rect.height - 0.5) * 2);
   };
   return (
     <AnimatePresence onExitComplete={handleExitComplete}>
@@ -592,65 +584,30 @@ function KPage({ onDone }: { onDone: () => void }) {
           <motion.div
             className="relative flex items-center justify-center will-change-transform"
             style={{ perspective: 900, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-            onMouseMove={(e) => onPointer(e.clientX, e.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect())}
-            onMouseLeave={() => { mx.set(0); my.set(0); }}
-            onTouchMove={(e) => {
-              const t = e.touches[0];
-              if (!t) return;
-              onPointer(t.clientX, t.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect());
-            }}
-            onTouchEnd={() => { mx.set(0); my.set(0); }}
+            initial={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>}
+            transition={{ duration: 0.62, ease: EASE, delay: 0.12 }}
           >
-            <motion.img
-              src="/kyronix-k.webp"
-              alt="KYRONIX K"
-              width={469}
-              height={520}
-              loading="eager"
-              decoding="async"
-              draggable={false}
-              className="relative h-[min(46dvh,380px)] w-auto select-none will-change-transform md:h-[min(56dvh,460px)]"
-              style={{ rotateX: rx, rotateY: ry, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-              initial={{ opacity: 0, scale: 0.72, rotateX: 16, rotateY: -14, filter: "blur(14px)" }}
-              animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
-              transition={{ type: "spring", stiffness: 320, damping: 12, mass: 0.95, delay: 0.28 } as unknown as Record<string, unknown>}
+            <video
+              src="/kyronix-k-video.mp4"
+              poster="/kyronix-k-video-poster.jpg"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              onEnded={finish}
+              className="relative h-[min(52dvh,420px)] max-h-[56dvh] w-auto max-w-[min(92vw,720px)] select-none rounded-[14px] object-contain shadow-[0_12px_40px_rgba(0,0,0,0.28)] md:h-[min(58dvh,560px)] md:max-w-[min(88vw,860px)]"
+              style={{ transform: "translateZ(0)" } as React.CSSProperties}
             />
-            {/* K Page original K LOGO — garis circuit asli di image, tak perlu SVG tarik */}
-            {/* sweep — ngikut siluet K (mask), bukan kotak */}
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 overflow-hidden"
-              style={{
-                WebkitMaskImage: "url(/kyronix-k.png)",
-                maskImage: "url(/kyronix-k.png)",
-                WebkitMaskSize: "contain",
-                maskSize: "contain",
-                WebkitMaskRepeat: "no-repeat",
-                maskRepeat: "no-repeat",
-                WebkitMaskPosition: "center",
-                maskPosition: "center",
-                filter: "blur(0.5px)",
-              } as React.CSSProperties}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0, 1, 1, 0] } as unknown as Record<string, unknown>}
-              transition={{ duration: 2.95, times: [0, 0.52, 0.58, 0.84, 1], ease: "easeInOut" } as unknown as Record<string, unknown>}
-            >
-              <motion.div
-                className="absolute inset-y-0 w-[45%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
-                initial={{ x: "-130%" }}
-                animate={{ x: "260%" }}
-                transition={{ duration: 1.15, delay: 1.42, ease: [0.22, 1, 0.36, 1] }}
-                style={{ transform: "skewX(-18deg)" }}
-              />
-            </motion.div>
           </motion.div>
           <motion.p
             className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-muted/70 max-sm:bottom-[5%] max-sm:text-[10px]"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.95, duration: 0.72, ease: EASE }}
+            transition={{ delay: 0.45, duration: 0.72, ease: EASE }}
           >
-            KYRONIX — K — tap / Esc to skip
+            KYRONIX — tap / Esc to skip
           </motion.p>
         </motion.div>
       )}
