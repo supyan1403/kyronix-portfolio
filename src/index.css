@@ -102,12 +102,12 @@
   .text-outline { -webkit-text-stroke-width: 1.15px; }
 }
 
-/* Warm card — dark surface, soft shadow */
+/* Warm card — dark surface, soft shadow — rounded dikit 16px (base radius) */
 .warm-card {
   position: relative;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 20px;
+  border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0,0,0,0.2);
   will-change: transform;
   transform: translateZ(0);
@@ -119,7 +119,7 @@
   border-color: #4A4642;
 }
 
-/* Warm button */
+/* Warm button — rounded dikit (12px) konsisten sama warm-card, bukan pill full */
 .warm-btn {
   display: inline-flex;
   align-items: center;
@@ -130,7 +130,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  border-radius: 9999px;
+  border-radius: 12px;
   cursor: pointer;
   transition: transform 150ms, background 150ms, color 150ms, box-shadow 150ms, border-color 150ms;
 }
@@ -156,7 +156,7 @@
   transform: translateY(-1px);
 }
 
-/* Warm tag */
+/* Warm tag — rounded dikit 10px konsisten sama button/card */
 .warm-tag {
   display: inline-flex;
   align-items: center;
@@ -165,7 +165,7 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  border-radius: 9999px;
+  border-radius: 10px;
   border: 1px solid var(--color-border);
   background: #2E2B29;
   color: var(--color-muted);

@@ -260,7 +260,7 @@ function Magnetic({
       whileTap={{ scale: 0.96 }}
       transition={{ type: "spring", stiffness: 420, damping: 22 }}
       style={{ x: sx, y: sy }}
-      className={`inline-flex w-auto justify-center items-center gap-2 self-center border px-6 py-3 font-mono text-[11px] font-black uppercase tracking-[0.14em] sm:px-7 sm:py-3.5 sm:text-sm cursor-pointer ${variant === "primary" ? `border-ink bg-terracotta text-white shadow-[0_4px_16px_rgba(28,25,23,0.08)]` : `border-border bg-surface text-ink shadow-[0_4px_16px_rgba(28,25,23,0.08)]`}`}
+      className={`inline-flex w-auto justify-center items-center gap-2 self-center rounded-xl border px-6 py-3 font-mono text-[11px] font-black uppercase tracking-[0.14em] sm:px-7 sm:py-3.5 sm:text-sm cursor-pointer ${variant === "primary" ? `border-ink bg-terracotta text-white shadow-[0_4px_16px_rgba(28,25,23,0.08)]` : `border-border bg-surface text-ink shadow-[0_4px_16px_rgba(28,25,23,0.08)]`}`}
     >
       {children}
     </motion.a>
@@ -519,13 +519,13 @@ const links = [
 function LangSwitch() {
   const { lang, setLang } = useLang();
   return (
-    <div className="inline-flex rounded-full border border-white/15 bg-surface p-1 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+    <div className="inline-flex rounded-xl border border-white/15 bg-surface p-1 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
       {(["id", "en"] as const).map((l) => (
         <button
           key={l}
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
-          className={`rounded-full px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${lang === l ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}
+          className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${lang === l ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}
         >
           {l === "id" ? "ID" : "EN"}
         </button>
