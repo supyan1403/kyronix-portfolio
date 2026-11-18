@@ -81,7 +81,6 @@ const tDict = {
     cardThisWeek: "Minggu Ini",
     jam: "KONTRIBUSI",
     hari: "HARI",
-    totalHint: "sesuai GitHub — 1 tahun terakhir",
     liveTicker: "hari ini",
     todayEmpty: "istirahat hari ini",
     todayActive: "produktif hari ini",
@@ -125,7 +124,6 @@ const tDict = {
     cardThisWeek: "This Week",
     jam: "CONTRIBUTIONS",
     hari: "DAYS",
-    totalHint: "matching GitHub — last year",
     liveTicker: "today",
     todayEmpty: "rest today",
     todayActive: "productive today",
@@ -846,7 +844,8 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           </p>
         </motion.div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-8 overflow-x-auto pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 hide-scrollbar">
+          <div className="grid gap-4 min-w-[980px] lg:min-w-0" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" } as React.CSSProperties}>
           <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.04 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
             <p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">
@@ -907,6 +906,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               <Flame size={12} className="text-terracotta" /> {t.beruntun}
             </span>
           </motion.div>
+          </div>
         </div>
 
         {/* split — bahasa 70 / aktivitas 30 */}
