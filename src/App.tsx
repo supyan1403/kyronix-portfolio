@@ -44,6 +44,7 @@ import {
   SiTailwindcss,
   SiVercel,
 } from "react-icons/si";
+import Dashboard from "./pages/Dashboard";
 
 /* ---------- Utility: Warm Dark palette tokens ---------- */
 const WARM = {
@@ -977,13 +978,14 @@ const dict = {
       tagline: "DARI IDE KE INFRA.",
     },
     profile: {
-      eyebrow: "Profil",
-      title: "DI BALIK KYRONIX.",
+      eyebrow: "Kyronix Lab",
+      title: "LABORATORIUM TEMPAT GAGASAN MENJADI SISTEM",
       name: "Supyan Sauri",
       role: "System Architect – Data & Web Systems",
-      bio: "Saya Supyan Sauri dari Tasikmalaya, Jawa Barat, Indonesia. Bergerak di pengelolaan data, pemodelan sistem, dan pengembangan aplikasi web, dengan antusias mengulik hal baru dan menerjemahkan gagasan kompleks menjadi solusi fungsional.",
-      ctaPrimary: "Hubungi Saya",
-      ctaSecondary: "Unduh CV",
+      bio: "Saya sangat suka mengulik berbagai hal baru dan menikmati proses belajar yang mendalam. Cara saya menerjemahkan gagasan kompleks menjadi solusi fungsional berawal dari pemodelan dan arsitektur sistem yang rapi. Cara saya memperluas wawasan dilakukan melalui eksplorasi pengembangan aplikasi web secara mandiri dan berkelanjutan",
+      ctaPrimary: "MASUK LAB",
+      ctaSecondary: "HUBUNGI SAYA",
+      ctaDashboard: "BUKA DASHBOARD AKTIVITAS",
     },
     stackEyebrow: "Ekosistem Kerja",
     stackTitle: "PERANGKAT YANG SAYA ANDALKAN.",
@@ -1069,13 +1071,14 @@ const dict = {
       tagline: "FROM IDEA TO INFRA.",
     },
     profile: {
-      eyebrow: "Profile",
-      title: "BEHIND KYRONIX.",
+      eyebrow: "Kyronix Lab",
+      title: "LABORATORY WHERE IDEAS BECOME SYSTEMS",
       name: "Supyan Sauri",
       role: "System Architect – Data & Web Systems",
-      bio: "I'm Supyan Sauri from Tasikmalaya, West Java, Indonesia. Working in data management, system modeling, and web application development — enthusiastic about exploring new things and translating complex ideas into functional solutions.",
-      ctaPrimary: "Contact Me",
-      ctaSecondary: "Download CV",
+      bio: "I really enjoy exploring new things and embracing deep learning. The way I translate complex ideas into functional solutions starts from neat modeling and system architecture. The way I expand my horizons is through independent and continuous web app exploration",
+      ctaPrimary: "Enter Lab",
+      ctaSecondary: "Contact Me",
+      ctaDashboard: "Open Activity Dashboard",
     },
     stackEyebrow: "Work Ecosystem",
     stackTitle: "MY TRUSTED TOOLKIT.",
@@ -1322,10 +1325,10 @@ function Hero({ ready }: { ready: boolean }) {
   );
 }
 
-/* ---------- 1.5 Profile — new area below Hero before Tools ---------- */
+/* ---------- 1.5 Profile — Kyronix Lab (cyber-sleek lab, dark + neon oranye, no colon, no project) ---------- */
 function Profile() {
   const { lang } = useLang();
-  const t = dict[lang].profile;
+  const t = dict[lang].profile as typeof dict["id"]["profile"] & { ctaDashboard?: string };
   const isId = lang === "id";
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
@@ -1336,36 +1339,66 @@ function Profile() {
   const rows = [
     { k: "Asal", kEn: "Based", v: "Tasikmalaya, Jawa Barat, Indonesia", vEn: "Tasikmalaya, Jawa Barat, Indonesia" },
     { k: "Fokus", kEn: "Focus", v: "Pengelolaan Data, Pemodelan Sistem, & Pengembangan Aplikasi Web", vEn: "Data Management, System Modeling & Web App Development" },
-    { k: "Pendekatan", kEn: "Approach", v: "Selalu antusias mengulik berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional.", vEn: "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions." },
-    { k: "Eksplorasi", kEn: "Exploration", v: "Aktif memperluas wawasan melalui pengembangan aplikasi web secara mandiri dan berkelanjutan.", vEn: "Actively expanding horizons through independent and continuous web app development." },
+    { k: "Pendekatan", kEn: "Approach", v: "Selalu antusias mengulik berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional", vEn: "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions" },
+    { k: "Eksplorasi", kEn: "Exploration", v: "Aktif memperluas wawasan melalui pengembangan aplikasi web secara mandiri dan berkelanjutan", vEn: "Actively expanding horizons through independent and continuous web app development" },
   ];
+  const goDashboard = () => {
+    window.history.pushState({}, "", "/dashboard");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+    window.scrollTo(0, 0);
+  };
   return (
     <section ref={ref} id="profile" className="relative flex min-h-[100dvh] items-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.55]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px] will-change-transform max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
-      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: ghostY, opacity: 0.05 } as unknown as Record<string, unknown>}>KYRONIX</motion.div>
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: ghostY, opacity: 0.045 } as unknown as Record<string, unknown>}>LAB</motion.div>
+      {/* lab scan line neon */}
+      <motion.div aria-hidden className="pointer-events-none absolute left-[5vw] right-[5vw] top-[8%] h-px bg-gradient-to-r from-transparent via-terracotta/25 to-transparent" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto w-full max-w-[1120px]">
         <div className="grid gap-8 md:grid-cols-12 md:gap-10 md:items-start">
           <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col gap-5 md:col-span-7 will-change-transform">
             <Eyebrow index="" label={t.eyebrow} />
-            <SplitReveal key={t.title} play={inView} text={t.title} className="font-display text-[clamp(2rem,6.5vw,5.2rem)] font-extrabold leading-[0.88] tracking-[0.01em] text-ink" />
-            <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.38 : 0.1 }} className="font-sans text-lg font-bold tracking-[0.04em] text-ink">{t.name}</motion.p>
-            <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.46 : 0.06 }} className="font-mono text-xs uppercase tracking-[0.18em] text-terracotta">{t.role}</motion.p>
-            <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.54 : 0 }} className="flex flex-wrap gap-3 pt-2">
-              <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t.ctaPrimary} <Mail size={16} /></Magnetic>
-              <Magnetic href="/cv.pdf" variant="ghost">{t.ctaSecondary} <Download size={16} /></Magnetic>
+            <SplitReveal key={t.title} play={inView} text={t.title} className="font-display text-[clamp(1.9rem,5.6vw,4.4rem)] font-extrabold leading-[0.88] tracking-[0.01em] text-ink" />
+            {/* lab status pill — no colon */}
+            <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.32 : 0.06 }} className="inline-flex w-fit items-center gap-2 border border-terracotta/20 bg-surface px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+              <span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> lab aktif — siap eksplorasi — sistem berjalan
             </motion.div>
-          </motion.div>
-          <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col will-change-transform md:col-span-5 md:border-l md:border-ink/10 md:pl-10 max-md:border-t max-md:border-border/10 max-md:pt-6">
-            <div className="divide-y divide-border/10 border-y border-border/10">
-              {rows.map((r, idx) => (
-                <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.34 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="py-5">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta shadow-[0_0_0_rgba(0,0,0,0)]" style={{ textShadow: "0 0 12px rgba(196,113,60,0.18)" } as React.CSSProperties}>{isId ? r.k : r.kEn}</p>
-                  <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? r.v : r.vEn}</p>
-                </motion.div>
-              ))}
+            <div className="space-y-1.5">
+              <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.38 : 0.08 }} className="font-sans text-lg font-bold tracking-[0.04em] text-ink">{t.name}</motion.p>
+              <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.44 : 0.04 }} className="font-mono text-xs uppercase tracking-[0.18em] text-terracotta">{t.role}</motion.p>
             </div>
-            <motion.p initial={{ opacity: 0 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.78 : 0 }} className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> {isId ? "Terbuka untuk kolaborasi riset" : "Open to research collaboration"}</motion.p>
+            <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.5 : 0.02 }} className="max-w-[52ch] font-sans text-[15px] leading-relaxed text-muted">
+              {t.bio}
+            </motion.p>
+            <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.58 : 0 }} className="flex flex-wrap gap-3 pt-2">
+              <Magnetic href="/dashboard" variant="primary" onClick={goDashboard}>{(t as unknown as { ctaDashboard: string }).ctaDashboard || t.ctaPrimary} <ArrowUpRight size={16} /></Magnetic>
+              <Magnetic href="#contact" variant="ghost" onClick={() => scrollToId("contact")}>{t.ctaSecondary} <Mail size={16} /></Magnetic>
+            </motion.div>
+            <motion.p initial={{ opacity: 0 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.72 : 0 }} className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted/70">cara saya merawat ritme belajar yang mendalam dan menerjemahkan gagasan menjadi sistem yang rapi</motion.p>
+          </motion.div>
+          <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col will-change-transform md:col-span-5 md:pl-2">
+            <div className="warm-card overflow-hidden p-0">
+              <div className="flex items-center gap-2 border-b border-border/10 bg-cream-deep px-4 py-2.5">
+                <span className="flex gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-terracotta" /><i className="h-2.5 w-2.5 rounded-full bg-[#fbbf24]" /><i className="h-2.5 w-2.5 rounded-full bg-[#8FA89B]" /></span>
+                <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">kyronix.lab — readout</span>
+                <span className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> live</span>
+              </div>
+              <div className="divide-y divide-border/10">
+                {rows.map((r, idx) => (
+                  <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.36 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="px-5 py-4">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta" style={{ textShadow: "0 0 12px rgba(196,113,60,0.18)" } as React.CSSProperties}>{isId ? r.k : r.kEn}</p>
+                    <p className="mt-1.5 font-sans text-[14px] font-semibold leading-relaxed text-ink">{isId ? r.v : r.vEn}</p>
+                  </motion.div>
+                ))}
+              </div>
+              <div className="border-t border-border/10 bg-cream px-5 py-3">
+                <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> {isId ? "Terbuka untuk kolaborasi riset" : "Open to research collaboration"}</p>
+              </div>
+            </div>
+            {/* micro terminal hint */}
+            <motion.div initial={{ opacity: 0 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.82 : 0 }} className="mt-3 hidden font-mono text-[10px] leading-relaxed text-muted/70 md:block">
+              <span className="text-terracotta">›</span> cara saya menjaga eksplorasi web app tetap hidup — pemantauan langsung tersedia di dashboard
+            </motion.div>
           </div>
         </div>
       </div>
@@ -2784,10 +2817,33 @@ function Contact() {
 function App() {
   const [phase, setPhase] = useState<"intro" | "k" | "ready">("intro");
   const [lang, setLang] = useState<Lang>("id");
+  const [route, setRoute] = useState(() => (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/"));
   useLenis();
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+  useEffect(() => {
+    const onPop = () => setRoute(window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/");
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+  // skip intro/k when langsung /dashboard
+  useEffect(() => {
+    if (route === "/dashboard" && phase !== "ready") setPhase("ready");
+  }, [route, phase]);
   const bands = dict[lang].bands;
   const ready = phase === "ready";
+  if (route === "/dashboard") {
+    return (
+      <LangCtx.Provider value={{ lang, setLang }}>
+        <Dashboard
+          onBack={() => {
+            window.history.pushState({}, "", "/");
+            setRoute("/");
+            window.scrollTo(0, 0);
+          }}
+        />
+      </LangCtx.Provider>
+    );
+  }
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
       <main className="crt relative bg-cream overflow-x-clip">
