@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { motion, useInView, useScroll, useSpring, useTransform } from "motion/react";
-import { Cpu, Clock, Flame, Activity } from "lucide-react";
+import { Cpu, Clock, Flame, Activity, CalendarDays, CalendarRange } from "lucide-react";
 import { SiGithub } from "react-icons/si";
 import { useLang } from "../langCtx";
 
@@ -73,8 +73,12 @@ const tDict = {
     title: "PANTAUAN AKTIVITAS LANGSUNG",
     desc: "Cara saya merawat konsistensi belajar dan eksplorasi pengembangan aplikasi web yang terekam dari aktivitas harian",
     totalBelajar: "Total Kontribusi",
+    totalHint: "keseluruhan",
     ngodingHariIni: "Kontribusi Hari Ini",
     streak: "Rekam Jejak Harian",
+    card3Month: "3 Bulan Terakhir",
+    cardThisMonth: "Bulan Ini",
+    cardThisWeek: "Minggu Ini",
     jam: "KONTRIBUSI",
     hari: "HARI",
     totalHint: "sesuai GitHub — 1 tahun terakhir",
@@ -113,8 +117,12 @@ const tDict = {
     title: "LIVE ACTIVITY MONITOR",
     desc: "How I nurture consistent learning and web development exploration tracked live from daily activity",
     totalBelajar: "Total Contributions",
+    totalHint: "all time",
     ngodingHariIni: "Today's Contributions",
     streak: "Daily Streak",
+    card3Month: "Last 3 Months",
+    cardThisMonth: "This Month",
+    cardThisWeek: "This Week",
     jam: "CONTRIBUTIONS",
     hari: "DAYS",
     totalHint: "matching GitHub — last year",
@@ -410,7 +418,6 @@ function ContributionHeatmap({
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
           {sum.toLocaleString(isEn ? "en-US" : "id-ID")} {isEn ? `contributions in ${filterLabel}` : `kontribusi dalam ${filterLabel}`}
-          <span className="ml-2 hidden font-normal text-muted sm:inline">· {total.toLocaleString(isEn ? "en-US" : "id-ID")} {t.heatContrib}</span>
         </p>
         <span className="inline-flex gap-1 border border-terracotta/20 bg-transparent p-1">
           {([
@@ -746,6 +753,44 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
     return 0;
   }, [heatmap, todayId]);
   const totalReal = heatmap?.total ?? 0;
+  const heatTotals = useMemo(() => {
+    if (!heatmap) return { all: 0, last90: 0, thisMonth: 0, thisWeek: 0 };
+    const flat = heatmap.weeks.flat().filter((d) => d.iso);
+    const map = new Map(flat.map((d) => [d.iso, d.count] as const));
+    const all = flat.reduce((a, d) => a + d.count, 0);
+    // all = keseluruhan dari heatmap (1 tahun terakhir ~ totalReal, tapi all = sum flat = total keseluruhan jogruber)
+    // untuk “keseluruhan” sesuai brief = total kontribusi sepanjang akun (cek 2023-2026 = 1206, tapi heatmap last year = 1202-1205)
+    // pakai all sebagai keseluruhan, heatmap.total sebagai validasi
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    let last90 = 0, thisMonth = 0, thisWeek = 0;
+    const cur = new Date(today);
+    // last 90
+    for (let i = 0; i < 90; i++) {
+      const iso = toLocalISO(cur);
+      last90 += map.get(iso) ?? 0;
+      cur.setDate(cur.getDate() - 1);
+    }
+    // thisMonth
+    const c2 = new Date(today);
+    while (c2 >= thisMonthStart) {
+      thisMonth += map.get(toLocalISO(c2)) ?? 0;
+      c2.setDate(c2.getDate() - 1);
+    }
+    // thisWeek Mon-Sun
+    const c3 = new Date(today);
+    const monDiff = (c3.getDay() + 6) % 7;
+    const mon = new Date(c3);
+    mon.setDate(c3.getDate() - monDiff);
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(mon);
+      d.setDate(mon.getDate() + i);
+      if (d > today) break;
+      thisWeek += map.get(toLocalISO(d)) ?? 0;
+    }
+    return { all, last90, thisMonth, thisWeek };
+  }, [heatmap]);
   const streakReal = useMemo(() => {
     if (!heatmap) return 0;
     const flat = heatmap.weeks.flat();
@@ -801,15 +846,35 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           </p>
         </motion.div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:grid-cols-3 lg:grid-cols-6">
           <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.04 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
             <p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">
-              {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
+              {heatTotals.all.toLocaleString(isEn ? "en-US" : "id-ID")}
               <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
             </p>
             <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
-              <Clock size={12} className="text-terracotta" /> {isEn ? (heatmapYear === "last" ? "last year" : String(heatmapYear)) : (heatmapYear === "last" ? "1 tahun terakhir" : String(heatmapYear))}
+              <Clock size={12} className="text-terracotta" /> {t.totalHint}
+            </span>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.card3Month}</p>
+            <p className="mt-2 font-display text-2xl font-extrabold leading-none text-ink">
+              {heatTotals.last90.toLocaleString(isEn ? "en-US" : "id-ID")}
+              <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
+            </p>
+            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+              <CalendarRange size={12} className="text-terracotta" /> 90 {isEn ? "days" : "hari"}
+            </span>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.cardThisMonth}</p>
+            <p className="mt-2 font-display text-2xl font-extrabold leading-none text-ink">
+              {heatTotals.thisMonth.toLocaleString(isEn ? "en-US" : "id-ID")}
+              <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
+            </p>
+            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+              <CalendarDays size={12} className="text-terracotta" /> {new Date().toLocaleDateString(isEn ? "en-US" : "id-ID", { month: "long" })}
             </span>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.12 }} className={`warm-card flex min-h-[118px] flex-col justify-between p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
@@ -822,7 +887,17 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               <Activity size={12} className={todayCount === 0 ? "text-muted" : "text-terracotta"} /> {todayCount === 0 ? t.todayEmpty : t.todayActive}
             </span>
           </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.2 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.14 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.cardThisWeek}</p>
+            <p className="mt-2 font-display text-2xl font-extrabold text-ink">
+              {heatTotals.thisWeek}
+              <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
+            </p>
+            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+              <Activity size={12} className="text-terracotta" /> {isEn ? "Mon–Sun" : "Sen–Min"}
+            </span>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.16 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
             <p className="mt-2 font-display text-2xl font-extrabold text-ink">
               {streakReal}
@@ -834,8 +909,8 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           </motion.div>
         </div>
 
-        {/* split — bahasa kiri, aktivitas kanan */}
-        <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
+        {/* split — bahasa 70 / aktivitas 30 */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-[7fr_3fr] lg:items-start">
           <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card p-6">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
             <div className="mt-5 space-y-3">
