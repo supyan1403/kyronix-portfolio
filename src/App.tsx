@@ -980,8 +980,8 @@ const dict = {
       eyebrow: "Profil",
       title: "DI BALIK KYRONIX.",
       name: "Supyan Sauri",
-      role: "Data Engineering — Data Science — Data Analytics",
-      bio: "Saya Supyan Sauri dari Tasikmalaya, Jawa Barat, Indonesia. Bergerak di Data Engineering, Data Science, dan Data Analytics, dengan ketertarikan pada riset berbasis pemodelan untuk memahami persoalan secara terstruktur.",
+      role: "System Architect – Data & Web Systems",
+      bio: "Saya Supyan Sauri dari Tasikmalaya, Jawa Barat, Indonesia. Bergerak di pengelolaan data, pemodelan sistem, dan pengembangan aplikasi web, dengan antusias mengulik hal baru dan menerjemahkan gagasan kompleks menjadi solusi fungsional.",
       ctaPrimary: "Hubungi Saya",
       ctaSecondary: "Unduh CV",
     },
@@ -1072,8 +1072,8 @@ const dict = {
       eyebrow: "Profile",
       title: "BEHIND KYRONIX.",
       name: "Supyan Sauri",
-      role: "Data Engineering — Data Science — Data Analytics",
-      bio: "I'm Supyan Sauri from Tasikmalaya, West Java, Indonesia. Working in Data Engineering, Data Science, and Data Analytics, with an interest in modeling-based research to understand problems structurally.",
+      role: "System Architect – Data & Web Systems",
+      bio: "I'm Supyan Sauri from Tasikmalaya, West Java, Indonesia. Working in data management, system modeling, and web application development — enthusiastic about exploring new things and translating complex ideas into functional solutions.",
       ctaPrimary: "Contact Me",
       ctaSecondary: "Download CV",
     },
@@ -1359,15 +1359,19 @@ function Profile() {
             <div className="divide-y divide-border/10 border-y border-border/10">
               <div className="py-4">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Asal" : "Based"}</p>
-                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Tasikmalaya, Jawa Barat, Indonesia" : "Tasikmalaya, West Java, Indonesia"}</p>
+                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">Tasikmalaya, Jawa Barat, Indonesia</p>
               </div>
               <div className="py-4">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Fokus" : "Focus"}</p>
-                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">Data Engineering · Data Science · Data Analytics</p>
+                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Pengelolaan Data, Pemodelan Sistem, & Pengembangan Aplikasi Web" : "Data Management, System Modeling & Web Application Development"}</p>
               </div>
               <div className="py-4">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Pendekatan" : "Approach"}</p>
-                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Riset berbasis pemodelan untuk memahami persoalan secara terstruktur." : "Modeling-based research to understand problems structurally."}</p>
+                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Selalu antusias mengulik berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional." : "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions."}</p>
+              </div>
+              <div className="py-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Eksplorasi" : "Exploration"}</p>
+                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Aktif memperluas wawasan melalui pengembangan aplikasi web secara mandiri dan berkelanjutan." : "Actively expanding horizons through independent and continuous web app development."}</p>
               </div>
             </div>
             <p className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> {isId ? "Terbuka untuk kolaborasi riset" : "Open to research collaboration"}</p>
