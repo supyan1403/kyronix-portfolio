@@ -850,8 +850,8 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
               {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
               <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
             </p>
-            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-transparent" aria-hidden>
-              <Clock size={12} /> —
+            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+              <Clock size={12} className="text-terracotta" /> {isEn ? (heatmapYear === "last" ? "last year" : String(heatmapYear)) : (heatmapYear === "last" ? "1 tahun terakhir" : String(heatmapYear))}
             </span>
           </div>
           <div className={`warm-card flex min-h-[118px] flex-col justify-between p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
@@ -860,8 +860,8 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
               {todayCount}
               <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
             </p>
-            <span className="mt-2 inline-flex h-[16px] items-center font-mono text-[10px] uppercase tracking-widest text-transparent" aria-hidden>
-              —
+            <span className={`mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest ${todayCount === 0 ? "text-muted" : "text-terracotta"}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${todayCount === 0 ? "bg-border" : "bg-terracotta live-dot"}`} /> {todayCount === 0 ? t.todayEmpty : t.todayActive}
             </span>
           </div>
           <div className="warm-card flex min-h-[118px] flex-col justify-between p-5">
