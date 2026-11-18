@@ -412,12 +412,12 @@ function ContributionHeatmap({
   }, [leadingEmpty, days.length]);
 
   return (
-    <div className="mt-4">
+    <div className="mt-4 min-h-[320px]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
           {sum.toLocaleString(isEn ? "en-US" : "id-ID")} {isEn ? `contributions in ${filterLabel}` : `kontribusi dalam ${filterLabel}`}
         </p>
-        <span className="inline-flex gap-1 border border-terracotta/20 bg-transparent p-1">
+        <span className="inline-flex shrink-0 gap-1 border border-terracotta/20 bg-transparent p-1">
           {([
             ["lastMonth", isEn ? "Last month" : "Bulan lalu"],
             ["thisMonth", isEn ? "This month" : "Bulan ini"],
@@ -426,7 +426,7 @@ function ContributionHeatmap({
             <button
               key={key}
               onClick={() => setMonthFilter(key as MonthFilter)}
-              className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${monthFilter === key ? "bg-terracotta text-white" : "text-muted hover:text-ink"}`}
+              className={`whitespace-nowrap px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-widest ${monthFilter === key ? "bg-terracotta text-white" : "text-muted hover:text-ink"}`}
             >
               {label}
             </button>
@@ -469,9 +469,11 @@ function ContributionHeatmap({
             <span key={`empty-trail-${i}`} className="h-[14px] sm:h-[16px]" />
           ))}
         </div>
-        <div className="mt-3 flex items-center justify-between gap-2 font-mono text-[10px] text-muted">
-          <span>{active} {isEn ? "active days" : "hari aktif"} / {days.length}</span>
-          <span className="inline-flex items-center gap-1.5">
+        <div className="mt-3 space-y-2 font-mono text-[10px] text-muted">
+          <div className="flex items-center justify-between">
+            <span>{active} {isEn ? "active days" : "hari aktif"} / {days.length}</span>
+          </div>
+          <div className="flex items-center justify-end gap-1.5">
             <span>{t.less}</span>
             <span className="inline-flex gap-[3px]">
               {["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"].map((lv) => (
@@ -479,7 +481,7 @@ function ContributionHeatmap({
               ))}
             </span>
             <span>{t.more}</span>
-          </span>
+          </div>
         </div>
       </div>
 
@@ -844,8 +846,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           </p>
         </motion.div>
 
-        <div className="mt-8 overflow-x-auto pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 hide-scrollbar">
-          <div className="grid gap-4 min-w-[980px] lg:min-w-0" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" } as React.CSSProperties}>
+        <div className="mt-8 grid gap-4 grid-cols-3">
           <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.04 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
             <p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">
@@ -906,7 +907,6 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               <Flame size={12} className="text-terracotta" /> {t.beruntun}
             </span>
           </motion.div>
-          </div>
         </div>
 
         {/* split — bahasa 70 / aktivitas 30 */}
