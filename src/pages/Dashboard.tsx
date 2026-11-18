@@ -48,7 +48,8 @@ function fetchWithTimeout(url: string, init: RequestInit = {}, ms = 4000): Promi
 // no ":" in any visible copy per spec — also no "project" word, use "cara saya"
 type LangStat = { lang: string; count: number; pct: number };
 type CommitItem = { repo: string; message: string; time: string; url: string };
-type HeatDay = { date: string; iso: string; count: number };
+type GHLevel = "NONE" | "FIRST_QUARTILE" | "SECOND_QUARTILE" | "THIRD_QUARTILE" | "FOURTH_QUARTILE";
+type HeatDay = { date: string; iso: string; count: number; level: GHLevel };
 type HeatWeek = HeatDay[];
 
 const tDict = {
@@ -152,7 +153,7 @@ const tDict = {
   },
 } as const;
 
-function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date()) {
+function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(), levelMap?: Map<string, GHLevel>) {
   // GitHub parity: 53w window ending today, aligned Mon–Sun (same as github.com)
   const end = new Date(today);
   end.setHours(0, 0, 0, 0);
@@ -176,11 +177,14 @@ function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(
     for (let d = 0; d < 7; d++) {
       const iso = cur.toISOString().slice(0, 10);
       const cnt = countMap.get(iso) ?? 0;
+      const lvl = levelMap?.get(iso);
+      const level: GHLevel = (lvl as GHLevel) ?? (cnt === 0 ? "NONE" : cnt <= 2 ? "FIRST_QUARTILE" : cnt <= 5 ? "SECOND_QUARTILE" : cnt <= 9 ? "THIRD_QUARTILE" : "FOURTH_QUARTILE");
       if (cur >= startExact && cur <= end) total += cnt;
       week.push({
         date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
         iso,
         count: cnt,
+        level,
       });
       cur.setDate(cur.getDate() + 1);
     }
@@ -193,7 +197,7 @@ function mockHeatmap(_today = new Date()) {
   return buildHeatmapFromCounts(new Map(), new Date());
 }
 
-function buildHeatmapForYear(countMap: Map<string, number>, year: number) {
+function buildHeatmapForYear(countMap: Map<string, number>, year: number, levelMap?: Map<string, GHLevel>) {
   const startExact = new Date(year, 0, 1);
   startExact.setHours(0, 0, 0, 0);
   const endExact = new Date(year, 11, 31);
@@ -210,11 +214,14 @@ function buildHeatmapForYear(countMap: Map<string, number>, year: number) {
     for (let d = 0; d < 7; d++) {
       const iso = cur.toISOString().slice(0, 10);
       const cnt = countMap.get(iso) ?? 0;
+      const lvl = levelMap?.get(iso);
+      const level: GHLevel = (lvl as GHLevel) ?? (cnt === 0 ? "NONE" : cnt <= 2 ? "FIRST_QUARTILE" : cnt <= 5 ? "SECOND_QUARTILE" : cnt <= 9 ? "THIRD_QUARTILE" : "FOURTH_QUARTILE");
       if (cur >= startExact && cur <= endExact) total += cnt;
       week.push({
         date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
         iso,
         count: cnt,
+        level,
       });
       cur.setDate(cur.getDate() + 1);
     }
@@ -223,12 +230,47 @@ function buildHeatmapForYear(countMap: Map<string, number>, year: number) {
   return { weeks, total };
 }
 
-function levelMeta(count: number) {
+function levelMetaByCount(count: number) {
   if (count === 0) return { bg: "#252220", border: "rgba(58,54,50,0.35)" };
   if (count <= 2) return { bg: "#5A2E18", border: "rgba(90,46,24,1)" };
   if (count <= 5) return { bg: "#8A3E1A", border: "rgba(138,62,26,1)" };
   if (count <= 9) return { bg: "#C4713C", border: "rgba(196,113,60,1)" };
   return { bg: "#E07A5F", border: "rgba(224,122,95,1)" };
+}
+function buildHeatmapFromGraphQLCalendar(cal: { totalContributions: number; weeks: { contributionDays: { date: string; contributionCount: number; contributionLevel: string }[] }[] }): { weeks: HeatWeek[]; total: number } {
+  const weeks: HeatWeek[] = cal.weeks.map((w) =>
+    w.contributionDays.map((d) => ({
+      date: new Date(d.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
+      iso: d.date,
+      count: d.contributionCount,
+      level: normalizeGHLevel(d.contributionLevel),
+    }))
+  );
+  return { weeks, total: cal.totalContributions };
+}
+
+function ghLevelToMeta(level: GHLevel) {
+  switch (level) {
+    case "FOURTH_QUARTILE": return { bg: "#E07A5F", border: "rgba(224,122,95,1)" };
+    case "THIRD_QUARTILE": return { bg: "#C4713C", border: "rgba(196,113,60,1)" };
+    case "SECOND_QUARTILE": return { bg: "#8A3E1A", border: "rgba(138,62,26,1)" };
+    case "FIRST_QUARTILE": return { bg: "#5A2E18", border: "rgba(90,46,24,1)" };
+    default: return { bg: "#252220", border: "rgba(58,54,50,0.35)" };
+  }
+}
+function normalizeGHLevel(v: unknown): GHLevel {
+  const u = String(v || "NONE").toUpperCase();
+  if (u === "FOURTH_QUARTILE" || u === "FOURTH") return "FOURTH_QUARTILE";
+  if (u === "THIRD_QUARTILE" || u === "THIRD") return "THIRD_QUARTILE";
+  if (u === "SECOND_QUARTILE" || u === "SECOND") return "SECOND_QUARTILE";
+  if (u === "FIRST_QUARTILE" || u === "FIRST") return "FIRST_QUARTILE";
+  return "NONE";
+}
+function levelMeta(count: number) {
+  return levelMetaByCount(count);
+}
+function levelMetaByLevel(level: GHLevel) {
+  return ghLevelToMeta(level);
 }
 
 function ContributionHeatmap({
@@ -324,7 +366,7 @@ function ContributionHeatmap({
               {weeks.map((week, wi) => (
                 <div key={wi} className="flex flex-col gap-[3px]">
                   {week.map((day) => {
-                    const { bg, border } = levelMeta(day.count);
+                    const { bg, border } = levelMetaByLevel(day.level);
                     const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
                     return (
                       <span
@@ -367,7 +409,7 @@ function ContributionHeatmap({
                 {weeks.map((week, wi) => (
                   <div key={wi} className="flex flex-col gap-[3px]">
                     {week.map((day) => {
-                      const { bg, border } = levelMeta(day.count);
+                      const { bg, border } = levelMetaByLevel(day.level);
                       const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
                       return (
                         <span
@@ -388,11 +430,11 @@ function ContributionHeatmap({
         <div className="mt-3 flex items-center justify-end gap-1.5 font-mono text-[10px] text-muted">
           <span>{t.less}</span>
           <span className="inline-flex gap-[3px]">
-            {[0, 1, 3, 6, 11].map((c) => {
-              const { bg, border } = levelMeta(c);
+            {["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"].map((lv) => {
+              const { bg, border } = levelMetaByLevel(lv as GHLevel);
               return (
                 <i
-                  key={c}
+                  key={lv}
                   className="h-[10px] w-[10px] rounded-[2px] border"
                   style={{ background: bg, borderColor: border } as React.CSSProperties}
                 />
@@ -422,14 +464,43 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
     const promises: Promise<void>[] = [];
 
     const heatP = (async () => {
+      // coba GraphQL ori (count + level kuartil persis github.com) bila ada token — 100% identik
+      const tok = (import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim();
+      if (tok) {
+        try {
+          const from = heatmapYear === "last" ? undefined : `${heatmapYear}-01-01T00:00:00Z`;
+          const to = heatmapYear === "last" ? undefined : `${heatmapYear}-12-31T23:59:59Z`;
+          const q = heatmapYear === "last"
+            ? `query{user(login:"${USER}"){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`
+            : `query($from:DateTime!,$to:DateTime!){user(login:"${USER}"){contributionsCollection(from:$from,to:$to){contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`;
+          const gr = await fetchWithTimeout("https://api.github.com/graphql", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${tok}`, "Content-Type": "application/json" },
+            body: JSON.stringify(heatmapYear === "last" ? { query: q } : { query: q, variables: { from, to } }),
+          }, 5500);
+          if (gr.ok) {
+            const j = await gr.json() as { data?: { user?: { contributionsCollection?: { contributionCalendar?: { totalContributions: number; weeks: { contributionDays: { date: string; contributionCount: number; contributionLevel: string }[] }[] } } } }; errors?: unknown };
+            const cal = j?.data?.user?.contributionsCollection?.contributionCalendar;
+            if (cal?.weeks?.length) {
+              setHeatmap(buildHeatmapFromGraphQLCalendar(cal));
+              return;
+            }
+          }
+        } catch {}
+      }
       try {
         const yParam = heatmapYear === "last" ? "last" : String(heatmapYear);
         const gr = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=${yParam}`);
         if (!gr.ok) throw new Error("gh");
-        const gj: { contributions: { date: string; count: number }[] } = await gr.json();
+        const gj: { contributions: { date: string; count: number; level?: string }[] } = await gr.json();
         const cMap = new Map<string, number>();
-        gj.contributions.forEach((c) => cMap.set(c.date, c.count));
-        setHeatmap(heatmapYear === "last" ? buildHeatmapFromCounts(cMap, new Date()) : buildHeatmapForYear(cMap, heatmapYear as number));
+        const lMap = new Map<string, GHLevel>();
+        gj.contributions.forEach((c) => {
+          cMap.set(c.date, c.count);
+          if ((c as { level?: string }).level) lMap.set(c.date, normalizeGHLevel((c as { level?: string }).level as string));
+        });
+        const withLevel = lMap.size > 0;
+        setHeatmap(heatmapYear === "last" ? buildHeatmapFromCounts(cMap, new Date(), withLevel ? lMap : undefined) : buildHeatmapForYear(cMap, heatmapYear as number, withLevel ? lMap : undefined));
       } catch {
         // fallback heatmap dari events kalau proxy down — akan diisi di bawah
       }
