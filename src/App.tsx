@@ -1456,9 +1456,6 @@ function Stack() {
         <div className="relative mx-auto max-w-[1120px] text-center">
           <motion.div
             style={{ y: openingTitleY } as unknown as Record<string, unknown>}
-            initial={{ opacity: 0 } as unknown as Record<string, unknown>}
-            animate={stackInView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
-            transition={{ duration: 0.6, ease: EASE }}
             className="will-change-transform"
           >
             <Eyebrow index="" label={t.stackEyebrow} />
@@ -1471,7 +1468,7 @@ function Stack() {
             <motion.p
               initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
               animate={stackInView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)}
-              transition={{ duration: 0.6, ease: EASE, delay: stackInView ? 0.22 : 0 }}
+              transition={{ duration: 0.6, ease: EASE, delay: stackInView ? 0.55 : 0.22 }}
               className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base"
               style={{ color: WARM.muted }}
             >
@@ -1604,9 +1601,6 @@ function ProjectsOpening() {
       <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
         <motion.div
           style={{ y: titleY } as unknown as Record<string, unknown>}
-          initial={{ opacity: 0 } as unknown as Record<string, unknown>}
-          animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
-          transition={{ duration: 0.6, ease: EASE }}
           className="will-change-transform"
         >
           <Eyebrow index="" label={t.projectsEyebrow} />
@@ -1619,7 +1613,7 @@ function ProjectsOpening() {
           <motion.p
             initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
             animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)}
-            transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.22 : 0 }}
+            transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.55 : 0.22 }}
             className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base"
             style={{ color: WARM.muted }}
           >
@@ -2373,9 +2367,6 @@ function ExperienceOpening() {
       <div className="relative mx-auto max-w-[1120px] text-center">
         <motion.div
           style={{ y: titleY } as unknown as Record<string, unknown>}
-          initial={{ opacity: 0 } as unknown as Record<string, unknown>}
-          animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
-          transition={{ duration: 0.6, ease: EASE }}
           className="will-change-transform"
         >
           <Eyebrow index="" label={t.experience.eyebrow} />
@@ -2383,7 +2374,7 @@ function ExperienceOpening() {
           <motion.p
             initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
             animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)}
-            transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.22 : 0 }}
+            transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.55 : 0.22 }}
             className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base"
             style={{ color: WARM.muted }}
           >
@@ -2502,9 +2493,6 @@ function Lab() {
         <div className="relative mx-auto w-full max-w-[1120px] min-w-0 text-center">
           <motion.div
             style={{ y: labTitleY } as unknown as Record<string, unknown>}
-            initial={{ opacity: 0 } as unknown as Record<string, unknown>}
-            animate={labInView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
-            transition={{ duration: 0.6, ease: EASE }}
             className="will-change-transform"
           >
             <Eyebrow index="" label={t.labEyebrow} />
@@ -2512,7 +2500,7 @@ function Lab() {
             <motion.p
               initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
               animate={labInView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)}
-              transition={{ duration: 0.6, ease: EASE, delay: labInView ? 0.22 : 0 }}
+              transition={{ duration: 0.6, ease: EASE, delay: labInView ? 0.55 : 0.22 }}
               className="mx-auto mt-6 max-w-2xl leading-relaxed"
               style={{ color: WARM.muted }}
             >
