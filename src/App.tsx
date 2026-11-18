@@ -663,6 +663,7 @@ function KPage({ onDone }: { onDone: () => void }) {
 
 /* ---------- Nav ---------- */
 const links = [
+  { id: "profile", label: { id: "Profil", en: "Profile" } },
   { id: "stack", label: { id: "Stack", en: "Stack" } },
   { id: "projects", label: { id: "Proyek", en: "Projects" } },
   { id: "experience", label: { id: "Pengalaman", en: "Experience" } },
@@ -966,6 +967,7 @@ function HoloCore({ ready, mx, my }: { ready: boolean; mx: MotionValue<number>; 
 const dict = {
   id: {
     nav: {
+      profile: "Profil",
       stack: "Stack",
       projects: "Proyek",
       experience: "Pengalaman",
@@ -1061,6 +1063,7 @@ const dict = {
   },
   en: {
     nav: {
+      profile: "Profile",
       stack: "Stack",
       projects: "Projects",
       experience: "Experience",
