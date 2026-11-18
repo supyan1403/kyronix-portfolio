@@ -1389,10 +1389,8 @@ function Profile() {
     window.dispatchEvent(new PopStateEvent("popstate"));
     window.scrollTo(0, 0);
   };
-  const activityRef = useRef<HTMLDivElement>(null);
-  const activityInView = useInView(activityRef as unknown as React.RefObject<Element>, { amount: 0.1, margin: "0px 0px -8% 0px" });
   return (
-    <section ref={ref} id="profile" className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
+    <section ref={ref} id="profile" className="relative flex min-h-[100dvh] items-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.55]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px] will-change-transform max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: ghostY, opacity: 0.045 } as unknown as Record<string, unknown>}>LAB</motion.div>
@@ -1465,17 +1463,25 @@ function Profile() {
             </div>
           </div>
         </div>
-        {/* Activity dashboard — dulu /dashboard (heatmap + bahasa live) sekarang di Profil */}
-        <motion.div
-          ref={activityRef as unknown as React.RefObject<HTMLDivElement>}
-          initial={{ opacity: 0, y: 14 } as unknown as Record<string, unknown>}
-          animate={activityInView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="mx-auto mt-10 w-full max-w-[1120px] will-change-transform"
-        >
-          <DashboardEmbed lazy />
-        </motion.div>
       </div>
+    </section>
+  );
+}
+
+function Activity() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref as unknown as React.RefObject<Element>, { amount: 0.05, margin: "0px 0px -8% 0px" });
+  return (
+    <section id="activity" className="relative overflow-hidden bg-transparent px-[5vw] py-10">
+      <motion.div
+        ref={ref as unknown as React.RefObject<HTMLDivElement>}
+        initial={{ opacity: 0, y: 14 } as unknown as Record<string, unknown>}
+        animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)}
+        transition={{ duration: 0.6, ease: EASE }}
+        className="mx-auto w-full max-w-[1120px] will-change-transform"
+      >
+        <DashboardEmbed lazy />
+      </motion.div>
     </section>
   );
 }
@@ -2952,6 +2958,7 @@ function App() {
       <Hero ready={ready} />
       <KineticBand text={bands.behindKyronix} />
       <Profile />
+      <Activity />
       <KineticBand text={bands.capabilities} />
       <Stack />
       <KineticBand text={bands.selectedWork} reverse />
