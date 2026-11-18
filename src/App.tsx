@@ -2626,20 +2626,29 @@ function Lab() {
           </motion.div>
         </div>
       </section>
-      {/* Steps — pipeline OPSI A tanpa badge: rata, sejajar, konektor terracotta */}
+      {/* Steps — S1 System Flow Diagram: INPUT → PROCESS → OUTPUT (lebih system, tetap tanpa badge) */}
       <section className="relative overflow-x-clip px-4 sm:px-[5vw] pb-[14vh] pt-4">
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.5]" />
       <div aria-hidden className="pointer-events-none absolute left-[10%] top-[10%] h-[380px] w-[380px] rounded-none bg-terracotta/8 blur-[60px] max-sm:hidden" />
       <div aria-hidden className="pointer-events-none absolute right-[-5%] bottom-[0%] h-[420px] w-[420px] rounded-none bg-sage/10 blur-[60px] max-sm:hidden" />
       <div className="relative mx-auto w-full max-w-[1120px] min-w-0">
         <div className="relative grid w-full min-w-0 gap-4 sm:gap-6 md:grid-cols-3 md:items-stretch">
-          {/* pipeline connector — desktop horizontal, mobile vertical */}
-          <div aria-hidden className="pointer-events-none absolute hidden md:block left-[16%] right-[16%] top-[44px] h-px bg-terracotta/20" />
+          {/* pipeline connector — desktop: dashed + panah, mobile: vertical */}
+          <div aria-hidden className="pointer-events-none absolute hidden md:block left-[16%] right-[16%] top-[44px] h-px border-t border-dashed border-terracotta/30" />
+          <div aria-hidden className="pointer-events-none absolute hidden md:block left-[33%] top-[36px] -translate-x-1/2 font-mono text-[14px] leading-none text-terracotta/50">→</div>
+          <div aria-hidden className="pointer-events-none absolute hidden md:block left-[66%] top-[36px] -translate-x-1/2 font-mono text-[14px] leading-none text-terracotta/50">→</div>
           <div aria-hidden className="pointer-events-none absolute hidden md:block left-[16%] top-[40px] h-[9px] w-[9px] -translate-y-1/2 rounded-full bg-terracotta border-2 border-cream shadow-sm" />
           <div aria-hidden className="pointer-events-none absolute hidden md:block left-1/2 top-[40px] h-[9px] w-[9px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-terracotta border-2 border-cream shadow-sm" />
           <div aria-hidden className="pointer-events-none absolute hidden md:block right-[16%] top-[40px] h-[9px] w-[9px] translate-x-0 -translate-y-1/2 rounded-full bg-terracotta border-2 border-cream shadow-sm" />
           <div aria-hidden className="pointer-events-none absolute md:hidden left-[28px] top-[20px] bottom-[20px] w-px bg-terracotta/15" />
-          {steps.map((step, idx) => (
+          {steps.map((step, idx) => {
+            const isEn = lang === "en";
+            const meta = [
+              { sys: "SYS-01", flow: "INPUT", cmd: isEn ? "understand --analyze" : "pahami --analyze" },
+              { sys: "SYS-02", flow: "PROCESS", cmd: isEn ? "assemble --build" : "rakit --build" },
+              { sys: "SYS-03", flow: "OUTPUT", cmd: isEn ? "run --deploy" : "jalankan --deploy" },
+            ][idx]!;
+            return (
             <motion.article
               key={step.title}
               initial={{ opacity: 0, y: 14 } as unknown as Record<string, unknown>}
@@ -2647,18 +2656,24 @@ function Lab() {
               viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }}
               transition={{ duration: 0.6, ease: EASE, delay: 0.12 + idx * 0.1 }}
               whileHover={{ y: -4 }}
-              className="warm-card relative flex w-full min-w-0 flex-col overflow-hidden break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta p-6 sm:p-7 md:p-8 md:min-h-[240px]"
+              className="warm-card relative flex w-full min-w-0 flex-col overflow-hidden break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta p-6 sm:p-7 md:p-8 md:min-h-[260px]"
             >
-              <span aria-hidden className="pointer-events-none absolute right-3 top-2 select-none font-display text-[52px] font-black leading-none tracking-tight text-ink/[0.04]">0{idx + 1}</span>
-              <div className="flex min-w-0 items-center gap-3">
+              <div className="flex items-center justify-between border-b border-border/15 pb-3 font-mono text-[10px] tracking-[0.16em] text-muted">
+                <span>{meta.sys} // {meta.flow}</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-terracotta/70" />
+              </div>
+              <span aria-hidden className="pointer-events-none absolute right-3 top-10 select-none font-display text-[52px] font-black leading-none tracking-tight text-ink/[0.04]">0{idx + 1}</span>
+              <div className="mt-4 flex min-w-0 items-center gap-3">
                 <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-terracotta bg-terracotta text-white">
                   <step.icon size={18} />
                 </span>
               </div>
               <h3 className="mt-5 w-full break-words font-sans text-[clamp(1.4rem,6vw,1.7rem)] font-semibold uppercase leading-none tracking-[0.06em] text-ink [overflow-wrap:anywhere]">{step.title}</h3>
               <p className="mt-3 w-full break-words text-sm leading-relaxed [overflow-wrap:anywhere]" style={{ color: WARM.muted }}>{step.desc}</p>
+              <p className="mt-auto pt-5 font-mono text-[10px] tracking-wide text-muted/50">› {meta.cmd}</p>
             </motion.article>
-          ))}
+            );
+          })}
         </div>
       </div>
       </section>
