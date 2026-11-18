@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion } from "motion/react";
-import { Radio, Cpu, Database, BarChart3, Clock, Flame, ChevronDown } from "lucide-react";
+import { Cpu, Database, BarChart3, Clock, Flame } from "lucide-react";
 import { SiGithub } from "react-icons/si";
 import { useLang } from "../langCtx";
 
@@ -16,39 +16,35 @@ type HeatWeek = HeatDay[];
 const tDict = {
   id: {
     back: "Kembali ke Beranda",
-    update: "pembaruan tiap 60 detik",
+    update: "diperbarui dari GitHub",
     eyebrow: "Kyronix Lab — Dashboard Aktivitas",
     title: "PANTAUAN AKTIVITAS LANGSUNG",
-    desc: "Cara saya merawat konsistensi belajar dan eksplorasi pengembangan aplikasi web yang terekam secara live dari aktivitas harian",
-    totalBelajar: "Total Waktu Belajar",
-    ngodingHariIni: "Ngoding Hari Ini",
+    desc: "Cara saya merawat konsistensi belajar dan eksplorasi pengembangan aplikasi web yang terekam dari aktivitas harian",
+    totalBelajar: "Total Kontribusi",
+    ngodingHariIni: "Belajar Hari Ini",
     streak: "Rekam Jejak Harian",
-    jam: "JAM",
+    jam: "KONTRIBUSI",
     hari: "HARI",
-    totalHint: "akumulasi hingga hari ini — live",
-    liveTicker: "live ticker",
+    totalHint: "akumulasi setahun terakhir",
+    liveTicker: "hari ini",
     beruntun: "beruntun",
     bahasaTitle: "Bahasa Paling Sering Digunakan",
     bahasaLive: "live dari GitHub",
-    bahasaDesc: "Cara saya merawat eksplorasi teknologi yang terlihat dari repositori aktif",
+    bahasaDesc: "Persentase jujur dari agregasi bahasa repositori aktif",
     loadingLang: "Memuat data bahasa",
     noLang: "Belum ada data bahasa",
     percent: "persen",
     viewGithub: "Lihat GitHub",
-    commitTitle: "Aktivitas Commit Terbaru",
-    commitLive: "live 60 detik",
-    commitDesc: "Cara saya menjaga alur kerja harian yang terekam dari kontribusi terbaru",
+    commitTitle: "Aktivitas Terbaru",
     loadingActivity: "Memuat aktivitas",
     noActivity: "Belum ada aktivitas terbaru",
     fallbackCommit: "memperbarui repositori",
     heatContrib: "kontribusi dalam setahun terakhir",
-    heatLearn: "Pelajari cara kami menghitung kontribusi",
-    heatSettings: "Pengaturan kontribusi",
     less: "Kurang",
     more: "Banyak",
     fokusHarian: "Fokus Harian",
     fokusDesc: "Cara saya menjaga ritme belajar yang mendalam dan berkelanjutan",
-    fokusHint: "7 hari terakhir — 5 hari aktif",
+    fokusHint: "7 hari terakhir — aktivitas real dari heatmap",
     pemodelan: "Pemodelan Sistem",
     pemodelanDesc: "Cara saya merancang alur data dan arsitektur agar gagasan kompleks menjadi fungsional",
     pemodelanHint: "Riset berbasis pemodelan yang rapi dan terukur",
@@ -69,39 +65,35 @@ const tDict = {
   },
   en: {
     back: "Back to Home",
-    update: "updates every 60 seconds",
+    update: "updated from GitHub",
     eyebrow: "Kyronix Lab — Activity Dashboard",
     title: "LIVE ACTIVITY MONITOR",
     desc: "How I nurture consistent learning and web development exploration tracked live from daily activity",
-    totalBelajar: "Total Learning Time",
-    ngodingHariIni: "Coding Today",
+    totalBelajar: "Total Contributions",
+    ngodingHariIni: "Learning Today",
     streak: "Daily Streak",
-    jam: "HOURS",
+    jam: "CONTRIBUTIONS",
     hari: "DAYS",
-    totalHint: "accumulated to date — live",
-    liveTicker: "live ticker",
+    totalHint: "accumulated in the last year",
+    liveTicker: "today",
     beruntun: "in a row",
     bahasaTitle: "Most Used Languages",
     bahasaLive: "live from GitHub",
-    bahasaDesc: "How I keep tech exploration visible through active repositories",
+    bahasaDesc: "Honest percentage aggregated from active repository languages",
     loadingLang: "Loading language data",
     noLang: "No language data yet",
     percent: "percent",
     viewGithub: "View GitHub",
-    commitTitle: "Latest Commit Activity",
-    commitLive: "live every 60s",
-    commitDesc: "How I keep daily workflow tracked from latest contributions",
+    commitTitle: "Recent Activity",
     loadingActivity: "Loading activity",
     noActivity: "No recent activity",
     fallbackCommit: "updating repository",
     heatContrib: "contributions in the last year",
-    heatLearn: "Learn how we count contributions",
-    heatSettings: "Contribution settings",
     less: "Less",
     more: "More",
     fokusHarian: "Daily Focus",
     fokusDesc: "How I keep a deep and sustainable learning rhythm",
-    fokusHint: "Last 7 days — 5 days active",
+    fokusHint: "Last 7 days — real activity from heatmap",
     pemodelan: "System Modeling",
     pemodelanDesc: "How I design data flows and architecture so complex ideas become functional",
     pemodelanHint: "Research grounded in clean and measurable modeling",
@@ -252,13 +244,10 @@ function ContributionHeatmap({
 
   return (
     <div className="mt-4">
-      <div className="flex items-center justify-between gap-3 border-b border-border/10 pb-3">
+      <div className="border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
           {total.toLocaleString(isEn ? "en-US" : "id-ID")} {t.heatContrib}
         </p>
-        <span className="hidden items-center gap-1.5 font-mono text-[10px] tracking-widest text-muted sm:inline-flex">
-          {t.heatSettings} <ChevronDown size={12} />
-        </span>
       </div>
 
       <div className="mt-3 overflow-x-auto hide-scrollbar border border-border/10 bg-cream-deep/40 p-3">
@@ -304,17 +293,8 @@ function ContributionHeatmap({
               ))}
             </div>
           </div>
-          <div className="mt-3 flex items-center justify-between font-mono text-[10px] text-muted">
-            <a
-              href={`https://github.com/${USER}`}
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-terracotta hover:underline"
-            >
-              {t.heatLearn}
-            </a>
-            <span className="inline-flex items-center gap-1.5">
-              {t.less}
+          <div className="mt-3 flex items-center justify-end gap-1.5 font-mono text-[10px] text-muted">
+              <span>{t.less}</span>
               <span className="inline-flex gap-[3px]">
                 {[0, 1, 3, 6, 11].map((c) => {
                   const { bg, border } = levelMeta(c);
@@ -327,8 +307,7 @@ function ContributionHeatmap({
                   );
                 })}
               </span>
-              {t.more}
-            </span>
+              <span>{t.more}</span>
           </div>
         </div>
       </div>
@@ -374,17 +353,49 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
     try {
       const r = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`);
       if (!r.ok) throw new Error(errRepo);
-      const repos: { language: string | null; name: string }[] = await r.json();
-      const map = new Map<string, number>();
-      repos.forEach((repo) => {
-        const l = repo.language || (isEn ? "Other" : "Lainnya");
-        map.set(l, (map.get(l) || 0) + 1);
+      const repos: { name: string; languages_url: string }[] = await r.json();
+      // jujur byte per bahasa — fetch languages_url per repo (max 30 biar tidak rate-limit)
+      const slice = repos.slice(0, 30);
+      const langMaps = await Promise.all(
+        slice.map(async (repo) => {
+          try {
+            const lr = await fetch(repo.languages_url);
+            if (!lr.ok) return {} as Record<string, number>;
+            return (await lr.json()) as Record<string, number>;
+          } catch {
+            return {} as Record<string, number>;
+          }
+        })
+      );
+      const bytes = new Map<string, number>();
+      langMaps.forEach((m) => {
+        Object.entries(m).forEach(([k, v]) => bytes.set(k, (bytes.get(k) || 0) + v));
       });
-      const total = Array.from(map.values()).reduce((a, b) => a + b, 0) || 1;
-      const sorted = Array.from(map.entries())
-        .map(([lang, count]) => ({ lang, count, pct: Math.round((count / total) * 100) }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 6);
+      let sorted: LangStat[];
+      if (bytes.size) {
+        const sum = Array.from(bytes.values()).reduce((a, b) => a + b, 0) || 1;
+        sorted = Array.from(bytes.entries())
+          .map(([lang, count]) => ({ lang, count, pct: Math.round((count / sum) * 100) }))
+          .sort((a, b) => b.pct - a.pct)
+          .slice(0, 6);
+      } else {
+        // fallback hitung per repo kalau languages kosong (fork kosong)
+        const c = new Map<string, number>();
+        repos.forEach((repo) => {
+          const l = (repo as unknown as { language: string | null }).language || (isEn ? "Other" : "Lainnya");
+          if (l) c.set(l, (c.get(l) || 0) + 1);
+        });
+        const t = Array.from(c.values()).reduce((a, b) => a + b, 0) || 1;
+        sorted = Array.from(c.entries())
+          .map(([lang, count]) => ({ lang, count, pct: Math.round((count / t) * 100) }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 6);
+      }
+      // koreksi rounding biar total 100
+      if (sorted.length) {
+        const s = sorted.reduce((a, b) => a + b.pct, 0);
+        if (s !== 100) sorted[0].pct += 100 - s;
+      }
       setLangs(sorted);
 
       const er = await fetch(`https://api.github.com/users/${USER}/events/public?per_page=100`);
@@ -415,32 +426,15 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
       }
       if (dayMap.size === 0) {
-        setHeatmap(mockHeatmap(new Date()));
+        setHeatmap(buildHeatmapFromCounts(dayMap, new Date()));
       } else {
-        // if very sparse, fill mock for empty early months so graph not blank like GitHub real
-        // keep real counts, but ensure total looks alive: if total < 200, merge mock base 15% opacity?
-        const built = buildHeatmapFromCounts(dayMap, new Date());
-        if (built.total < 120) {
-          const mocked = mockHeatmap(new Date());
-          // blend: keep real where exists
-          const blendedWeeks = mocked.weeks.map((w) =>
-            w.map((d) => {
-              const real = dayMap.get(d.iso);
-              return real !== undefined ? { ...d, count: real } : d;
-            })
-          );
-          const blendedTotal = blendedWeeks.flat().reduce((a, d) => a + d.count, 0);
-          setHeatmap({ weeks: blendedWeeks, total: blendedTotal });
-        } else {
-          setHeatmap(built);
-        }
+        setHeatmap(buildHeatmapFromCounts(dayMap, new Date()));
       }
 
       setErr(null);
     } catch (e) {
       setErr(e instanceof Error ? e.message : errGeneric);
-      // fallback heatmap mock so UI still shows GitHub style
-      if (!heatmap) setHeatmap(mockHeatmap(new Date()));
+      if (!heatmap) setHeatmap(buildHeatmapFromCounts(new Map(), new Date()));
     } finally {
       setLoading(false);
     }
@@ -501,15 +495,64 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
   const isEn = lang === "en";
   const t = tDict[lang];
   const { langs, commits, heatmap, loading, err } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric);
-  const [tick, setTick] = useState(0);
-  // live ticker untuk metrik belajar dan ngoding tanpa WakaTime
-  useEffect(() => {
-    const id = window.setInterval(() => setTick((t) => t + 1), 3000);
-    return () => window.clearInterval(id);
-  }, []);
-  const totalBelajar = 1240 + (tick % 7);
-  const ngodingHariIni = (4.2 + (tick % 5) * 0.1).toFixed(1);
-  const streak = 48 + Math.floor(tick / 8) % 3;
+
+  // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
+  const todayId = new Date().toISOString().slice(0, 10);
+  const todayCount = useMemo(() => {
+    if (!heatmap) return 0;
+    for (const w of heatmap.weeks) for (const d of w) if (d.iso === todayId) return d.count;
+    return 0;
+  }, [heatmap, todayId]);
+  const totalReal = heatmap?.total ?? 0;
+  const streakReal = useMemo(() => {
+    if (!heatmap) return 0;
+    const flat = heatmap.weeks.flat();
+    const map = new Map(flat.map((d) => [d.iso, d.count] as const));
+    let s = 0;
+    const cur = new Date();
+    cur.setHours(0, 0, 0, 0);
+    for (let i = 0; i < 500; i++) {
+      const iso = cur.toISOString().slice(0, 10);
+      const c = map.get(iso) ?? 0;
+      if (c > 0) s++;
+      else if (s > 0) break;
+      // kalau hari ini 0 tetap lanjut cek kemarin (streak tidak reset di hari 0 kalau kemarin ada)
+      // tapi berhenti kalau sudah ada streak dan ketemu 0
+      if (s === 0 && i > 0 && (map.get(iso) ?? 0) === 0) {
+        // cek mundur tanpa batas: skip 0 di awal hanya 1 hari
+      }
+      cur.setDate(cur.getDate() - 1);
+      if (s > 0 && (map.get(cur.toISOString().slice(0, 10)) ?? 0) === 0) break;
+    }
+    // hitung ulang yang benar: beruntun mundur dari today (kalau today 0, mulai dari yesterday)
+    let streak2 = 0;
+    const c2 = new Date();
+    c2.setHours(0, 0, 0, 0);
+    // kalau today 0, mulai dari yesterday
+    if ((map.get(c2.toISOString().slice(0, 10)) ?? 0) === 0) c2.setDate(c2.getDate() - 1);
+    for (let i = 0; i < 400; i++) {
+      const iso = c2.toISOString().slice(0, 10);
+      if ((map.get(iso) ?? 0) > 0) {
+        streak2++;
+        c2.setDate(c2.getDate() - 1);
+      } else break;
+    }
+    return streak2;
+  }, [heatmap]);
+  const fokusDots = useMemo(() => {
+    if (!heatmap) return Array(7).fill(false);
+    const flat = heatmap.weeks.flat();
+    const map = new Map(flat.map((d) => [d.iso, d.count] as const));
+    const out: boolean[] = [];
+    const cur = new Date();
+    cur.setHours(0, 0, 0, 0);
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(cur);
+      d.setDate(cur.getDate() - i);
+      out.push((map.get(d.toISOString().slice(0, 10)) ?? 0) > 0);
+    }
+    return out;
+  }, [heatmap]);
 
   const handleBack = () => {
     if (onBack) onBack();
@@ -577,7 +620,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
               <div>
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
                 <p className="mt-1 font-display text-3xl font-extrabold leading-none text-ink">
-                  {totalBelajar}
+                  {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
                   <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
                 </p>
                 <p className="mt-1 font-mono text-[11px] text-muted">{t.totalHint}</p>
@@ -590,7 +633,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
               <div className="warm-card p-5">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p>
                 <p className="mt-2 font-display text-2xl font-extrabold text-ink">
-                  {ngodingHariIni}
+                  {todayCount}
                   <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
                 </p>
                 <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
@@ -600,7 +643,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
               <div className="warm-card p-5">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
                 <p className="mt-2 font-display text-2xl font-extrabold text-ink">
-                  {streak}
+                  {streakReal}
                   <span className="ml-1 font-mono text-xs text-muted"> {t.hari}</span>
                 </p>
                 <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
@@ -664,15 +707,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
           </section>
 
           <section className="warm-card p-6 md:col-span-7">
-            <div className="flex items-center justify-between">
-              <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
-              <span className="inline-flex items-center gap-1.5 font-mono text-[11px] tracking-widest text-muted">
-                <Radio size={12} className="text-terracotta live-dot" /> {t.commitLive}
-              </span>
-            </div>
-            <p className="mt-1 font-mono text-[11px] leading-relaxed text-muted">
-              {t.commitDesc}
-            </p>
+            <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
             {loading ? (
               <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
             ) : err ? (
@@ -694,8 +729,8 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
               {t.fokusDesc}
             </p>
             <div className="mt-3 flex gap-1.5">
-              {Array.from({ length: 7 }).map((_, i) => (
-                <span key={i} className={`h-2 flex-1 rounded-full ${i < 5 ? "bg-terracotta" : "bg-border/30"}`} />
+              {fokusDots.map((active, i) => (
+                <span key={i} className={`h-2 flex-1 rounded-full ${active ? "bg-terracotta" : "bg-border/30"}`} />
               ))}
             </div>
             <p className="mt-2 font-mono text-[11px] text-muted">{t.fokusHint}</p>
