@@ -424,7 +424,7 @@ function ContributionHeatmap({
   }, [leadingEmpty, days.length]);
 
   return (
-    <div className="mt-4 min-h-[320px]">
+    <div className="mt-4 flex min-h-[275px] flex-col">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
           {sum.toLocaleString(isEn ? "en-US" : "id-ID")} {isEn ? `contributions in ${filterLabel}` : `kontribusi dalam ${filterLabel}`}
@@ -448,7 +448,7 @@ function ContributionHeatmap({
       {/* info bulan aktif */}
       <p className="mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-terracotta">{monthInfo}</p>
 
-      <div className="mt-2 flex min-h-[280px] flex-col overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "280px" } as React.CSSProperties}>
+      <div className="mt-2 flex h-[208px] flex-col overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "208px" } as React.CSSProperties}>
         {/* C kalender kecil — 7 kolom, kotak kosong fill warna saja, full sebulan — flex-col + footer mt-auto biar tidak geser saat switch */}
         <div className="grid grid-cols-7 gap-1">
           {weekdayLabels.map((w) => (
@@ -849,7 +849,6 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
         <section data-dash-opening className="relative flex min-h-[76dvh] flex-col items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[8vh] text-center">
           <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: openingTitleY, opacity: 0.03 } as unknown as Record<string, unknown>}>LAB</motion.div>
           <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.7]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.03) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-          <motion.div aria-hidden className="pointer-events-none absolute -right-[8%] top-[22%] h-[380px] w-[360px] bg-terracotta/[0.06] blur-[70px] will-change-transform max-sm:hidden" style={{ y: openingTitleY } as unknown as Record<string, unknown>} />
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE }} style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="relative will-change-transform">
             <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
               <ChipPixel size={14} className="text-terracotta/60" />
@@ -927,11 +926,11 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           </motion.div>
         </div>
 
-        {/* split — bahasa 70 / aktivitas 30 */}
-        <div className="mt-6 grid gap-6 lg:grid-cols-[7fr_3fr] lg:items-start">
-          <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card p-6">
+        {/* split — bahasa 70 / aktivitas 30 — tinggi samakan, bahasa yang stretch */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-[7fr_3fr] lg:items-stretch">
+          <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card flex flex-col p-6">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
-            <div className="mt-5 space-y-3">
+            <div className="mt-5 space-y-5">
               {langs && langs.length ? (
                 langs.map((l, i) => (
                   <div key={l.lang}>
@@ -944,12 +943,12 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
                       );})()}
                       <span className="text-muted">{l.pct}{t.percent}</span>
                     </div>
-                    <div className="mt-1.5 h-1.5 overflow-hidden rounded-full border border-border/15 bg-cream-deep/50">
+                    <div className="mt-2 h-2 overflow-hidden rounded-full border border-border/20 bg-cream-deep">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={langInView ? { width: `${l.pct}%` } : { width: 0 }}
                         transition={{ duration: 0.9, ease: EASE, delay: langInView ? 0.08 + i * 0.07 : 0 }}
-                        className="h-full rounded-full bg-gradient-to-r from-[#B85E2E]/90 to-[#E07A5F]/75"
+                        className="h-full rounded-full bg-gradient-to-r from-[#B85E2E] to-[#E07A5F]"
                       />
                     </div>
                   </div>
