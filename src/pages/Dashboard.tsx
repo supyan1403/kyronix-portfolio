@@ -473,7 +473,7 @@ function ContributionHeatmap({
           <div className="flex items-center justify-between">
             <span>{active} {isEn ? "active days" : "hari aktif"} / {days.length}</span>
           </div>
-          <div className="flex items-center justify-end gap-1.5">
+          <div className="flex items-center justify-start gap-1.5">
             <span>{t.less}</span>
             <span className="inline-flex gap-[3px]">
               {["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"].map((lv) => (
