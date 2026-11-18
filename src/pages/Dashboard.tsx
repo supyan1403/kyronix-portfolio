@@ -708,9 +708,10 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   const shouldFetch = !lazy || embedInView;
   const bahasaRef = useRef<HTMLElement>(null);
   const langInView = useInView(bahasaRef as unknown as React.RefObject<Element>, { amount: 0.25 });
-  // 1x parallax aja (blur disain lain udah whileInView) — hemat 8 listeners
+  // 1x parallax aja (blur disain lain udah whileInView) — hemat 8 listeners + spring biar 60/120 halus
   const { scrollYProgress: dashProgress } = useScroll({ target: embedRef as unknown as React.RefObject<Element>, offset: ["start end", "end start"] });
-  const dashHeadY = useTransform(dashProgress, [0, 1], [10, -10]);
+  const rawHead = useTransform(dashProgress, [0, 1], [10, -10]);
+  const dashHeadY = useSpring(rawHead, { stiffness: 140, damping: 30, mass: 0.3 });
   const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear, shouldFetch);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur

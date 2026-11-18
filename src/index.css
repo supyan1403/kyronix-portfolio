@@ -110,8 +110,8 @@
   border: 1px solid var(--color-border);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0,0,0,0.2);
-  will-change: transform;
   transform: translateZ(0);
+  contain: layout paint;
   transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease, border-color 220ms ease;
 }
 .warm-card:hover {
@@ -268,7 +268,6 @@ button:disabled, a[aria-disabled="true"] { cursor: default; }
 
 /* — mobile juga parallax & reverse animasi (jangan mati di HP) — */
 .warm-card, .kinetic, [data-dot], #projects [style*="transform"] {
-  transform: translateZ(0);
   backface-visibility: hidden;
 }
 /* Heatmap 5 level — class biar 350 kotak tidak pakai 350 inline style object */
@@ -283,6 +282,6 @@ button:disabled, a[aria-disabled="true"] { cursor: default; }
 }
 
 @media (max-width: 768px) {
-  #stack, #lab, #experience, #contact { content-visibility: visible; }
+  #stack, #lab, #experience, #contact { content-visibility: auto; contain-intrinsic-size: 800px; }
   #projects { contain: layout style; }
 }

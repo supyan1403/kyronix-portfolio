@@ -397,7 +397,8 @@ function KineticBand({ text, accent, reverse }: { text: string; accent?: string;
   const low = useIsLowEnd();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
+  const rawX = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
+  const x = useSpring(rawX, { stiffness: 120, damping: 30, mass: 0.35 });
   // low-end: no 5× scroll listeners — pure CSS marquee (same look selang-seling via reverse direction)
   if (low) {
     return (
@@ -1211,16 +1212,18 @@ function Hero({ ready }: { ready: boolean }) {
   }, [ready]);
   const done = typed.length === FULL.length;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, light ? -48 : -160]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, light ? 0.97 : 0.92]);
-  const gridY = useTransform(scrollYProgress, [0, 1], [0, light ? -14 : -30]);
-  const taglineY = useTransform(scrollYProgress, [0, 1], [0, light ? -10 : -24]);
-  const ctaY = useTransform(scrollYProgress, [0, 1], [0, light ? -8 : -18]);
+  // spring halus biar hero + K hex tidak jentak 60/120fps (tanpa ubah range)
+  const smooth = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.3 });
+  const heroY = useTransform(smooth, [0, 1], [0, light ? -48 : -160]);
+  const heroOpacity = useTransform(smooth, [0, 0.55], [1, 0]);
+  const heroScale = useTransform(smooth, [0, 1], [1, light ? 0.97 : 0.92]);
+  const gridY = useTransform(smooth, [0, 1], [0, light ? -14 : -30]);
+  const taglineY = useTransform(smooth, [0, 1], [0, light ? -10 : -24]);
+  const ctaY = useTransform(smooth, [0, 1], [0, light ? -8 : -18]);
   // BG K tersedot hilang + reverse + handoff dari KPage (panjang, memudar dikit-dikit 0→0.65 biar nyambung)
-  const ghostScale = useTransform(scrollYProgress, [0, 0.65], light ? [1, 0.28] : low ? [1, 0.32] : [1, 0.14]);
-  const ghostOpacity = useTransform(scrollYProgress, [0, 0.18, 0.42, 0.65], [0.085, 0.065, 0.022, 0]);
-  const ghostBlurPx = useTransform(scrollYProgress, [0, 0.65], [0.3, light ? 5 : 8]);
+  const ghostScale = useTransform(smooth, [0, 0.65], light ? [1, 0.28] : low ? [1, 0.32] : [1, 0.14]);
+  const ghostOpacity = useTransform(smooth, [0, 0.18, 0.42, 0.65], [0.085, 0.065, 0.022, 0]);
+  const ghostBlurPx = useTransform(smooth, [0, 0.65], [0.3, light ? 5 : 8]);
   const ghostFilter = useMotionTemplate`blur(${ghostBlurPx}px)`;
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28"
@@ -1469,7 +1472,8 @@ function Activity() {
   const secRef = useRef<HTMLElement>(null);
   // ringankan: 1 MotionValue aja untuk blur, reveal pakai whileInView (tanpa 8 useTransform bareng)
   const { scrollYProgress } = useScroll({ target: secRef, offset: ["start end", "end start"] });
-  const actGridY = useTransform(scrollYProgress, [0, 1], [8, -8]);
+  const raw = useTransform(scrollYProgress, [0, 1], [8, -8]);
+  const actGridY = useSpring(raw, { stiffness: 140, damping: 30, mass: 0.3 });
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref as unknown as React.RefObject<Element>, { amount: 0.1, margin: "0px 0px -12% 0px" });
   return (
