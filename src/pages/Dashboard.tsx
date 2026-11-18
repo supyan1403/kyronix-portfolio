@@ -224,7 +224,7 @@ function buildHeatmapForYear(countMap: Map<string, number>, year: number) {
 }
 
 function levelMeta(count: number) {
-  if (count === 0) return { bg: "#2A2826", border: "rgba(58,54,50,0.45)" };
+  if (count === 0) return { bg: "#252220", border: "rgba(58,54,50,0.35)" };
   if (count <= 2) return { bg: "#5A2E18", border: "rgba(90,46,24,1)" };
   if (count <= 5) return { bg: "#8A3E1A", border: "rgba(138,62,26,1)" };
   if (count <= 9) return { bg: "#C4713C", border: "rgba(196,113,60,1)" };
@@ -295,18 +295,20 @@ function ContributionHeatmap({
         ) : null}
       </div>
 
-      <div className="mt-3 overflow-x-auto hide-scrollbar border border-border/10 bg-cream-deep/40 p-3">
-        <div className="min-w-[760px]">
-          {/* month row */}
-          <div className="flex gap-[3px] pl-[28px] font-mono text-[10px] leading-none text-muted">
-            {weeks.map((_, idx) => {
-              const lbl = monthLabels.find((m) => m.col === idx);
-              return (
-                <span key={idx} className="w-[11px] shrink-0 text-left">
-                  {lbl ? lbl.label : ""}
-                </span>
-              );
-            })}
+      <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3">
+        <div className="hidden md:block">
+          <div className="flex gap-[3px]">
+            <span className="w-[28px] shrink-0" />
+            <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
+              {weeks.map((_, idx) => {
+                const lbl = monthLabels.find((m) => m.col === idx);
+                return (
+                  <span key={idx} className="font-mono text-[10px] leading-none text-muted">
+                    {lbl ? lbl.label : ""}
+                  </span>
+                );
+              })}
+            </div>
           </div>
           <div className="mt-1.5 flex gap-[3px]">
             <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] leading-[11px] text-muted">
@@ -318,7 +320,7 @@ function ContributionHeatmap({
               <span className="h-[11px]"></span>
               <span className="h-[11px]"></span>
             </div>
-            <div className="flex gap-[3px]">
+            <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
               {weeks.map((week, wi) => (
                 <div key={wi} className="flex flex-col gap-[3px]">
                   {week.map((day) => {
@@ -329,7 +331,7 @@ function ContributionHeatmap({
                         key={day.iso}
                         title={tip}
                         aria-label={tip}
-                        className="h-[11px] w-[11px] shrink-0 rounded-[2px] border transition-colors hover:border-terracotta/80"
+                        className="aspect-square w-full rounded-[2px] border transition-colors hover:border-terracotta/80"
                         style={{ background: bg, borderColor: border } as React.CSSProperties}
                       />
                     );
@@ -338,22 +340,66 @@ function ContributionHeatmap({
               ))}
             </div>
           </div>
-          <div className="mt-3 flex items-center justify-end gap-1.5 font-mono text-[10px] text-muted">
-              <span>{t.less}</span>
-              <span className="inline-flex gap-[3px]">
-                {[0, 1, 3, 6, 11].map((c) => {
-                  const { bg, border } = levelMeta(c);
-                  return (
-                    <i
-                      key={c}
-                      className="h-[10px] w-[10px] rounded-[2px] border"
-                      style={{ background: bg, borderColor: border } as React.CSSProperties}
-                    />
-                  );
-                })}
-              </span>
-              <span>{t.more}</span>
+        </div>
+        <div className="overflow-x-auto hide-scrollbar md:hidden">
+          <div className="min-w-[760px]">
+            <div className="flex gap-[3px] pl-[28px] font-mono text-[10px] leading-none text-muted">
+              {weeks.map((_, idx) => {
+                const lbl = monthLabels.find((m) => m.col === idx);
+                return (
+                  <span key={idx} className="w-[11px] shrink-0 text-left">
+                    {lbl ? lbl.label : ""}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="mt-1.5 flex gap-[3px]">
+              <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] leading-[11px] text-muted">
+                <span className="h-[11px]">Mon</span>
+                <span className="h-[11px]"></span>
+                <span className="h-[11px]">Wed</span>
+                <span className="h-[11px]"></span>
+                <span className="h-[11px]">Fri</span>
+                <span className="h-[11px]"></span>
+                <span className="h-[11px]"></span>
+              </div>
+              <div className="flex gap-[3px]">
+                {weeks.map((week, wi) => (
+                  <div key={wi} className="flex flex-col gap-[3px]">
+                    {week.map((day) => {
+                      const { bg, border } = levelMeta(day.count);
+                      const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
+                      return (
+                        <span
+                          key={day.iso}
+                          title={tip}
+                          aria-label={tip}
+                          className="h-[11px] w-[11px] shrink-0 rounded-[2px] border transition-colors hover:border-terracotta/80"
+                          style={{ background: bg, borderColor: border } as React.CSSProperties}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
+        </div>
+        <div className="mt-3 flex items-center justify-end gap-1.5 font-mono text-[10px] text-muted">
+          <span>{t.less}</span>
+          <span className="inline-flex gap-[3px]">
+            {[0, 1, 3, 6, 11].map((c) => {
+              const { bg, border } = levelMeta(c);
+              return (
+                <i
+                  key={c}
+                  className="h-[10px] w-[10px] rounded-[2px] border"
+                  style={{ background: bg, borderColor: border } as React.CSSProperties}
+                />
+              );
+            })}
+          </span>
+          <span>{t.more}</span>
         </div>
       </div>
 
