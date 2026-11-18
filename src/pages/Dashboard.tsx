@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "motion/react";
-import { Cpu, Database, BarChart3, Clock, Flame, Activity } from "lucide-react";
+import { Cpu, Clock, Flame, Activity } from "lucide-react";
 import { SiGithub } from "react-icons/si";
 import { useLang } from "../langCtx";
 
@@ -94,15 +94,6 @@ const tDict = {
     heatContrib: "kontribusi dalam setahun terakhir",
     less: "Kurang",
     more: "Banyak",
-    fokusHarian: "Fokus Harian",
-    fokusDesc: "Cara saya menjaga ritme belajar yang mendalam dan berkelanjutan",
-    fokusHint: "7 hari terakhir — aktivitas real dari heatmap",
-    pemodelan: "Pemodelan Sistem",
-    pemodelanDesc: "Cara saya merancang alur data dan arsitektur agar gagasan kompleks menjadi fungsional",
-    pemodelanHint: "Riset berbasis pemodelan yang rapi dan terukur",
-    eksplorasi: "Pengembangan Web",
-    eksplorasiDesc: "Cara saya memperluas wawasan melalui pengembangan web secara mandiri",
-    eksplorasiHint: "Eksperimen berkelanjutan di Kyronix Lab",
     footer: "Kyronix Lab — ruang eksperimen tempat gagasan menjadi sistem",
     terminalLines: [
       "> inisialisasi kyronix lab",
@@ -143,15 +134,6 @@ const tDict = {
     heatContrib: "contributions in the last year",
     less: "Less",
     more: "More",
-    fokusHarian: "Daily Focus",
-    fokusDesc: "How I keep a deep and sustainable learning rhythm",
-    fokusHint: "Last 7 days — real activity from heatmap",
-    pemodelan: "System Modeling",
-    pemodelanDesc: "How I design data flows and architecture so complex ideas become functional",
-    pemodelanHint: "Research grounded in clean and measurable modeling",
-    eksplorasi: "Web Development",
-    eksplorasiDesc: "How I expand horizons through independent web development",
-    eksplorasiHint: "Continuous experiments at Kyronix Lab",
     footer: "Kyronix Lab — experimental space where ideas become systems",
     terminalLines: [
       "> initializing kyronix lab",
@@ -780,21 +762,6 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
     }
     return streak2;
   }, [heatmap]);
-  const fokusDots = useMemo(() => {
-    if (!heatmap) return Array(7).fill(false);
-    const flat = heatmap.weeks.flat();
-    const map = new Map(flat.map((d) => [d.iso, d.count] as const));
-    const out: boolean[] = [];
-    const cur = new Date();
-    cur.setHours(0, 0, 0, 0);
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(cur);
-      d.setDate(cur.getDate() - i);
-      out.push((map.get(toLocalISO(d)) ?? 0) > 0);
-    }
-    return out;
-  }, [heatmap]);
-
   // handleBack hanya fallback jika onBack tidak ada (dashboard dipakai tanpa App route)
 
   return (
@@ -903,41 +870,6 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
           )}
         </motion.section>
-
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.04 }} className="warm-card p-5">
-            <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
-              <BarChart3 size={14} /> {t.fokusHarian}
-            </div>
-            <p className="mt-2 font-sans text-sm font-semibold leading-relaxed text-ink">
-              {t.fokusDesc}
-            </p>
-            <div className="mt-3 flex gap-1.5">
-              {fokusDots.map((active, i) => (
-                <span key={i} className={`h-2 flex-1 rounded-full ${active ? "bg-terracotta" : "bg-border/30"}`} />
-              ))}
-            </div>
-            <p className="mt-2 font-mono text-[11px] text-muted">{t.fokusHint}</p>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.1 }} className="warm-card p-5">
-            <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
-              <Database size={14} /> {t.pemodelan}
-            </div>
-            <p className="mt-2 font-sans text-sm font-semibold leading-relaxed text-ink">
-              {t.pemodelanDesc}
-            </p>
-            <p className="mt-2 font-mono text-[11px] text-muted">{t.pemodelanHint}</p>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.16 }} className="warm-card p-5">
-            <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
-              <Cpu size={14} /> {t.eksplorasi}
-            </div>
-            <p className="mt-2 font-sans text-sm font-semibold leading-relaxed text-ink">
-              {t.eksplorasiDesc}
-            </p>
-            <p className="mt-2 font-mono text-[11px] text-muted">{t.eksplorasiHint}</p>
-          </motion.div>
-        </div>
 
         <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-widest text-muted">
           {t.footer}
