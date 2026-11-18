@@ -12,6 +12,31 @@ function ghHeaders(): HeadersInit {
   return tok ? { Authorization: `Bearer ${tok}` } : {};
 }
 
+const LANGS_CACHE_KEY = "kyronix:langs:v1";
+const LANGS_TTL_MS = 60 * 60 * 1000;
+function readLangsCache(): LangStat[] | null {
+  try {
+    const raw = localStorage.getItem(LANGS_CACHE_KEY);
+    if (!raw) return null;
+    const { at, data } = JSON.parse(raw) as { at: number; data: LangStat[] };
+    if (!at || !Array.isArray(data)) return null;
+    if (Date.now() - at > LANGS_TTL_MS) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+function writeLangsCache(data: LangStat[]) {
+  try {
+    localStorage.setItem(LANGS_CACHE_KEY, JSON.stringify({ at: Date.now(), data }));
+  } catch {}
+}
+function fetchWithTimeout(url: string, init: RequestInit = {}, ms = 6000): Promise<Response> {
+  const ac = new AbortController();
+  const t = setTimeout(() => ac.abort(), ms);
+  return fetch(url, { ...init, signal: ac.signal }).finally(() => clearTimeout(t));
+}
+
 // no ":" in any visible copy per spec — also no "project" word, use "cara saya"
 type LangStat = { lang: string; count: number; pct: number };
 type CommitItem = { repo: string; message: string; time: string; url: string };
@@ -302,34 +327,20 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
     promises.push(heatP);
 
     const ghP = (async () => {
+      // cache-first biar tidak loading lama
+      const cached = readLangsCache();
+      if (cached?.length) {
+        setLangs(cached);
+        setLangErr(null);
+      }
       try {
-        const r = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`, { headers: ghHeaders() });
+        const r = await fetchWithTimeout(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`, { headers: ghHeaders() }, 7000);
         if (!r.ok) throw new Error(`${r.status}`);
         const repos: { name: string; languages_url: string; language: string | null }[] = await r.json();
-        const slice = repos.slice(0, 30);
-        const langMaps = await Promise.all(
-          slice.map(async (repo) => {
-            try {
-              const lr = await fetch(repo.languages_url, { headers: ghHeaders() });
-              if (!lr.ok) return {} as Record<string, number>;
-              return (await lr.json()) as Record<string, number>;
-            } catch {
-              return {} as Record<string, number>;
-            }
-          })
-        );
-        const bytes = new Map<string, number>();
-        langMaps.forEach((m) => {
-          Object.entries(m).forEach(([k, v]) => bytes.set(k, (bytes.get(k) || 0) + v));
-        });
+        // tanpa token: jangan 30x languages_url (bikin 403 + lambat) — pakai field language dari /repos
+        const hasTok = !!((import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim());
         let sorted: LangStat[];
-        if (bytes.size) {
-          const sum = Array.from(bytes.values()).reduce((a, b) => a + b, 0) || 1;
-          sorted = Array.from(bytes.entries())
-            .map(([lang, count]) => ({ lang, count, pct: Math.round((count / sum) * 100) }))
-            .sort((a, b) => b.pct - a.pct)
-            .slice(0, 6);
-        } else {
+        if (!hasTok) {
           const c = new Map<string, number>();
           repos.forEach((repo) => {
             const l = repo.language || (isEn ? "Other" : "Lainnya");
@@ -340,17 +351,59 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
             .map(([lang, count]) => ({ lang, count, pct: Math.round((count / t) * 100) }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 6);
+        } else {
+          const slice = repos.slice(0, 12);
+          const langMaps = await Promise.all(
+            slice.map(async (repo) => {
+              try {
+                const lr = await fetchWithTimeout(repo.languages_url, { headers: ghHeaders() }, 5000);
+                if (!lr.ok) return {} as Record<string, number>;
+                return (await lr.json()) as Record<string, number>;
+              } catch {
+                return {} as Record<string, number>;
+              }
+            })
+          );
+          const bytes = new Map<string, number>();
+          langMaps.forEach((m) => {
+            Object.entries(m).forEach(([k, v]) => bytes.set(k, (bytes.get(k) || 0) + v));
+          });
+          if (bytes.size) {
+            const sum = Array.from(bytes.values()).reduce((a, b) => a + b, 0) || 1;
+            sorted = Array.from(bytes.entries())
+              .map(([lang, count]) => ({ lang, count, pct: Math.round((count / sum) * 100) }))
+              .sort((a, b) => b.pct - a.pct)
+              .slice(0, 6);
+          } else {
+            const c = new Map<string, number>();
+            repos.forEach((repo) => {
+              const l = repo.language || (isEn ? "Other" : "Lainnya");
+              if (l) c.set(l, (c.get(l) || 0) + 1);
+            });
+            const t = Array.from(c.values()).reduce((a, b) => a + b, 0) || 1;
+            sorted = Array.from(c.entries())
+              .map(([lang, count]) => ({ lang, count, pct: Math.round((count / t) * 100) }))
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 6);
+          }
         }
         if (sorted.length) {
           const s = sorted.reduce((a, b) => a + b.pct, 0);
           if (s !== 100) sorted[0].pct += 100 - s;
         }
         setLangs(sorted);
+        writeLangsCache(sorted);
         setLangErr(null);
       } catch (e) {
         const msg = e instanceof Error ? e.message : errGeneric;
-        // 403 rate limit — jangan block dashboard total
+        const cached2 = readLangsCache();
+        if (cached2?.length) {
+          setLangs((prev) => prev ?? cached2);
+          setLangErr(null);
+          return;
+        }
         if (msg.includes("403")) setLangErr(isEn ? "GitHub rate limit — try again shortly" : "Batas GitHub — coba lagi sebentar");
+        else if (msg.includes("AbortError") || msg.toLowerCase().includes("abort")) setLangErr(isEn ? "GitHub slow — showing cached data soon" : "GitHub lambat — coba lagi sebentar");
         else setLangErr(msg);
       }
     })();
@@ -358,7 +411,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
 
     const evP = (async () => {
       try {
-        const er = await fetch(`https://api.github.com/users/${USER}/events/public?per_page=100`, { headers: ghHeaders() });
+        const er = await fetchWithTimeout(`https://api.github.com/users/${USER}/events/public?per_page=100`, { headers: ghHeaders() }, 6500);
         if (!er.ok) throw new Error(`${er.status}`);
         const events: { type: string; repo: { name: string }; payload: { commits?: { message: string }[]; size?: number }; created_at: string }[] =
           await er.json();
