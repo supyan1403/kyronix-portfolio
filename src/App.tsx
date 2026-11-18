@@ -1339,7 +1339,7 @@ function Profile() {
   const rows = [
     { k: "Asal", kEn: "Based", v: "Tasikmalaya, Jawa Barat, Indonesia", vEn: "Tasikmalaya, Jawa Barat, Indonesia" },
     { k: "Fokus", kEn: "Focus", v: "Pengelolaan Data, Pemodelan Sistem, & Pengembangan Aplikasi Web", vEn: "Data Management, System Modeling & Web App Development" },
-    { k: "Pendekatan", kEn: "Approach", v: "Selalu antusias mengulik berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional", vEn: "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions" },
+    { k: "Pendekatan", kEn: "Approach", v: "Selalu antusias belajar berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional", vEn: "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions" },
     { k: "Eksplorasi", kEn: "Exploration", v: "Aktif memperluas wawasan melalui pengembangan aplikasi web secara mandiri dan berkelanjutan", vEn: "Actively expanding horizons through independent and continuous web app development" },
   ];
   const goDashboard = () => {
