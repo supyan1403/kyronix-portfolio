@@ -308,12 +308,10 @@ function ContributionHeatmap({
   const monthLabels = useMemo(() => {
     const labels: { label: string; col: number }[] = [];
     let lastMonth = -1;
-    // ambil tahun dari heatmap (biar Jan-Des murni, bukan kebawa minggu Des tahun lalu)
-    const labelYear = weeks[0]?.[0]?.iso ? new Date(weeks[0][0].iso).getFullYear() : new Date().getFullYear();
-    // untuk heatmap Jan-Des, cek juga tahun kalender (SETAHUN/2026/2025) — fallback ke tahun labelYear
+    const firstValid = weeks.flat().find((d) => d.iso)?.iso;
+    const labelYear = firstValid ? new Date(firstValid).getFullYear() : new Date().getFullYear();
     const targetYear = (() => {
-      // cari iso pertama yang tahun-nya != Des overlap: bulan Jan tahun heatmap
-      for (const w of weeks) for (const d of w) {
+      for (const w of weeks) for (const d of w) if (d.iso) {
         const dt = new Date(d.iso);
         if (dt.getFullYear() === labelYear && dt.getMonth() === 0) return labelYear;
         if (dt.getFullYear() === labelYear + 1 && dt.getMonth() === 0) return labelYear + 1;
@@ -321,12 +319,12 @@ function ContributionHeatmap({
       return labelYear;
     })();
     weeks.forEach((w, idx) => {
-      // pakai hari pertama yang masuk tahun target (bukan w[0] yang bisa Des tahun lalu)
-      const rep = w.find((d) => new Date(d.iso).getFullYear() === targetYear) ?? w[0];
+      const rep = w.find((d) => d.iso && new Date(d.iso).getFullYear() === targetYear) ?? w.find((d) => d.iso) ?? w[0];
+      if (!rep?.iso) return;
       const d = new Date(rep.iso);
+      if (Number.isNaN(d.getTime())) return;
       const m = d.getMonth();
       if (m !== lastMonth) {
-        // only show if there are at least 3 weeks distance or first
         if (labels.length === 0 || idx - (labels[labels.length - 1]?.col ?? -10) >= 4) {
           labels.push({
             label: d.toLocaleString(isEn ? "en-US" : "id-ID", { month: "short" }),
