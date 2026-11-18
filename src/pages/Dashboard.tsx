@@ -25,8 +25,10 @@ const tDict = {
     streak: "Rekam Jejak Harian",
     jam: "KONTRIBUSI",
     hari: "HARI",
-    totalHint: "akumulasi setahun terakhir",
+    totalHint: "akumulasi 90 hari terakhir — sesuai API publik GitHub",
     liveTicker: "hari ini",
+    todayEmpty: "istirahat hari ini",
+    todayActive: "ada aktivitas hari ini",
     beruntun: "beruntun",
     bahasaTitle: "Bahasa Paling Sering Digunakan",
     bahasaLive: "live dari GitHub",
@@ -39,7 +41,7 @@ const tDict = {
     loadingActivity: "Memuat aktivitas",
     noActivity: "Belum ada aktivitas terbaru",
     fallbackCommit: "memperbarui repositori",
-    heatContrib: "kontribusi dalam setahun terakhir",
+    heatContrib: "kontribusi dalam 90 hari terakhir",
     less: "Kurang",
     more: "Banyak",
     fokusHarian: "Fokus Harian",
@@ -74,8 +76,10 @@ const tDict = {
     streak: "Daily Streak",
     jam: "CONTRIBUTIONS",
     hari: "DAYS",
-    totalHint: "accumulated in the last year",
+    totalHint: "accumulated last 90 days — from GitHub public API",
     liveTicker: "today",
+    todayEmpty: "rest today",
+    todayActive: "active today",
     beruntun: "in a row",
     bahasaTitle: "Most Used Languages",
     bahasaLive: "live from GitHub",
@@ -88,7 +92,7 @@ const tDict = {
     loadingActivity: "Loading activity",
     noActivity: "No recent activity",
     fallbackCommit: "updating repository",
-    heatContrib: "contributions in the last year",
+    heatContrib: "contributions in the last 90 days",
     less: "Less",
     more: "More",
     fokusHarian: "Daily Focus",
@@ -630,14 +634,14 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
               </span>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="warm-card p-5">
+              <div className={`warm-card p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p>
-                <p className="mt-2 font-display text-2xl font-extrabold text-ink">
+                <p className={`mt-2 font-display text-2xl font-extrabold ${todayCount === 0 ? "text-muted" : "text-ink"}`}>
                   {todayCount}
                   <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
                 </p>
-                <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
-                  <span className="h-1.5 w-1.5 rounded-full bg-terracotta live-dot" /> {t.liveTicker}
+                <span className={`mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest ${todayCount === 0 ? "text-muted" : "text-terracotta"}`}>
+                  <span className={`h-1.5 w-1.5 rounded-full ${todayCount === 0 ? "bg-border" : "bg-terracotta live-dot"}`} /> {todayCount === 0 ? t.todayEmpty : t.todayActive}
                 </span>
               </div>
               <div className="warm-card p-5">
