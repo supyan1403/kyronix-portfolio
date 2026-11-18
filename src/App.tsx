@@ -49,7 +49,7 @@ import {
   SiTailwindcss,
   SiVercel,
 } from "react-icons/si";
-import { DashboardEmbed } from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard";
 
 /* ---------- Utility: Warm Dark palette tokens ---------- */
 const WARM = {
@@ -1385,12 +1385,12 @@ function Profile() {
     { k: "Eksplorasi", kEn: "Exploration", Icon: Lightbulb, v: "Aktif memperluas wawasan melalui pengembangan web secara mandiri dan berkelanjutan", vEn: "Actively expanding horizons through independent and continuous web development" },
   ];
   const goDashboard = () => {
-    scrollToId("profile");
+    window.history.pushState({}, "", "/dashboard");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+    window.scrollTo(0, 0);
   };
-  const activityRef = useRef<HTMLDivElement>(null);
-  const activityInView = useInView(activityRef as unknown as React.RefObject<Element>, { amount: 0.12, margin: "0px 0px -10% 0px" });
   return (
-    <section ref={ref} id="profile" className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
+    <section ref={ref} id="profile" className="relative flex min-h-[100dvh] items-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.55]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px] will-change-transform max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: ghostY, opacity: 0.045 } as unknown as Record<string, unknown>}>LAB</motion.div>
@@ -1406,7 +1406,7 @@ function Profile() {
               {t.bio}
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.58 : 0 }} className="flex flex-wrap gap-3 pt-2">
-              <Magnetic href="#profile" variant="primary" onClick={goDashboard}>{(t as unknown as { ctaDashboard: string }).ctaDashboard || t.ctaPrimary} <ArrowUpRight size={16} /></Magnetic>
+              <Magnetic href="/dashboard" variant="primary" onClick={goDashboard}>{(t as unknown as { ctaDashboard: string }).ctaDashboard || t.ctaPrimary} <ArrowUpRight size={16} /></Magnetic>
               <Magnetic href="#contact" variant="ghost" onClick={() => scrollToId("contact")}>{t.ctaSecondary} <Mail size={16} /></Magnetic>
             </motion.div>
           </motion.div>
@@ -1463,16 +1463,6 @@ function Profile() {
             </div>
           </div>
         </div>
-        {/* Activity dashboard — dulu /dashboard (heatmap + bahasa live) sekarang di dalam Profil */}
-        <motion.div
-          ref={activityRef as unknown as React.RefObject<HTMLDivElement>}
-          initial={{ opacity: 0, y: 14 } as unknown as Record<string, unknown>}
-          animate={activityInView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="mx-auto mt-10 w-full max-w-[1120px] will-change-transform"
-        >
-          <DashboardEmbed lazy />
-        </motion.div>
       </div>
     </section>
   );
@@ -2900,25 +2890,29 @@ function App() {
     try {
       if (typeof window !== "undefined" && sessionStorage.getItem("kyronix:introDone") === "1") return "ready";
     } catch {}
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard")) return "ready";
     return "intro";
   });
   const [lang, setLang] = useState<Lang>("id");
-  useLenis(true);
+  const [route, setRoute] = useState(() => (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/"));
+  const isDashboard = route === "/dashboard";
+  useLenis(!isDashboard);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
-  // /dashboard lama → redirect ke #profile (single page sekarang)
+  // dashboard pakai scroll native — jangan hijack Lenis (destroy, bukan stop yang bikin kekunci)
+  // ringan: resize setelah mount balik ke "/"
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard")) {
-      window.history.replaceState({}, "", "/#profile");
-    }
-    const onPop = () => {
-      if (window.location.pathname.startsWith("/dashboard")) {
-        window.history.replaceState({}, "", "/#profile");
-        scrollToId("profile");
-      }
-    };
+    if (isDashboard) document.documentElement.classList.remove("lenis", "lenis-smooth");
+    else requestAnimationFrame(() => lenisInstance?.resize());
+  }, [isDashboard]);
+  useEffect(() => {
+    const onPop = () => setRoute(window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/");
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
+  // skip intro/k when langsung /dashboard
+  useEffect(() => {
+    if (route === "/dashboard" && phase !== "ready") setPhase("ready");
+  }, [route, phase]);
   useEffect(() => {
     if (phase === "ready") {
       try { sessionStorage.setItem("kyronix:introDone", "1"); } catch {}
@@ -2926,6 +2920,24 @@ function App() {
   }, [phase]);
   const bands = dict[lang].bands;
   const ready = phase === "ready";
+  if (route === "/dashboard") {
+    return (
+      <LangCtx.Provider value={{ lang, setLang }}>
+        <Dashboard
+          onBack={() => {
+            window.history.pushState({}, "", "/");
+            setRoute("/");
+            // Lenis baru mount setelah isDashboard=false — pakai native scrollTo sekarang, Lenis akan sync di resize
+            window.scrollTo(0, 0);
+            requestAnimationFrame(() => {
+              window.scrollTo(0, 0);
+              lenisInstance?.resize();
+            });
+          }}
+        />
+      </LangCtx.Provider>
+    );
+  }
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
       <main className="crt relative bg-cream overflow-x-clip">

@@ -501,7 +501,7 @@ function ContributionHeatmap({
   );
 }
 
-function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, errAct: string, errGeneric: string, heatmapYear: number | "last", enabled = true) {
+function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, errAct: string, errGeneric: string, heatmapYear: number | "last") {
   const [langs, setLangs] = useState<LangStat[] | null>(null);
   const [commits, setCommits] = useState<CommitItem[] | null>(null);
   const [heatmap, setHeatmap] = useState<{ weeks: HeatWeek[]; total: number } | null>(null);
@@ -667,12 +667,11 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
   };
 
   useEffect(() => {
-    if (!enabled) return;
     fetchAll();
     const id = window.setInterval(fetchAll, 60000);
     return () => window.clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEn, fallbackCommit, errRepo, errAct, heatmapYear, enabled]);
+  }, [isEn, fallbackCommit, errRepo, errAct, heatmapYear]);
 
   useEffect(() => {
     // heatmap baru mount ~53×7 cells — kasih info ke Lenis biar ukur tinggi lagi
@@ -722,15 +721,12 @@ function TerminalHero({ lines }: { lines: string[] }) {
   );
 }
 
-export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
-  const { lang } = useLang();
+export default function Dashboard({ onBack }: { onBack?: () => void }) {
+  const { lang, setLang } = useLang();
   const isEn = lang === "en";
   const t = tDict[lang];
   const [heatmapYear, setHeatmapYear] = useState<number | "last">("last");
-  const embedRef = useRef<HTMLDivElement>(null);
-  const embedInView = useInView(embedRef as unknown as React.RefObject<Element>, { amount: 0, margin: "400px 0px" });
-  const shouldFetch = !lazy || embedInView;
-  const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear, shouldFetch);
+  const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
   const todayId = toLocalISO(new Date());
@@ -793,10 +789,10 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   // handleBack hanya fallback jika onBack tidak ada (dashboard dipakai tanpa App route)
 
   return (
-    <div ref={embedRef} className="relative mt-8 overflow-hidden border border-border/10 bg-cream-deep/20">
+    <main className="relative min-h-[100dvh] overflow-x-clip bg-cream">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.6]"
+        className="pointer-events-none absolute inset-0 opacity-[1]"
         style={{
           backgroundImage:
             "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)",
@@ -806,18 +802,24 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
       <div aria-hidden className="pointer-events-none absolute -right-[12%] top-[10%] h-[520px] w-[520px] bg-terracotta/10 blur-[56px] md:blur-[80px]" />
       <div aria-hidden className="pointer-events-none absolute -left-[10%] bottom-[6%] h-[420px] w-[420px] bg-sage/10 blur-[56px] md:blur-[70px]" />
 
-      <div className="relative px-4 py-6 sm:px-6 sm:py-8">
+      <div className="relative mx-auto max-w-[1120px] px-[5vw] pb-10 pt-8">
+        <div className="flex items-center justify-end gap-4">
+          <div className="inline-flex rounded-xl border border-white/15 bg-surface p-1 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+              <button onClick={() => setLang("id")} aria-pressed={!isEn} className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${!isEn ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}>ID</button>
+              <button onClick={() => setLang("en")} aria-pressed={isEn} className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${isEn ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}>EN</button>
+            </div>
+        </div>
 
-        <div className="text-center">
+        <div className="mt-8 text-center">
           <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
             <span className="inline-flex h-3 w-3 items-center justify-center text-terracotta/60">
               <Cpu size={14} />
             </span>
             {t.eyebrow}
           </p>
-          <h2 className="mx-auto mt-4 max-w-3xl font-display text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[0.9] tracking-[0.01em] text-ink">
+          <h1 className="mx-auto mt-4 max-w-3xl font-display text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[0.9] tracking-[0.01em] text-ink">
             {t.title}
-          </h2>
+          </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted">
             {t.desc}
           </p>
@@ -949,11 +951,6 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           {t.footer}
         </p>
       </div>
-    </div>
+    </main>
   );
-}
-
-// fallback route compat — /dashboard lama tetap render embed (nanti di-redirect ke #profile)
-export default function Dashboard({ onBack: _onBack }: { onBack?: () => void }) {
-  return <DashboardEmbed />;
 }
