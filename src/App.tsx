@@ -1221,110 +1221,119 @@ function Hero({ ready }: { ready: boolean }) {
       <div aria-hidden className="pointer-events-none absolute right-[24px] top-[88px] h-[22px] w-[22px] border-r-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:right-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
       <div aria-hidden className="pointer-events-none absolute bottom-[24px] left-[24px] h-[22px] w-[22px] border-b-[1.5px] border-l-[1.5px] border-terracotta/20 max-sm:bottom-[16px] max-sm:left-[16px] max-sm:h-[18px] max-sm:w-[18px]" />
       <div aria-hidden className="pointer-events-none absolute bottom-[24px] right-[24px] h-[22px] w-[22px] border-b-[1.5px] border-r-[1.5px] border-terracotta/20 max-sm:bottom-[16px] max-sm:right-[16px] max-sm:h-[18px] max-sm:w-[18px]" />
-      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-7 px-[6vw] pb-16 pt-6 text-center sm:gap-8 sm:px-[5vw] md:px-[4vw]" style={light ? ({ opacity: heroOpacity } as unknown as Record<string, unknown>) : ({ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>)} initial={light ? ({ opacity: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, filter: "blur(10px)" } as unknown as Record<string, unknown>)} animate={light ? ({ opacity: 1 } as unknown as Record<string, unknown>) : low ? (ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)) : (ready ? ({ opacity: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>))} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
-        {/* KYRONIX — image 3D tembaga persis K/R/O/... (notch puzzle) + sweep ngikut siluet */}
-        <motion.div
-          aria-label={FULL}
-          role="img"
-          className="relative inline-flex select-none flex-wrap items-end justify-center gap-[0.06em] will-change-transform"
-          style={{ perspective: 800, transformStyle: "preserve-3d", rotateX: heroRx, rotateY: heroRy, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-        >
-          <span className="sr-only">{FULL}</span>
-          {FULL.split("").map((ch, i) => {
-            const visible = i < typed.length;
-            const isLast = i === FULL.length - 1;
-            const src = `/letters/kyronix-${ch.toLowerCase()}.webp`;
-            const srcPng = `/letters/kyronix-${ch.toLowerCase()}.png`;
-            return (
-              <motion.span
-                key={ch + i}
-                className="relative inline-flex will-change-transform"
-                initial={
-                  light
-                    ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)
-                    : low
-                      ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)
-                      : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
-                }
-                animate={
-                  visible
-                    ? light
-                      ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
-                      : low
-                        ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
-                        : ({ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 } as unknown as Record<string, unknown>)
-                    : light
-                      ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)
-                      : low
-                        ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)
-                        : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
-                }
-                transition={{ duration: light ? 0.42 : 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * (light ? 0.035 : 0.06) }}
-              >
-                <picture>
-                  <source srcSet={src} type="image/webp" />
-                  <img
-                    src={srcPng}
-                    alt=""
-                    width={520}
-                    height={528}
-                    loading="eager"
-                    decoding="async"
-                    draggable={false}
-                    className="h-[clamp(3.4rem,11vw,8.2rem)] w-auto select-none object-contain"
-                    style={{ filter: visible ? "drop-shadow(0 12px 28px rgba(0,0,0,0.28)) drop-shadow(0 28px 36px rgba(224,122,95,0.14))" : undefined } as React.CSSProperties}
-                  />
-                </picture>
-                {/* sweep ngikut siluet — mask per huruf kayak KPage */}
-                <motion.span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 overflow-hidden"
-                  style={{
-                    WebkitMaskImage: `url(${srcPng})`,
-                    maskImage: `url(${srcPng})`,
-                    WebkitMaskSize: "contain",
-                    maskSize: "contain",
-                    WebkitMaskRepeat: "no-repeat",
-                    maskRepeat: "no-repeat",
-                    WebkitMaskPosition: "center",
-                    maskPosition: "center",
-                    filter: "blur(0.5px)",
-                  } as React.CSSProperties}
-                  initial={{ opacity: 0 }}
-                  animate={visible && done ? ({ opacity: [0, 0, 1, 1, 0] } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
-                  transition={{ duration: 1.55, times: [0, 0.42, 0.52, 0.84, 1], ease: "easeInOut", delay: 0.52 + i * 0.06 } as unknown as Record<string, unknown>}
-                >
+      <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col justify-center px-[6vw] pb-16 pt-6 sm:px-[5vw] md:px-[4vw]" style={light ? ({ opacity: heroOpacity } as unknown as Record<string, unknown>) : ({ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>)} initial={light ? ({ opacity: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, filter: "blur(10px)" } as unknown as Record<string, unknown>)} animate={light ? ({ opacity: 1 } as unknown as Record<string, unknown>) : low ? (ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)) : (ready ? ({ opacity: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>))} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
+        <div className="flex flex-col gap-7 sm:gap-8 lg:grid lg:grid-cols-[1.35fr_0.85fr] lg:gap-10 lg:items-center">
+          {/* left — statement */}
+          <div className="flex flex-col items-center gap-7 text-center sm:gap-8 lg:items-start lg:text-left">
+            {/* KYRONIX — image 3D tembaga persis K/R/O/... (notch puzzle) + sweep ngikut siluet */}
+            <motion.div
+              aria-label={FULL}
+              role="img"
+              className="relative inline-flex select-none flex-wrap items-end justify-center gap-[0.06em] will-change-transform lg:justify-start"
+              style={{ perspective: 800, transformStyle: "preserve-3d", rotateX: heroRx, rotateY: heroRy, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
+            >
+              <span className="sr-only">{FULL}</span>
+              {FULL.split("").map((ch, i) => {
+                const visible = i < typed.length;
+                const isLast = i === FULL.length - 1;
+                const src = `/letters/kyronix-${ch.toLowerCase()}.webp`;
+                const srcPng = `/letters/kyronix-${ch.toLowerCase()}.png`;
+                return (
                   <motion.span
-                    className="absolute inset-y-0 w-[42%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
-                    initial={{ x: "-130%" }}
-                    animate={visible && done ? ({ x: "260%" } as unknown as Record<string, unknown>) : ({ x: "-130%" } as unknown as Record<string, unknown>)}
-                    transition={{ duration: 0.92, ease: [0.22, 1, 0.36, 1], delay: 0.52 + i * 0.06 }}
-                    style={{ transform: "skewX(-18deg)" }}
-                  />
-                </motion.span>
-                {isLast && done && (
-                  <motion.span
-                    aria-hidden
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.35, duration: 0.6 }}
-                    className="pointer-events-none absolute -inset-x-3 -top-2 bottom-0 -z-10 bg-gradient-to-r from-transparent via-terracotta/16 to-transparent blur-[14px]"
-                  />
-                )}
-              </motion.span>
-            );
-          })}
-        </motion.div>
-        <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" style={{ y: taglineY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
-          {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
-        </motion.p>
-        <motion.p className="mx-auto max-w-[60ch] text-balance font-sans text-[13.5px] leading-[1.75] text-muted sm:max-w-[60ch] sm:text-[14px]" style={{ y: taglineY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.82 }}>
-          {(t2.hero as unknown as { desc: string }).desc}
-        </motion.p>
-        <motion.div style={{ y: ctaY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
-          <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
-          <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
-        </motion.div>
+                    key={ch + i}
+                    className="relative inline-flex will-change-transform"
+                    initial={
+                      light
+                        ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)
+                        : low
+                          ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)
+                          : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
+                    }
+                    animate={
+                      visible
+                        ? light
+                          ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
+                          : low
+                            ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
+                            : ({ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 } as unknown as Record<string, unknown>)
+                        : light
+                          ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)
+                          : low
+                            ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)
+                            : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
+                    }
+                    transition={{ duration: light ? 0.42 : 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * (light ? 0.035 : 0.06) }}
+                  >
+                    <picture>
+                      <source srcSet={src} type="image/webp" />
+                      <img
+                        src={srcPng}
+                        alt=""
+                        width={520}
+                        height={528}
+                        loading="eager"
+                        decoding="async"
+                        draggable={false}
+                        className="h-[clamp(3.4rem,11vw,8.2rem)] w-auto select-none object-contain"
+                        style={{ filter: visible ? "drop-shadow(0 12px 28px rgba(0,0,0,0.28)) drop-shadow(0 28px 36px rgba(224,122,95,0.14))" : undefined } as React.CSSProperties}
+                      />
+                    </picture>
+                    {/* sweep ngikut siluet — mask per huruf kayak KPage */}
+                    <motion.span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 overflow-hidden"
+                      style={{
+                        WebkitMaskImage: `url(${srcPng})`,
+                        maskImage: `url(${srcPng})`,
+                        WebkitMaskSize: "contain",
+                        maskSize: "contain",
+                        WebkitMaskRepeat: "no-repeat",
+                        maskRepeat: "no-repeat",
+                        WebkitMaskPosition: "center",
+                        maskPosition: "center",
+                        filter: "blur(0.5px)",
+                      } as React.CSSProperties}
+                      initial={{ opacity: 0 }}
+                      animate={visible && done ? ({ opacity: [0, 0, 1, 1, 0] } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
+                      transition={{ duration: 1.55, times: [0, 0.42, 0.52, 0.84, 1], ease: "easeInOut", delay: 0.52 + i * 0.06 } as unknown as Record<string, unknown>}
+                    >
+                      <motion.span
+                        className="absolute inset-y-0 w-[42%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
+                        initial={{ x: "-130%" }}
+                        animate={visible && done ? ({ x: "260%" } as unknown as Record<string, unknown>) : ({ x: "-130%" } as unknown as Record<string, unknown>)}
+                        transition={{ duration: 0.92, ease: [0.22, 1, 0.36, 1], delay: 0.52 + i * 0.06 }}
+                        style={{ transform: "skewX(-18deg)" }}
+                      />
+                    </motion.span>
+                    {isLast && done && (
+                      <motion.span
+                        aria-hidden
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.35, duration: 0.6 }}
+                        className="pointer-events-none absolute -inset-x-3 -top-2 bottom-0 -z-10 bg-gradient-to-r from-transparent via-terracotta/16 to-transparent blur-[14px]"
+                      />
+                    )}
+                  </motion.span>
+                );
+              })}
+            </motion.div>
+            <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none lg:text-left" style={{ y: taglineY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
+              {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
+            </motion.p>
+            <motion.div style={{ y: ctaY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-1 lg:justify-start lg:pt-2">
+              <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
+              <Magnetic href="#projects" variant="ghost" onClick={() => scrollToId("projects")}>{t2.hero.ctaSecondary} <ArrowDownRight size={18} /></Magnetic>
+            </motion.div>
+          </div>
+          {/* right — narrative side note */}
+          <motion.div style={{ y: taglineY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.82 }} className="mx-auto flex max-w-[60ch] flex-col gap-3 text-center lg:mx-0 lg:max-w-[36ch] lg:items-start lg:border-l-2 lg:border-terracotta/20 lg:pl-6 lg:text-left">
+            <span className="hidden font-mono text-[9px] uppercase tracking-[0.22em] text-terracotta lg:inline-flex lg:items-center lg:gap-2"><span className="h-px w-6 bg-terracotta/40" /> vibe coder</span>
+            <p className="text-balance font-sans text-[13.5px] leading-[1.75] text-muted sm:text-[14px] lg:text-balance-none lg:text-left">
+              {(t2.hero as unknown as { desc: string }).desc}
+            </p>
+          </motion.div>
+        </div>
         <motion.button aria-label="Scroll" onClick={() => scrollToId("stack")} initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: 1.25, duration: 0.6 }} className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink md:flex">
           <span>Scroll</span><span className="h-7 w-px bg-border"><motion.i className="block h-3 w-px bg-terracotta" animate={{ y: [0, 14, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }} /></span>
         </motion.button>
