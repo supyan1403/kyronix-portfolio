@@ -2519,11 +2519,32 @@ function Contact() {
   const email = "supyansauri47@gmail.com";
   const [copied, setCopied] = useState(false);
   const copyEmail = async () => {
+    const fallbackCopy = () => {
+      const ta = document.createElement("textarea");
+      ta.value = email;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      ta.style.pointerEvents = "none";
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch { ok = false; }
+      ta.remove();
+      return ok;
+    };
     try {
-      await navigator.clipboard.writeText(email);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(email);
+      } else if (!fallbackCopy()) throw new Error("no clipboard");
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {}
+      setTimeout(() => setCopied(false), 2200);
+    } catch {
+      if (fallbackCopy()) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2200);
+      }
+    }
   };
   const [f, setF] = useState({ name: "", email: "", subject: "", phone: "", message: "", _gotcha: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -2696,25 +2717,26 @@ function Contact() {
             transition={{ duration: 0.6, ease: EASE, delay: 0.26 }}
             className="flex flex-col gap-3 md:sticky md:top-28"
           >
-            <Magnetic href={`mailto:${email}`} variant="primary">
+            <a href={`mailto:${email}`} className="warm-btn primary w-full justify-center">
               <Mail size={16} /> {lang === "id" ? "Email Saya" : "Email Me"}
-            </Magnetic>
+            </a>
             <button
+              type="button"
               onClick={copyEmail}
               aria-live="polite"
-              className="warm-btn ghost inline-flex items-center gap-2 justify-center"
+              className="warm-btn ghost w-full justify-center gap-2"
             >
               {copied ? <Check size={16} /> : <Copy size={16} />}
               {copied ? (lang === "id" ? "Tersalin!" : "Copied!") : email}
             </button>
-            <Magnetic href="/cv.pdf" variant="ghost">
+            <a href="/cv.pdf" className="warm-btn ghost w-full justify-center">
               {t.downloadCv} <Download size={16} />
-            </Magnetic>
+            </a>
             <a
               href="https://github.com/supyan1403"
               target="_blank"
               rel="noreferrer"
-              className="warm-btn ghost justify-center"
+              className="warm-btn ghost w-full justify-center"
               style={{ boxShadow: `0 4px 16px rgba(28,25,23,0.08)` } as React.CSSProperties}
             >
               GitHub ↗
