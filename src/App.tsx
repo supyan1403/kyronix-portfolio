@@ -1326,25 +1326,25 @@ function Hero({ ready }: { ready: boolean }) {
 function Profile() {
   const { lang } = useLang();
   const t = dict[lang].profile;
+  const isId = lang === "id";
   return (
     <section id="profile" className="relative overflow-x-clip bg-transparent py-14 sm:py-20">
       <div className="mx-auto max-w-[1120px] px-[5vw]">
-        <div className="grid gap-6 md:grid-cols-12 md:gap-8">
+        <div className="grid gap-8 md:grid-cols-12 md:gap-10">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
             transition={{ duration: 0.7, ease: EASE }}
-            className="warm-card relative flex flex-col gap-5 p-6 md:col-span-7 md:p-8"
+            className="flex flex-col gap-5 md:col-span-7"
           >
             <Eyebrow index="" label={t.eyebrow} />
             <h2 className="font-display text-[clamp(2rem,5.2vw,3.2rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink">{t.title}</h2>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <p className="font-sans text-lg font-bold tracking-[0.04em] text-ink">{t.name}</p>
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-terracotta">{t.role}</p>
-              <p className="max-w-[52ch] font-sans text-[15px] leading-relaxed text-muted">{t.bio}</p>
             </div>
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="flex flex-wrap gap-3 pt-3">
               <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t.ctaPrimary} <Mail size={16} /></Magnetic>
               <Magnetic href="/cv.pdf" variant="ghost">{t.ctaSecondary} <Download size={16} /></Magnetic>
             </div>
@@ -1354,30 +1354,23 @@ function Profile() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
             transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
-            className="warm-card flex flex-col gap-4 p-6 md:col-span-5 md:p-8"
+            className="flex flex-col md:col-span-5 md:border-l md:border-border/40 md:pl-8"
           >
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-cream-deep font-mono text-xs font-black text-ink">SS</span>
-              <div>
-                <p className="font-sans text-sm font-bold text-ink">Supyan Sauri</p>
-                <p className="font-mono text-[11px] uppercase tracking-widest text-muted">KYRONIX • Systems over Syntax</p>
+            <div className="divide-y divide-border/10 border-y border-border/10">
+              <div className="py-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Asal" : "Based"}</p>
+                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Tasikmalaya, Jawa Barat, Indonesia" : "Tasikmalaya, West Java, Indonesia"}</p>
+              </div>
+              <div className="py-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Fokus" : "Focus"}</p>
+                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">Data Engineering · Data Science · Data Analytics</p>
+              </div>
+              <div className="py-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Pendekatan" : "Approach"}</p>
+                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Riset berbasis pemodelan untuk memahami persoalan secara terstruktur." : "Modeling-based research to understand problems structurally."}</p>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3 pt-2">
-              <div className="rounded-xl border border-border/40 bg-cream px-3 py-3 text-center">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-muted">Fokus</p>
-                <p className="mt-1 font-sans text-sm font-bold text-ink">Data • Analitik • Riset</p>
-              </div>
-              <div className="rounded-xl border border-border/40 bg-cream px-3 py-3 text-center">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-muted">Lokasi</p>
-                <p className="mt-1 font-sans text-sm font-bold text-ink">Tasikmalaya</p>
-              </div>
-              <div className="rounded-xl border border-border/40 bg-cream px-3 py-3 text-center">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-muted">Status</p>
-                <p className="mt-1 inline-flex items-center justify-center gap-1 font-sans text-sm font-bold text-terracotta"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> Open</p>
-              </div>
-            </div>
-            <p className="font-mono text-[11px] leading-relaxed text-muted">Terbuka untuk kolaborasi riset dan pengembangan berbasis data. Model yang rapi, hasil yang bisa dipakai.</p>
+            <p className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> {isId ? "Terbuka untuk kolaborasi riset" : "Open to research collaboration"}</p>
           </motion.div>
         </div>
       </div>
