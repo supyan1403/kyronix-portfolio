@@ -13,12 +13,12 @@ function ghHeaders(): HeadersInit {
 }
 
 const FALLBACK_LANGS: LangStat[] = [
-  { lang: "TypeScript", count: 38, pct: 38 },
-  { lang: "JavaScript", count: 24, pct: 24 },
-  { lang: "CSS", count: 14, pct: 14 },
-  { lang: "HTML", count: 12, pct: 12 },
-  { lang: "Python", count: 7, pct: 7 },
-  { lang: "Lainnya", count: 5, pct: 5 },
+  { lang: "JavaScript", count: 2109093, pct: 56 },
+  { lang: "PHP", count: 552264, pct: 15 },
+  { lang: "Python", count: 529577, pct: 14 },
+  { lang: "CSS", count: 267984, pct: 7 },
+  { lang: "TypeScript", count: 231114, pct: 6 },
+  { lang: "HTML", count: 23571, pct: 1 },
 ];
 const LANG_ICON_SRC: Record<string, string> = {
   javascript: "/icons/javascript.svg",
@@ -33,7 +33,7 @@ function langIconSrc(lang: string): string | null {
   return LANG_ICON_SRC[k] ?? null;
 }
 
-const LANGS_CACHE_KEY = "kyronix:langs:v2";
+const LANGS_CACHE_KEY = "kyronix:langs:v3";
 const LANGS_TTL_MS = 60 * 60 * 1000;
 function readLangsCache(): LangStat[] | null {
   try {
@@ -573,8 +573,6 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         const r = await fetchWithTimeout(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`, { headers: ghHeaders() }, 4500);
         if (!r.ok) throw new Error(`${r.status}`);
         const repos: { name: string; languages_url: string; language: string | null }[] = await r.json();
-        // tanpa token: jangan 30x languages_url (bikin 403 + lambat) — pakai field language dari /repos
-        const hasTok = !!((import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim());
         let sorted: LangStat[];
         // pakai bytes asli biar 25% rata hilang — JS 56% sesuai live: kulinara+project_bps_tasik JS 2.1MB
         // tanpa token tetap pakai languages_url (4 repo ringan, tidak bikin 403), hanya fallback ke count jika gagal
@@ -604,16 +602,8 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
             .sort((a, b) => b.pct - a.pct)
             .slice(0, 6);
         } else {
-          const c = new Map<string, number>();
-          repos.forEach((repo) => {
-            const l = repo.language || (isEn ? "Other" : "Lainnya");
-            if (l) c.set(l, (c.get(l) || 0) + 1);
-          });
-          const t = Array.from(c.values()).reduce((a, b) => a + b, 0) || 1;
-          sorted = Array.from(c.entries())
-            .map(([lang, count]) => ({ lang, count, pct: Math.round((count / t) * 100) }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 6);
+          // jangan fallback count repo 1-1 (jadi 25% rata) — pakai bytes fallback jujur
+          sorted = [...FALLBACK_LANGS].sort((a, b) => b.pct - a.pct);
         }
         if (sorted.length) {
           const s = sorted.reduce((a, b) => a + b.pct, 0);
