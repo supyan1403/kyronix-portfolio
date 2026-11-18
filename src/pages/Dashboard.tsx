@@ -816,9 +816,9 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
             <span className="hidden items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-muted sm:inline-flex">
               <span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> {t.update}
             </span>
-            <div className="flex items-center gap-1 border border-border/10 bg-surface p-1">
-              <button onClick={() => setLang("id")} className={`px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-widest ${!isEn ? "bg-ink text-white" : "text-muted hover:text-ink"}`}>ID</button>
-              <button onClick={() => setLang("en")} className={`px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-widest ${isEn ? "bg-ink text-white" : "text-muted hover:text-ink"}`}>EN</button>
+            <div className="inline-flex rounded-xl border border-white/15 bg-surface p-1 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+              <button onClick={() => setLang("id")} aria-pressed={!isEn} className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${!isEn ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}>ID</button>
+              <button onClick={() => setLang("en")} aria-pressed={isEn} className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${isEn ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}>EN</button>
             </div>
           </div>
         </div>
