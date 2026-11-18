@@ -1444,25 +1444,39 @@ function Stack() {
   const { scrollYProgress: flatProgress } = useScroll({ target: flatRef, offset: ["start end", "end start"] });
   const openingGridY = useTransform(openingProgress, [0, 1], [22, -22]);
   const openingTitleY = useTransform(openingProgress, [0, 1], [14, -14]);
+  const stackInView = useInView(openingRef, { amount: 0.35, margin: "0px 0px -12% 0px" });
   const flatX = useTransform(flatProgress, [0, 1], [-12, 12]);
   const flatXRev = useTransform(flatProgress, [0, 1], [10, -10]);
   return (
     <section id="stack" className="relative bg-transparent overflow-x-clip">
-      {/* Opening — full 100dvh text-only EPIC */}
+      {/* Opening — full 100dvh text-only EPIC — enter+exit 1 blok */}
       <section ref={openingRef} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]">
         <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
         <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[420px] w-[420px] bg-terracotta/10 blur-[60px] will-change-transform max-sm:hidden" style={{ y: openingTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto max-w-[1120px] text-center">
-          <motion.div style={{ y: openingTitleY } as unknown as Record<string, unknown>} initial={{ opacity: 0 } as unknown as Record<string, unknown>} whileInView={{ opacity: 1 } as unknown as Record<string, unknown>} viewport={{ amount: 0.35, margin: "0px 0px -12% 0px" }} transition={{ duration: 0.7, ease: EASE }} className="will-change-transform">
+          <motion.div
+            style={{ y: openingTitleY } as unknown as Record<string, unknown>}
+            initial={{ opacity: 0 } as unknown as Record<string, unknown>}
+            animate={stackInView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="will-change-transform"
+          >
             <Eyebrow index="" label={t.stackEyebrow} />
             <SplitReveal
               key={t.stackTitle}
+              play={stackInView}
               text={t.stackTitle}
               className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
             />
-            <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: WARM.muted }}>
+            <motion.p
+              initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
+              animate={stackInView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)}
+              transition={{ duration: 0.6, ease: EASE, delay: stackInView ? 0.22 : 0 }}
+              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base"
+              style={{ color: WARM.muted }}
+            >
               {(t as unknown as { stackSubtitle: string }).stackSubtitle}
-            </p>
+            </motion.p>
           </motion.div>
         </div>
       </section>
@@ -1583,20 +1597,34 @@ function ProjectsOpening() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
   const titleY = useTransform(scrollYProgress, [0, 1], [14, -16]);
+  const inView = useInView(ref, { amount: 0.35, margin: "0px 0px -12% 0px" });
   return (
     <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-visible bg-transparent px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
       <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] -bottom-[8%] h-[640px] w-[900px] bg-sage/10 blur-[90px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
-        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} initial={{ opacity: 0 } as unknown as Record<string, unknown>} whileInView={{ opacity: 1 } as unknown as Record<string, unknown>} viewport={{ amount: 0.35, margin: "0px 0px -12% 0px" }} transition={{ duration: 0.7, ease: EASE }} className="will-change-transform">
+        <motion.div
+          style={{ y: titleY } as unknown as Record<string, unknown>}
+          initial={{ opacity: 0 } as unknown as Record<string, unknown>}
+          animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="will-change-transform"
+        >
           <Eyebrow index="" label={t.projectsEyebrow} />
           <SplitReveal
             key={t.projectsTitle}
+            play={inView}
             text={t.projectsTitle}
             className="mx-auto font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
           />
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: WARM.muted }}>
+          <motion.p
+            initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
+            animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)}
+            transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.22 : 0 }}
+            className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base"
+            style={{ color: WARM.muted }}
+          >
             {(t as unknown as { projectsSubtitle: string }).projectsSubtitle}
-          </p>
+          </motion.p>
         </motion.div>
       </div>
     </section>
@@ -2338,16 +2366,29 @@ function ExperienceOpening() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
   const titleY = useTransform(scrollYProgress, [0, 1], [14, -16]);
+  const inView = useInView(ref, { amount: 0.35, margin: "0px 0px -12% 0px" });
   return (
     <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-visible px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
       <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] -top-[8%] h-[640px] w-[900px] bg-terracotta/10 blur-[90px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto max-w-[1120px] text-center">
-        <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} initial={{ opacity: 0 } as unknown as Record<string, unknown>} whileInView={{ opacity: 1 } as unknown as Record<string, unknown>} viewport={{ amount: 0.35, margin: "0px 0px -12% 0px" }} transition={{ duration: 0.7, ease: EASE }} className="will-change-transform">
+        <motion.div
+          style={{ y: titleY } as unknown as Record<string, unknown>}
+          initial={{ opacity: 0 } as unknown as Record<string, unknown>}
+          animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="will-change-transform"
+        >
           <Eyebrow index="" label={t.experience.eyebrow} />
-          <SplitReveal key={t.experience.title} text={t.experience.title} className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]" />
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: WARM.muted }}>
+          <SplitReveal key={t.experience.title} play={inView} text={t.experience.title} className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]" />
+          <motion.p
+            initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
+            animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)}
+            transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.22 : 0 }}
+            className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base"
+            style={{ color: WARM.muted }}
+          >
             {(t.experience as unknown as { subtitle: string }).subtitle}
-          </p>
+          </motion.p>
         </motion.div>
       </div>
     </section>
@@ -2451,23 +2492,32 @@ function Lab() {
   const { scrollYProgress: openingProgress } = useScroll({ target: openingRef, offset: ["start end", "end start"] });
   const labGridY = useTransform(openingProgress, [0, 1], [22, -22]);
   const labTitleY = useTransform(openingProgress, [0, 1], [14, -14]);
+  const labInView = useInView(openingRef, { amount: 0.35, margin: "0px 0px -12% 0px" });
   return (
     <div id="lab" className="relative bg-transparent overflow-x-clip">
-      {/* Opening — full 100dvh EPIC */}
+      {/* Opening — full 100dvh EPIC — enter+exit 1 blok */}
       <section ref={openingRef} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-4 sm:px-[5vw] py-[12vh]">
         <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: labGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
         <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] top-[16%] h-[420px] w-[520px] bg-sage/10 blur-[60px] max-sm:hidden" style={{ y: labTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto w-full max-w-[1120px] min-w-0 text-center">
-          <motion.div style={{ y: labTitleY } as unknown as Record<string, unknown>} initial={{ opacity: 0 } as unknown as Record<string, unknown>} whileInView={{ opacity: 1 } as unknown as Record<string, unknown>} viewport={{ amount: 0.35, margin: "0px 0px -12% 0px" }} transition={{ duration: 0.7, ease: EASE }} className="will-change-transform">
+          <motion.div
+            style={{ y: labTitleY } as unknown as Record<string, unknown>}
+            initial={{ opacity: 0 } as unknown as Record<string, unknown>}
+            animate={labInView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="will-change-transform"
+          >
             <Eyebrow index="" label={t.labEyebrow} />
-            <SplitReveal
-              key={t.labTitle}
-              text={t.labTitle}
-              className="mx-auto max-w-3xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
-            />
-            <p className="mx-auto mt-6 max-w-2xl leading-relaxed" style={{ color: WARM.muted }}>
+            <SplitReveal key={t.labTitle} play={labInView} text={t.labTitle} className="mx-auto max-w-3xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink" />
+            <motion.p
+              initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
+              animate={labInView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)}
+              transition={{ duration: 0.6, ease: EASE, delay: labInView ? 0.22 : 0 }}
+              className="mx-auto mt-6 max-w-2xl leading-relaxed"
+              style={{ color: WARM.muted }}
+            >
               {t.labDesc}
-            </p>
+            </motion.p>
           </motion.div>
         </div>
       </section>
