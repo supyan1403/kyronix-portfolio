@@ -387,7 +387,7 @@ function ContributionHeatmap({
         ) : null}
       </div>
 
-      <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3">
+      <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "320px" } as React.CSSProperties}>
         <div className="hidden md:block">
           <div className="flex gap-[3px]">
             <span className="w-[28px] shrink-0" />
@@ -424,7 +424,7 @@ function ContributionHeatmap({
                         key={day.iso}
                         title={tip}
                         aria-label={tip}
-                        className="h-[11px] w-full rounded-[2px] border transition-colors hover:border-terracotta/80"
+                        className="h-[11px] w-full rounded-[2px] border"
                         style={{ background: bg, borderColor: border } as React.CSSProperties}
                       />
                     );
@@ -468,7 +468,7 @@ function ContributionHeatmap({
                           key={day.iso}
                           title={tip}
                           aria-label={tip}
-                          className="h-[11px] w-[11px] shrink-0 rounded-[2px] border transition-colors hover:border-terracotta/80"
+                          className="h-[11px] w-[11px] shrink-0 rounded-[2px] border"
                           style={{ background: bg, borderColor: border } as React.CSSProperties}
                         />
                       );
@@ -673,6 +673,11 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEn, fallbackCommit, errRepo, errAct, heatmapYear]);
 
+  useEffect(() => {
+    // heatmap baru mount ~53×7 cells — kasih info ke Lenis biar ukur tinggi lagi
+    requestAnimationFrame(() => lenisInstance?.resize());
+  }, [heatmap]);
+
   return { langs, commits, heatmap, loading, err, langErr, refresh: fetchAll };
 }
 
@@ -857,14 +862,8 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
             <div className="mt-5 space-y-3">
               {langs && langs.length ? (
-                langs.map((l, i) => (
-                  <motion.div
-                    key={l.lang}
-                    initial={{ opacity: 0, x: -8 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ amount: 0.3 }}
-                    transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}
-                  >
+                langs.map((l) => (
+                  <div key={l.lang}>
                     <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest">
                       {(() => { const ic = langIconSrc(l.lang); return (
                       <span className="inline-flex items-center gap-2 font-semibold text-ink">
@@ -875,15 +874,12 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
                       <span className="text-muted">{l.pct} {t.percent}</span>
                     </div>
                     <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-cream-deep">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${l.pct}%` }}
-                        viewport={{ amount: 0.3 }}
-                        transition={{ duration: 0.9, ease: EASE, delay: 0.2 + i * 0.06 }}
+                      <div
+                        style={{ width: `${l.pct}%` } as React.CSSProperties}
                         className="h-full rounded-full bg-gradient-to-r from-[#B85E2E] to-[#E07A5F]"
                       />
                     </div>
-                  </motion.div>
+                  </div>
                 ))
               ) : (
                 <p className="font-mono text-xs text-muted">{t.noLang}</p>

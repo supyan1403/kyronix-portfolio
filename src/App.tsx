@@ -172,8 +172,17 @@ function scrollToId(id: string) {
 }
 
 /* ---------- Smooth scroll (Lenis) — desktop smooth, HP native biar ga sendat ---------- */
-function useLenis() {
+function useLenis(enabled = true) {
   useEffect(() => {
+    if (!enabled) {
+      if (lenisInstance) {
+        lenisInstance.destroy();
+        lenisInstance = null;
+      }
+      document.documentElement.classList.remove("lenis", "lenis-smooth");
+      try { delete (window as unknown as Record<string, unknown>).__lenis; } catch { (window as unknown as Record<string, unknown>).__lenis = null; }
+      return;
+    }
     const isCoarse = window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches;
     // HP: jangan hijack touch — pakai scroll native Chrome (compositor thread, fling 120hz mulus)
     // Lenis tetap hidup untuk scrollToId(programmatic) tapi smoothTouch OFF
@@ -186,6 +195,7 @@ function useLenis() {
         touchMultiplier: 1,
       });
       lenisInstance = lenis;
+      (window as unknown as Record<string, unknown>).__lenis = lenis;
       let raf = 0;
       const loop = (t: number) => {
         lenis.raf(t);
@@ -196,6 +206,7 @@ function useLenis() {
         cancelAnimationFrame(raf);
         lenis.destroy();
         lenisInstance = null;
+        try { delete (window as unknown as Record<string, unknown>).__lenis; } catch { (window as unknown as Record<string, unknown>).__lenis = null; }
       };
     }
     const dm = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
@@ -210,6 +221,7 @@ function useLenis() {
       easing: (t: number) => 1 - Math.pow(1 - t, 2.8),
     });
     lenisInstance = lenis;
+    (window as unknown as Record<string,unknown>).__lenis = lenis;
     let raf = 0;
     const loop = (t: number) => {
       lenis.raf(t);
@@ -220,8 +232,9 @@ function useLenis() {
       cancelAnimationFrame(raf);
       lenis.destroy();
       lenisInstance = null;
+      try { delete (window as unknown as Record<string,unknown>).__lenis; } catch { (window as unknown as Record<string,unknown>).__lenis = null; }
     };
-  }, []);
+  }, [enabled]);
 }
 
 /* ---------- Micro-interactions ---------- */
@@ -2882,12 +2895,15 @@ function App() {
   });
   const [lang, setLang] = useState<Lang>("id");
   const [route, setRoute] = useState(() => (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/"));
-  useLenis();
+  const isDashboard = route === "/dashboard";
+  useLenis(!isDashboard);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
-  // dashboard scroll ringan: Lenis tetap jalan tapi sinkron ulang tinggi konten (jangan stop — nanti kekunci)
+  // dashboard pakai scroll native — jangan hijack Lenis (destroy, bukan stop yang bikin kekunci)
+  // ringan: resize setelah mount balik ke "/"
   useEffect(() => {
-    if (route === "/dashboard") requestAnimationFrame(() => lenisInstance?.resize());
-  }, [route]);
+    if (isDashboard) document.documentElement.classList.remove("lenis", "lenis-smooth");
+    else requestAnimationFrame(() => lenisInstance?.resize());
+  }, [isDashboard]);
   useEffect(() => {
     const onPop = () => setRoute(window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/");
     window.addEventListener("popstate", onPop);
@@ -2911,11 +2927,11 @@ function App() {
           onBack={() => {
             window.history.pushState({}, "", "/");
             setRoute("/");
+            // Lenis baru mount setelah isDashboard=false — pakai native scrollTo sekarang, Lenis akan sync di resize
+            window.scrollTo(0, 0);
             requestAnimationFrame(() => {
-              if (lenisInstance) {
-                lenisInstance.scrollTo(0, { immediate: true });
-                lenisInstance.resize();
-              } else window.scrollTo(0, 0);
+              window.scrollTo(0, 0);
+              lenisInstance?.resize();
             });
           }}
         />
