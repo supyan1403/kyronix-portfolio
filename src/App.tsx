@@ -1419,14 +1419,11 @@ function Profile() {
             <div className="grid gap-3 sm:grid-cols-2">
               <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.54 : 0.04 }} className="warm-card flex flex-col p-4">
                 <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><Compass size={12} strokeWidth={1.9} /> {isId ? "PENDEKATAN" : "APPROACH"}</p>
-                <p className="mt-2 flex-1 font-sans text-[12px] leading-relaxed text-muted">{isId ? rows[2].v : rows[2].vEn}</p>
-                <div className="mt-3 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.1em] text-muted"><span>{isId ? "Process Decomposition" : "Process Decomposition"}</span><span className="text-ink font-bold">100%</span></div>
-                <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-border/20"><div className="h-full w-full bg-terracotta" /></div>
+                <p className="mt-2 font-sans text-[12px] leading-relaxed text-muted">{isId ? rows[2].v : rows[2].vEn}</p>
               </motion.div>
               <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.62 : 0.04 }} className="warm-card flex flex-col p-4">
                 <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><Lightbulb size={12} strokeWidth={1.9} /> {isId ? "EKSPLORASI" : "EXPLORATION"}</p>
-                <p className="mt-2 flex-1 font-sans text-[12px] leading-relaxed text-muted">{isId ? rows[3].v : rows[3].vEn}</p>
-                <div className="mt-3 border-t border-border/10 pt-2 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">NG CYCLE</div>
+                <p className="mt-2 font-sans text-[12px] leading-relaxed text-muted">{isId ? rows[3].v : rows[3].vEn}</p>
               </motion.div>
             </div>
           </div>
