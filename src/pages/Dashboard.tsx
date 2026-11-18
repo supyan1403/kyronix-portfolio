@@ -793,7 +793,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   // handleBack hanya fallback jika onBack tidak ada (dashboard dipakai tanpa App route)
 
   return (
-    <div ref={embedRef} className="relative mt-8 overflow-hidden border border-border/10 bg-cream-deep/20">
+    <div ref={embedRef} className="relative overflow-hidden">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.6]"
