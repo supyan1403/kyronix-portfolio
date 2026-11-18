@@ -25,7 +25,7 @@ const tDict = {
     streak: "Rekam Jejak Harian",
     jam: "KONTRIBUSI",
     hari: "HARI",
-    totalHint: "akumulasi 90 hari terakhir — sesuai API publik GitHub",
+    totalHint: "akumulasi 30 hari terakhir — sesuai API publik GitHub",
     liveTicker: "hari ini",
     todayEmpty: "istirahat hari ini",
     todayActive: "ada aktivitas hari ini",
@@ -41,7 +41,7 @@ const tDict = {
     loadingActivity: "Memuat aktivitas",
     noActivity: "Belum ada aktivitas terbaru",
     fallbackCommit: "memperbarui repositori",
-    heatContrib: "kontribusi dalam 90 hari terakhir",
+    heatContrib: "kontribusi dalam 30 hari terakhir",
     less: "Kurang",
     more: "Banyak",
     fokusHarian: "Fokus Harian",
@@ -76,7 +76,7 @@ const tDict = {
     streak: "Daily Streak",
     jam: "CONTRIBUTIONS",
     hari: "DAYS",
-    totalHint: "accumulated last 90 days — from GitHub public API",
+    totalHint: "accumulated last 30 days — from GitHub public API",
     liveTicker: "today",
     todayEmpty: "rest today",
     todayActive: "active today",
@@ -92,7 +92,7 @@ const tDict = {
     loadingActivity: "Loading activity",
     noActivity: "No recent activity",
     fallbackCommit: "updating repository",
-    heatContrib: "contributions in the last 90 days",
+    heatContrib: "contributions in the last 30 days",
     less: "Less",
     more: "More",
     fokusHarian: "Daily Focus",
@@ -118,26 +118,29 @@ const tDict = {
   },
 } as const;
 
-function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date()) {
-  // GitHub: 53 weeks x 7 days, weeks start Mon
+function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(), daysWindow = 30) {
   const end = new Date(today);
   end.setHours(0, 0, 0, 0);
-  // start 52 weeks ago Mondays: 53*7-1 = 370 days span
-  const start = new Date(end);
-  start.setDate(end.getDate() - 364);
-  // align start to Monday
-  const day = start.getDay(); // 0 Sun
-  const diff = (day + 6) % 7; // days since Mon
-  start.setDate(start.getDate() - diff);
+  const startExact = new Date(end);
+  startExact.setDate(end.getDate() - (daysWindow - 1));
+  // align start to Monday before startExact
+  const start = new Date(startExact);
+  const startDiff = (start.getDay() + 6) % 7;
+  start.setDate(start.getDate() - startDiff);
+  // align end to Sunday after end (biar grid penuh)
+  const endAligned = new Date(end);
+  const endDay = end.getDay();
+  const toSunday = (7 - ((endDay + 6) % 7) - 1);
+  endAligned.setDate(end.getDate() + toSunday);
   const weeks: HeatWeek[] = [];
-  let total = 0;
+  let totalWindow = 0;
   const cur = new Date(start);
-  for (let w = 0; w < 53; w++) {
+  while (cur <= endAligned) {
     const week: HeatWeek = [];
     for (let d = 0; d < 7; d++) {
       const iso = cur.toISOString().slice(0, 10);
       const cnt = countMap.get(iso) ?? 0;
-      total += cnt;
+      if (cur >= startExact && cur <= end) totalWindow += cnt;
       week.push({
         date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
         iso,
@@ -147,9 +150,7 @@ function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(
     }
     weeks.push(week);
   }
-  // clamp to not exceed today (last week may have future days)
-  // future days count 0 already
-  return { weeks, total };
+  return { weeks, total: totalWindow };
 }
 
 function mockHeatmap(today = new Date()) {
@@ -230,19 +231,21 @@ function ContributionHeatmap({
     return labels;
   }, [weeks, isEn]);
 
-  // distinct 3 commits for footer under heatmap
+  // 3 commit terbaru distinct per pesan (bukan per repo) — biar tidak duplikat KYRONIX-PORTFOLIO
   const distinctCommits = useMemo(() => {
     if (!commits) return [];
     const seen = new Set<string>();
     const out: CommitItem[] = [];
     for (const c of commits) {
-      const key = c.repo + "|" + c.message.slice(0, 40);
+      const key = c.message.slice(0, 60).trim();
       if (!seen.has(key)) {
-        seen.add(c.repo);
+        seen.add(key);
         out.push(c);
         if (out.length >= 3) break;
       }
     }
+    // kalau semua pesan sama (fallback), cukup tampil 1
+    if (out.length > 1 && out.every((x) => x.message === out[0].message)) return out.slice(0, 1);
     return out;
   }, [commits]);
 
@@ -254,8 +257,8 @@ function ContributionHeatmap({
         </p>
       </div>
 
-      <div className="mt-3 overflow-x-auto hide-scrollbar border border-border/10 bg-cream-deep/40 p-3">
-        <div className="min-w-[760px]">
+      <div className="mt-3 overflow-x-auto hide-scrollbar border border-border/10 bg-cream-deep/40 p-3 sm:overflow-visible">
+        <div className={weeks.length <= 6 ? "w-full" : "min-w-[760px]"}>
           {/* month row */}
           <div className="flex gap-[3px] pl-[28px] font-mono text-[10px] leading-none text-muted">
             {weeks.map((_, idx) => {
@@ -430,15 +433,15 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
       }
       if (dayMap.size === 0) {
-        setHeatmap(buildHeatmapFromCounts(dayMap, new Date()));
+        setHeatmap(buildHeatmapFromCounts(dayMap, new Date(), 30));
       } else {
-        setHeatmap(buildHeatmapFromCounts(dayMap, new Date()));
+        setHeatmap(buildHeatmapFromCounts(dayMap, new Date(), 30));
       }
 
       setErr(null);
     } catch (e) {
       setErr(e instanceof Error ? e.message : errGeneric);
-      if (!heatmap) setHeatmap(buildHeatmapFromCounts(new Map(), new Date()));
+      if (!heatmap) setHeatmap(buildHeatmapFromCounts(new Map(), new Date(), 30));
     } finally {
       setLoading(false);
     }
