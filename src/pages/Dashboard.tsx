@@ -855,7 +855,6 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
                   {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
                   <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
                 </p>
-                <p className="mt-1 font-mono text-[11px] text-muted">{t.totalHint}</p>
               </div>
               <span className="flex h-10 w-10 items-center justify-center border border-terracotta/20 bg-cream-deep text-terracotta">
                 <Clock size={18} />
