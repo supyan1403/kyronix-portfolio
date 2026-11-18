@@ -977,6 +977,7 @@ const dict = {
       ctaPrimary: "Hubungi Saya",
       ctaSecondary: "Jelajahi Hasil",
       tagline: "DARI IDE KE INFRA.",
+      desc: "Menjelajahi dunia pengembangan perangkat lunak sebagai seorang vibe coder yang mengandalkan pemanfaatan perangkat modern secara optimal. Melalui eksplorasi aktif dan pemodelan sistem yang terstruktur, cara saya mewujudkan berbagai gagasan kreatif menjadi sistem berbasis web yang fungsional tanpa batas konvensional.",
     },
     profile: {
       eyebrow: "DI BALIK KYRONIX",
@@ -1071,6 +1072,7 @@ const dict = {
       ctaPrimary: "Contact Me",
       ctaSecondary: "Explore Builds",
       tagline: "FROM IDEA TO INFRA.",
+      desc: "Exploring the world of software development as a vibe coder who relies on the optimal use of modern tools. Through active exploration and structured system modeling, the way I bring various creative ideas to life as functional web based systems without conventional limits.",
     },
     profile: {
       eyebrow: "BEHIND KYRONIX",
@@ -1315,6 +1317,9 @@ function Hero({ ready }: { ready: boolean }) {
         </motion.div>
         <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none" style={{ y: taglineY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
           {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
+        </motion.p>
+        <motion.p className="mx-auto max-w-[58ch] text-balance font-sans text-[13.5px] leading-[1.7] text-muted sm:text-[14.5px]" style={{ y: taglineY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.82 }}>
+          {(t2.hero as unknown as { desc: string }).desc}
         </motion.p>
         <motion.div style={{ y: ctaY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, ease: EASE, delay: 0.92 }} className="flex w-auto flex-wrap items-center justify-center gap-3 pt-2">
           <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t2.hero.ctaPrimary} <ArrowDownRight size={18} /></Magnetic>
