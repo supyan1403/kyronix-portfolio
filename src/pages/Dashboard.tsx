@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from "react";
-import { motion, useInView } from "motion/react";
+import { motion, useInView, useScroll, useTransform } from "motion/react";
 import { Cpu, Database, BarChart3, Clock, Flame, Activity } from "lucide-react";
 import { SiGithub } from "react-icons/si";
 import { useLang } from "../langCtx";
@@ -730,6 +730,16 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   const embedRef = useRef<HTMLDivElement>(null);
   const embedInView = useInView(embedRef as unknown as React.RefObject<Element>, { amount: 0.05 });
   const shouldFetch = !lazy || embedInView;
+  const { scrollYProgress: dashProgress } = useScroll({ target: embedRef as unknown as React.RefObject<Element>, offset: ["start end", "end start"] });
+  const dashHeadY = useTransform(dashProgress, [0, 1], [16, -16]);
+  const dashC1Y = useTransform(dashProgress, [0, 1], [18, -14]);
+  const dashC2Y = useTransform(dashProgress, [0, 1], [22, -18]);
+  const dashC3Y = useTransform(dashProgress, [0, 1], [26, -22]);
+  const dashLangY = useTransform(dashProgress, [0, 1], [14, -14]);
+  const dashHeatY = useTransform(dashProgress, [0, 1], [12, -12]);
+  const dashBot1Y = useTransform(dashProgress, [0, 1], [16, -12]);
+  const dashBot2Y = useTransform(dashProgress, [0, 1], [20, -16]);
+  const dashBot3Y = useTransform(dashProgress, [0, 1], [24, -20]);
   const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear, shouldFetch);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
@@ -795,7 +805,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   return (
     <div ref={embedRef} className="relative">
 
-        <div className="text-center">
+        <motion.div style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="text-center will-change-transform">
           <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
             <span className="inline-flex h-3 w-3 items-center justify-center text-terracotta/60">
               <Cpu size={14} />
@@ -808,10 +818,10 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted">
             {t.desc}
           </p>
-        </div>
+        </motion.div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="warm-card flex min-h-[118px] flex-col justify-between p-5">
+          <motion.div style={{ y: dashC1Y } as unknown as Record<string, unknown>} className="warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
             <p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">
               {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
@@ -820,8 +830,8 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
               <Clock size={12} className="text-terracotta" /> {isEn ? (heatmapYear === "last" ? "last year" : String(heatmapYear)) : (heatmapYear === "last" ? "1 tahun terakhir" : String(heatmapYear))}
             </span>
-          </div>
-          <div className={`warm-card flex min-h-[118px] flex-col justify-between p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
+          </motion.div>
+          <motion.div style={{ y: dashC2Y } as unknown as Record<string, unknown>} className={`warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform ${todayCount === 0 ? "opacity-90" : ""}`}>
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p>
             <p className={`mt-2 font-display text-2xl font-extrabold ${todayCount === 0 ? "text-muted" : "text-ink"}`}>
               {todayCount}
@@ -830,8 +840,8 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             <span className={`mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest ${todayCount === 0 ? "text-muted" : "text-terracotta"}`}>
               <Activity size={12} className={todayCount === 0 ? "text-muted" : "text-terracotta"} /> {todayCount === 0 ? t.todayEmpty : t.todayActive}
             </span>
-          </div>
-          <div className="warm-card flex min-h-[118px] flex-col justify-between p-5">
+          </motion.div>
+          <motion.div style={{ y: dashC3Y } as unknown as Record<string, unknown>} className="warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
             <p className="mt-2 font-display text-2xl font-extrabold text-ink">
               {streakReal}
@@ -840,10 +850,10 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
               <Flame size={12} className="text-terracotta" /> {t.beruntun}
             </span>
-          </div>
+          </motion.div>
         </div>
 
-        <section className="mt-6 warm-card p-6">
+        <motion.section style={{ y: dashLangY } as unknown as Record<string, unknown>} className="mt-6 warm-card p-6 will-change-transform">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
             <div className="mt-5 space-y-3">
               {langs && langs.length ? (
@@ -880,9 +890,9 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             >
               {t.viewGithub} <SiGithub size={14} />
             </a>
-          </section>
+          </motion.section>
 
-        <section className="mt-6 warm-card p-6">
+        <motion.section style={{ y: dashHeatY } as unknown as Record<string, unknown>} className="mt-6 warm-card p-6 will-change-transform">
           <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
           {heatmap ? (
             <ContributionHeatmap
@@ -897,10 +907,10 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           ) : (
             <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
           )}
-        </section>
+        </motion.section>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <div className="warm-card p-5">
+          <motion.div style={{ y: dashBot1Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
               <BarChart3 size={14} /> {t.fokusHarian}
             </div>
@@ -913,8 +923,8 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               ))}
             </div>
             <p className="mt-2 font-mono text-[11px] text-muted">{t.fokusHint}</p>
-          </div>
-          <div className="warm-card p-5">
+          </motion.div>
+          <motion.div style={{ y: dashBot2Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
               <Database size={14} /> {t.pemodelan}
             </div>
@@ -922,8 +932,8 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               {t.pemodelanDesc}
             </p>
             <p className="mt-2 font-mono text-[11px] text-muted">{t.pemodelanHint}</p>
-          </div>
-          <div className="warm-card p-5">
+          </motion.div>
+          <motion.div style={{ y: dashBot3Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
               <Cpu size={14} /> {t.eksplorasi}
             </div>
@@ -931,7 +941,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               {t.eksplorasiDesc}
             </p>
             <p className="mt-2 font-mono text-[11px] text-muted">{t.eksplorasiHint}</p>
-          </div>
+          </motion.div>
         </div>
 
         <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-widest text-muted">
