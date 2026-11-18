@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Lang, LangCtx, useLang } from "./langCtx";
 import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import Lenis from "lenis";
@@ -157,10 +158,6 @@ function useInViewActive() {
   }, []);
   return { ref, active } as const;
 }
-
-type Lang = "id" | "en";
-const LangCtx = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang: "id", setLang: () => {} });
-const useLang = () => useContext(LangCtx);
 
 function scrollToId(id: string) {
   const el = document.getElementById(id);
