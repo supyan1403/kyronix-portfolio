@@ -755,6 +755,8 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   const { scrollYProgress: dashProgress } = useScroll({ target: embedRef as unknown as React.RefObject<Element>, offset: ["start end", "end start"] });
   const rawHead = useTransform(dashProgress, [0, 1], [10, -10]);
   const dashHeadY = useSpring(rawHead, { stiffness: 140, damping: 30, mass: 0.3 });
+  const openingGridY = useTransform(dashProgress, [0, 1], [22, -22]);
+  const openingTitleY = useTransform(dashProgress, [0, 1], [14, -14]);
   const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear, shouldFetch);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
@@ -843,18 +845,24 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   return (
     <div ref={embedRef} className="relative">
 
-        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE }} style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="text-center will-change-transform">
-          <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
-            <ChipPixel size={14} className="text-terracotta/60" />
-            {t.eyebrow}
-          </p>
-          <h2 className="mx-auto mt-4 max-w-4xl font-display text-[clamp(3rem,9vw,5.5rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink">
-            {t.title}
-          </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
-            {t.desc}
-          </p>
-        </motion.div>
+        {/* Opening full 100dvh kayak EKOSISTEM KERJA — parallax Grid+Title LAB biar epic */}
+        <section data-dash-opening className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-[5vw] py-[12vh] text-center">
+          <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: openingTitleY, opacity: 0.045 } as unknown as Record<string, unknown>}>LAB</motion.div>
+          <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+          <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[420px] w-[420px] bg-terracotta/10 blur-[60px] will-change-transform max-sm:hidden" style={{ y: openingTitleY } as unknown as Record<string, unknown>} />
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE }} style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="relative will-change-transform">
+            <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
+              <ChipPixel size={14} className="text-terracotta/60" />
+              {t.eyebrow}
+            </p>
+            <h2 className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink">
+              {t.title}
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
+              {t.desc}
+            </p>
+          </motion.div>
+        </section>
 
         <div className="mt-8 grid gap-4 grid-cols-3">
           <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.04 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
