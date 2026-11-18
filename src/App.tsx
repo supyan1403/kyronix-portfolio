@@ -1397,9 +1397,6 @@ function Profile() {
                 <Layers size={12} strokeWidth={1.9} /> {isId ? "FOKUS SISTEM" : "SYSTEM FOCUS"}
               </p>
               <p className="mt-2 font-sans text-[12px] font-bold uppercase leading-[1.45] tracking-[0.02em] text-ink">{(isId ? rows[1].v : rows[1].vEn).toUpperCase()}</p>
-              <div className="mt-3 border-t border-border/10 pt-3 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
-                <span className="truncate">{isId ? "PENGELOLAAN DATA · PEMODELAN SISTEM · PENGEMBANGAN WEB" : "DATA MANAGEMENT · SYSTEM MODELING · WEB DEVELOPMENT"}</span>
-              </div>
               <div className="mt-3 grid grid-cols-3 gap-2">
                 <div className="border border-border/15 bg-cream/5 px-2 py-2.5 text-center">
                   <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">{isId ? "Pengelolaan Data" : "Data Management"}</p>
