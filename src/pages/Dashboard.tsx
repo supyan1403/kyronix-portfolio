@@ -153,6 +153,11 @@ const tDict = {
   },
 } as const;
 
+function buildHeatmapForCurrentYear(countMap: Map<string, number>, levelMap?: Map<string, GHLevel>) {
+  const y = new Date().getFullYear();
+  return buildHeatmapForYear(countMap, y, levelMap);
+}
+
 function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(), levelMap?: Map<string, GHLevel>) {
   // GitHub parity: 53w window ending today, aligned Mon–Sun (same as github.com)
   const end = new Date(today);
@@ -476,15 +481,14 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
       const tok = (import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim();
       if (tok) {
         try {
-          const from = heatmapYear === "last" ? undefined : `${heatmapYear}-01-01T00:00:00Z`;
-          const to = heatmapYear === "last" ? undefined : `${heatmapYear}-12-31T23:59:59Z`;
-          const q = heatmapYear === "last"
-            ? `query{user(login:"${USER}"){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`
-            : `query($from:DateTime!,$to:DateTime!){user(login:"${USER}"){contributionsCollection(from:$from,to:$to){contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`;
+          const cy = new Date().getFullYear();
+          const from = heatmapYear === "last" ? `${cy}-01-01T00:00:00Z` : `${heatmapYear}-01-01T00:00:00Z`;
+          const to = heatmapYear === "last" ? `${cy}-12-31T23:59:59Z` : `${heatmapYear}-12-31T23:59:59Z`;
+          const q = `query($from:DateTime!,$to:DateTime!){user(login:"${USER}"){contributionsCollection(from:$from,to:$to){contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`;
           const gr = await fetchWithTimeout("https://api.github.com/graphql", {
             method: "POST",
             headers: { Authorization: `Bearer ${tok}`, "Content-Type": "application/json" },
-            body: JSON.stringify(heatmapYear === "last" ? { query: q } : { query: q, variables: { from, to } }),
+            body: JSON.stringify({ query: q, variables: { from, to } }),
           }, 5500);
           if (gr.ok) {
             const j = await gr.json() as { data?: { user?: { contributionsCollection?: { contributionCalendar?: { totalContributions: number; weeks: { contributionDays: { date: string; contributionCount: number; contributionLevel: string }[] }[] } } } }; errors?: unknown };
@@ -497,7 +501,8 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         } catch {}
       }
       try {
-        const yParam = heatmapYear === "last" ? "last" : String(heatmapYear);
+        const cy2 = new Date().getFullYear();
+        const yParam = heatmapYear === "last" ? String(cy2) : String(heatmapYear);
         const gr = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=${yParam}`);
         if (!gr.ok) throw new Error("gh");
         const gj: { contributions: { date: string; count: number; level?: number | string }[] } = await gr.json();
@@ -509,7 +514,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
           if (lv !== undefined && lv !== null) lMap.set(c.date, normalizeGHLevel(lv));
         });
         const withLevel = lMap.size > 0;
-        setHeatmap(heatmapYear === "last" ? buildHeatmapFromCounts(cMap, new Date(), withLevel ? lMap : undefined) : buildHeatmapForYear(cMap, heatmapYear as number, withLevel ? lMap : undefined));
+        setHeatmap(heatmapYear === "last" ? buildHeatmapForCurrentYear(cMap, withLevel ? lMap : undefined) : buildHeatmapForYear(cMap, heatmapYear as number, withLevel ? lMap : undefined));
       } catch {
         // fallback heatmap dari events kalau proxy down — akan diisi di bawah
       }
@@ -628,7 +633,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
             const c = e.payload.commits?.length ?? e.payload.size ?? 1;
             dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
           }
-          return heatmapYear === "last" ? buildHeatmapFromCounts(dayMap, new Date()) : buildHeatmapForYear(dayMap, heatmapYear as number);
+          return heatmapYear === "last" ? buildHeatmapForCurrentYear(dayMap) : buildHeatmapForYear(dayMap, heatmapYear as number);
         });
       } catch {
         setErr(null);
