@@ -36,8 +36,6 @@ const tDict = {
     todayActive: "ada aktivitas hari ini",
     beruntun: "beruntun",
     bahasaTitle: "Bahasa Paling Sering Digunakan",
-    bahasaLive: "live dari GitHub",
-    bahasaDesc: "Persentase jujur dari agregasi bahasa repositori aktif",
     loadingLang: "Memuat data bahasa",
     noLang: "Belum ada data bahasa",
     percent: "persen",
@@ -87,8 +85,6 @@ const tDict = {
     todayActive: "active today",
     beruntun: "in a row",
     bahasaTitle: "Most Used Languages",
-    bahasaLive: "live from GitHub",
-    bahasaDesc: "Honest percentage aggregated from active repository languages",
     loadingLang: "Loading language data",
     noLang: "No language data yet",
     percent: "percent",
@@ -665,13 +661,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
 
         <div className="mt-6 grid gap-6 md:grid-cols-12 md:items-start">
           <section className="warm-card p-6 md:col-span-5">
-            <div className="flex items-center justify-between">
-              <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
-              <span className="font-mono text-[11px] tracking-widest text-muted">{t.bahasaLive}</span>
-            </div>
-            <p className="mt-1 font-mono text-[11px] leading-relaxed text-muted">
-              {t.bahasaDesc}
-            </p>
+            <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
             <div className="mt-5 space-y-3">
               {loading && !langs ? (
                 <p className="font-mono text-xs text-muted">{t.loadingLang}</p>
