@@ -310,17 +310,54 @@ function ContributionHeatmap({
   onYearChange?: (y: number | "last") => void;
   availableYears?: number[];
 }) {
-  // C — mini 30 hari: dari 371 kotak -> 30 kotak, no scroll, no month/day labels
-  const flatSorted = useMemo(() => weeks.flat().filter((d) => d.iso).sort((a, b) => a.iso.localeCompare(b.iso)), [weeks]);
-  const days30 = useMemo(() => flatSorted.slice(-30), [flatSorted]);
-  const sum30 = useMemo(() => days30.reduce((a, d) => a + d.count, 0), [days30]);
+  // C — mini kalender 30 hari: 30 kotak dalam grid kalender 7 kolom + badge tanggal
+  const levelMap = useMemo(() => {
+    const m = new Map<string, HeatDay>();
+    for (const w of weeks) for (const d of w) if (d.iso) m.set(d.iso, d);
+    return m;
+  }, [weeks]);
+  const { days30, sum30 } = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let end = new Date(today);
+    if (yearLabel && yearLabel !== "last") {
+      const y = Number(yearLabel);
+      if (!Number.isNaN(y)) {
+        const yearEnd = new Date(y, 11, 31);
+        yearEnd.setHours(0, 0, 0, 0);
+        end = yearEnd > today ? today : yearEnd;
+      }
+    }
+    const list: HeatDay[] = [];
+    let sum = 0;
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(end);
+      d.setDate(end.getDate() - i);
+      const iso = toLocalISO(d);
+      const hit = levelMap.get(iso);
+      const item: HeatDay = hit ?? { date: d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }), iso, count: 0, level: "NONE" as GHLevel };
+      list.push(item);
+      sum += item.count;
+    }
+    return { days30: list, sum30: sum };
+  }, [levelMap, yearLabel]);
   const active30 = useMemo(() => days30.filter((d) => d.count > 0).length, [days30]);
+  // weekday header Senin..Minggu / Mon..Sun
+  const weekdayLabels = useMemo(() => {
+    const base = isEn ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] : ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+    return base;
+  }, [isEn]);
+  const leadingEmpty = useMemo(() => {
+    if (!days30[0]?.iso) return 0;
+    const d = new Date(days30[0].iso + "T12:00:00");
+    return (d.getDay() + 6) % 7; // Mon=0
+  }, [days30]);
 
   const LEVELS = useMemo(() => ["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"] as GHLevel[], []);
   const [phase, setPhase] = useState<"shuffle"|"reveal">("shuffle");
   const [shuffleSeed, setShuffleSeed] = useState(0);
   const lastSigRef = useRef<string>("");
-  const sig = useMemo(() => `${yearLabel}|${days30.length}|${days30[0]?.iso}|${days30[days30.length - 1]?.iso}|${sum30}`, [yearLabel, days30, sum30]);
+  const sig = useMemo(() => `${yearLabel}|${days30[0]?.iso}|${days30[days30.length - 1]?.iso}|${sum30}`, [yearLabel, days30, sum30]);
   useEffect(() => {
     if (sig === lastSigRef.current) return;
     lastSigRef.current = sig;
@@ -366,21 +403,36 @@ function ContributionHeatmap({
       </div>
 
       <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "260px" } as React.CSSProperties}>
-        {/* C mini — 30 kotak saja, no horizontal scroll */}
-        <div className="grid grid-cols-10 gap-[5px] sm:grid-cols-15 sm:gap-[6px]">
+        {/* C kalender — 7 kolom, badge tanggal, tetap ringan 30 kotak */}
+        <div className="grid grid-cols-7 gap-1.5">
+          {weekdayLabels.map((w) => (
+            <span key={w} className="text-center font-mono text-[10px] font-semibold uppercase tracking-widest text-muted/70">
+              {w}
+            </span>
+          ))}
+        </div>
+        <div className="mt-2 grid grid-cols-7 gap-1.5">
+          {Array.from({ length: leadingEmpty }).map((_, i) => (
+            <span key={`empty-lead-${i}`} className="h-[42px] sm:h-[48px]" />
+          ))}
           {days30.map((day, i) => {
             const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
             const rnd = shuffled[i] ?? "NONE";
             const show = phase === "shuffle" ? rnd : day.level;
             const delay = phase === "reveal" ? `${i * 18}ms` : "0ms";
+            const dayNum = Number(day.iso.slice(8, 10));
+            const isToday = day.iso === toLocalISO(new Date());
             return (
               <span
                 key={day.iso + "-" + i}
                 title={tip}
                 aria-label={tip}
-                className={`h-[14px] w-full rounded-[3px] border sm:h-[16px] hm-${show} hm-cell`}
+                className={`relative flex h-[42px] flex-col items-center justify-center rounded-[6px] border p-1 sm:h-[48px] hm-${show} hm-cell ${isToday ? "ring-1 ring-terracotta/60" : ""}`}
                 style={{ transitionDelay: delay } as React.CSSProperties}
-              />
+              >
+                <span className="font-mono text-[10px] font-bold leading-none text-ink/90">{dayNum}</span>
+                <span className="mt-0.5 font-mono text-[9px] leading-none text-ink/60">{day.count > 0 ? `${day.count}` : "·"}</span>
+              </span>
             );
           })}
         </div>
