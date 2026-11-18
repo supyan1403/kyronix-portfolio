@@ -171,13 +171,11 @@ function levelMeta(count: number) {
 function ContributionHeatmap({
   weeks,
   total,
-  commits,
   isEn,
   t,
 }: {
   weeks: HeatWeek[];
   total: number;
-  commits: CommitItem[] | null;
   isEn: boolean;
   t: (typeof tDict)["id"];
 }) {
@@ -200,24 +198,6 @@ function ContributionHeatmap({
     });
     return labels;
   }, [weeks, isEn]);
-
-  // 3 commit terbaru distinct per pesan (bukan per repo) — biar tidak duplikat KYRONIX-PORTFOLIO
-  const distinctCommits = useMemo(() => {
-    if (!commits) return [];
-    const seen = new Set<string>();
-    const out: CommitItem[] = [];
-    for (const c of commits) {
-      const key = c.message.slice(0, 60).trim();
-      if (!seen.has(key)) {
-        seen.add(key);
-        out.push(c);
-        if (out.length >= 3) break;
-      }
-    }
-    // kalau semua pesan sama (fallback), cukup tampil 1
-    if (out.length > 1 && out.every((x) => x.message === out[0].message)) return out.slice(0, 1);
-    return out;
-  }, [commits]);
 
   return (
     <div className="mt-4">
@@ -289,32 +269,6 @@ function ContributionHeatmap({
         </div>
       </div>
 
-      {/* distinct commits mini footer */}
-      {distinctCommits.length ? (
-        <div className="mt-4 space-y-2">
-          {distinctCommits.map((c, i) => (
-            <a
-              key={c.repo + i}
-              href={c.url}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-between gap-3 border border-border/10 bg-cream px-3 py-2 hover:border-terracotta/30"
-            >
-              <span className="min-w-0">
-                <span className="block truncate font-mono text-[11px] font-bold uppercase tracking-widest text-ink">
-                  {c.repo}
-                </span>
-                <span className="mt-0.5 line-clamp-1 block font-mono text-[11px] text-muted">
-                  {c.message}
-                </span>
-              </span>
-              <span className="shrink-0 font-mono text-[10px] uppercase tracking-widest text-terracotta">
-                {c.time}
-              </span>
-            </a>
-          ))}
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -711,7 +665,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
           <section className="warm-card p-6 md:col-span-7">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
             {heatmap ? (
-              <ContributionHeatmap weeks={heatmap.weeks} total={heatmap.total} commits={commits} isEn={isEn} t={t} />
+              <ContributionHeatmap weeks={heatmap.weeks} total={heatmap.total} isEn={isEn} t={t} />
             ) : loading ? (
               <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
             ) : err ? (
