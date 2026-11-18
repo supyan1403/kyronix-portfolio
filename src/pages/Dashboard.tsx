@@ -805,7 +805,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   return (
     <div ref={embedRef} className="relative">
 
-        <motion.div style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="text-center will-change-transform">
+        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE }} style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="text-center will-change-transform">
           <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
             <span className="inline-flex h-3 w-3 items-center justify-center text-terracotta/60">
               <Cpu size={14} />
@@ -821,7 +821,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
         </motion.div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <motion.div style={{ y: dashC1Y } as unknown as Record<string, unknown>} className="warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.04 }} style={{ y: dashC1Y } as unknown as Record<string, unknown>} className="warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
             <p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">
               {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
@@ -831,7 +831,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               <Clock size={12} className="text-terracotta" /> {isEn ? (heatmapYear === "last" ? "last year" : String(heatmapYear)) : (heatmapYear === "last" ? "1 tahun terakhir" : String(heatmapYear))}
             </span>
           </motion.div>
-          <motion.div style={{ y: dashC2Y } as unknown as Record<string, unknown>} className={`warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform ${todayCount === 0 ? "opacity-90" : ""}`}>
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.12 }} style={{ y: dashC2Y } as unknown as Record<string, unknown>} className={`warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform ${todayCount === 0 ? "opacity-90" : ""}`}>
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p>
             <p className={`mt-2 font-display text-2xl font-extrabold ${todayCount === 0 ? "text-muted" : "text-ink"}`}>
               {todayCount}
@@ -841,7 +841,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               <Activity size={12} className={todayCount === 0 ? "text-muted" : "text-terracotta"} /> {todayCount === 0 ? t.todayEmpty : t.todayActive}
             </span>
           </motion.div>
-          <motion.div style={{ y: dashC3Y } as unknown as Record<string, unknown>} className="warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.2 }} style={{ y: dashC3Y } as unknown as Record<string, unknown>} className="warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
             <p className="mt-2 font-display text-2xl font-extrabold text-ink">
               {streakReal}
@@ -853,7 +853,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           </motion.div>
         </div>
 
-        <motion.section style={{ y: dashLangY } as unknown as Record<string, unknown>} className="mt-6 warm-card p-6 will-change-transform">
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} style={{ y: dashLangY } as unknown as Record<string, unknown>} className="mt-6 warm-card p-6 will-change-transform">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
             <div className="mt-5 space-y-3">
               {langs && langs.length ? (
@@ -892,7 +892,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             </a>
           </motion.section>
 
-        <motion.section style={{ y: dashHeatY } as unknown as Record<string, unknown>} className="mt-6 warm-card p-6 will-change-transform">
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} style={{ y: dashHeatY } as unknown as Record<string, unknown>} className="mt-6 warm-card p-6 will-change-transform">
           <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
           {heatmap ? (
             <ContributionHeatmap
@@ -910,7 +910,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
         </motion.section>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <motion.div style={{ y: dashBot1Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.04 }} style={{ y: dashBot1Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
               <BarChart3 size={14} /> {t.fokusHarian}
             </div>
@@ -924,7 +924,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             </div>
             <p className="mt-2 font-mono text-[11px] text-muted">{t.fokusHint}</p>
           </motion.div>
-          <motion.div style={{ y: dashBot2Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.1 }} style={{ y: dashBot2Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
               <Database size={14} /> {t.pemodelan}
             </div>
@@ -933,7 +933,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             </p>
             <p className="mt-2 font-mono text-[11px] text-muted">{t.pemodelanHint}</p>
           </motion.div>
-          <motion.div style={{ y: dashBot3Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.16 }} style={{ y: dashBot3Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
               <Cpu size={14} /> {t.eksplorasi}
             </div>
