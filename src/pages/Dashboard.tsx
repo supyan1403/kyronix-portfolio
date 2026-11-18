@@ -275,10 +275,10 @@ function ContributionHeatmap({
           {total.toLocaleString(isEn ? "en-US" : "id-ID")} {yearLabel ? `${yearLabel === "last" ? t.heatContrib : isEn ? `contributions in ${yearLabel}` : `kontribusi di ${yearLabel}`}` : t.heatContrib}
         </p>
         {onYearChange && availableYears ? (
-          <span className="inline-flex gap-1 border border-border/10 bg-surface p-1">
+          <span className="inline-flex gap-1 border border-terracotta/20 bg-transparent p-1">
             <button
               onClick={() => onYearChange("last" as unknown as number)}
-              className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${yearLabel === "last" ? "bg-ink text-white" : "text-muted hover:text-ink"}`}
+              className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${yearLabel === "last" ? "bg-terracotta text-white" : "text-muted hover:text-ink"}`}
             >
               {isEn ? "Last year" : "Setahun"}
             </button>
@@ -286,7 +286,7 @@ function ContributionHeatmap({
               <button
                 key={y}
                 onClick={() => onYearChange(y)}
-                className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${String(y) === String(yearLabel) ? "bg-ink text-white" : "text-muted hover:text-ink"}`}
+                className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${String(y) === String(yearLabel) ? "bg-terracotta text-white" : "text-muted hover:text-ink"}`}
               >
                 {y}
               </button>
