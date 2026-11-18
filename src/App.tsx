@@ -1426,10 +1426,7 @@ function Profile() {
               <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.62 : 0.04 }} className="warm-card flex flex-col p-4">
                 <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><Lightbulb size={12} strokeWidth={1.9} /> {isId ? "EKSPLORASI" : "EXPLORATION"}</p>
                 <p className="mt-2 flex-1 font-sans text-[12px] leading-relaxed text-muted">{isId ? rows[3].v : rows[3].vEn}</p>
-                <div className="mt-3 flex items-center justify-between gap-2">
-                  <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted">NG CYCLE</span>
-                  <span className="inline-flex items-center gap-1 border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.1em] text-emerald-400"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400 live-dot" /> {isId ? "BERKELANJUTAN" : "CONTINUOUS"}</span>
-                </div>
+                <div className="mt-3 border-t border-border/10 pt-2 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">NG CYCLE</div>
               </motion.div>
             </div>
           </div>
