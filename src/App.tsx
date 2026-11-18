@@ -29,7 +29,11 @@ import {
   FolderOpen,
   GraduationCap,
   Mail,
+  MapPin,
   Radio,
+  Layers,
+  Lightbulb,
+  Compass,
   Wrench,
   X,
 } from "lucide-react";
@@ -1337,10 +1341,10 @@ function Profile() {
   const ghostY = useTransform(scrollYProgress, [0, 1], [18, -18]);
   const inView = useInView(ref, { amount: 0.35, margin: "0px 0px -12% 0px" });
   const rows = [
-    { k: "Asal", kEn: "Based", v: "Tasikmalaya, Jawa Barat, Indonesia", vEn: "Tasikmalaya, Jawa Barat, Indonesia" },
-    { k: "Fokus", kEn: "Focus", v: "Pengelolaan Data, Pemodelan Sistem, & Pengembangan Aplikasi Web", vEn: "Data Management, System Modeling & Web App Development" },
-    { k: "Pendekatan", kEn: "Approach", v: "Selalu antusias belajar berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional", vEn: "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions" },
-    { k: "Eksplorasi", kEn: "Exploration", v: "Aktif memperluas wawasan melalui pengembangan aplikasi web secara mandiri dan berkelanjutan", vEn: "Actively expanding horizons through independent and continuous web app development" },
+    { k: "Asal", kEn: "Based", Icon: MapPin, v: "Tasikmalaya, Jawa Barat, Indonesia", vEn: "Tasikmalaya, West Java, Indonesia" },
+    { k: "Fokus", kEn: "Focus", Icon: Layers, v: "Pengelolaan Data, Pemodelan Sistem, & Pengembangan Aplikasi Web", vEn: "Data Management, System Modeling & Web App Development" },
+    { k: "Pendekatan", kEn: "Approach", Icon: Compass, v: "Selalu antusias belajar berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional", vEn: "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions" },
+    { k: "Eksplorasi", kEn: "Exploration", Icon: Lightbulb, v: "Aktif memperluas wawasan melalui pengembangan aplikasi web secara mandiri dan berkelanjutan", vEn: "Actively expanding horizons through independent and continuous web app development" },
   ];
   const goDashboard = () => {
     window.history.pushState({}, "", "/dashboard");
@@ -1368,20 +1372,16 @@ function Profile() {
               <Magnetic href="#contact" variant="ghost" onClick={() => scrollToId("contact")}>{t.ctaSecondary} <Mail size={16} /></Magnetic>
             </motion.div>
           </motion.div>
-          <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col will-change-transform md:col-span-5 md:pl-2">
-            <div className="warm-card overflow-hidden p-0">
-              <div className="flex items-center gap-2 border-b border-border/10 bg-cream-deep px-4 py-2.5">
-                <span className="flex gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-terracotta" /><i className="h-2.5 w-2.5 rounded-full bg-[#fbbf24]" /><i className="h-2.5 w-2.5 rounded-full bg-[#8FA89B]" /></span>
-                <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">kyronix.lab — readout</span>
-              </div>
-              <div className="divide-y divide-border/10">
-                {rows.map((r, idx) => (
-                  <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.36 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="px-5 py-4">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta" style={{ textShadow: "0 0 12px rgba(196,113,60,0.18)" } as React.CSSProperties}>{isId ? r.k : r.kEn}</p>
-                    <p className="mt-1.5 font-sans text-[14px] font-semibold leading-relaxed text-ink">{isId ? r.v : r.vEn}</p>
-                  </motion.div>
-                ))}
-              </div>
+          <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col gap-2 will-change-transform md:col-span-5 md:pl-2">
+            <div className="space-y-3 md:space-y-3.5">
+              {rows.map((r, idx) => (
+                <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.36 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="flex items-start gap-3">
+                  <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center border border-terracotta/25 bg-surface/50 text-terracotta">
+                    <r.Icon size={14} />
+                  </span>
+                  <p className="font-sans text-[14px] font-semibold leading-relaxed text-ink">{isId ? r.v : r.vEn}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
