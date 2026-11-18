@@ -801,8 +801,8 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
           backgroundSize: "32px 32px",
         } as React.CSSProperties}
       />
-      <div aria-hidden className="pointer-events-none absolute -right-[12%] top-[10%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px]" />
-      <div aria-hidden className="pointer-events-none absolute -left-[10%] bottom-[6%] h-[420px] w-[420px] bg-sage/10 blur-[70px]" />
+      <div aria-hidden className="pointer-events-none absolute -right-[12%] top-[10%] h-[520px] w-[520px] bg-terracotta/10 blur-[56px] md:blur-[80px]" />
+      <div aria-hidden className="pointer-events-none absolute -left-[10%] bottom-[6%] h-[420px] w-[420px] bg-sage/10 blur-[56px] md:blur-[70px]" />
 
       <div className="relative mx-auto max-w-[1120px] px-[5vw] pb-10 pt-8">
         <div className="flex items-center justify-between gap-4">

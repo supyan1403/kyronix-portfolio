@@ -2878,6 +2878,10 @@ function App() {
   const [route, setRoute] = useState(() => (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/"));
   useLenis();
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+  // dashboard scroll ringan: Lenis tetap jalan tapi sinkron ulang tinggi konten (jangan stop — nanti kekunci)
+  useEffect(() => {
+    if (route === "/dashboard") requestAnimationFrame(() => lenisInstance?.resize());
+  }, [route]);
   useEffect(() => {
     const onPop = () => setRoute(window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/");
     window.addEventListener("popstate", onPop);
