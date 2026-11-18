@@ -1372,11 +1372,11 @@ function Profile() {
             </motion.div>
           </motion.div>
           <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col will-change-transform md:col-span-5 md:pl-2">
-            {/* Caps + container kecil tiap baris — 1 baris = 1 box */}
-            <div className="space-y-3">
+            {/* C Accent Rail — border-l terracotta, no box, architects vibe */}
+            <div className="space-y-4">
               {rows.map((r, idx) => (
-                <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.36 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="flex items-center gap-3 border border-border/15 bg-surface/70 px-3.5 py-3">
-                  <span className="inline-flex h-[30px] w-[30px] shrink-0 items-center justify-center border border-terracotta/35 bg-terracotta/10 text-terracotta">
+                <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.36 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="flex items-start gap-3 border-l-2 border-terracotta bg-surface/30 py-1 pl-3.5 pr-2">
+                  <span className="mt-0.5 inline-flex shrink-0 items-center justify-center text-terracotta">
                     <r.Icon size={14} strokeWidth={1.9} />
                   </span>
                   <p className="font-sans text-[13px] font-semibold uppercase leading-[1.55] tracking-[0.03em] text-ink">{(isId ? r.v : r.vEn).toUpperCase()}</p>
