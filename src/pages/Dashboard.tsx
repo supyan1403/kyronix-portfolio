@@ -153,11 +153,6 @@ const tDict = {
   },
 } as const;
 
-function buildHeatmapForCurrentYear(countMap: Map<string, number>, levelMap?: Map<string, GHLevel>) {
-  const y = new Date().getFullYear();
-  return buildHeatmapForYear(countMap, y, levelMap);
-}
-
 function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(), levelMap?: Map<string, GHLevel>) {
   // GitHub parity: 53w window ending today, aligned Mon–Sun (same as github.com)
   const end = new Date(today);
@@ -207,28 +202,35 @@ function buildHeatmapForYear(countMap: Map<string, number>, year: number, levelM
   startExact.setHours(0, 0, 0, 0);
   const endExact = new Date(year, 11, 31);
   endExact.setHours(0, 0, 0, 0);
-  const start = new Date(startExact);
-  start.setDate(startExact.getDate() - ((startExact.getDay() + 6) % 7));
-  const endAligned = new Date(endExact);
-  endAligned.setDate(endExact.getDate() + (6 - ((endExact.getDay() + 6) % 7)));
+  const leading = (startExact.getDay() + 6) % 7;
+  const trailing = 6 - ((endExact.getDay() + 6) % 7);
+  const totalDays = Math.round((endExact.getTime() - startExact.getTime()) / 86400000) + 1;
+  const totalCells = leading + totalDays + trailing;
+  const weekCount = Math.ceil(totalCells / 7);
   const weeks: HeatWeek[] = [];
   let total = 0;
-  const cur = new Date(start);
-  while (cur <= endAligned) {
+  for (let wi = 0; wi < weekCount; wi++) {
     const week: HeatWeek = [];
     for (let d = 0; d < 7; d++) {
+      const cellIndex = wi * 7 + d;
+      const dayOffset = cellIndex - leading;
+      if (dayOffset < 0 || dayOffset >= totalDays) {
+        week.push({ date: "", iso: "", count: 0, level: "NONE" });
+        continue;
+      }
+      const cur = new Date(startExact);
+      cur.setDate(startExact.getDate() + dayOffset);
       const iso = cur.toISOString().slice(0, 10);
       const cnt = countMap.get(iso) ?? 0;
       const lvl = levelMap?.get(iso);
       const level: GHLevel = (lvl as GHLevel) ?? (cnt === 0 ? "NONE" : cnt <= 2 ? "FIRST_QUARTILE" : cnt <= 5 ? "SECOND_QUARTILE" : cnt <= 9 ? "THIRD_QUARTILE" : "FOURTH_QUARTILE");
-      if (cur >= startExact && cur <= endExact) total += cnt;
+      total += cnt;
       week.push({
         date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
         iso,
         count: cnt,
         level,
       });
-      cur.setDate(cur.getDate() + 1);
     }
     weeks.push(week);
   }
@@ -380,19 +382,20 @@ function ContributionHeatmap({
             </div>
           </div>
           <div className="mt-1.5 flex gap-[3px]">
-            <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] leading-[11px] text-muted">
-              <span className="h-[11px]">Mon</span>
-              <span className="h-[11px]"></span>
-              <span className="h-[11px]">Wed</span>
-              <span className="h-[11px]"></span>
-              <span className="h-[11px]">Fri</span>
-              <span className="h-[11px]"></span>
-              <span className="h-[11px]"></span>
+            <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] text-muted" style={{ lineHeight: "11px" } as React.CSSProperties}>
+              <span className="h-[11px] leading-[11px]">Mon</span>
+              <span className="h-[11px] leading-[11px]"></span>
+              <span className="h-[11px] leading-[11px]">Wed</span>
+              <span className="h-[11px] leading-[11px]"></span>
+              <span className="h-[11px] leading-[11px]">Fri</span>
+              <span className="h-[11px] leading-[11px]"></span>
+              <span className="h-[11px] leading-[11px]"></span>
             </div>
             <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
               {weeks.map((week, wi) => (
                 <div key={wi} className="flex flex-col gap-[3px]">
-                  {week.map((day) => {
+                  {week.map((day, di) => {
+                    if (!day.iso) return <span key={`${wi}-${di}`} className="aspect-square w-full rounded-[2px] border border-transparent bg-transparent" />;
                     const { bg, border } = levelMetaByLevel(day.level);
                     const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
                     return (
@@ -400,7 +403,7 @@ function ContributionHeatmap({
                         key={day.iso}
                         title={tip}
                         aria-label={tip}
-                        className="aspect-square w-full rounded-[2px] border transition-colors hover:border-terracotta/80"
+                        className="h-[11px] w-full rounded-[2px] border transition-colors hover:border-terracotta/80"
                         style={{ background: bg, borderColor: border } as React.CSSProperties}
                       />
                     );
@@ -435,7 +438,8 @@ function ContributionHeatmap({
               <div className="flex gap-[3px]">
                 {weeks.map((week, wi) => (
                   <div key={wi} className="flex flex-col gap-[3px]">
-                    {week.map((day) => {
+                    {week.map((day, di) => {
+                      if (!day.iso) return <span key={`${wi}-${di}`} className="h-[11px] w-[11px] shrink-0 rounded-[2px] border border-transparent bg-transparent" />;
                       const { bg, border } = levelMetaByLevel(day.level);
                       const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
                       return (
@@ -495,14 +499,15 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
       const tok = (import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim();
       if (tok) {
         try {
-          const cy = new Date().getFullYear();
-          const from = heatmapYear === "last" ? `${cy}-01-01T00:00:00Z` : `${heatmapYear}-01-01T00:00:00Z`;
-          const to = heatmapYear === "last" ? `${cy}-12-31T23:59:59Z` : `${heatmapYear}-12-31T23:59:59Z`;
-          const q = `query($from:DateTime!,$to:DateTime!){user(login:"${USER}"){contributionsCollection(from:$from,to:$to){contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`;
+          const from = heatmapYear === "last" ? undefined : `${heatmapYear}-01-01T00:00:00Z`;
+          const to = heatmapYear === "last" ? undefined : `${heatmapYear}-12-31T23:59:59Z`;
+          const q = heatmapYear === "last"
+            ? `query{user(login:"${USER}"){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`
+            : `query($from:DateTime!,$to:DateTime!){user(login:"${USER}"){contributionsCollection(from:$from,to:$to){contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`;
           const gr = await fetchWithTimeout("https://api.github.com/graphql", {
             method: "POST",
             headers: { Authorization: `Bearer ${tok}`, "Content-Type": "application/json" },
-            body: JSON.stringify({ query: q, variables: { from, to } }),
+            body: JSON.stringify(heatmapYear === "last" ? { query: q } : { query: q, variables: { from, to } }),
           }, 5500);
           if (gr.ok) {
             const j = await gr.json() as { data?: { user?: { contributionsCollection?: { contributionCalendar?: { totalContributions: number; weeks: { contributionDays: { date: string; contributionCount: number; contributionLevel: string }[] }[] } } } }; errors?: unknown };
@@ -515,8 +520,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         } catch {}
       }
       try {
-        const cy2 = new Date().getFullYear();
-        const yParam = heatmapYear === "last" ? String(cy2) : String(heatmapYear);
+        const yParam = heatmapYear === "last" ? "last" : String(heatmapYear);
         const gr = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=${yParam}`);
         if (!gr.ok) throw new Error("gh");
         const gj: { contributions: { date: string; count: number; level?: number | string }[] } = await gr.json();
@@ -528,7 +532,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
           if (lv !== undefined && lv !== null) lMap.set(c.date, normalizeGHLevel(lv));
         });
         const withLevel = lMap.size > 0;
-        setHeatmap(heatmapYear === "last" ? buildHeatmapForCurrentYear(cMap, withLevel ? lMap : undefined) : buildHeatmapForYear(cMap, heatmapYear as number, withLevel ? lMap : undefined));
+        setHeatmap(heatmapYear === "last" ? buildHeatmapFromCounts(cMap, new Date(), withLevel ? lMap : undefined) : buildHeatmapForYear(cMap, heatmapYear as number, withLevel ? lMap : undefined));
       } catch {
         // fallback heatmap dari events kalau proxy down — akan diisi di bawah
       }
@@ -647,7 +651,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
             const c = e.payload.commits?.length ?? e.payload.size ?? 1;
             dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
           }
-          return heatmapYear === "last" ? buildHeatmapForCurrentYear(dayMap) : buildHeatmapForYear(dayMap, heatmapYear as number);
+          return heatmapYear === "last" ? buildHeatmapFromCounts(dayMap, new Date()) : buildHeatmapForYear(dayMap, heatmapYear as number);
         });
       } catch {
         setErr(null);
