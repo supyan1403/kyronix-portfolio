@@ -489,7 +489,7 @@ function Intro({ onDone }: { onDone: () => void }) {
   }, []);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {!leaving && (
         <motion.div
           className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-cream px-6"
@@ -570,7 +570,7 @@ function KPage({ onDone }: { onDone: () => void }) {
     my.set(((clientY - rect.top) / rect.height - 0.5) * 2);
   };
   return (
-    <AnimatePresence onExitComplete={handleExitComplete}>
+    <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
       {!leaving && (
         <motion.div
           className="fixed inset-0 z-[150] flex flex-col items-center justify-center overflow-hidden bg-black px-6"
@@ -2873,7 +2873,13 @@ function Contact() {
 }
 
 function App() {
-  const [phase, setPhase] = useState<"intro" | "k" | "ready">("intro");
+  const [phase, setPhase] = useState<"intro" | "k" | "ready">(() => {
+    try {
+      if (typeof window !== "undefined" && sessionStorage.getItem("kyronix:introDone") === "1") return "ready";
+    } catch {}
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard")) return "ready";
+    return "intro";
+  });
   const [lang, setLang] = useState<Lang>("id");
   const [route, setRoute] = useState(() => (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/"));
   useLenis();
@@ -2891,6 +2897,11 @@ function App() {
   useEffect(() => {
     if (route === "/dashboard" && phase !== "ready") setPhase("ready");
   }, [route, phase]);
+  useEffect(() => {
+    if (phase === "ready") {
+      try { sessionStorage.setItem("kyronix:introDone", "1"); } catch {}
+    }
+  }, [phase]);
   const bands = dict[lang].bands;
   const ready = phase === "ready";
   if (route === "/dashboard") {
@@ -2900,7 +2911,12 @@ function App() {
           onBack={() => {
             window.history.pushState({}, "", "/");
             setRoute("/");
-            window.scrollTo(0, 0);
+            requestAnimationFrame(() => {
+              if (lenisInstance) {
+                lenisInstance.scrollTo(0, { immediate: true });
+                lenisInstance.resize();
+              } else window.scrollTo(0, 0);
+            });
           }}
         />
       </LangCtx.Provider>

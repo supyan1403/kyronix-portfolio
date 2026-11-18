@@ -781,14 +781,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
     return out;
   }, [heatmap]);
 
-  const handleBack = () => {
-    if (onBack) onBack();
-    else {
-      window.history.pushState({}, "", "/");
-      window.dispatchEvent(new PopStateEvent("popstate"));
-      window.scrollTo(0, 0);
-    }
-  };
+  // handleBack hanya fallback jika onBack tidak ada (dashboard dipakai tanpa App route)
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-clip bg-cream">
@@ -805,22 +798,11 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
       <div aria-hidden className="pointer-events-none absolute -left-[10%] bottom-[6%] h-[420px] w-[420px] bg-sage/10 blur-[56px] md:blur-[70px]" />
 
       <div className="relative mx-auto max-w-[1120px] px-[5vw] pb-10 pt-8">
-        <div className="flex items-center justify-between gap-4">
-          <button
-            onClick={handleBack}
-            className="inline-flex items-center gap-2 border border-border bg-surface px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-terracotta hover:text-terracotta"
-          >
-            ← {t.back}
-          </button>
-          <div className="flex items-center gap-3">
-            <span className="hidden items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-muted sm:inline-flex">
-              <span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> {t.update}
-            </span>
-            <div className="inline-flex rounded-xl border border-white/15 bg-surface p-1 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+        <div className="flex items-center justify-end gap-4">
+          <div className="inline-flex rounded-xl border border-white/15 bg-surface p-1 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
               <button onClick={() => setLang("id")} aria-pressed={!isEn} className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${!isEn ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}>ID</button>
               <button onClick={() => setLang("en")} aria-pressed={isEn} className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${isEn ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}>EN</button>
             </div>
-          </div>
         </div>
 
         <div className="mt-8 text-center">
