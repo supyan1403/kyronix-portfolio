@@ -793,20 +793,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   // handleBack hanya fallback jika onBack tidak ada (dashboard dipakai tanpa App route)
 
   return (
-    <div ref={embedRef} className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.6]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        } as React.CSSProperties}
-      />
-      <div aria-hidden className="pointer-events-none absolute -right-[12%] top-[10%] h-[520px] w-[520px] bg-terracotta/10 blur-[56px] md:blur-[80px]" />
-      <div aria-hidden className="pointer-events-none absolute -left-[10%] bottom-[6%] h-[420px] w-[420px] bg-sage/10 blur-[56px] md:blur-[70px]" />
-
-      <div className="relative px-4 py-6 sm:px-6 sm:py-8">
+    <div ref={embedRef} className="relative">
 
         <div className="text-center">
           <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
@@ -948,7 +935,6 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
         <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-widest text-muted">
           {t.footer}
         </p>
-      </div>
     </div>
   );
 }
