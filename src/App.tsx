@@ -1033,6 +1033,7 @@ const dict = {
     backToTop: "Kembali ke atas ↑",
     downloadCv: "Unduh CV",
     bands: {
+      behindKyronix: "DI BALIK KYRONIX",
       capabilities: "KAPABILITAS",
       selectedWork: "DARI IDE JADI NYATA",
       experience: "PENGALAMAN",
@@ -1126,6 +1127,7 @@ const dict = {
     backToTop: "Back to top ↑",
     downloadCv: "Download CV",
     bands: {
+      behindKyronix: "BEHIND KYRONIX",
       capabilities: "CAPABILITIES",
       selectedWork: "SELECTED WORK",
       experience: "EXPERIENCE",
@@ -2835,6 +2837,7 @@ function App() {
       <GlowCursor />
       <Nav ready={ready} />
       <Hero ready={ready} />
+      <KineticBand text={bands.behindKyronix} />
       <Profile />
       <KineticBand text={bands.capabilities} />
       <Stack />
@@ -2842,6 +2845,7 @@ function App() {
       <Projects />
       <KineticBand text={bands.experience} />
       <Experience />
+      <KineticBand text={bands.howIBuild} />
       <Lab />
       <KineticBand text={bands.letsBuild} />
       <Contact />
