@@ -1359,12 +1359,8 @@ function Profile() {
           <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col gap-5 md:col-span-7 will-change-transform">
             <Eyebrow index="" label={t.eyebrow} />
             <SplitReveal key={t.title} play={inView} text={t.title} className="font-display text-[clamp(1.9rem,5.6vw,4.4rem)] font-extrabold leading-[0.88] tracking-[0.01em] text-ink" />
-            {/* lab status pill — no colon */}
-            <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.32 : 0.06 }} className="inline-flex w-fit items-center gap-2 border border-terracotta/20 bg-surface px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              <span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> lab aktif — siap eksplorasi — sistem berjalan
-            </motion.div>
             <div className="space-y-1.5">
-              <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.38 : 0.08 }} className="font-sans text-lg font-bold tracking-[0.04em] text-ink">{t.name}</motion.p>
+              <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.38 : 0.08 }} className="font-sans text-lg font-bold uppercase tracking-[0.04em] text-ink">{t.name.toUpperCase()}</motion.p>
               <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.44 : 0.04 }} className="font-mono text-xs uppercase tracking-[0.18em] text-terracotta">{t.role}</motion.p>
             </div>
             <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.5 : 0.02 }} className="max-w-[52ch] font-sans text-[15px] leading-relaxed text-muted">
@@ -1374,14 +1370,12 @@ function Profile() {
               <Magnetic href="/dashboard" variant="primary" onClick={goDashboard}>{(t as unknown as { ctaDashboard: string }).ctaDashboard || t.ctaPrimary} <ArrowUpRight size={16} /></Magnetic>
               <Magnetic href="#contact" variant="ghost" onClick={() => scrollToId("contact")}>{t.ctaSecondary} <Mail size={16} /></Magnetic>
             </motion.div>
-            <motion.p initial={{ opacity: 0 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.72 : 0 }} className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted/70">cara saya merawat ritme belajar yang mendalam dan menerjemahkan gagasan menjadi sistem yang rapi</motion.p>
           </motion.div>
           <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col will-change-transform md:col-span-5 md:pl-2">
             <div className="warm-card overflow-hidden p-0">
               <div className="flex items-center gap-2 border-b border-border/10 bg-cream-deep px-4 py-2.5">
                 <span className="flex gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-terracotta" /><i className="h-2.5 w-2.5 rounded-full bg-[#fbbf24]" /><i className="h-2.5 w-2.5 rounded-full bg-[#8FA89B]" /></span>
                 <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">kyronix.lab — readout</span>
-                <span className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> live</span>
               </div>
               <div className="divide-y divide-border/10">
                 {rows.map((r, idx) => (
@@ -1391,14 +1385,7 @@ function Profile() {
                   </motion.div>
                 ))}
               </div>
-              <div className="border-t border-border/10 bg-cream px-5 py-3">
-                <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> {isId ? "Terbuka untuk kolaborasi riset" : "Open to research collaboration"}</p>
-              </div>
             </div>
-            {/* micro terminal hint */}
-            <motion.div initial={{ opacity: 0 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.82 : 0 }} className="mt-3 hidden font-mono text-[10px] leading-relaxed text-muted/70 md:block">
-              <span className="text-terracotta">›</span> cara saya menjaga eksplorasi web app tetap hidup — pemantauan langsung tersedia di dashboard
-            </motion.div>
           </div>
         </div>
       </div>
