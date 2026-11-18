@@ -298,9 +298,9 @@ function ContributionHeatmap({
   total,
   isEn,
   t,
-  yearLabel,
-  onYearChange,
-  availableYears,
+  yearLabel: _yearLabel,
+  onYearChange: _onYearChange,
+  availableYears: _availableYears,
 }: {
   weeks: HeatWeek[];
   total: number;
@@ -310,54 +310,61 @@ function ContributionHeatmap({
   onYearChange?: (y: number | "last") => void;
   availableYears?: number[];
 }) {
-  // C — mini kalender 30 hari: 30 kotak dalam grid kalender 7 kolom + badge tanggal
+  // C — kalender kecil + filter BULAN LALU / BULAN INI / 1 BULAN TERAKHIR
+  type MonthFilter = "lastMonth" | "thisMonth" | "last30";
+  const [monthFilter, setMonthFilter] = useState<MonthFilter>("last30");
   const levelMap = useMemo(() => {
     const m = new Map<string, HeatDay>();
     for (const w of weeks) for (const d of w) if (d.iso) m.set(d.iso, d);
     return m;
   }, [weeks]);
-  const { days30, sum30 } = useMemo(() => {
+  const { days, sum } = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    let end = new Date(today);
-    if (yearLabel && yearLabel !== "last") {
-      const y = Number(yearLabel);
-      if (!Number.isNaN(y)) {
-        const yearEnd = new Date(y, 11, 31);
-        yearEnd.setHours(0, 0, 0, 0);
-        end = yearEnd > today ? today : yearEnd;
-      }
+    let start: Date;
+    let end: Date;
+    if (monthFilter === "thisMonth") {
+      start = new Date(today.getFullYear(), today.getMonth(), 1);
+      end = new Date(today);
+    } else if (monthFilter === "lastMonth") {
+      start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      end = new Date(today.getFullYear(), today.getMonth(), 0);
+    } else {
+      end = new Date(today);
+      start = new Date(end);
+      start.setDate(end.getDate() - 29);
     }
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
     const list: HeatDay[] = [];
-    let sum = 0;
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(end);
-      d.setDate(end.getDate() - i);
-      const iso = toLocalISO(d);
+    let s = 0;
+    const cur = new Date(start);
+    while (cur <= end) {
+      const iso = toLocalISO(cur);
       const hit = levelMap.get(iso);
-      const item: HeatDay = hit ?? { date: d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }), iso, count: 0, level: "NONE" as GHLevel };
+      const item: HeatDay = hit ?? { date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }), iso, count: 0, level: "NONE" as GHLevel };
       list.push(item);
-      sum += item.count;
+      s += item.count;
+      cur.setDate(cur.getDate() + 1);
     }
-    return { days30: list, sum30: sum };
-  }, [levelMap, yearLabel]);
-  const active30 = useMemo(() => days30.filter((d) => d.count > 0).length, [days30]);
-  // weekday header Senin..Minggu / Mon..Sun
+    return { days: list, sum: s };
+  }, [levelMap, monthFilter]);
+  const active = useMemo(() => days.filter((d) => d.count > 0).length, [days]);
   const weekdayLabels = useMemo(() => {
     const base = isEn ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] : ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
     return base;
   }, [isEn]);
   const leadingEmpty = useMemo(() => {
-    if (!days30[0]?.iso) return 0;
-    const d = new Date(days30[0].iso + "T12:00:00");
+    if (!days[0]?.iso) return 0;
+    const d = new Date(days[0].iso + "T12:00:00");
     return (d.getDay() + 6) % 7; // Mon=0
-  }, [days30]);
+  }, [days]);
 
   const LEVELS = useMemo(() => ["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"] as GHLevel[], []);
   const [phase, setPhase] = useState<"shuffle"|"reveal">("shuffle");
   const [shuffleSeed, setShuffleSeed] = useState(0);
   const lastSigRef = useRef<string>("");
-  const sig = useMemo(() => `${yearLabel}|${days30[0]?.iso}|${days30[days30.length - 1]?.iso}|${sum30}`, [yearLabel, days30, sum30]);
+  const sig = useMemo(() => `${monthFilter}|${days[0]?.iso}|${days[days.length - 1]?.iso}|${sum}`, [monthFilter, days, sum]);
   useEffect(() => {
     if (sig === lastSigRef.current) return;
     lastSigRef.current = sig;
@@ -368,54 +375,52 @@ function ContributionHeatmap({
   }, [sig]);
 
   const shuffled = useMemo(() => {
-    return days30.map((_, i) => {
+    return days.map((_, i) => {
       const n = (shuffleSeed * 9301 + i * 23311) % 5;
       return LEVELS[n];
     });
-  }, [days30, shuffleSeed, LEVELS]);
+  }, [days, shuffleSeed, LEVELS]);
+
+  const filterLabel = monthFilter === "thisMonth" ? (isEn ? "this month" : "bulan ini") : monthFilter === "lastMonth" ? (isEn ? "last month" : "bulan lalu") : (isEn ? "last 30 days" : "30 hari terakhir");
 
   return (
     <div className="mt-4">
-      <div className="flex items-center justify-between gap-3 border-b border-border/10 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
-          {sum30.toLocaleString(isEn ? "en-US" : "id-ID")} {isEn ? "contributions in last 30 days" : "kontribusi dalam 30 hari terakhir"}
-          <span className="ml-2 font-normal text-muted">· {total.toLocaleString(isEn ? "en-US" : "id-ID")} {yearLabel ? `${yearLabel === "last" ? t.heatContrib : isEn ? `contributions in ${yearLabel}` : `kontribusi di ${yearLabel}`}` : t.heatContrib}</span>
+          {sum.toLocaleString(isEn ? "en-US" : "id-ID")} {isEn ? `contributions in ${filterLabel}` : `kontribusi dalam ${filterLabel}`}
+          <span className="ml-2 hidden font-normal text-muted sm:inline">· {total.toLocaleString(isEn ? "en-US" : "id-ID")} {t.heatContrib}</span>
         </p>
-        {onYearChange && availableYears ? (
-          <span className="inline-flex gap-1 border border-terracotta/20 bg-transparent p-1">
+        <span className="inline-flex gap-1 border border-terracotta/20 bg-transparent p-1">
+          {([
+            ["lastMonth", isEn ? "Bulan lalu" : "Bulan lalu"],
+            ["thisMonth", isEn ? "Bulan ini" : "Bulan ini"],
+            ["last30", isEn ? "1 bulan terakhir" : "1 bulan terakhir"],
+          ] as const).map(([key, label]) => (
             <button
-              onClick={() => onYearChange("last" as unknown as number)}
-              className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${yearLabel === "last" ? "bg-terracotta text-white" : "text-muted hover:text-ink"}`}
+              key={key}
+              onClick={() => setMonthFilter(key as MonthFilter)}
+              className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${monthFilter === key ? "bg-terracotta text-white" : "text-muted hover:text-ink"}`}
             >
-              {isEn ? "Last year" : "Setahun"}
+              {label}
             </button>
-            {availableYears.map((y) => (
-              <button
-                key={y}
-                onClick={() => onYearChange(y)}
-                className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${String(y) === String(yearLabel) ? "bg-terracotta text-white" : "text-muted hover:text-ink"}`}
-              >
-                {y}
-              </button>
-            ))}
-          </span>
-        ) : null}
+          ))}
+        </span>
       </div>
 
-      <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "260px" } as React.CSSProperties}>
-        {/* C kalender — 7 kolom, badge tanggal, tetap ringan 30 kotak */}
-        <div className="grid grid-cols-7 gap-1.5">
+      <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "220px" } as React.CSSProperties}>
+        {/* C kalender kecil — 7 kolom, badge tanggal, kotak kecil biar ringan */}
+        <div className="grid grid-cols-7 gap-1">
           {weekdayLabels.map((w) => (
-            <span key={w} className="text-center font-mono text-[10px] font-semibold uppercase tracking-widest text-muted/70">
+            <span key={w} className="text-center font-mono text-[9px] font-semibold uppercase tracking-widest text-muted/70">
               {w}
             </span>
           ))}
         </div>
-        <div className="mt-2 grid grid-cols-7 gap-1.5">
+        <div className="mt-1.5 grid grid-cols-7 gap-1">
           {Array.from({ length: leadingEmpty }).map((_, i) => (
-            <span key={`empty-lead-${i}`} className="h-[42px] sm:h-[48px]" />
+            <span key={`empty-lead-${i}`} className="h-[30px] sm:h-[32px]" />
           ))}
-          {days30.map((day, i) => {
+          {days.map((day, i) => {
             const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
             const rnd = shuffled[i] ?? "NONE";
             const show = phase === "shuffle" ? rnd : day.level;
@@ -427,17 +432,17 @@ function ContributionHeatmap({
                 key={day.iso + "-" + i}
                 title={tip}
                 aria-label={tip}
-                className={`relative flex h-[42px] flex-col items-center justify-center rounded-[6px] border p-1 sm:h-[48px] hm-${show} hm-cell ${isToday ? "ring-1 ring-terracotta/60" : ""}`}
+                className={`relative flex h-[30px] flex-col items-center justify-center rounded-[4px] border p-0.5 sm:h-[32px] hm-${show} hm-cell ${isToday ? "ring-1 ring-terracotta/60" : ""}`}
                 style={{ transitionDelay: delay } as React.CSSProperties}
               >
-                <span className="font-mono text-[10px] font-bold leading-none text-ink/90">{dayNum}</span>
-                <span className="mt-0.5 font-mono text-[9px] leading-none text-ink/60">{day.count > 0 ? `${day.count}` : "·"}</span>
+                <span className="font-mono text-[9px] font-bold leading-none text-ink/90">{dayNum}</span>
+                <span className="mt-0.5 font-mono text-[8px] leading-none text-ink/60">{day.count > 0 ? `${day.count}` : "·"}</span>
               </span>
             );
           })}
         </div>
         <div className="mt-3 flex items-center justify-between gap-2 font-mono text-[10px] text-muted">
-          <span>{active30} {isEn ? "active days" : "hari aktif"} / 30</span>
+          <span>{active} {isEn ? "active days" : "hari aktif"} / {days.length}</span>
           <span className="inline-flex items-center gap-1.5">
             <span>{t.less}</span>
             <span className="inline-flex gap-[3px]">
