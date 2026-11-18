@@ -606,7 +606,7 @@ function KPage({ onDone }: { onDone: () => void }) {
             onTouchEnd={() => { mx.set(0); my.set(0); }}
           >
             <motion.img
-              src="/kyronix-k-page.webp"
+              src="/kyronix-k-hex.webp"
               alt="KYRONIX K"
               width={1024}
               height={1024}
@@ -619,13 +619,13 @@ function KPage({ onDone }: { onDone: () => void }) {
               animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
               transition={{ type: "spring", stiffness: 180, damping: 18, mass: 1.15, delay: 0.55 } as unknown as Record<string, unknown>}
             />
-            {/* sweep ngikut siluet K-PAGE2 tanpa BG */}
+            {/* sweep ngikut siluet K hex */}
             <motion.div
               aria-hidden
               className="pointer-events-none absolute inset-0 overflow-hidden"
               style={{
-                WebkitMaskImage: "url(/kyronix-k-page.png)",
-                maskImage: "url(/kyronix-k-page.png)",
+                WebkitMaskImage: "url(/kyronix-k-hex.webp)",
+                maskImage: "url(/kyronix-k-hex.webp)",
                 WebkitMaskSize: "contain",
                 maskSize: "contain",
                 WebkitMaskRepeat: "no-repeat",
