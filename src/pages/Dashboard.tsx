@@ -909,9 +909,9 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           </motion.div>
         </div>
 
-        {/* split — bahasa 70 / aktivitas 30 */}
-        <div className="mt-6 grid gap-6 lg:grid-cols-[7fr_3fr] lg:items-start">
-          <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card p-6">
+        {/* split — bahasa 70 / aktivitas 30 — tinggi samakan, bahasa yang stretch */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-[7fr_3fr] lg:items-stretch">
+          <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card flex flex-col p-6">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
             <div className="mt-5 space-y-3">
               {langs && langs.length ? (
@@ -944,13 +944,13 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               href={`https://github.com/${USER}?tab=repositories`}
               target="_blank"
               rel="noreferrer"
-              className="mt-5 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-terracotta hover:text-ink"
+              className="mt-auto inline-flex items-center gap-2 pt-5 font-mono text-xs font-bold uppercase tracking-widest text-terracotta hover:text-ink"
             >
               {t.viewGithub} <SiGithub size={14} />
             </a>
           </motion.section>
 
-          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} className="warm-card p-6">
+          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} className="warm-card flex flex-col p-6">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
             {heatmap ? (
               <ContributionHeatmap
