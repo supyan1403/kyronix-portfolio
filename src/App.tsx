@@ -2877,17 +2877,6 @@ function App() {
   const [lang, setLang] = useState<Lang>("id");
   const [route, setRoute] = useState(() => (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/"));
   useLenis();
-  // /dashboard = scroll native, jangan pakai Lenis (hijack + RAF + blur repaint bikin lag)
-  useEffect(() => {
-    if (route === "/dashboard") {
-      lenisInstance?.stop();
-      document.documentElement.classList.remove("lenis", "lenis-smooth");
-      lenisInstance?.resize();
-    } else {
-      lenisInstance?.start();
-      lenisInstance?.resize();
-    }
-  }, [route]);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   useEffect(() => {
     const onPop = () => setRoute(window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/");
