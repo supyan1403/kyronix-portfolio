@@ -2633,30 +2633,30 @@ function Contact() {
   };
 
   return (
-    <footer id="contact" className="relative overflow-hidden px-[5vw] pb-10 pt-[16vh] bg-transparent">
+    <footer id="contact" className="relative flex min-h-[100dvh] flex-col justify-between overflow-hidden bg-transparent px-[5vw] pb-4 max-lg:min-h-0 max-lg:pb-8 lg:py-[4vh]">
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.4]" />
       {/* grain mengganti orb duplikat Hero biar fase beda */}
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(245,239,230,0.9) 1px, transparent 0)", backgroundSize: "22px 22px" }} />
-      <div className="relative mx-auto max-w-[1120px]">
+      <div className="relative mx-auto flex w-full max-w-[1120px] flex-1 flex-col justify-center">
         <div className="text-center">
           <Eyebrow index="" label={t.contactEyebrow} />
           <SplitReveal
             key={t.contactTitle}
             text={t.contactTitle}
-            className="font-display text-[clamp(2.6rem,8.5vw,6.75rem)] font-extrabold leading-[1.08] tracking-[0.02em] text-ink"
+            className="font-display text-[clamp(2.2rem,7vw,5.2rem)] leading-[0.95] tracking-[0.02em] text-ink max-lg:text-[clamp(2.6rem,8.5vw,6.75rem)] font-extrabold"
           />
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ amount: 0.4, margin: "0px 0px -10% 0px" }}
             transition={{ duration: 0.6, ease: EASE, delay: 0.15 }}
-            className="mx-auto mt-8 max-w-lg text-lg"
+            className="mx-auto mt-3 max-w-lg text-[15px] leading-relaxed lg:mt-4 lg:text-[16px]"
             style={{ color: WARM.muted }}
           >
             {t.contactDesc}
           </motion.p>
         </div>
-        <div className="mt-10 grid gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-start">
+        <div className="mt-6 grid gap-6 md:grid-cols-[1.35fr_0.65fr] md:items-start lg:mt-7 lg:gap-7">
           <motion.form
             onSubmit={onSubmit}
             noValidate
@@ -2666,7 +2666,7 @@ function Contact() {
             transition={{ duration: 0.6, ease: EASE, delay: 0.24 }}
             className="w-full text-left"
           >
-            <div className="warm-card p-5 sm:p-6">
+            <div className="warm-card p-4 lg:p-5">
             {/* honeypot — hidden dari user, bot isi = block */}
             <input
               type="text"
@@ -2716,14 +2716,14 @@ function Contact() {
                 />
               </label>
             </div>
-            <label className="mt-3 flex flex-col gap-1.5">
+            <label className="mt-2.5 flex flex-col gap-1.5">
               <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: WARM.muted }}>{t.contactForm.message} *</span>
               <textarea
                 value={f.message}
                 onChange={(e) => setF({ ...f, message: e.target.value })}
                 required
-                rows={4}
-                className="min-h-[110px] w-full resize-y rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                rows={3}
+                className="min-h-[88px] w-full resize-y rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 max-lg:min-h-[100px]"
               />
             </label>
 
@@ -2786,7 +2786,7 @@ function Contact() {
             </a>
           </motion.div>
         </div>
-        <div className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t border-border/10 pt-6 font-mono text-xs uppercase tracking-widest" style={{ color: WARM.muted }}>
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-border/10 pt-4 font-mono text-xs uppercase tracking-widest max-lg:mt-10 max-lg:pt-6" style={{ color: WARM.muted }}>
           <p>© 2025 Supyan Sauri</p>
           <p>KYRONIX</p>
           <button onClick={() => scrollToId("top")} className="text-terracotta hover:text-ink transition-colors cursor-pointer font-mono text-xs uppercase tracking-widest">
