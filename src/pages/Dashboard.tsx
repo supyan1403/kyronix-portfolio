@@ -310,44 +310,17 @@ function ContributionHeatmap({
   onYearChange?: (y: number | "last") => void;
   availableYears?: number[];
 }) {
-  const monthLabels = useMemo(() => {
-    const labels: { label: string; col: number }[] = [];
-    let lastMonth = -1;
-    const firstValid = weeks.flat().find((d) => d.iso)?.iso;
-    const labelYear = firstValid ? new Date(firstValid).getFullYear() : new Date().getFullYear();
-    const targetYear = (() => {
-      for (const w of weeks) for (const d of w) if (d.iso) {
-        const dt = new Date(d.iso);
-        if (dt.getFullYear() === labelYear && dt.getMonth() === 0) return labelYear;
-        if (dt.getFullYear() === labelYear + 1 && dt.getMonth() === 0) return labelYear + 1;
-      }
-      return labelYear;
-    })();
-    weeks.forEach((w, idx) => {
-      const rep = w.find((d) => d.iso && new Date(d.iso).getFullYear() === targetYear) ?? w.find((d) => d.iso) ?? w[0];
-      if (!rep?.iso) return;
-      const d = new Date(rep.iso);
-      if (Number.isNaN(d.getTime())) return;
-      const m = d.getMonth();
-      if (m !== lastMonth) {
-        if (labels.length === 0 || idx - (labels[labels.length - 1]?.col ?? -10) >= 4) {
-          labels.push({
-            label: d.toLocaleString(isEn ? "en-US" : "id-ID", { month: "short" }),
-            col: idx,
-          });
-          lastMonth = m;
-        }
-      }
-    });
-    return labels;
-  }, [weeks, isEn]);
+  // C — mini 30 hari: dari 371 kotak -> 30 kotak, no scroll, no month/day labels
+  const flatSorted = useMemo(() => weeks.flat().filter((d) => d.iso).sort((a, b) => a.iso.localeCompare(b.iso)), [weeks]);
+  const days30 = useMemo(() => flatSorted.slice(-30), [flatSorted]);
+  const sum30 = useMemo(() => days30.reduce((a, d) => a + d.count, 0), [days30]);
+  const active30 = useMemo(() => days30.filter((d) => d.count > 0).length, [days30]);
 
-  // acak dulu baru nemu titik bener — SETIAP RENDER (ganti tahun + tiap fetch baru)
   const LEVELS = useMemo(() => ["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"] as GHLevel[], []);
   const [phase, setPhase] = useState<"shuffle"|"reveal">("shuffle");
   const [shuffleSeed, setShuffleSeed] = useState(0);
   const lastSigRef = useRef<string>("");
-  const sig = useMemo(() => `${yearLabel}|${weeks.length}|${weeks.flat().slice(0,3).map(d=>d.iso).join(",")}|${total}`, [yearLabel, weeks, total]);
+  const sig = useMemo(() => `${yearLabel}|${days30.length}|${days30[0]?.iso}|${days30[days30.length - 1]?.iso}|${sum30}`, [yearLabel, days30, sum30]);
   useEffect(() => {
     if (sig === lastSigRef.current) return;
     lastSigRef.current = sig;
@@ -358,20 +331,18 @@ function ContributionHeatmap({
   }, [sig]);
 
   const shuffled = useMemo(() => {
-    // random level per cell berbasis seed + index — ringan, tidak bikin object style 350
-    return weeks.map((week, wi) =>
-      week.map((_, di) => {
-        const n = (shuffleSeed * 9301 + wi * 49297 + di * 23311) % 5;
-        return LEVELS[n];
-      })
-    );
-  }, [weeks, shuffleSeed, LEVELS]);
+    return days30.map((_, i) => {
+      const n = (shuffleSeed * 9301 + i * 23311) % 5;
+      return LEVELS[n];
+    });
+  }, [days30, shuffleSeed, LEVELS]);
 
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between gap-3 border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
-          {total.toLocaleString(isEn ? "en-US" : "id-ID")} {yearLabel ? `${yearLabel === "last" ? t.heatContrib : isEn ? `contributions in ${yearLabel}` : `kontribusi di ${yearLabel}`}` : t.heatContrib}
+          {sum30.toLocaleString(isEn ? "en-US" : "id-ID")} {isEn ? "contributions in last 30 days" : "kontribusi dalam 30 hari terakhir"}
+          <span className="ml-2 font-normal text-muted">· {total.toLocaleString(isEn ? "en-US" : "id-ID")} {yearLabel ? `${yearLabel === "last" ? t.heatContrib : isEn ? `contributions in ${yearLabel}` : `kontribusi di ${yearLabel}`}` : t.heatContrib}</span>
         </p>
         {onYearChange && availableYears ? (
           <span className="inline-flex gap-1 border border-terracotta/20 bg-transparent p-1">
@@ -394,66 +365,36 @@ function ContributionHeatmap({
         ) : null}
       </div>
 
-      <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "320px" } as React.CSSProperties}>
-        {/* Opsi A: 1 papan saja (dari 742 -> 371 kotak) — scroll halus di hp & desktop */}
-        <div className="overflow-x-auto hide-scrollbar">
-          <div className="min-w-[740px]">
-            <div className="flex gap-[3px]">
-              <span className="w-[28px] shrink-0" />
-              <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
-                {weeks.map((_, idx) => {
-                  const lbl = monthLabels.find((m) => m.col === idx);
-                  return (
-                    <span key={idx} className="font-mono text-[10px] leading-none text-muted">
-                      {lbl ? lbl.label : ""}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="mt-1.5 flex gap-[3px]">
-              <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] leading-[11px] text-muted">
-                <span className="h-[11px] leading-[11px]">Mon</span>
-                <span className="h-[11px] leading-[11px]">Tue</span>
-                <span className="h-[11px] leading-[11px]">Wed</span>
-                <span className="h-[11px] leading-[11px]">Thu</span>
-                <span className="h-[11px] leading-[11px]">Fri</span>
-                <span className="h-[11px] leading-[11px]">Sat</span>
-                <span className="h-[11px] leading-[11px]">Sun</span>
-              </div>
-              <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
-                {weeks.map((week, wi) => (
-                  <div key={wi} className="flex flex-col gap-[3px]">
-                    {week.map((day, di) => {
-                      if (!day.iso) return <span key={`${wi}-${di}`} className="h-[11px] w-full rounded-[2px] border border-transparent bg-transparent" />;
-                      const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
-                      const rnd = shuffled[wi]?.[di] ?? "NONE";
-                      const show = phase === "shuffle" ? rnd : day.level;
-                      const delay = phase === "reveal" ? `${wi * 14 + di * 8}ms` : "0ms";
-                      return (
-                        <span
-                          key={day.iso}
-                          title={tip}
-                          aria-label={tip}
-                          className={`h-[11px] w-full rounded-[2px] border hm-${show} hm-cell`}
-                          style={{ transitionDelay: delay } as React.CSSProperties}
-                        />
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+      <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "260px" } as React.CSSProperties}>
+        {/* C mini — 30 kotak saja, no horizontal scroll */}
+        <div className="grid grid-cols-10 gap-[5px] sm:grid-cols-15 sm:gap-[6px]">
+          {days30.map((day, i) => {
+            const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
+            const rnd = shuffled[i] ?? "NONE";
+            const show = phase === "shuffle" ? rnd : day.level;
+            const delay = phase === "reveal" ? `${i * 18}ms` : "0ms";
+            return (
+              <span
+                key={day.iso + "-" + i}
+                title={tip}
+                aria-label={tip}
+                className={`h-[14px] w-full rounded-[3px] border sm:h-[16px] hm-${show} hm-cell`}
+                style={{ transitionDelay: delay } as React.CSSProperties}
+              />
+            );
+          })}
         </div>
-        <div className="mt-3 flex items-center justify-end gap-1.5 font-mono text-[10px] text-muted">
-          <span>{t.less}</span>
-          <span className="inline-flex gap-[3px]">
-            {["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"].map((lv) => (
-              <i key={lv} className={`h-[10px] w-[10px] rounded-[2px] border hm-${lv}`} />
-            ))}
+        <div className="mt-3 flex items-center justify-between gap-2 font-mono text-[10px] text-muted">
+          <span>{active30} {isEn ? "active days" : "hari aktif"} / 30</span>
+          <span className="inline-flex items-center gap-1.5">
+            <span>{t.less}</span>
+            <span className="inline-flex gap-[3px]">
+              {["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"].map((lv) => (
+                <i key={lv} className={`h-[10px] w-[10px] rounded-[2px] border hm-${lv}`} />
+              ))}
+            </span>
+            <span>{t.more}</span>
           </span>
-          <span>{t.more}</span>
         </div>
       </div>
 
