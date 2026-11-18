@@ -324,12 +324,14 @@ function ContributionHeatmap({
     let start: Date;
     let end: Date;
     if (monthFilter === "thisMonth") {
+      // FULL sebulan walaupun hari ini 19 — 1 sampai akhir bulan
       start = new Date(today.getFullYear(), today.getMonth(), 1);
-      end = new Date(today);
+      end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     } else if (monthFilter === "lastMonth") {
       start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       end = new Date(today.getFullYear(), today.getMonth(), 0);
     } else {
+      // 1 bulan terakhir — rolling 30 hari ending today
       end = new Date(today);
       start = new Date(end);
       start.setDate(end.getDate() - 29);
@@ -382,6 +384,26 @@ function ContributionHeatmap({
   }, [days, shuffleSeed, LEVELS]);
 
   const filterLabel = monthFilter === "thisMonth" ? (isEn ? "this month" : "bulan ini") : monthFilter === "lastMonth" ? (isEn ? "last month" : "bulan lalu") : (isEn ? "last 30 days" : "30 hari terakhir");
+  const monthInfo = useMemo(() => {
+    const today = new Date();
+    if (monthFilter === "thisMonth") {
+      return today.toLocaleDateString(isEn ? "en-US" : "id-ID", { month: "long", year: "numeric" });
+    }
+    if (monthFilter === "lastMonth") {
+      const d = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      return d.toLocaleDateString(isEn ? "en-US" : "id-ID", { month: "long", year: "numeric" });
+    }
+    const end = new Date(today);
+    const start = new Date(end);
+    start.setDate(end.getDate() - 29);
+    const sLabel = start.toLocaleDateString(isEn ? "en-US" : "id-ID", { day: "numeric", month: "short" });
+    const eLabel = end.toLocaleDateString(isEn ? "en-US" : "id-ID", { day: "numeric", month: "long", year: "numeric" });
+    return `${sLabel} – ${eLabel}`;
+  }, [monthFilter, isEn]);
+  const trailingEmpty = useMemo(() => {
+    const mod = (leadingEmpty + days.length) % 7;
+    return mod === 0 ? 0 : 7 - mod;
+  }, [leadingEmpty, days.length]);
 
   return (
     <div className="mt-4">
@@ -406,9 +428,11 @@ function ContributionHeatmap({
           ))}
         </span>
       </div>
+      {/* info bulan aktif */}
+      <p className="mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-terracotta">{monthInfo}</p>
 
-      <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "220px" } as React.CSSProperties}>
-        {/* C kalender kecil — 7 kolom, badge tanggal, kotak kecil biar ringan */}
+      <div className="mt-2 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "220px" } as React.CSSProperties}>
+        {/* C kalender kecil — 7 kolom, kotak kosong fill warna saja, full sebulan */}
         <div className="grid grid-cols-7 gap-1">
           {weekdayLabels.map((w) => (
             <span key={w} className="text-center font-mono text-[9px] font-semibold uppercase tracking-widest text-muted/70">
@@ -418,28 +442,27 @@ function ContributionHeatmap({
         </div>
         <div className="mt-1.5 grid grid-cols-7 gap-1">
           {Array.from({ length: leadingEmpty }).map((_, i) => (
-            <span key={`empty-lead-${i}`} className="h-[30px] sm:h-[32px]" />
+            <span key={`empty-lead-${i}`} className="h-[14px] sm:h-[16px]" />
           ))}
           {days.map((day, i) => {
             const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
             const rnd = shuffled[i] ?? "NONE";
             const show = phase === "shuffle" ? rnd : day.level;
             const delay = phase === "reveal" ? `${i * 18}ms` : "0ms";
-            const dayNum = Number(day.iso.slice(8, 10));
             const isToday = day.iso === toLocalISO(new Date());
             return (
               <span
                 key={day.iso + "-" + i}
                 title={tip}
                 aria-label={tip}
-                className={`relative flex h-[30px] flex-col items-center justify-center rounded-[4px] border p-0.5 sm:h-[32px] hm-${show} hm-cell ${isToday ? "ring-1 ring-terracotta/60" : ""}`}
+                className={`h-[14px] w-full rounded-[3px] border sm:h-[16px] hm-${show} hm-cell ${isToday ? "ring-1 ring-terracotta/50" : ""}`}
                 style={{ transitionDelay: delay } as React.CSSProperties}
-              >
-                <span className="font-mono text-[9px] font-bold leading-none text-ink/90">{dayNum}</span>
-                <span className="mt-0.5 font-mono text-[8px] leading-none text-ink/60">{day.count > 0 ? `${day.count}` : "·"}</span>
-              </span>
+              />
             );
           })}
+          {Array.from({ length: trailingEmpty }).map((_, i) => (
+            <span key={`empty-trail-${i}`} className="h-[14px] sm:h-[16px]" />
+          ))}
         </div>
         <div className="mt-3 flex items-center justify-between gap-2 font-mono text-[10px] text-muted">
           <span>{active} {isEn ? "active days" : "hari aktif"} / {days.length}</span>
@@ -808,7 +831,9 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           </motion.div>
         </div>
 
-        <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="mt-6 warm-card p-6">
+        {/* split — bahasa kiri, aktivitas kanan */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
+          <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card p-6">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
             <div className="mt-5 space-y-3">
               {langs && langs.length ? (
@@ -847,22 +872,23 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             </a>
           </motion.section>
 
-        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} className="mt-6 warm-card p-6">
-          <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
-          {heatmap ? (
-            <ContributionHeatmap
-              weeks={heatmap.weeks}
-              total={heatmap.total}
-              isEn={isEn}
-              t={t}
-              yearLabel={String(heatmapYear)}
-              onYearChange={setHeatmapYear as (y: number | "last") => void}
-              availableYears={[2026, 2025]}
-            />
-          ) : (
-            <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
-          )}
-        </motion.section>
+          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} className="warm-card p-6">
+            <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
+            {heatmap ? (
+              <ContributionHeatmap
+                weeks={heatmap.weeks}
+                total={heatmap.total}
+                isEn={isEn}
+                t={t}
+                yearLabel={String(heatmapYear)}
+                onYearChange={setHeatmapYear as (y: number | "last") => void}
+                availableYears={[2026, 2025]}
+              />
+            ) : (
+              <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
+            )}
+          </motion.section>
+        </div>
 
         <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-widest text-muted">
           {t.footer}
