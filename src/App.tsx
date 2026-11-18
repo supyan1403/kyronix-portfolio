@@ -392,49 +392,24 @@ function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yello
   );
 }
 
-/* ---------- Kinetic band — tanpa BG solid 3× selang-seling (adaptive: scroll-linked desktop, CSS marquee low-end) ---------- */
+/* ---------- Kinetic band — marquee GPU 60fps (tanpa scroll-linked yang tabrakan Lenis) ---------- */
 function KineticBand({ text, accent, reverse }: { text: string; accent?: string; reverse?: boolean }) {
-  const low = useIsLowEnd();
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
-  // low-end: no 5× scroll listeners — pure CSS marquee (same look selang-seling via reverse direction)
-  if (low) {
-    return (
-      <div className="overflow-hidden bg-transparent py-4 md:py-6" aria-hidden>
-        <div
-          className={`kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.06em] text-ink md:gap-16 marquee-track ${reverse ? "[animation-direction:reverse]" : ""}`}
-          style={{ animationDuration: "28s" } as React.CSSProperties}
-        >
-          <span>{text}</span>
-          <span className="text-terracotta">{accent ?? "//"}</span>
-          <span>{text}</span>
-          <span className="text-terracotta">{accent ?? "//"}</span>
-          <span>{text}</span>
-          <span className="text-terracotta">{accent ?? "//"}</span>
-          <span>{text}</span>
-          <span className="text-terracotta">{accent ?? "//"}</span>
-          <span>{text}</span>
-        </div>
-      </div>
-    );
-  }
   return (
-    <div ref={ref} className="overflow-hidden bg-transparent py-4 md:py-6" aria-hidden>
-      <motion.div
-        className="kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.06em] text-ink md:gap-16"
-        style={{ x }}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }}
-        transition={{ duration: 0.7, ease: EASE }}
+    <div className="overflow-hidden bg-transparent py-4 md:py-6" aria-hidden>
+      <div
+        className={`kinetic flex w-max items-center gap-12 whitespace-nowrap px-[4vw] font-display text-[clamp(2.2rem,5.8vw,4.4rem)] font-extrabold uppercase tracking-[0.06em] text-ink md:gap-16 marquee-track ${reverse ? "[animation-direction:reverse]" : ""}`}
+        style={{ animationDuration: "28s" } as React.CSSProperties}
       >
         <span>{text}</span>
         <span className="text-terracotta">{accent ?? "//"}</span>
         <span>{text}</span>
         <span className="text-terracotta">{accent ?? "//"}</span>
         <span>{text}</span>
-      </motion.div>
+        <span className="text-terracotta">{accent ?? "//"}</span>
+        <span>{text}</span>
+        <span className="text-terracotta">{accent ?? "//"}</span>
+        <span>{text}</span>
+      </div>
     </div>
   );
 }
