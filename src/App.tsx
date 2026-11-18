@@ -295,7 +295,7 @@ function Magnetic({
       whileTap={{ scale: 0.96 }}
       transition={{ type: "spring", stiffness: 420, damping: 22 }}
       style={{ x: sx, y: sy }}
-      className={`inline-flex w-auto justify-center items-center gap-2 self-center rounded-xl border px-6 py-3 font-mono text-[11px] font-black uppercase tracking-[0.14em] sm:px-7 sm:py-3.5 sm:text-sm cursor-pointer ${variant === "primary" ? `border-[#B85E2E] bg-gradient-to-br from-[#B85E2E] to-[#E07A5F] text-white shadow-[0_8px_24px_rgba(184,94,46,0.28)]` : `border-border bg-surface text-ink shadow-[0_4px_16px_rgba(28,25,23,0.08)]`}`}
+      className={`warm-btn ${variant}`}
     >
       {children}
     </motion.a>
