@@ -414,9 +414,9 @@ function ContributionHeatmap({
         </p>
         <span className="inline-flex gap-1 border border-terracotta/20 bg-transparent p-1">
           {([
-            ["lastMonth", isEn ? "Bulan lalu" : "Bulan lalu"],
-            ["thisMonth", isEn ? "Bulan ini" : "Bulan ini"],
-            ["last30", isEn ? "1 bulan terakhir" : "1 bulan terakhir"],
+            ["lastMonth", isEn ? "Last month" : "Bulan lalu"],
+            ["thisMonth", isEn ? "This month" : "Bulan ini"],
+            ["last30", isEn ? "Last 30 days" : "1 bulan terakhir"],
           ] as const).map(([key, label]) => (
             <button
               key={key}
