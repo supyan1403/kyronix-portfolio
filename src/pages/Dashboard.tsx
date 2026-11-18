@@ -791,18 +791,18 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
   };
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-clip bg-cream">
+    <main className="relative min-h-[100dvh] overflow-x-hidden bg-cream">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[1]"
+        className="pointer-events-none absolute inset-0 opacity-[1] [transform:translateZ(0)] [will-change:transform]"
         style={{
           backgroundImage:
             "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)",
           backgroundSize: "32px 32px",
         } as React.CSSProperties}
       />
-      <div aria-hidden className="pointer-events-none absolute -right-[12%] top-[10%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px]" />
-      <div aria-hidden className="pointer-events-none absolute -left-[10%] bottom-[6%] h-[420px] w-[420px] bg-sage/10 blur-[70px]" />
+      <div aria-hidden className="pointer-events-none absolute -right-[12%] top-[10%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px] [transform:translateZ(0)] [will-change:transform] will-change-transform" />
+      <div aria-hidden className="pointer-events-none absolute -left-[10%] bottom-[6%] h-[420px] w-[420px] bg-sage/10 blur-[70px] [transform:translateZ(0)] [will-change:transform] will-change-transform" />
 
       <div className="relative mx-auto max-w-[1120px] px-[5vw] pb-10 pt-8">
         <div className="flex items-center justify-between gap-4">
