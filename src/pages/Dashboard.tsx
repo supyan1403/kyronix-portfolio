@@ -382,20 +382,20 @@ function ContributionHeatmap({
             </div>
           </div>
           <div className="mt-1.5 flex gap-[3px]">
-            <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] text-muted" style={{ lineHeight: "11px" } as React.CSSProperties}>
+            <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] leading-[11px] text-muted">
               <span className="h-[11px] leading-[11px]">Mon</span>
-              <span className="h-[11px] leading-[11px]"></span>
+              <span className="h-[11px] leading-[11px]">Tue</span>
               <span className="h-[11px] leading-[11px]">Wed</span>
-              <span className="h-[11px] leading-[11px]"></span>
+              <span className="h-[11px] leading-[11px]">Thu</span>
               <span className="h-[11px] leading-[11px]">Fri</span>
-              <span className="h-[11px] leading-[11px]"></span>
-              <span className="h-[11px] leading-[11px]"></span>
+              <span className="h-[11px] leading-[11px]">Sat</span>
+              <span className="h-[11px] leading-[11px]">Sun</span>
             </div>
             <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
               {weeks.map((week, wi) => (
                 <div key={wi} className="flex flex-col gap-[3px]">
                   {week.map((day, di) => {
-                    if (!day.iso) return <span key={`${wi}-${di}`} className="aspect-square w-full rounded-[2px] border border-transparent bg-transparent" />;
+                    if (!day.iso) return <span key={`${wi}-${di}`} className="h-[11px] w-full rounded-[2px] border border-transparent bg-transparent" />;
                     const { bg, border } = levelMetaByLevel(day.level);
                     const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
                     return (
@@ -428,12 +428,12 @@ function ContributionHeatmap({
             <div className="mt-1.5 flex gap-[3px]">
               <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] leading-[11px] text-muted">
                 <span className="h-[11px]">Mon</span>
-                <span className="h-[11px]"></span>
+                <span className="h-[11px]">Tue</span>
                 <span className="h-[11px]">Wed</span>
-                <span className="h-[11px]"></span>
+                <span className="h-[11px]">Thu</span>
                 <span className="h-[11px]">Fri</span>
-                <span className="h-[11px]"></span>
-                <span className="h-[11px]"></span>
+                <span className="h-[11px]">Sat</span>
+                <span className="h-[11px]">Sun</span>
               </div>
               <div className="flex gap-[3px]">
                 {weeks.map((week, wi) => (
