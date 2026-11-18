@@ -672,7 +672,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-12 md:items-start">
+        <div className="mt-6 grid gap-6 md:grid-cols-12">
           <section className="warm-card p-6 md:col-span-5">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
             <div className="mt-5 space-y-3">
@@ -713,16 +713,16 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
               {t.viewGithub} <SiGithub size={14} />
             </a>
           </section>
-
-          <section className="warm-card p-6 md:col-span-7">
-            <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
-            {heatmap ? (
-              <ContributionHeatmap weeks={heatmap.weeks} total={heatmap.total} isEn={isEn} t={t} />
-            ) : (
-              <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
-            )}
-          </section>
         </div>
+
+        <section className="mt-6 warm-card p-6">
+          <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
+          {heatmap ? (
+            <ContributionHeatmap weeks={heatmap.weeks} total={heatmap.total} isEn={isEn} t={t} />
+          ) : (
+            <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
+          )}
+        </section>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="warm-card p-5">
