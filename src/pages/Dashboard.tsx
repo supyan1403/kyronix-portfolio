@@ -20,7 +20,7 @@ const FALLBACK_LANGS: LangStat[] = [
   { lang: "Python", count: 7, pct: 7 },
   { lang: "Lainnya", count: 5, pct: 5 },
 ];
-const LANGS_CACHE_KEY = "kyronix:langs:v1";
+const LANGS_CACHE_KEY = "kyronix:langs:v2";
 const LANGS_TTL_MS = 60 * 60 * 1000;
 function readLangsCache(): LangStat[] | null {
   try {
@@ -563,7 +563,34 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         // tanpa token: jangan 30x languages_url (bikin 403 + lambat) — pakai field language dari /repos
         const hasTok = !!((import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim());
         let sorted: LangStat[];
-        if (!hasTok) {
+        // pakai bytes asli biar 25% rata hilang — JS 56% sesuai live: kulinara+project_bps_tasik JS 2.1MB
+        // tanpa token tetap pakai languages_url (4 repo ringan, tidak bikin 403), hanya fallback ke count jika gagal
+        const langMapsAll = await Promise.all(
+          repos.slice(0, 20).map(async (repo) => {
+            try {
+              const lr = await fetchWithTimeout(repo.languages_url, { headers: ghHeaders() }, 3500);
+              if (!lr.ok) return null as unknown as Record<string, number>;
+              return (await lr.json()) as Record<string, number>;
+            } catch {
+              return null as unknown as Record<string, number>;
+            }
+          })
+        );
+        const bytes = new Map<string, number>();
+        let hasBytes = false;
+        langMapsAll.forEach((m) => {
+          if (!m || typeof m !== "object") return;
+          const ent = Object.entries(m as Record<string, number>);
+          if (ent.length) hasBytes = true;
+          ent.forEach(([k, v]) => bytes.set(k, (bytes.get(k) || 0) + v));
+        });
+        if (hasBytes && bytes.size) {
+          const sum = Array.from(bytes.values()).reduce((a, b) => a + b, 0) || 1;
+          sorted = Array.from(bytes.entries())
+            .map(([lang, count]) => ({ lang, count, pct: Math.round((count / sum) * 100) }))
+            .sort((a, b) => b.pct - a.pct)
+            .slice(0, 6);
+        } else {
           const c = new Map<string, number>();
           repos.forEach((repo) => {
             const l = repo.language || (isEn ? "Other" : "Lainnya");
@@ -574,41 +601,6 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
             .map(([lang, count]) => ({ lang, count, pct: Math.round((count / t) * 100) }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 6);
-        } else {
-          const slice = repos.slice(0, 12);
-          const langMaps = await Promise.all(
-            slice.map(async (repo) => {
-              try {
-                const lr = await fetchWithTimeout(repo.languages_url, { headers: ghHeaders() }, 3500);
-                if (!lr.ok) return {} as Record<string, number>;
-                return (await lr.json()) as Record<string, number>;
-              } catch {
-                return {} as Record<string, number>;
-              }
-            })
-          );
-          const bytes = new Map<string, number>();
-          langMaps.forEach((m) => {
-            Object.entries(m).forEach(([k, v]) => bytes.set(k, (bytes.get(k) || 0) + v));
-          });
-          if (bytes.size) {
-            const sum = Array.from(bytes.values()).reduce((a, b) => a + b, 0) || 1;
-            sorted = Array.from(bytes.entries())
-              .map(([lang, count]) => ({ lang, count, pct: Math.round((count / sum) * 100) }))
-              .sort((a, b) => b.pct - a.pct)
-              .slice(0, 6);
-          } else {
-            const c = new Map<string, number>();
-            repos.forEach((repo) => {
-              const l = repo.language || (isEn ? "Other" : "Lainnya");
-              if (l) c.set(l, (c.get(l) || 0) + 1);
-            });
-            const t = Array.from(c.values()).reduce((a, b) => a + b, 0) || 1;
-            sorted = Array.from(c.entries())
-              .map(([lang, count]) => ({ lang, count, pct: Math.round((count / t) * 100) }))
-              .sort((a, b) => b.count - a.count)
-              .slice(0, 6);
-          }
         }
         if (sorted.length) {
           const s = sorted.reduce((a, b) => a + b.pct, 0);
