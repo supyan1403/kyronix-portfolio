@@ -259,11 +259,19 @@ function ghLevelToMeta(level: GHLevel) {
   }
 }
 function normalizeGHLevel(v: unknown): GHLevel {
+  // jogruber: 0..4 angka ; GraphQL: FIRST_QUARTILE..FOURTH_QUARTILE string
+  if (typeof v === "number") {
+    if (v >= 4) return "FOURTH_QUARTILE";
+    if (v === 3) return "THIRD_QUARTILE";
+    if (v === 2) return "SECOND_QUARTILE";
+    if (v === 1) return "FIRST_QUARTILE";
+    return "NONE";
+  }
   const u = String(v || "NONE").toUpperCase();
-  if (u === "FOURTH_QUARTILE" || u === "FOURTH") return "FOURTH_QUARTILE";
-  if (u === "THIRD_QUARTILE" || u === "THIRD") return "THIRD_QUARTILE";
-  if (u === "SECOND_QUARTILE" || u === "SECOND") return "SECOND_QUARTILE";
-  if (u === "FIRST_QUARTILE" || u === "FIRST") return "FIRST_QUARTILE";
+  if (u === "4" || u === "FOURTH_QUARTILE" || u === "FOURTH") return "FOURTH_QUARTILE";
+  if (u === "3" || u === "THIRD_QUARTILE" || u === "THIRD") return "THIRD_QUARTILE";
+  if (u === "2" || u === "SECOND_QUARTILE" || u === "SECOND") return "SECOND_QUARTILE";
+  if (u === "1" || u === "FIRST_QUARTILE" || u === "FIRST") return "FIRST_QUARTILE";
   return "NONE";
 }
 function levelMeta(count: number) {
@@ -492,12 +500,13 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         const yParam = heatmapYear === "last" ? "last" : String(heatmapYear);
         const gr = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=${yParam}`);
         if (!gr.ok) throw new Error("gh");
-        const gj: { contributions: { date: string; count: number; level?: string }[] } = await gr.json();
+        const gj: { contributions: { date: string; count: number; level?: number | string }[] } = await gr.json();
         const cMap = new Map<string, number>();
         const lMap = new Map<string, GHLevel>();
         gj.contributions.forEach((c) => {
           cMap.set(c.date, c.count);
-          if ((c as { level?: string }).level) lMap.set(c.date, normalizeGHLevel((c as { level?: string }).level as string));
+          const lv = (c as { level?: number | string }).level;
+          if (lv !== undefined && lv !== null) lMap.set(c.date, normalizeGHLevel(lv));
         });
         const withLevel = lMap.size > 0;
         setHeatmap(heatmapYear === "last" ? buildHeatmapFromCounts(cMap, new Date(), withLevel ? lMap : undefined) : buildHeatmapForYear(cMap, heatmapYear as number, withLevel ? lMap : undefined));
