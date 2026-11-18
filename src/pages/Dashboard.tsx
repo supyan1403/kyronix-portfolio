@@ -71,7 +71,7 @@ const tDict = {
     update: "diperbarui dari GitHub",
     eyebrow: "Kyronix Lab — Dashboard Aktivitas",
     title: "PANTAUAN AKTIVITAS LANGSUNG",
-    desc: "Cara saya merawat konsistensi belajar dan eksplorasi pengembangan aplikasi web yang terekam dari aktivitas harian",
+    desc: "Konsistensi belajar dan eksplorasi berkelanjutan yang tercermin melalui rekam jejak aktivitas harian, menjadi landasan bagi cara saya mengembangkan berbagai sistem secara bertahap",
     totalBelajar: "Total Kontribusi",
     totalHint: "keseluruhan",
     ngodingHariIni: "Kontribusi Hari Ini",
