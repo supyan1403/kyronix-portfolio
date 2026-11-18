@@ -913,7 +913,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
         <div className="mt-6 grid gap-6 lg:grid-cols-[7fr_3fr] lg:items-stretch">
           <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card flex flex-col p-6">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
-            <div className="mt-5 space-y-3">
+            <div className="mt-5 space-y-5">
               {langs && langs.length ? (
                 langs.map((l, i) => (
                   <div key={l.lang}>
@@ -926,7 +926,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
                       );})()}
                       <span className="text-muted">{l.pct}{t.percent}</span>
                     </div>
-                    <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-cream-deep">
+                    <div className="mt-2 h-2 overflow-hidden rounded-full border border-border/20 bg-cream-deep">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={langInView ? { width: `${l.pct}%` } : { width: 0 }}
