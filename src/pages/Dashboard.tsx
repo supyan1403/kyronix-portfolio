@@ -424,7 +424,7 @@ function ContributionHeatmap({
   }, [leadingEmpty, days.length]);
 
   return (
-    <div className="mt-4 flex h-[295px] flex-col">
+    <div className="mt-4 flex h-[318px] flex-col">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
           {sum.toLocaleString(isEn ? "en-US" : "id-ID")} {isEn ? `contributions in ${filterLabel}` : `kontribusi dalam ${filterLabel}`}
@@ -448,7 +448,7 @@ function ContributionHeatmap({
       {/* info bulan aktif */}
       <p className="mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-terracotta">{monthInfo}</p>
 
-      <div className="mt-2 flex h-[228px] flex-col overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "228px" } as React.CSSProperties}>
+      <div className="mt-2 flex h-[238px] flex-col border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "238px" } as React.CSSProperties}>
         {/* C kalender kecil — 7 kolom, kotak kosong fill warna saja, full sebulan — flex-col + footer mt-auto biar tidak geser saat switch */}
         <div className="grid grid-cols-7 gap-1">
           {weekdayLabels.map((w) => (
