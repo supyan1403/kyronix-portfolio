@@ -1462,8 +1462,9 @@ const stackGallery: { id: string; title: Record<Lang, string>; tiles: Tile[] }[]
     id: "bahasa",
     title: { id: "Bahasa", en: "Languages" },
     tiles: [
-      { label: "Python", src: "/icons/python.svg", brand: true, color: "#3776AB" },
+      { label: "PHP", src: "/icons/php.svg", brand: true, color: "#8892BF" },
       { label: "JavaScript", src: "/icons/javascript.svg", brand: true, color: "#F7DF1E" },
+      { label: "Python", src: "/icons/python.svg", brand: true, color: "#3776AB" },
       { label: "TypeScript", src: "/icons/typescript.svg", brand: true, color: "#3178C6" },
     ],
   },
@@ -2832,7 +2833,7 @@ function Contact() {
             className="flex flex-col gap-3 md:sticky md:top-28"
           >
             <a href={`mailto:${email}`} className="warm-btn primary w-full justify-center">
-              <Mail size={16} /> {lang === "id" ? "Email Saya" : "Email Me"}
+              <img src="/icons/gmail.svg" alt="" aria-hidden width={16} height={16} className="h-4 w-4 object-contain" /> {lang === "id" ? "Email Saya" : "Email Me"}
             </a>
             <button
               type="button"
@@ -2853,7 +2854,7 @@ function Contact() {
               className="warm-btn ghost w-full justify-center"
               style={{ boxShadow: `0 4px 16px rgba(28,25,23,0.08)` } as React.CSSProperties}
             >
-              GitHub ↗
+              <SiGithub size={16} /> GitHub ↗
             </a>
           </motion.div>
         </div>

@@ -20,6 +20,17 @@ const FALLBACK_LANGS: LangStat[] = [
   { lang: "Python", count: 7, pct: 7 },
   { lang: "Lainnya", count: 5, pct: 5 },
 ];
+const LANG_ICON_SRC: Record<string, string> = {
+  javascript: "/icons/javascript.svg",
+  typescript: "/icons/typescript.svg",
+  python: "/icons/python.svg",
+  php: "/icons/php.svg",
+};
+function langIconSrc(lang: string): string | null {
+  const k = lang.trim().toLowerCase();
+  return LANG_ICON_SRC[k] ?? null;
+}
+
 const LANGS_CACHE_KEY = "kyronix:langs:v2";
 const LANGS_TTL_MS = 60 * 60 * 1000;
 function readLangsCache(): LangStat[] | null {
@@ -881,7 +892,12 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
                     transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}
                   >
                     <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest">
-                      <span className="font-semibold text-ink">{l.lang}</span>
+                      {(() => { const ic = langIconSrc(l.lang); return (
+                      <span className="inline-flex items-center gap-2 font-semibold text-ink">
+                        {ic ? <img src={ic} alt="" aria-hidden width={16} height={16} className="h-4 w-4 object-contain" loading="lazy" /> : null}
+                        {l.lang}
+                      </span>
+                      );})()}
                       <span className="text-muted">{l.pct} {t.percent}</span>
                     </div>
                     <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-cream-deep">
