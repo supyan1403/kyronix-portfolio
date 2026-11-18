@@ -49,7 +49,7 @@ import {
   SiTailwindcss,
   SiVercel,
 } from "react-icons/si";
-import { DashboardEmbed, default as DashboardPage } from "./pages/Dashboard";
+import { DashboardEmbed } from "./pages/Dashboard";
 
 /* ---------- Utility: Warm Dark palette tokens ---------- */
 const WARM = {
@@ -1384,13 +1384,9 @@ function Profile() {
     { k: "Pendekatan", kEn: "Approach", Icon: Compass, v: "Selalu antusias belajar berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional", vEn: "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions" },
     { k: "Eksplorasi", kEn: "Exploration", Icon: Lightbulb, v: "Aktif memperluas wawasan melalui pengembangan web secara mandiri dan berkelanjutan", vEn: "Actively expanding horizons through independent and continuous web development" },
   ];
-  const goDashboard = () => {
-    window.history.pushState({}, "", "/dashboard");
-    window.dispatchEvent(new PopStateEvent("popstate"));
-    window.scrollTo(0, 0);
-  };
+  const goDashboard = () => scrollToId("activity");
   return (
-    <section ref={ref} id="profile" className="relative flex min-h-[100dvh] items-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
+    <section ref={ref} id="profile" className="relative flex min-h-[100dvh] items-center overflow-visible bg-transparent px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.55]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px] will-change-transform max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: ghostY, opacity: 0.045 } as unknown as Record<string, unknown>}>LAB</motion.div>
@@ -1406,7 +1402,7 @@ function Profile() {
               {t.bio}
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.58 : 0 }} className="flex flex-wrap gap-3 pt-2">
-              <Magnetic href="/dashboard" variant="primary" onClick={goDashboard}>{(t as unknown as { ctaDashboard: string }).ctaDashboard || t.ctaPrimary} <ArrowUpRight size={16} /></Magnetic>
+              <Magnetic href="#activity" variant="primary" onClick={goDashboard}>{(t as unknown as { ctaDashboard: string }).ctaDashboard || t.ctaPrimary} <ArrowUpRight size={16} /></Magnetic>
               <Magnetic href="#contact" variant="ghost" onClick={() => scrollToId("contact")}>{t.ctaSecondary} <Mail size={16} /></Magnetic>
             </motion.div>
           </motion.div>
@@ -1469,16 +1465,22 @@ function Profile() {
 }
 
 function Activity() {
+  const secRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: secRef, offset: ["start end", "end start"] });
+  const actTitleY = useTransform(scrollYProgress, [0, 1], [18, -18]);
+  const actGridY = useTransform(scrollYProgress, [0, 1], [10, -10]);
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref as unknown as React.RefObject<Element>, { amount: 0.05, margin: "0px 0px -8% 0px" });
+  const inView = useInView(ref as unknown as React.RefObject<Element>, { amount: 0.1, margin: "0px 0px -12% 0px" });
   return (
-    <section id="activity" className="relative overflow-hidden bg-transparent px-[5vw] py-10">
+    <section ref={secRef} id="activity" className="relative overflow-visible bg-transparent px-[5vw] py-10">
+      <motion.div aria-hidden className="pointer-events-none absolute -left-[8%] bottom-[-6%] h-[420px] w-[420px] bg-terracotta/10 blur-[60px] will-change-transform max-sm:hidden" style={{ y: actGridY } as unknown as Record<string, unknown>} />
       <motion.div
         ref={ref as unknown as React.RefObject<HTMLDivElement>}
         initial={{ opacity: 0, y: 14 } as unknown as Record<string, unknown>}
         animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)}
         transition={{ duration: 0.6, ease: EASE }}
-        className="mx-auto w-full max-w-[1120px] will-change-transform"
+        style={{ y: actTitleY } as unknown as Record<string, unknown>}
+        className="relative mx-auto w-full max-w-[1120px] will-change-transform"
       >
         <DashboardEmbed lazy />
       </motion.div>
@@ -2911,17 +2913,22 @@ function App() {
     return "intro";
   });
   const [lang, setLang] = useState<Lang>("id");
-  const [route, setRoute] = useState(() => (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/"));
   useLenis(true);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   useEffect(() => {
-    const onPop = () => setRoute(window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/");
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard")) {
+      window.history.replaceState({}, "", "/#activity");
+      requestAnimationFrame(() => scrollToId("activity"));
+    }
+    const onPop = () => {
+      if (window.location.pathname.startsWith("/dashboard")) {
+        window.history.replaceState({}, "", "/#activity");
+        scrollToId("activity");
+      }
+    };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
-  useEffect(() => {
-    if (route === "/dashboard" && phase !== "ready") setPhase("ready");
-  }, [route, phase]);
   useEffect(() => {
     if (phase === "ready") {
       try { sessionStorage.setItem("kyronix:introDone", "1"); } catch {}
@@ -2929,23 +2936,6 @@ function App() {
   }, [phase]);
   const bands = dict[lang].bands;
   const ready = phase === "ready";
-  if (route === "/dashboard") {
-    return (
-      <LangCtx.Provider value={{ lang, setLang }}>
-        <DashboardPage
-          onBack={() => {
-            window.history.pushState({}, "", "/");
-            setRoute("/");
-            window.scrollTo(0, 0);
-            requestAnimationFrame(() => {
-              window.scrollTo(0, 0);
-              lenisInstance?.resize();
-            });
-          }}
-        />
-      </LangCtx.Provider>
-    );
-  }
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
       <main className="crt relative bg-cream overflow-x-clip">
