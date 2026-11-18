@@ -1466,6 +1466,8 @@ const stackGallery: { id: string; title: Record<Lang, string>; tiles: Tile[] }[]
       { label: "JavaScript", src: "/icons/javascript.svg", brand: true, color: "#F7DF1E" },
       { label: "Python", src: "/icons/python.svg", brand: true, color: "#3776AB" },
       { label: "TypeScript", src: "/icons/typescript.svg", brand: true, color: "#3178C6" },
+      { label: "HTML", src: "/icons/html.svg", brand: true, color: "#E44D26" },
+      { label: "CSS", src: "/icons/css.svg", brand: true, color: "#1172B8" },
     ],
   },
   {

@@ -25,6 +25,8 @@ const LANG_ICON_SRC: Record<string, string> = {
   typescript: "/icons/typescript.svg",
   python: "/icons/python.svg",
   php: "/icons/php.svg",
+  html: "/icons/html.svg",
+  css: "/icons/css.svg",
 };
 function langIconSrc(lang: string): string | null {
   const k = lang.trim().toLowerCase();
