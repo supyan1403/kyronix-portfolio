@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from "react";
-import { motion, useInView, useScroll, useTransform } from "motion/react";
+import { motion, useInView, useScroll, useSpring, useTransform } from "motion/react";
 import { Cpu, Clock, Flame, Activity } from "lucide-react";
 import { SiGithub } from "react-icons/si";
 import { useLang } from "../langCtx";
@@ -646,7 +646,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
   useEffect(() => {
     // heatmap baru mount — resize lenis pake debounce biar tidak layout thrash tiap kotak shuffle
     let id = 0 as unknown as number;
-    const cb = () => { (lenisInstance as unknown as { resize?: () => void })?.resize?.(); };
+    const cb = () => { (window as unknown as { __lenis?: { resize?: () => void } }).__lenis?.resize?.(); };
     if ("requestIdleCallback" in window) id = (window as unknown as { requestIdleCallback: (cb: ()=>void)=>number }).requestIdleCallback(cb);
     else id = window.setTimeout(cb, 160) as unknown as number;
     return () => {
