@@ -983,7 +983,7 @@ const dict = {
       title: "HALO, SAYA SUPYAN SAURI",
       name: "Supyan Sauri",
       role: "System Architect – Data & Web Systems",
-      bio: "Memiliki ketertarikan tinggi terhadap proses pembelajaran mendalam serta eksplorasi teknologi baru. Melalui pemodelan sistem yang terstruktur dan pengembangan aplikasi web secara berkelanjutan, cara saya menterjemahkan berbagai gagasan kompleks menjadi solusi yang fungsional dan andal",
+      bio: "Memiliki ketertarikan tinggi terhadap proses pembelajaran mendalam serta eksplorasi teknologi baru. Melalui pemodelan sistem yang terstruktur dan pengembangan web secara berkelanjutan, cara saya menterjemahkan berbagai gagasan kompleks menjadi solusi yang fungsional dan andal",
       ctaPrimary: "MASUK LAB",
       ctaSecondary: "HUBUNGI SAYA",
       ctaDashboard: "BUKA DASHBOARD AKTIVITAS",
@@ -1044,7 +1044,7 @@ const dict = {
       all: "Semua",
       research: "Penelitian",
       iot: "IoT Project",
-      webapp: "Web App",
+      webapp: "Pengembangan Web",
     },
     projectModal: {
       title: "Belum Tersedia",
@@ -1077,7 +1077,7 @@ const dict = {
       title: "HI, I AM SUPYAN SAURI",
       name: "Supyan Sauri",
       role: "System Architect – Data & Web Systems",
-      bio: "Highly interested in deep learning processes and exploration of new technologies. Through structured system modeling and continuous web app development, the way I translate various complex ideas into functional and reliable solutions",
+      bio: "Highly interested in deep learning processes and exploration of new technologies. Through structured system modeling and continuous web development, the way I translate various complex ideas into functional and reliable solutions",
       ctaPrimary: "Enter Lab",
       ctaSecondary: "Contact Me",
       ctaDashboard: "Open Activity Dashboard",
@@ -1138,7 +1138,7 @@ const dict = {
       all: "All",
       research: "Research",
       iot: "IoT Project",
-      webapp: "Web App",
+      webapp: "Pengembangan Web",
     },
     projectModal: {
       title: "Project Not Yet Available",
@@ -1341,9 +1341,9 @@ function Profile() {
   const inView = useInView(ref, { amount: 0.35, margin: "0px 0px -12% 0px" });
   const rows = [
     { k: "Asal", kEn: "Based", Icon: MapPin, v: "Tasikmalaya, Jawa Barat, Indonesia", vEn: "Tasikmalaya, West Java, Indonesia" },
-    { k: "Fokus", kEn: "Focus", Icon: Layers, v: "Pengelolaan Data, Pemodelan Sistem, & Pengembangan Aplikasi Web", vEn: "Data Management, System Modeling & Web App Development" },
+    { k: "Fokus", kEn: "Focus", Icon: Layers, v: "Pengelolaan Data, Pemodelan Sistem, & Pengembangan Web", vEn: "Data Management, System Modeling & Web Development" },
     { k: "Pendekatan", kEn: "Approach", Icon: Compass, v: "Selalu antusias belajar berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional", vEn: "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions" },
-    { k: "Eksplorasi", kEn: "Exploration", Icon: Lightbulb, v: "Aktif memperluas wawasan melalui pengembangan aplikasi web secara mandiri dan berkelanjutan", vEn: "Actively expanding horizons through independent and continuous web app development" },
+    { k: "Eksplorasi", kEn: "Exploration", Icon: Lightbulb, v: "Aktif memperluas wawasan melalui pengembangan web secara mandiri dan berkelanjutan", vEn: "Actively expanding horizons through independent and continuous web development" },
   ];
   const goDashboard = () => {
     window.history.pushState({}, "", "/dashboard");
@@ -1398,7 +1398,7 @@ function Profile() {
               </p>
               <p className="mt-2 font-sans text-[12px] font-bold uppercase leading-[1.45] tracking-[0.02em] text-ink">{(isId ? rows[1].v : rows[1].vEn).toUpperCase()}</p>
               <div className="mt-3 flex items-center justify-between gap-2 border-t border-border/10 pt-3 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
-                <span className="truncate">{isId ? "PENGELOLAAN DATA · PEMODELAN SISTEM · WEB APP" : "DATA MANAGEMENT · SYSTEM MODELING · WEB APP"}</span>
+                <span className="truncate">{isId ? "PENGELOLAAN DATA · PEMODELAN SISTEM · PENGEMBANGAN WEB" : "DATA MANAGEMENT · SYSTEM MODELING · WEB DEVELOPMENT"}</span>
                 <span className="inline-flex items-center gap-1 shrink-0 text-terracotta"><span className="h-1.5 w-1.5 rounded-full bg-terracotta live-dot" /> {isId ? "AKTIF" : "ACTIVE"}</span>
               </div>
               <div className="mt-3 grid grid-cols-3 gap-2">
@@ -1411,7 +1411,7 @@ function Profile() {
                   <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.06em] text-muted">Relational / Graph</p>
                 </div>
                 <div className="border border-border/15 bg-cream/5 px-2 py-2.5 text-center">
-                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">{isId ? "Aplikasi Web" : "Web App"}</p>
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">{isId ? "Pengembangan Web" : "Web Development"}</p>
                   <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.06em] text-muted">Reactive Core</p>
                 </div>
               </div>
@@ -1633,7 +1633,7 @@ const projects = [
   {
     no: "04",
     title: "Kulinara — Kuliner Nusantara",
-    kind: "Web App · Concept",
+    kind: "Pengembangan Web · Concept",
     desc: { id: "Aplikasi konsep untuk eksplorasi kuliner Nusantara, pelacakan nutrisi terstruktur, dan estimasi anggaran memasak.", en: "Concept app for Indonesian culinary exploration, structured nutrition tracking, and cooking budget estimation." } as const,
     stack: ["Concept", "Nutrition API", "Tailwind", "PostgreSQL"],
     status: "CONCEPT STAGE",
