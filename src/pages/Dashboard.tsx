@@ -153,6 +153,13 @@ const tDict = {
   },
 } as const;
 
+function toLocalISO(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(), levelMap?: Map<string, GHLevel>) {
   // GitHub parity: 53w window ending today, aligned Mon–Sun (same as github.com)
   const end = new Date(today);
@@ -175,7 +182,7 @@ function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(
   while (cur <= endAligned) {
     const week: HeatWeek = [];
     for (let d = 0; d < 7; d++) {
-      const iso = cur.toISOString().slice(0, 10);
+      const iso = toLocalISO(cur);
       const cnt = countMap.get(iso) ?? 0;
       const lvl = levelMap?.get(iso);
       const level: GHLevel = (lvl as GHLevel) ?? (cnt === 0 ? "NONE" : cnt <= 2 ? "FIRST_QUARTILE" : cnt <= 5 ? "SECOND_QUARTILE" : cnt <= 9 ? "THIRD_QUARTILE" : "FOURTH_QUARTILE");
@@ -220,7 +227,7 @@ function buildHeatmapForYear(countMap: Map<string, number>, year: number, levelM
       }
       const cur = new Date(startExact);
       cur.setDate(startExact.getDate() + dayOffset);
-      const iso = cur.toISOString().slice(0, 10);
+      const iso = toLocalISO(cur);
       const cnt = countMap.get(iso) ?? 0;
       const lvl = levelMap?.get(iso);
       const level: GHLevel = (lvl as GHLevel) ?? (cnt === 0 ? "NONE" : cnt <= 2 ? "FIRST_QUARTILE" : cnt <= 5 ? "SECOND_QUARTILE" : cnt <= 9 ? "THIRD_QUARTILE" : "FOURTH_QUARTILE");
@@ -246,12 +253,15 @@ function levelMetaByCount(count: number) {
 }
 function buildHeatmapFromGraphQLCalendar(cal: { totalContributions: number; weeks: { contributionDays: { date: string; contributionCount: number; contributionLevel: string }[] }[] }): { weeks: HeatWeek[]; total: number } {
   const weeks: HeatWeek[] = cal.weeks.map((w) =>
-    w.contributionDays.map((d) => ({
-      date: new Date(d.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
-      iso: d.date,
-      count: d.contributionCount,
-      level: normalizeGHLevel(d.contributionLevel),
-    }))
+    w.contributionDays.map((d) => {
+      const dt = new Date(`${d.date}T12:00:00`);
+      return {
+        date: dt.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
+        iso: d.date,
+        count: d.contributionCount,
+        level: normalizeGHLevel(d.contributionLevel),
+      };
+    })
   );
   return { weeks, total: cal.totalContributions };
 }
@@ -645,7 +655,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
           if (prev && prev.total > 0) return prev;
           const dayMap = new Map<string, number>();
           for (const e of push) {
-            const iso = new Date(e.created_at).toISOString().slice(0, 10);
+            const iso = toLocalISO(new Date(e.created_at));
             const c = e.payload.commits?.length ?? e.payload.size ?? 1;
             dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
           }
@@ -719,7 +729,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
   const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
-  const todayId = new Date().toISOString().slice(0, 10);
+  const todayId = toLocalISO(new Date());
   const todayCount = useMemo(() => {
     if (!heatmap) return 0;
     for (const w of heatmap.weeks) for (const d of w) if (d.iso === todayId) return d.count;
@@ -734,7 +744,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
     const cur = new Date();
     cur.setHours(0, 0, 0, 0);
     for (let i = 0; i < 500; i++) {
-      const iso = cur.toISOString().slice(0, 10);
+      const iso = toLocalISO(cur);
       const c = map.get(iso) ?? 0;
       if (c > 0) s++;
       else if (s > 0) break;
@@ -744,16 +754,16 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
         // cek mundur tanpa batas: skip 0 di awal hanya 1 hari
       }
       cur.setDate(cur.getDate() - 1);
-      if (s > 0 && (map.get(cur.toISOString().slice(0, 10)) ?? 0) === 0) break;
+      if (s > 0 && (map.get(toLocalISO(cur)) ?? 0) === 0) break;
     }
     // hitung ulang yang benar: beruntun mundur dari today (kalau today 0, mulai dari yesterday)
     let streak2 = 0;
     const c2 = new Date();
     c2.setHours(0, 0, 0, 0);
     // kalau today 0, mulai dari yesterday
-    if ((map.get(c2.toISOString().slice(0, 10)) ?? 0) === 0) c2.setDate(c2.getDate() - 1);
+    if ((map.get(toLocalISO(c2)) ?? 0) === 0) c2.setDate(c2.getDate() - 1);
     for (let i = 0; i < 400; i++) {
-      const iso = c2.toISOString().slice(0, 10);
+      const iso = toLocalISO(c2);
       if ((map.get(iso) ?? 0) > 0) {
         streak2++;
         c2.setDate(c2.getDate() - 1);
@@ -771,7 +781,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
     for (let i = 6; i >= 0; i--) {
       const d = new Date(cur);
       d.setDate(cur.getDate() - i);
-      out.push((map.get(d.toISOString().slice(0, 10)) ?? 0) > 0);
+      out.push((map.get(toLocalISO(d)) ?? 0) > 0);
     }
     return out;
   }, [heatmap]);
