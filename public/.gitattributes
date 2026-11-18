@@ -2,7 +2,7 @@
 # Fonts/images tiny kept off LFS to prevent 9.66GB Image Storage bloat per deploy
 favicon.png -filter -diff -merge -text
 favicon-*.png -filter -diff -merge -text
-kyronix-k-retro.webp -filter -diff -merge -text
+apple-touch-icon.png -filter -diff -merge -text
 *.png -filter -diff -merge -text
 *.webp -filter -diff -merge -text
 *.pdf -filter -diff -merge -text
