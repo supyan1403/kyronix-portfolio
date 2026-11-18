@@ -1495,6 +1495,7 @@ function Stack() {
     <section id="stack" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh text-only EPIC — enter+exit 1 blok */}
       <section ref={openingRef} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]">
+        <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: openingTitleY, opacity: 0.045 } as unknown as Record<string, unknown>}>STACK</motion.div>
         <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
         <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[420px] w-[420px] bg-terracotta/10 blur-[60px] will-change-transform max-sm:hidden" style={{ y: openingTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto max-w-[1120px] text-center">
@@ -1641,6 +1642,7 @@ function ProjectsOpening() {
   const inView = useInView(ref, { amount: 0.35, margin: "0px 0px -12% 0px" });
   return (
     <section ref={ref} className="relative flex min-h-[56dvh] items-center justify-center overflow-visible bg-transparent px-[5vw] py-[6vh] md:min-h-[62dvh] md:py-[7vh]">
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline max-sm:text-[30vw]" style={{ y: titleY, opacity: 0.042 } as unknown as Record<string, unknown>}>KARYA</motion.div>
       <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] -bottom-[8%] h-[640px] w-[900px] bg-sage/10 blur-[90px] max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto w-[min(1120px,90vw)] text-center">
         <motion.div
@@ -2443,6 +2445,7 @@ function Experience() {
   const smooth = useSpring(scrollYProgress, { stiffness: 165, damping: 34, mass: 0.45 });
   const pipe = useTransform(smooth, [0, 1], [0, 1]);
   const expOpacity = useTransform(smooth, [0, 1], [1, 0.92]);
+  const ghostY = useTransform(smooth, [0, 1], [18, -18]);
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -2484,6 +2487,7 @@ function Experience() {
       <ExperienceOpening />
       {/* Timeline — cards-only */}
       <section ref={trackRef} className="relative px-[5vw] pb-[14vh] pt-3 md:pb-[14vh] overflow-x-clip">
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: ghostY, opacity: 0.04 } as unknown as Record<string, unknown>}>JEJAK</motion.div>
       <motion.div style={{ opacity: expOpacity } as unknown as Record<string, unknown>} className="mx-auto max-w-[1120px] will-change-transform">
         <div className="relative">
           <div className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-border md:left-1/2" aria-hidden />
@@ -2532,6 +2536,7 @@ function Lab() {
     <div id="lab" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC — enter+exit 1 blok */}
       <section ref={openingRef} className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-4 sm:px-[5vw] py-[12vh]">
+        <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: labTitleY, opacity: 0.042 } as unknown as Record<string, unknown>}>CARA</motion.div>
         <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: labGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
         <motion.div aria-hidden className="pointer-events-none absolute -left-[10%] top-[16%] h-[420px] w-[520px] bg-sage/10 blur-[60px] max-sm:hidden" style={{ y: labTitleY } as unknown as Record<string, unknown>} />
         <div className="relative mx-auto w-full max-w-[1120px] min-w-0 text-center">
@@ -2676,6 +2681,7 @@ function Contact() {
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.4]" />
       {/* grain mengganti orb duplikat Hero biar fase beda */}
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(245,239,230,0.9) 1px, transparent 0)", backgroundSize: "22px 22px" }} />
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline max-sm:text-[30vw]" style={{ opacity: 0.035 } as unknown as React.CSSProperties}>KONTAK</div>
       <div className="relative mx-auto flex w-full max-w-[1120px] flex-1 flex-col justify-center">
         <div className="text-center">
           <Eyebrow index="" label={t.contactEyebrow} />
