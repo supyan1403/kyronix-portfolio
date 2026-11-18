@@ -979,7 +979,7 @@ const dict = {
     },
     profile: {
       eyebrow: "Kyronix Lab",
-      title: "LABORATORIUM TEMPAT GAGASAN MENJADI SISTEM",
+      title: "DI BALIK KYRONIX",
       name: "Supyan Sauri",
       role: "System Architect – Data & Web Systems",
       bio: "Suka mengulik hal baru dan menikmati proses belajar yang mendalam. Cara saya mengubah gagasan kompleks menjadi solusi fungsional lewat pemodelan dan arsitektur sistem yang rapi serta eksplorasi web app secara mandiri dan berkelanjutan",
@@ -1072,11 +1072,10 @@ const dict = {
     },
     profile: {
       eyebrow: "Kyronix Lab",
-      title: "LABORATORY WHERE IDEAS BECOME SYSTEMS",
+      title: "BEHIND KYRONIX",
       name: "Supyan Sauri",
       role: "System Architect – Data & Web Systems",
       bio: "I enjoy exploring new things and deep learning. The way I turn complex ideas into functional solutions is through clean modeling and system architecture plus continuous independent web app exploration",
-      ctaPrimary: "Enter Lab",
       ctaPrimary: "Enter Lab",
       ctaSecondary: "Contact Me",
       ctaDashboard: "Open Activity Dashboard",
