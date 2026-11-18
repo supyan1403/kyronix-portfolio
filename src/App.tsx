@@ -978,8 +978,8 @@ const dict = {
       tagline: "DARI IDE KE INFRA.",
     },
     profile: {
-      eyebrow: "Kyronix Lab",
-      title: "DI BALIK KYRONIX",
+      eyebrow: "DI BALIK KYRONIX",
+      title: "HALO, SAYA SUPYAN SAURI",
       name: "Supyan Sauri",
       role: "System Architect – Data & Web Systems",
       bio: "Suka belajar hal baru dan menikmati proses belajar yang mendalam. Cara saya mengubah gagasan kompleks menjadi solusi fungsional lewat pemodelan dan arsitektur sistem yang rapi serta eksplorasi web app secara mandiri dan berkelanjutan",
@@ -1071,8 +1071,8 @@ const dict = {
       tagline: "FROM IDEA TO INFRA.",
     },
     profile: {
-      eyebrow: "Kyronix Lab",
-      title: "BEHIND KYRONIX",
+      eyebrow: "BEHIND KYRONIX",
+      title: "HI, I AM SUPYAN SAURI",
       name: "Supyan Sauri",
       role: "System Architect – Data & Web Systems",
       bio: "I enjoy exploring new things and deep learning. The way I turn complex ideas into functional solutions is through clean modeling and system architecture plus continuous independent web app exploration",
@@ -1358,11 +1358,8 @@ function Profile() {
         <div className="grid gap-8 md:grid-cols-12 md:gap-10 md:items-start">
           <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col gap-5 md:col-span-7 will-change-transform">
             <Eyebrow index="" label={t.eyebrow} />
-            <SplitReveal key={t.title} play={inView} text={t.title} className="font-display text-[clamp(1.9rem,5.6vw,4.4rem)] font-extrabold leading-[0.88] tracking-[0.01em] text-ink" />
-            <div className="space-y-1.5">
-              <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.38 : 0.08 }} className="font-sans text-lg font-bold uppercase tracking-[0.04em] text-ink">{t.name.toUpperCase()}</motion.p>
-              <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.44 : 0.04 }} className="font-mono text-xs uppercase tracking-[0.18em] text-terracotta">{t.role}</motion.p>
-            </div>
+            <SplitReveal key={t.title} play={inView} text={t.title} className="font-display text-[clamp(2.4rem,6.2vw,5rem)] font-extrabold leading-[0.88] tracking-[0.01em] text-ink" />
+            <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.44 : 0.04 }} className="font-mono text-xs uppercase tracking-[0.18em] text-terracotta">{t.role}</motion.p>
             <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.5 : 0.02 }} className="max-w-[52ch] font-sans text-[15px] leading-relaxed text-muted">
               {t.bio}
             </motion.p>
