@@ -13,12 +13,12 @@ function ghHeaders(): HeadersInit {
 }
 
 const FALLBACK_LANGS: LangStat[] = [
-  { lang: "JavaScript", count: 2109093, pct: 56 },
-  { lang: "PHP", count: 552264, pct: 15 },
-  { lang: "Python", count: 529577, pct: 14 },
+  { lang: "JavaScript", count: 2109093, pct: 51 },
+  { lang: "PHP", count: 560998, pct: 14 },
+  { lang: "Python", count: 529577, pct: 13 },
+  { lang: "HTML", count: 384990, pct: 9 },
   { lang: "CSS", count: 267984, pct: 7 },
-  { lang: "TypeScript", count: 231114, pct: 6 },
-  { lang: "HTML", count: 23571, pct: 1 },
+  { lang: "TypeScript", count: 240845, pct: 6 },
 ];
 const LANG_ICON_SRC: Record<string, string> = {
   javascript: "/icons/javascript.svg",
@@ -33,7 +33,7 @@ function langIconSrc(lang: string): string | null {
   return LANG_ICON_SRC[k] ?? null;
 }
 
-const LANGS_CACHE_KEY = "kyronix:langs:v3";
+const LANGS_CACHE_KEY = "kyronix:langs:v4";
 const LANGS_TTL_MS = 60 * 60 * 1000;
 function readLangsCache(): LangStat[] | null {
   try {
@@ -579,8 +579,17 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         });
         if (hasBytes && bytes.size) {
           const sum = Array.from(bytes.values()).reduce((a, b) => a + b, 0) || 1;
-          sorted = Array.from(bytes.entries())
-            .map(([lang, count]) => ({ lang, count, pct: Math.round((count / sum) * 100) }))
+          // filter noise <1% (Blade 0.2% / Batchfile 0.2% / Dockerfile 0.1% / Shell 0.3%) + merge Blade->PHP (Laravel)
+          const merged = new Map<string, number>();
+          for (const [k, v] of bytes.entries()) {
+            const key = k === "Blade" ? "PHP" : k;
+            merged.set(key, (merged.get(key) || 0) + v);
+          }
+          const filtered = [...merged.entries()].filter(([, v]) => (v / sum) * 100 >= 1);
+          const useEntries = filtered.length >= 4 ? filtered : [...merged.entries()];
+          const useSum = useEntries.reduce((a, [, v]) => a + v, 0) || sum;
+          sorted = useEntries
+            .map(([lang, count]) => ({ lang, count, pct: Math.round((count / useSum) * 100) }))
             .sort((a, b) => b.pct - a.pct)
             .slice(0, 6);
         } else {
