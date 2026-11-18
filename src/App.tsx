@@ -1200,6 +1200,11 @@ function Hero({ ready }: { ready: boolean }) {
   const gridY = useTransform(scrollYProgress, [0, 1], [0, light ? -14 : -30]);
   const taglineY = useTransform(scrollYProgress, [0, 1], [0, light ? -10 : -24]);
   const ctaY = useTransform(scrollYProgress, [0, 1], [0, light ? -8 : -18]);
+  // BG K tersedot hilang + reverse (scroll-linked, balik pas scroll up)
+  const ghostScale = useTransform(scrollYProgress, [0, 0.55], light ? [1, 0.28] : low ? [1, 0.32] : [1, 0.14]);
+  const ghostOpacity = useTransform(scrollYProgress, [0, 0.32, 0.55], [0.085, 0.035, 0]);
+  const ghostBlurPx = useTransform(scrollYProgress, [0, 0.55], [0.3, light ? 5 : 8]);
+  const ghostFilter = useMotionTemplate`blur(${ghostBlurPx}px)`;
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28"
       onMouseMove={(e) => {
@@ -1219,9 +1224,9 @@ function Hero({ ready }: { ready: boolean }) {
     >
       {/* Hero: Blueprint Grid 32px + scanline — stripes cuma di Intro biar gak duplikat */}
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-      {/* K hexagon ghost — K tembaga + hexagon circuit (Logo Kyronix baru) watermark subtle behind KYRONIX */}
-      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] h-[min(72vw,560px)] w-[min(72vw,560px)] -translate-x-1/2 -translate-y-1/2 will-change-transform max-sm:h-[84vw] max-sm:w-[84vw]" style={{ y: gridY, opacity: 0.085 } as unknown as Record<string, unknown>}>
-        <img src="/kyronix-k-hex.webp" alt="" width={1024} height={1024} loading="eager" decoding="async" draggable={false} className="h-full w-full select-none object-contain" style={{ filter: "blur(0.3px)" } as React.CSSProperties} />
+      {/* K hexagon ghost — tersedot mengecil + blur + fade pas scroll, reverse pas scroll up */}
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] h-[min(72vw,560px)] w-[min(72vw,560px)] -translate-x-1/2 -translate-y-1/2 will-change-transform max-sm:h-[84vw] max-sm:w-[84vw]" style={{ y: gridY, scale: ghostScale, opacity: ghostOpacity } as unknown as Record<string, unknown>}>
+        <motion.img src="/kyronix-k-hex.webp" alt="" width={1024} height={1024} loading="eager" decoding="async" draggable={false} className="h-full w-full select-none object-contain will-change-transform" style={{ filter: ghostFilter as unknown as React.CSSProperties["filter"] } as React.CSSProperties} />
       </motion.div>
       {/* corner brackets blueprint — keep */}
       <div aria-hidden className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
