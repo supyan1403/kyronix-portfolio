@@ -1327,55 +1327,46 @@ function Profile() {
   const { lang } = useLang();
   const t = dict[lang].profile;
   const isId = lang === "id";
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
+  const titleY = useTransform(scrollYProgress, [0, 1], [14, -14]);
+  const ghostY = useTransform(scrollYProgress, [0, 1], [18, -18]);
+  const inView = useInView(ref, { amount: 0.35, margin: "0px 0px -12% 0px" });
+  const rows = [
+    { k: "Asal", kEn: "Based", v: "Tasikmalaya, Jawa Barat, Indonesia", vEn: "Tasikmalaya, Jawa Barat, Indonesia" },
+    { k: "Fokus", kEn: "Focus", v: "Pengelolaan Data, Pemodelan Sistem, & Pengembangan Aplikasi Web", vEn: "Data Management, System Modeling & Web App Development" },
+    { k: "Pendekatan", kEn: "Approach", v: "Selalu antusias mengulik berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional.", vEn: "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions." },
+    { k: "Eksplorasi", kEn: "Exploration", v: "Aktif memperluas wawasan melalui pengembangan aplikasi web secara mandiri dan berkelanjutan.", vEn: "Actively expanding horizons through independent and continuous web app development." },
+  ];
   return (
-    <section id="profile" className="relative overflow-x-clip bg-transparent py-14 sm:py-20">
-      <div className="mx-auto max-w-[1120px] px-[5vw]">
-        <div className="grid gap-8 md:grid-cols-12 md:gap-10">
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="flex flex-col gap-5 md:col-span-7"
-          >
+    <section ref={ref} id="profile" className="relative flex min-h-[100dvh] items-center overflow-hidden bg-transparent px-[5vw] py-[12vh]">
+      <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.55]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
+      <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px] will-change-transform max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: ghostY, opacity: 0.05 } as unknown as Record<string, unknown>}>KYRONIX</motion.div>
+      <div className="relative mx-auto w-full max-w-[1120px]">
+        <div className="grid gap-8 md:grid-cols-12 md:gap-10 md:items-start">
+          <motion.div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col gap-5 md:col-span-7 will-change-transform">
             <Eyebrow index="" label={t.eyebrow} />
-            <h2 className="font-display text-[clamp(2rem,5.2vw,3.2rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink">{t.title}</h2>
-            <div className="space-y-2">
-              <p className="font-sans text-lg font-bold tracking-[0.04em] text-ink">{t.name}</p>
-              <p className="font-mono text-xs uppercase tracking-[0.18em] text-terracotta">{t.role}</p>
-            </div>
-            <div className="flex flex-wrap gap-3 pt-3">
+            <SplitReveal key={t.title} play={inView} text={t.title} className="font-display text-[clamp(2rem,6.5vw,5.2rem)] font-extrabold leading-[0.88] tracking-[0.01em] text-ink" />
+            <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.38 : 0.1 }} className="font-sans text-lg font-bold tracking-[0.04em] text-ink">{t.name}</motion.p>
+            <motion.p initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.46 : 0.06 }} className="font-mono text-xs uppercase tracking-[0.18em] text-terracotta">{t.role}</motion.p>
+            <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.54 : 0 }} className="flex flex-wrap gap-3 pt-2">
               <Magnetic href="#contact" variant="primary" onClick={() => scrollToId("contact")}>{t.ctaPrimary} <Mail size={16} /></Magnetic>
               <Magnetic href="/cv.pdf" variant="ghost">{t.ctaSecondary} <Download size={16} /></Magnetic>
-            </div>
+            </motion.div>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
-            className="flex flex-col md:col-span-5 md:border-l md:border-border/40 md:pl-8"
-          >
+          <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col will-change-transform md:col-span-5 md:border-l md:border-ink/10 md:pl-10 max-md:border-t max-md:border-border/10 max-md:pt-6">
             <div className="divide-y divide-border/10 border-y border-border/10">
-              <div className="py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Asal" : "Based"}</p>
-                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">Tasikmalaya, Jawa Barat, Indonesia</p>
-              </div>
-              <div className="py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Fokus" : "Focus"}</p>
-                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Pengelolaan Data, Pemodelan Sistem, & Pengembangan Aplikasi Web" : "Data Management, System Modeling & Web Application Development"}</p>
-              </div>
-              <div className="py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Pendekatan" : "Approach"}</p>
-                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Selalu antusias mengulik berbagai hal baru, menikmati proses belajar yang mendalam, dan menerjemahkan gagasan kompleks menjadi solusi yang fungsional." : "Always enthusiastic to explore new things, enjoying deep learning and translating complex ideas into functional solutions."}</p>
-              </div>
-              <div className="py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{isId ? "Eksplorasi" : "Exploration"}</p>
-                <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? "Aktif memperluas wawasan melalui pengembangan aplikasi web secara mandiri dan berkelanjutan." : "Actively expanding horizons through independent and continuous web app development."}</p>
-              </div>
+              {rows.map((r, idx) => (
+                <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.34 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="py-5">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta shadow-[0_0_0_rgba(0,0,0,0)]" style={{ textShadow: "0 0 12px rgba(196,113,60,0.18)" } as React.CSSProperties}>{isId ? r.k : r.kEn}</p>
+                  <p className="mt-1.5 font-sans text-[15px] font-semibold leading-relaxed text-ink">{isId ? r.v : r.vEn}</p>
+                </motion.div>
+              ))}
             </div>
-            <p className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> {isId ? "Terbuka untuk kolaborasi riset" : "Open to research collaboration"}</p>
-          </motion.div>
+            <motion.p initial={{ opacity: 0 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.78 : 0 }} className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted"><span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> {isId ? "Terbuka untuk kolaborasi riset" : "Open to research collaboration"}</motion.p>
+          </div>
         </div>
       </div>
     </section>
