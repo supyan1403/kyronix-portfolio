@@ -1372,15 +1372,14 @@ function Profile() {
             </motion.div>
           </motion.div>
           <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col will-change-transform md:col-span-5 md:pl-2">
-            {/* Ghost List refined — hairline + airy icons, no container */}
-            <div className="relative space-y-5 pl-1 md:space-y-[18px]">
-              <span aria-hidden className="pointer-events-none absolute left-[13px] top-1.5 bottom-1.5 hidden w-px bg-border/10 md:block" />
+            {/* Caps + chip terracotta per baris — kayak screenshot */}
+            <div className="space-y-3 md:space-y-3">
               {rows.map((r, idx) => (
-                <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.36 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="relative flex items-start gap-3.5">
-                  <span className="relative z-10 mt-0.5 inline-flex h-[26px] w-[26px] shrink-0 items-center justify-center border border-terracotta/15 bg-transparent text-terracotta/90">
-                    <r.Icon size={14} strokeWidth={1.75} />
+                <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.36 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="flex items-center gap-3">
+                  <span className="inline-flex h-[30px] w-[30px] shrink-0 items-center justify-center border border-terracotta/35 bg-terracotta/10 text-terracotta">
+                    <r.Icon size={14} strokeWidth={1.9} />
                   </span>
-                  <p className="font-sans text-[13.5px] font-medium leading-[1.65] tracking-[-0.01em] text-ink/90">{isId ? r.v : r.vEn}</p>
+                  <p className="font-sans text-[13px] font-semibold uppercase leading-[1.55] tracking-[0.03em] text-ink">{(isId ? r.v : r.vEn).toUpperCase()}</p>
                 </motion.div>
               ))}
             </div>
