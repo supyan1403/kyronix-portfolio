@@ -424,7 +424,7 @@ function ContributionHeatmap({
   }, [leadingEmpty, days.length]);
 
   return (
-    <div className="mt-4 flex min-h-[275px] flex-col">
+    <div className="mt-4 flex h-[275px] flex-col">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
           {sum.toLocaleString(isEn ? "en-US" : "id-ID")} {isEn ? `contributions in ${filterLabel}` : `kontribusi dalam ${filterLabel}`}
@@ -855,7 +855,9 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               {t.eyebrow}
             </p>
             <h2 className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink">
-              {t.title}
+              {t.title.split(" ").map((w, i, arr) => (
+                <span key={i} className={w.includes("-") ? "whitespace-nowrap" : undefined}>{w}{i < arr.length - 1 ? " " : ""}</span>
+              ))}
             </h2>
             <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
               {t.desc}
