@@ -1398,20 +1398,20 @@ function Profile() {
               </p>
               <p className="mt-2 font-sans text-[12px] font-bold uppercase leading-[1.45] tracking-[0.02em] text-ink">{(isId ? rows[1].v : rows[1].vEn).toUpperCase()}</p>
               <div className="mt-3 flex items-center justify-between gap-2 border-t border-border/10 pt-3 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
-                <span>SYSTEM_DATA_FLOW PIPELINE_SPEC_V2.4</span>
-                <span className="inline-flex items-center gap-1 shrink-0 text-terracotta"><span className="h-1.5 w-1.5 rounded-full bg-terracotta live-dot" /> HIGH THROUGHPUT</span>
+                <span className="truncate">{isId ? "PENGELOLAAN DATA · PEMODELAN SISTEM · WEB APP" : "DATA MANAGEMENT · SYSTEM MODELING · WEB APP"}</span>
+                <span className="inline-flex items-center gap-1 shrink-0 text-terracotta"><span className="h-1.5 w-1.5 rounded-full bg-terracotta live-dot" /> {isId ? "AKTIF" : "ACTIVE"}</span>
               </div>
               <div className="mt-3 grid grid-cols-3 gap-2">
                 <div className="border border-border/15 bg-cream/5 px-2 py-2.5 text-center">
-                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">Data Ingest</p>
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">{isId ? "Pengelolaan Data" : "Data Management"}</p>
                   <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.06em] text-muted">ETL & Validation</p>
                 </div>
                 <div className="border border-terracotta/40 bg-terracotta/15 px-2 py-2.5 text-center">
-                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">System Model</p>
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">{isId ? "Pemodelan Sistem" : "System Modeling"}</p>
                   <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.06em] text-muted">Relational / Graph</p>
                 </div>
                 <div className="border border-border/15 bg-cream/5 px-2 py-2.5 text-center">
-                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">Web Interface</p>
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">{isId ? "Aplikasi Web" : "Web App"}</p>
                   <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.06em] text-muted">Reactive Core</p>
                 </div>
               </div>
