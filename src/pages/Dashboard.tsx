@@ -844,26 +844,27 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="warm-card flex items-center justify-between p-5">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
-              <p className="mt-1 font-display text-3xl font-extrabold leading-none text-ink">
-                {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
-                <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
-              </p>
-            </div>
-            <span className="flex h-10 w-10 items-center justify-center border border-terracotta/20 bg-cream-deep text-terracotta">
-              <Clock size={18} />
+          <div className="warm-card flex min-h-[118px] flex-col justify-between p-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
+            <p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">
+              {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
+              <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
+            </p>
+            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-transparent" aria-hidden>
+              <Clock size={12} /> —
             </span>
           </div>
-          <div className={`warm-card p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
+          <div className={`warm-card flex min-h-[118px] flex-col justify-between p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p>
             <p className={`mt-2 font-display text-2xl font-extrabold ${todayCount === 0 ? "text-muted" : "text-ink"}`}>
               {todayCount}
               <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
             </p>
+            <span className="mt-2 inline-flex h-[16px] items-center font-mono text-[10px] uppercase tracking-widest text-transparent" aria-hidden>
+              —
+            </span>
           </div>
-          <div className="warm-card p-5">
+          <div className="warm-card flex min-h-[118px] flex-col justify-between p-5">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
             <p className="mt-2 font-display text-2xl font-extrabold text-ink">
               {streakReal}
