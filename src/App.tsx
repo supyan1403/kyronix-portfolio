@@ -1216,9 +1216,9 @@ function Hero({ ready }: { ready: boolean }) {
     >
       {/* Hero: Blueprint Grid 32px + scanline — stripes cuma di Intro biar gak duplikat */}
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-      {/* KPage ghost — watermark subtle behind KYRONIX, selaras LAB 22vw */}
-      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] h-[min(72vw,520px)] w-[min(72vw,520px)] -translate-x-1/2 -translate-y-1/2 will-change-transform max-sm:h-[84vw] max-sm:w-[84vw]" style={{ y: gridY, opacity: 0.055 } as unknown as Record<string, unknown>}>
-        <img src="/kyronix-k-page.webp" alt="" width={1024} height={1024} loading="eager" decoding="async" draggable={false} className="h-full w-full select-none object-contain" style={{ filter: "blur(0.4px)" } as React.CSSProperties} />
+      {/* K hexagon ghost — K tembaga + hexagon circuit (Logo Kyronix baru) watermark subtle behind KYRONIX */}
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] h-[min(72vw,560px)] w-[min(72vw,560px)] -translate-x-1/2 -translate-y-1/2 will-change-transform max-sm:h-[84vw] max-sm:w-[84vw]" style={{ y: gridY, opacity: 0.085 } as unknown as Record<string, unknown>}>
+        <img src="/kyronix-k-hex.webp" alt="" width={1024} height={1024} loading="eager" decoding="async" draggable={false} className="h-full w-full select-none object-contain" style={{ filter: "blur(0.3px)" } as React.CSSProperties} />
       </motion.div>
       {/* corner brackets blueprint — keep */}
       <div aria-hidden className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
