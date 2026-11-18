@@ -1,11 +1,23 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { motion, useInView, useScroll, useSpring, useTransform } from "motion/react";
-import { Cpu, Clock, Flame, Activity, CalendarDays, CalendarRange } from "lucide-react";
-import { SiGithub } from "react-icons/si";
+import { Clock, Flame, Activity, CalendarDays, CalendarRange } from "lucide-react";
 import { useLang } from "../langCtx";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const USER = "supyan1403";
+
+function ChipPixel({ size = 24, className, style }: { size?: number; className?: string; style?: React.CSSProperties }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} style={style} stroke="currentColor" strokeWidth={1.7} strokeLinecap="square" strokeLinejoin="miter" aria-hidden>
+      <rect x={6.5} y={6.5} width={11} height={11} rx={0} />
+      <rect x={9.7} y={9.7} width={4.6} height={4.6} rx={0} />
+      <path d="M9 6.5V4.2M12 6.5V3.6M15 6.5V4.2" />
+      <path d="M9 17.5V19.8M12 17.5V20.4M15 17.5V19.8" />
+      <path d="M6.5 9H4.2M6.5 12H3.6M6.5 15H4.2" />
+      <path d="M17.5 9H19.8M17.5 12H20.4M17.5 15H19.8" />
+    </svg>
+  );
+}
 
 function ghHeaders(): HeadersInit {
   const tok = (import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim();
@@ -69,8 +81,8 @@ const tDict = {
   id: {
     back: "Kembali ke Beranda",
     update: "diperbarui dari GitHub",
-    eyebrow: "Kyronix Lab — Dashboard Aktivitas",
-    title: "PANTAUAN AKTIVITAS LANGSUNG",
+    eyebrow: "Kyronix Lab - Rekam Jejak Operasional",
+    title: "MONITORING AKTIVITAS REAL-TIME",
     desc: "Konsistensi belajar dan eksplorasi berkelanjutan yang tercermin melalui rekam jejak aktivitas harian, menjadi landasan bagi cara saya mengembangkan berbagai sistem secara bertahap",
     totalBelajar: "Total Kontribusi",
     totalHint: "keseluruhan",
@@ -112,8 +124,8 @@ const tDict = {
   en: {
     back: "Back to Home",
     update: "updated from GitHub",
-    eyebrow: "Kyronix Lab — Activity Dashboard",
-    title: "LIVE ACTIVITY MONITOR",
+    eyebrow: "Kyronix Lab - Operational Trail",
+    title: "REAL-TIME ACTIVITY MONITORING",
     desc: "How I nurture consistent learning and web development exploration tracked live from daily activity",
     totalBelajar: "Total Contributions",
     totalHint: "all time",
@@ -436,8 +448,8 @@ function ContributionHeatmap({
       {/* info bulan aktif */}
       <p className="mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-terracotta">{monthInfo}</p>
 
-      <div className="mt-2 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "220px" } as React.CSSProperties}>
-        {/* C kalender kecil — 7 kolom, kotak kosong fill warna saja, full sebulan */}
+      <div className="mt-2 flex min-h-[280px] flex-col overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "280px" } as React.CSSProperties}>
+        {/* C kalender kecil — 7 kolom, kotak kosong fill warna saja, full sebulan — flex-col + footer mt-auto biar tidak geser saat switch */}
         <div className="grid grid-cols-7 gap-1">
           {weekdayLabels.map((w) => (
             <span key={w} className="text-center font-mono text-[9px] font-semibold uppercase tracking-widest text-muted/70">
@@ -469,7 +481,7 @@ function ContributionHeatmap({
             <span key={`empty-trail-${i}`} className="h-[14px] sm:h-[16px]" />
           ))}
         </div>
-        <div className="mt-3 space-y-2 font-mono text-[10px] text-muted">
+        <div className="mt-auto pt-3 space-y-2 font-mono text-[10px] text-muted">
           <div className="flex items-center justify-between">
             <span>{active} {isEn ? "active days" : "hari aktif"} / {days.length}</span>
           </div>
@@ -833,15 +845,13 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
 
         <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE }} style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="text-center will-change-transform">
           <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
-            <span className="inline-flex h-3 w-3 items-center justify-center text-terracotta/60">
-              <Cpu size={14} />
-            </span>
+            <ChipPixel size={14} className="text-terracotta/60" />
             {t.eyebrow}
           </p>
-          <h2 className="mx-auto mt-4 max-w-3xl font-display text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[0.9] tracking-[0.01em] text-ink">
+          <h2 className="mx-auto mt-4 max-w-4xl font-display text-[clamp(3rem,9vw,5.5rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink">
             {t.title}
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted">
+          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
             {t.desc}
           </p>
         </motion.div>
@@ -940,14 +950,6 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
                 <p className="font-mono text-xs text-muted">{t.noLang}</p>
               )}
             </div>
-            <a
-              href={`https://github.com/${USER}?tab=repositories`}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-auto inline-flex items-center gap-2 pt-5 font-mono text-xs font-bold uppercase tracking-widest text-terracotta hover:text-ink"
-            >
-              {t.viewGithub} <SiGithub size={14} />
-            </a>
           </motion.section>
 
           <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} className="warm-card flex flex-col p-6">
