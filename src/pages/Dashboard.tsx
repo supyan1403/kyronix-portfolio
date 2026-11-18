@@ -25,7 +25,7 @@ const tDict = {
     streak: "Rekam Jejak Harian",
     jam: "KONTRIBUSI",
     hari: "HARI",
-    totalHint: "akumulasi 30 hari terakhir — sesuai API publik GitHub",
+    totalHint: "sesuai GitHub — 1 tahun terakhir",
     liveTicker: "hari ini",
     todayEmpty: "istirahat hari ini",
     todayActive: "ada aktivitas hari ini",
@@ -41,7 +41,7 @@ const tDict = {
     loadingActivity: "Memuat aktivitas",
     noActivity: "Belum ada aktivitas terbaru",
     fallbackCommit: "memperbarui repositori",
-    heatContrib: "kontribusi dalam 30 hari terakhir",
+    heatContrib: "kontribusi dalam setahun terakhir",
     less: "Kurang",
     more: "Banyak",
     fokusHarian: "Fokus Harian",
@@ -76,7 +76,7 @@ const tDict = {
     streak: "Daily Streak",
     jam: "CONTRIBUTIONS",
     hari: "DAYS",
-    totalHint: "accumulated last 30 days — from GitHub public API",
+    totalHint: "matching GitHub — last year",
     liveTicker: "today",
     todayEmpty: "rest today",
     todayActive: "active today",
@@ -92,7 +92,7 @@ const tDict = {
     loadingActivity: "Loading activity",
     noActivity: "No recent activity",
     fallbackCommit: "updating repository",
-    heatContrib: "contributions in the last 30 days",
+    heatContrib: "contributions in the last year",
     less: "Less",
     more: "More",
     fokusHarian: "Daily Focus",
@@ -118,29 +118,31 @@ const tDict = {
   },
 } as const;
 
-function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(), daysWindow = 30) {
+function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date()) {
+  // GitHub parity: 53w window ending today, aligned Mon–Sun (same as github.com)
   const end = new Date(today);
   end.setHours(0, 0, 0, 0);
-  const startExact = new Date(end);
-  startExact.setDate(end.getDate() - (daysWindow - 1));
-  // align start to Monday before startExact
-  const start = new Date(startExact);
-  const startDiff = (start.getDay() + 6) % 7;
-  start.setDate(start.getDate() - startDiff);
-  // align end to Sunday after end (biar grid penuh)
+  const start = new Date(end);
+  start.setDate(end.getDate() - 364); // 365 days inclusive
+  const diff = (start.getDay() + 6) % 7;
+  start.setDate(start.getDate() - diff);
   const endAligned = new Date(end);
-  const endDay = end.getDay();
-  const toSunday = (7 - ((endDay + 6) % 7) - 1);
-  endAligned.setDate(end.getDate() + toSunday);
+  const eDiff = start.getDay(); // unused, compute Sunday after end
+  const toSun = 6 - ((end.getDay() + 6) % 7);
+  endAligned.setDate(end.getDate() + toSun);
+  void eDiff;
   const weeks: HeatWeek[] = [];
-  let totalWindow = 0;
+  let total = 0;
+  const startExact = new Date(end);
+  startExact.setDate(end.getDate() - 364);
+  startExact.setHours(0, 0, 0, 0);
   const cur = new Date(start);
   while (cur <= endAligned) {
     const week: HeatWeek = [];
     for (let d = 0; d < 7; d++) {
       const iso = cur.toISOString().slice(0, 10);
       const cnt = countMap.get(iso) ?? 0;
-      if (cur >= startExact && cur <= end) totalWindow += cnt;
+      if (cur >= startExact && cur <= end) total += cnt;
       week.push({
         date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
         iso,
@@ -150,44 +152,11 @@ function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(
     }
     weeks.push(week);
   }
-  return { weeks, total: totalWindow };
+  return { weeks, total };
 }
 
-function mockHeatmap(today = new Date()) {
-  const map = new Map<string, number>();
-  // emulate realistic pattern: quiet Nov-Jan, active Apr-Nov like screenshot 1141 total
-  const end = new Date(today);
-  end.setHours(0, 0, 0, 0);
-  const start = new Date(end);
-  start.setDate(end.getDate() - 364);
-  const day0 = start.getDay();
-  const diff = (day0 + 6) % 7;
-  start.setDate(start.getDate() - diff);
-  const cur = new Date(start);
-  let seed = 42;
-  const rnd = () => {
-    seed = (seed * 1664525 + 1013904223) % 4294967296;
-    return seed / 4294967296;
-  };
-  for (let i = 0; i < 371; i++) {
-    const iso = cur.toISOString().slice(0, 10);
-    const month = cur.getMonth(); // 0-11
-    // weight by season: Nov(10) Dec(11) Jan(0) Feb(1) Mar(2) = low
-    let prob = 0.12;
-    if (month >= 3 && month <= 8) prob = 0.62; // Apr-Sep high
-    if (month === 9 || month === 10) prob = 0.48; // Oct-Nov medium
-    if (rnd() < prob) {
-      const lvl = rnd();
-      let c = 0;
-      if (lvl < 0.4) c = 1 + Math.floor(rnd() * 2);
-      else if (lvl < 0.72) c = 3 + Math.floor(rnd() * 3);
-      else if (lvl < 0.9) c = 6 + Math.floor(rnd() * 4);
-      else c = 10 + Math.floor(rnd() * 6);
-      map.set(iso, c);
-    }
-    cur.setDate(cur.getDate() + 1);
-  }
-  return buildHeatmapFromCounts(map, today);
+function mockHeatmap(_today = new Date()) {
+  return buildHeatmapFromCounts(new Map(), new Date());
 }
 
 function levelMeta(count: number) {
@@ -257,8 +226,8 @@ function ContributionHeatmap({
         </p>
       </div>
 
-      <div className="mt-3 overflow-x-auto hide-scrollbar border border-border/10 bg-cream-deep/40 p-3 sm:overflow-visible">
-        <div className={weeks.length <= 6 ? "w-full" : "min-w-[760px]"}>
+      <div className="mt-3 overflow-x-auto hide-scrollbar border border-border/10 bg-cream-deep/40 p-3">
+        <div className="min-w-[760px]">
           {/* month row */}
           <div className="flex gap-[3px] pl-[28px] font-mono text-[10px] leading-none text-muted">
             {weeks.map((_, idx) => {
@@ -425,23 +394,29 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
       // dedup by repo for footer later, keep raw for heatmap
       setCommits(commitItems.length ? commitItems : []);
 
-      // heatmap counts per day
-      const dayMap = new Map<string, number>();
-      for (const e of push) {
-        const iso = new Date(e.created_at).toISOString().slice(0, 10);
-        const c = e.payload.commits?.length ?? e.payload.size ?? 1;
-        dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
-      }
-      if (dayMap.size === 0) {
-        setHeatmap(buildHeatmapFromCounts(dayMap, new Date(), 30));
-      } else {
-        setHeatmap(buildHeatmapFromCounts(dayMap, new Date(), 30));
+      // heatmap: wajib sama kayak github.com/supyan1403 — 1,145 setahun — via jogruber proxy (GitHub GraphQL)
+      // fallback ke events public kalau proxy down
+      try {
+        const gr = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=last`);
+        if (!gr.ok) throw new Error("gh");
+        const gj: { contributions: { date: string; count: number }[]; total: { lastYear: number } } = await gr.json();
+        const cMap = new Map<string, number>();
+        gj.contributions.forEach((c) => cMap.set(c.date, c.count));
+        setHeatmap(buildHeatmapFromCounts(cMap, new Date()));
+      } catch {
+        const dayMap = new Map<string, number>();
+        for (const e of push) {
+          const iso = new Date(e.created_at).toISOString().slice(0, 10);
+          const c = e.payload.commits?.length ?? e.payload.size ?? 1;
+          dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
+        }
+        setHeatmap(buildHeatmapFromCounts(dayMap, new Date()));
       }
 
       setErr(null);
     } catch (e) {
       setErr(e instanceof Error ? e.message : errGeneric);
-      if (!heatmap) setHeatmap(buildHeatmapFromCounts(new Map(), new Date(), 30));
+      if (!heatmap) setHeatmap(buildHeatmapFromCounts(new Map(), new Date()));
     } finally {
       setLoading(false);
     }
