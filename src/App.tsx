@@ -49,7 +49,8 @@ import {
   SiTailwindcss,
   SiVercel,
 } from "react-icons/si";
-import { DashboardEmbed } from "./pages/Dashboard";
+import { lazy, Suspense } from "react";
+const DashboardEmbed = lazy(() => import("./pages/Dashboard").then((m) => ({ default: m.DashboardEmbed })) );
 
 /* ---------- Utility: Warm Dark palette tokens ---------- */
 const WARM = {
@@ -1466,23 +1467,24 @@ function Profile() {
 
 function Activity() {
   const secRef = useRef<HTMLElement>(null);
+  // ringankan: 1 MotionValue aja untuk blur, reveal pakai whileInView (tanpa 8 useTransform bareng)
   const { scrollYProgress } = useScroll({ target: secRef, offset: ["start end", "end start"] });
-  const actTitleY = useTransform(scrollYProgress, [0, 1], [18, -18]);
-  const actGridY = useTransform(scrollYProgress, [0, 1], [10, -10]);
+  const actGridY = useTransform(scrollYProgress, [0, 1], [8, -8]);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref as unknown as React.RefObject<Element>, { amount: 0.1, margin: "0px 0px -12% 0px" });
   return (
     <section ref={secRef} id="activity" className="relative overflow-visible bg-transparent px-[5vw] py-10">
-      <motion.div aria-hidden className="pointer-events-none absolute -left-[8%] bottom-[-6%] h-[420px] w-[420px] bg-terracotta/10 blur-[60px] will-change-transform max-sm:hidden" style={{ y: actGridY } as unknown as Record<string, unknown>} />
+      <motion.div aria-hidden className="pointer-events-none absolute -left-[8%] bottom-[-6%] h-[420px] w-[420px] bg-terracotta/10 blur-[48px] will-change-transform max-sm:hidden" style={{ y: actGridY } as unknown as Record<string, unknown>} />
       <motion.div
         ref={ref as unknown as React.RefObject<HTMLDivElement>}
         initial={{ opacity: 0, y: 14 } as unknown as Record<string, unknown>}
         animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)}
         transition={{ duration: 0.6, ease: EASE }}
-        style={{ y: actTitleY } as unknown as Record<string, unknown>}
         className="relative mx-auto w-full max-w-[1120px] will-change-transform"
       >
-        <DashboardEmbed lazy />
+        <Suspense fallback={<div className="min-h-[320px] animate-pulse rounded-2xl bg-cream-deep/40" />}>
+          <DashboardEmbed lazy />
+        </Suspense>
       </motion.div>
     </section>
   );

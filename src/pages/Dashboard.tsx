@@ -730,16 +730,11 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   const embedRef = useRef<HTMLDivElement>(null);
   const embedInView = useInView(embedRef as unknown as React.RefObject<Element>, { amount: 0.05 });
   const shouldFetch = !lazy || embedInView;
+  const bahasaRef = useRef<HTMLElement>(null);
+  const langInView = useInView(bahasaRef as unknown as React.RefObject<Element>, { amount: 0.25 });
+  // 1x parallax aja (blur disain lain udah whileInView) — hemat 8 listeners
   const { scrollYProgress: dashProgress } = useScroll({ target: embedRef as unknown as React.RefObject<Element>, offset: ["start end", "end start"] });
-  const dashHeadY = useTransform(dashProgress, [0, 1], [16, -16]);
-  const dashC1Y = useTransform(dashProgress, [0, 1], [18, -14]);
-  const dashC2Y = useTransform(dashProgress, [0, 1], [22, -18]);
-  const dashC3Y = useTransform(dashProgress, [0, 1], [26, -22]);
-  const dashLangY = useTransform(dashProgress, [0, 1], [14, -14]);
-  const dashHeatY = useTransform(dashProgress, [0, 1], [12, -12]);
-  const dashBot1Y = useTransform(dashProgress, [0, 1], [16, -12]);
-  const dashBot2Y = useTransform(dashProgress, [0, 1], [20, -16]);
-  const dashBot3Y = useTransform(dashProgress, [0, 1], [24, -20]);
+  const dashHeadY = useTransform(dashProgress, [0, 1], [10, -10]);
   const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear, shouldFetch);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
@@ -821,7 +816,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
         </motion.div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.04 }} style={{ y: dashC1Y } as unknown as Record<string, unknown>} className="warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.04 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
             <p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">
               {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
@@ -831,7 +826,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               <Clock size={12} className="text-terracotta" /> {isEn ? (heatmapYear === "last" ? "last year" : String(heatmapYear)) : (heatmapYear === "last" ? "1 tahun terakhir" : String(heatmapYear))}
             </span>
           </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.12 }} style={{ y: dashC2Y } as unknown as Record<string, unknown>} className={`warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform ${todayCount === 0 ? "opacity-90" : ""}`}>
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.12 }} className={`warm-card flex min-h-[118px] flex-col justify-between p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p>
             <p className={`mt-2 font-display text-2xl font-extrabold ${todayCount === 0 ? "text-muted" : "text-ink"}`}>
               {todayCount}
@@ -841,7 +836,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
               <Activity size={12} className={todayCount === 0 ? "text-muted" : "text-terracotta"} /> {todayCount === 0 ? t.todayEmpty : t.todayActive}
             </span>
           </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.2 }} style={{ y: dashC3Y } as unknown as Record<string, unknown>} className="warm-card flex min-h-[118px] flex-col justify-between p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.2 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
             <p className="mt-2 font-display text-2xl font-extrabold text-ink">
               {streakReal}
@@ -853,7 +848,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
           </motion.div>
         </div>
 
-        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} style={{ y: dashLangY } as unknown as Record<string, unknown>} className="mt-6 warm-card p-6 will-change-transform">
+        <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="mt-6 warm-card p-6">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
             <div className="mt-5 space-y-3">
               {langs && langs.length ? (
@@ -871,8 +866,8 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
                     <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-cream-deep">
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={embedInView ? { width: `${l.pct}%` } : { width: 0 }}
-                        transition={{ duration: 0.9, ease: EASE, delay: 0.08 + i * 0.07 }}
+                        animate={langInView ? { width: `${l.pct}%` } : { width: 0 }}
+                        transition={{ duration: 0.9, ease: EASE, delay: langInView ? 0.08 + i * 0.07 : 0 }}
                         className="h-full rounded-full bg-gradient-to-r from-[#B85E2E] to-[#E07A5F]"
                       />
                     </div>
@@ -892,7 +887,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             </a>
           </motion.section>
 
-        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} style={{ y: dashHeatY } as unknown as Record<string, unknown>} className="mt-6 warm-card p-6 will-change-transform">
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} className="mt-6 warm-card p-6">
           <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
           {heatmap ? (
             <ContributionHeatmap
@@ -910,7 +905,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
         </motion.section>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.04 }} style={{ y: dashBot1Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.04 }} className="warm-card p-5">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
               <BarChart3 size={14} /> {t.fokusHarian}
             </div>
@@ -924,7 +919,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             </div>
             <p className="mt-2 font-mono text-[11px] text-muted">{t.fokusHint}</p>
           </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.1 }} style={{ y: dashBot2Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.1 }} className="warm-card p-5">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
               <Database size={14} /> {t.pemodelan}
             </div>
@@ -933,7 +928,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             </p>
             <p className="mt-2 font-mono text-[11px] text-muted">{t.pemodelanHint}</p>
           </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.16 }} style={{ y: dashBot3Y } as unknown as Record<string, unknown>} className="warm-card p-5 will-change-transform">
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.25, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.55, ease: EASE, delay: 0.16 }} className="warm-card p-5">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
               <Cpu size={14} /> {t.eksplorasi}
             </div>
