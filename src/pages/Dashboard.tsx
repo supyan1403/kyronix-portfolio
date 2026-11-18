@@ -867,9 +867,6 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
                   {todayCount}
                   <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
                 </p>
-                <span className={`mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest ${todayCount === 0 ? "text-muted" : "text-terracotta"}`}>
-                  <span className={`h-1.5 w-1.5 rounded-full ${todayCount === 0 ? "bg-border" : "bg-terracotta live-dot"}`} /> {todayCount === 0 ? t.todayEmpty : t.todayActive}
-                </span>
               </div>
               <div className="warm-card p-5">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
