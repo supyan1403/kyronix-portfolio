@@ -193,6 +193,36 @@ function mockHeatmap(_today = new Date()) {
   return buildHeatmapFromCounts(new Map(), new Date());
 }
 
+function buildHeatmapForYear(countMap: Map<string, number>, year: number) {
+  const startExact = new Date(year, 0, 1);
+  startExact.setHours(0, 0, 0, 0);
+  const endExact = new Date(year, 11, 31);
+  endExact.setHours(0, 0, 0, 0);
+  const start = new Date(startExact);
+  start.setDate(startExact.getDate() - ((startExact.getDay() + 6) % 7));
+  const endAligned = new Date(endExact);
+  endAligned.setDate(endExact.getDate() + (6 - ((endExact.getDay() + 6) % 7)));
+  const weeks: HeatWeek[] = [];
+  let total = 0;
+  const cur = new Date(start);
+  while (cur <= endAligned) {
+    const week: HeatWeek = [];
+    for (let d = 0; d < 7; d++) {
+      const iso = cur.toISOString().slice(0, 10);
+      const cnt = countMap.get(iso) ?? 0;
+      if (cur >= startExact && cur <= endExact) total += cnt;
+      week.push({
+        date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
+        iso,
+        count: cnt,
+      });
+      cur.setDate(cur.getDate() + 1);
+    }
+    weeks.push(week);
+  }
+  return { weeks, total };
+}
+
 function levelMeta(count: number) {
   if (count === 0) return { bg: "#2A2826", border: "rgba(58,54,50,0.45)" };
   if (count <= 2) return { bg: "#5A2E18", border: "rgba(90,46,24,1)" };
@@ -206,11 +236,17 @@ function ContributionHeatmap({
   total,
   isEn,
   t,
+  yearLabel,
+  onYearChange,
+  availableYears,
 }: {
   weeks: HeatWeek[];
   total: number;
   isEn: boolean;
   t: (typeof tDict)["id"];
+  yearLabel?: string;
+  onYearChange?: (y: number | "last") => void;
+  availableYears?: number[];
 }) {
   const monthLabels = useMemo(() => {
     const labels: { label: string; col: number }[] = [];
@@ -234,10 +270,29 @@ function ContributionHeatmap({
 
   return (
     <div className="mt-4">
-      <div className="border-b border-border/10 pb-3">
+      <div className="flex items-center justify-between gap-3 border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
-          {total.toLocaleString(isEn ? "en-US" : "id-ID")} {t.heatContrib}
+          {total.toLocaleString(isEn ? "en-US" : "id-ID")} {yearLabel ? `${yearLabel === "last" ? t.heatContrib : isEn ? `contributions in ${yearLabel}` : `kontribusi di ${yearLabel}`}` : t.heatContrib}
         </p>
+        {onYearChange && availableYears ? (
+          <span className="inline-flex gap-1 border border-border/10 bg-surface p-1">
+            <button
+              onClick={() => onYearChange("last" as unknown as number)}
+              className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${yearLabel === "last" ? "bg-ink text-white" : "text-muted hover:text-ink"}`}
+            >
+              {isEn ? "Last year" : "Setahun"}
+            </button>
+            {availableYears.map((y) => (
+              <button
+                key={y}
+                onClick={() => onYearChange(y)}
+                className={`px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest ${String(y) === String(yearLabel) ? "bg-ink text-white" : "text-muted hover:text-ink"}`}
+              >
+                {y}
+              </button>
+            ))}
+          </span>
+        ) : null}
       </div>
 
       <div className="mt-3 overflow-x-auto hide-scrollbar border border-border/10 bg-cream-deep/40 p-3">
@@ -306,7 +361,7 @@ function ContributionHeatmap({
   );
 }
 
-function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, errAct: string, errGeneric: string) {
+function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, errAct: string, errGeneric: string, heatmapYear: number | "last") {
   const [langs, setLangs] = useState<LangStat[] | null>(null);
   const [commits, setCommits] = useState<CommitItem[] | null>(null);
   const [heatmap, setHeatmap] = useState<{ weeks: HeatWeek[]; total: number } | null>(null);
@@ -322,12 +377,13 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
 
     const heatP = (async () => {
       try {
-        const gr = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=last`);
+        const yParam = heatmapYear === "last" ? "last" : String(heatmapYear);
+        const gr = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=${yParam}`);
         if (!gr.ok) throw new Error("gh");
         const gj: { contributions: { date: string; count: number }[] } = await gr.json();
         const cMap = new Map<string, number>();
         gj.contributions.forEach((c) => cMap.set(c.date, c.count));
-        setHeatmap(buildHeatmapFromCounts(cMap, new Date()));
+        setHeatmap(heatmapYear === "last" ? buildHeatmapFromCounts(cMap, new Date()) : buildHeatmapForYear(cMap, heatmapYear as number));
       } catch {
         // fallback heatmap dari events kalau proxy down — akan diisi di bawah
       }
@@ -446,7 +502,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
             const c = e.payload.commits?.length ?? e.payload.size ?? 1;
             dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
           }
-          return buildHeatmapFromCounts(dayMap, new Date());
+          return heatmapYear === "last" ? buildHeatmapFromCounts(dayMap, new Date()) : buildHeatmapForYear(dayMap, heatmapYear as number);
         });
       } catch {
         setErr(null);
@@ -463,7 +519,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
     const id = window.setInterval(fetchAll, 60000);
     return () => window.clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEn, fallbackCommit, errRepo, errAct]);
+  }, [isEn, fallbackCommit, errRepo, errAct, heatmapYear]);
 
   return { langs, commits, heatmap, loading, err, langErr, refresh: fetchAll };
 }
@@ -512,7 +568,8 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
   const { lang, setLang } = useLang();
   const isEn = lang === "en";
   const t = tDict[lang];
-  const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric);
+  const [heatmapYear, setHeatmapYear] = useState<number | "last">("last");
+  const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
   const todayId = new Date().toISOString().slice(0, 10);
@@ -718,7 +775,15 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
         <section className="mt-6 warm-card p-6">
           <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
           {heatmap ? (
-            <ContributionHeatmap weeks={heatmap.weeks} total={heatmap.total} isEn={isEn} t={t} />
+            <ContributionHeatmap
+              weeks={heatmap.weeks}
+              total={heatmap.total}
+              isEn={isEn}
+              t={t}
+              yearLabel={String(heatmapYear)}
+              onYearChange={setHeatmapYear as (y: number | "last") => void}
+              availableYears={[2026, 2025]}
+            />
           ) : (
             <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
           )}
