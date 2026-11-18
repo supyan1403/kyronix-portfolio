@@ -10,7 +10,6 @@ import {
   useInView,
   useMotionValue,
   useMotionValueEvent,
-  useMotionTemplate,
   useScroll,
   useSpring,
   useTransform,
@@ -1212,7 +1211,7 @@ function Hero({ ready }: { ready: boolean }) {
   }, [ready]);
   const done = typed.length === FULL.length;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  // spring halus biar hero + K hex tidak jentak 60/120fps (tanpa ubah range)
+  // spring halus biar hero tidak jentak 60/120fps
   const smooth = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.3 });
   const heroY = useTransform(smooth, [0, 1], [0, light ? -48 : -160]);
   const heroOpacity = useTransform(smooth, [0, 0.55], [1, 0]);
@@ -1220,11 +1219,6 @@ function Hero({ ready }: { ready: boolean }) {
   const gridY = useTransform(smooth, [0, 1], [0, light ? -14 : -30]);
   const taglineY = useTransform(smooth, [0, 1], [0, light ? -10 : -24]);
   const ctaY = useTransform(smooth, [0, 1], [0, light ? -8 : -18]);
-  // BG K tersedot hilang + reverse + handoff dari KPage (panjang, memudar dikit-dikit 0→0.65 biar nyambung)
-  const ghostScale = useTransform(smooth, [0, 0.65], light ? [1, 0.28] : low ? [1, 0.32] : [1, 0.14]);
-  const ghostOpacity = useTransform(smooth, [0, 0.18, 0.42, 0.65], [0.085, 0.065, 0.022, 0]);
-  const ghostBlurPx = useTransform(smooth, [0, 0.65], [0.3, light ? 5 : 8]);
-  const ghostFilter = useMotionTemplate`blur(${ghostBlurPx}px)`;
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28"
       onMouseMove={(e) => {
@@ -1242,12 +1236,13 @@ function Hero({ ready }: { ready: boolean }) {
       }}
       onTouchEnd={() => { heroMx.set(0); heroMy.set(0); }}
     >
-      {/* Hero: Blueprint Grid 32px + scanline — stripes cuma di Intro biar gak duplikat */}
+      {/* Hero: Blueprint Grid 32px — keep, K circuit ganti watermark diagonal */}
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-      {/* K hexagon ghost — tersedot + handoff morph dari KPage: masuk memudar 0.9s ease, lalu scroll-linked hilang */}
-      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] h-[min(72vw,560px)] w-[min(72vw,560px)] -translate-x-1/2 -translate-y-1/2 will-change-transform max-sm:h-[84vw] max-sm:w-[84vw]" style={{ y: gridY, scale: ghostScale, opacity: ghostOpacity } as unknown as Record<string, unknown>}>
-        <motion.img src="/kyronix-k-hex.webp" alt="" width={1024} height={1024} loading="eager" decoding="async" draggable={false} className="h-full w-full select-none object-contain will-change-transform" style={{ filter: ghostFilter as unknown as React.CSSProperties["filter"] } as React.CSSProperties} initial={{ opacity: 0, scale: 0.86, filter: "blur(6px)" }} animate={ready ? ({ opacity: 1, scale: 1, filter: "blur(0.3px)" } as unknown as Record<string, unknown>) : ({ opacity: 0, scale: 0.86, filter: "blur(6px)" } as unknown as Record<string, unknown>)} transition={{ duration: 1.35, ease: EASE, delay: 0.28 }} />
-      </motion.div>
+      {/* Watermark KYRONIX horizontal — kepotong pas setengah N: KYRON|IX nyambung melintasi */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden select-none">
+        <span className="absolute right-0 top-[5%] translate-x-[36%] whitespace-nowrap font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline max-sm:top-[3%] max-sm:text-[30vw]" style={{ opacity: 0.032 } as React.CSSProperties}>KYRONIX</span>
+        <span className="absolute bottom-[5%] left-0 -translate-x-[64%] whitespace-nowrap font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline max-sm:bottom-[3%] max-sm:text-[30vw]" style={{ opacity: 0.032 } as React.CSSProperties}>KYRONIX</span>
+      </div>
       {/* corner brackets blueprint — keep */}
       <div aria-hidden className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
       <div aria-hidden className="pointer-events-none absolute right-[24px] top-[88px] h-[22px] w-[22px] border-r-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:right-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
