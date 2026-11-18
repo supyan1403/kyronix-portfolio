@@ -17,8 +17,8 @@ const FALLBACK_LANGS: LangStat[] = [
   { lang: "PHP", count: 560998, pct: 14 },
   { lang: "Python", count: 529577, pct: 13 },
   { lang: "HTML", count: 384990, pct: 9 },
-  { lang: "CSS", count: 267984, pct: 7 },
-  { lang: "TypeScript", count: 240845, pct: 6 },
+  { lang: "CSS", count: 268645, pct: 7 },
+  { lang: "TypeScript", count: 233052, pct: 6 },
 ];
 const LANG_ICON_SRC: Record<string, string> = {
   javascript: "/icons/javascript.svg",
@@ -33,7 +33,7 @@ function langIconSrc(lang: string): string | null {
   return LANG_ICON_SRC[k] ?? null;
 }
 
-const LANGS_CACHE_KEY = "kyronix:langs:v4";
+const LANGS_CACHE_KEY = "kyronix:langs:v5";
 const LANGS_TTL_MS = 60 * 60 * 1000;
 function readLangsCache(): LangStat[] | null {
   try {
@@ -555,8 +555,8 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         if (!r.ok) throw new Error(`${r.status}`);
         const repos: { name: string; languages_url: string; language: string | null }[] = await r.json();
         let sorted: LangStat[];
-        // pakai bytes asli biar 25% rata hilang — JS 56% sesuai live: kulinara+project_bps_tasik JS 2.1MB
-        // tanpa token tetap pakai languages_url (4 repo ringan, tidak bikin 403), hanya fallback ke count jika gagal
+        // pakai bytes asli biar 25% rata hilang — JS 51% sesuai live: kulinara+project_bps_tasik JS 2.1MB
+        // tanpa token tetap pakai languages_url (4 repo ringan), tapi kalau 1 aja gagal jangan pakai partial (bikin PHP 40% ngaco)
         const langMapsAll = await Promise.all(
           repos.slice(0, 20).map(async (repo) => {
             try {
@@ -568,6 +568,9 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
             }
           })
         );
+        // kalau ada repo yang gagal (rate limit/timeout) → jangan pakai partial, pakai fallback jujur
+        const anyFailed = langMapsAll.some((m) => !m || typeof m !== "object");
+        if (anyFailed) throw new Error("partial langs");
         const bytes = new Map<string, number>();
         let hasBytes = false;
         langMapsAll.forEach((m) => {
@@ -603,7 +606,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         writeLangsCache(sorted);
         setLangErr(null);
       } catch {
-        // 403 / timeout — tetap tampil fallback/cache, jangan tampilkan Batas GitHub
+        // 403 / partial / timeout — tetap tampil fallback/cache, jangan tampilkan data ngaco 40/38
         const ok = readLangsCache();
         if (ok?.length) {
           setLangs((prev) => (prev && prev.length ? prev : ok));
