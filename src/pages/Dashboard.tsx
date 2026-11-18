@@ -7,6 +7,11 @@ import { useLang } from "../langCtx";
 const EASE = [0.22, 1, 0.36, 1] as const;
 const USER = "supyan1403";
 
+function ghHeaders(): HeadersInit {
+  const tok = (import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim();
+  return tok ? { Authorization: `Bearer ${tok}` } : {};
+}
+
 // no ":" in any visible copy per spec — also no "project" word, use "cara saya"
 type LangStat = { lang: string; count: number; pct: number };
 type CommitItem = { repo: string; message: string; time: string; url: string };
@@ -348,14 +353,14 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
 
     const ghP = (async () => {
       try {
-        const r = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`);
+        const r = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`, { headers: ghHeaders() });
         if (!r.ok) throw new Error(`${r.status}`);
         const repos: { name: string; languages_url: string; language: string | null }[] = await r.json();
         const slice = repos.slice(0, 30);
         const langMaps = await Promise.all(
           slice.map(async (repo) => {
             try {
-              const lr = await fetch(repo.languages_url);
+              const lr = await fetch(repo.languages_url, { headers: ghHeaders() });
               if (!lr.ok) return {} as Record<string, number>;
               return (await lr.json()) as Record<string, number>;
             } catch {
@@ -403,7 +408,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
 
     const evP = (async () => {
       try {
-        const er = await fetch(`https://api.github.com/users/${USER}/events/public?per_page=100`);
+        const er = await fetch(`https://api.github.com/users/${USER}/events/public?per_page=100`, { headers: ghHeaders() });
         if (!er.ok) throw new Error(`${er.status}`);
         const events: { type: string; repo: { name: string }; payload: { commits?: { message: string }[]; size?: number }; created_at: string }[] =
           await er.json();
