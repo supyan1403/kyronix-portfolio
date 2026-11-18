@@ -324,102 +324,124 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
   const [heatmap, setHeatmap] = useState<{ weeks: HeatWeek[]; total: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [langErr, setLangErr] = useState<string | null>(null);
 
   const fetchAll = async () => {
-    try {
-      const r = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`);
-      if (!r.ok) throw new Error(errRepo);
-      const repos: { name: string; languages_url: string }[] = await r.json();
-      // jujur byte per bahasa — fetch languages_url per repo (max 30 biar tidak rate-limit)
-      const slice = repos.slice(0, 30);
-      const langMaps = await Promise.all(
-        slice.map(async (repo) => {
-          try {
-            const lr = await fetch(repo.languages_url);
-            if (!lr.ok) return {} as Record<string, number>;
-            return (await lr.json()) as Record<string, number>;
-          } catch {
-            return {} as Record<string, number>;
-          }
-        })
-      );
-      const bytes = new Map<string, number>();
-      langMaps.forEach((m) => {
-        Object.entries(m).forEach(([k, v]) => bytes.set(k, (bytes.get(k) || 0) + v));
-      });
-      let sorted: LangStat[];
-      if (bytes.size) {
-        const sum = Array.from(bytes.values()).reduce((a, b) => a + b, 0) || 1;
-        sorted = Array.from(bytes.entries())
-          .map(([lang, count]) => ({ lang, count, pct: Math.round((count / sum) * 100) }))
-          .sort((a, b) => b.pct - a.pct)
-          .slice(0, 6);
-      } else {
-        // fallback hitung per repo kalau languages kosong (fork kosong)
-        const c = new Map<string, number>();
-        repos.forEach((repo) => {
-          const l = (repo as unknown as { language: string | null }).language || (isEn ? "Other" : "Lainnya");
-          if (l) c.set(l, (c.get(l) || 0) + 1);
-        });
-        const t = Array.from(c.values()).reduce((a, b) => a + b, 0) || 1;
-        sorted = Array.from(c.entries())
-          .map(([lang, count]) => ({ lang, count, pct: Math.round((count / t) * 100) }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 6);
-      }
-      // koreksi rounding biar total 100
-      if (sorted.length) {
-        const s = sorted.reduce((a, b) => a + b.pct, 0);
-        if (s !== 100) sorted[0].pct += 100 - s;
-      }
-      setLangs(sorted);
+    setLoading(true);
+    // 1) heatmap 1 tahun wajib sama github — jogruber (tidak kena rate limit api.github.com)
+    // 2) events + langs via api.github.com tapi tidak bikin gagal total kalau 403
+    const promises: Promise<void>[] = [];
 
-      const er = await fetch(`https://api.github.com/users/${USER}/events/public?per_page=100`);
-      if (!er.ok) throw new Error(errAct);
-      const events: { type: string; repo: { name: string }; payload: { commits?: { message: string }[]; size?: number }; created_at: string }[] =
-        await er.json();
-      const push = events.filter((e) => e.type === "PushEvent");
-      // commits: 5 distinct latest for mini footer
-      const commitItems: CommitItem[] = push.slice(0, 20).map((e) => {
-        const msg = e.payload.commits?.[0]?.message || fallbackCommit;
-        const d = new Date(e.created_at);
-        const rel = d.toLocaleDateString(isEn ? "en-US" : "id-ID", { day: "2-digit", month: "short", year: "numeric" });
-        return {
-          repo: e.repo.name.replace(`${USER}/`, ""),
-          message: msg.split("\n")[0].slice(0, 72),
-          time: rel,
-          url: `https://github.com/${e.repo.name}`,
-        };
-      });
-      // dedup by repo for footer later, keep raw for heatmap
-      setCommits(commitItems.length ? commitItems : []);
-
-      // heatmap: wajib sama kayak github.com/supyan1403 — 1,145 setahun — via jogruber proxy (GitHub GraphQL)
-      // fallback ke events public kalau proxy down
+    const heatP = (async () => {
       try {
         const gr = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=last`);
         if (!gr.ok) throw new Error("gh");
-        const gj: { contributions: { date: string; count: number }[]; total: { lastYear: number } } = await gr.json();
+        const gj: { contributions: { date: string; count: number }[] } = await gr.json();
         const cMap = new Map<string, number>();
         gj.contributions.forEach((c) => cMap.set(c.date, c.count));
         setHeatmap(buildHeatmapFromCounts(cMap, new Date()));
       } catch {
-        const dayMap = new Map<string, number>();
-        for (const e of push) {
-          const iso = new Date(e.created_at).toISOString().slice(0, 10);
-          const c = e.payload.commits?.length ?? e.payload.size ?? 1;
-          dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
-        }
-        setHeatmap(buildHeatmapFromCounts(dayMap, new Date()));
+        // fallback heatmap dari events kalau proxy down — akan diisi di bawah
       }
+    })();
+    promises.push(heatP);
 
-      setErr(null);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : errGeneric);
-      if (!heatmap) setHeatmap(buildHeatmapFromCounts(new Map(), new Date()));
-    } finally {
-      setLoading(false);
-    }
+    const ghP = (async () => {
+      try {
+        const r = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`);
+        if (!r.ok) throw new Error(`${r.status}`);
+        const repos: { name: string; languages_url: string; language: string | null }[] = await r.json();
+        const slice = repos.slice(0, 30);
+        const langMaps = await Promise.all(
+          slice.map(async (repo) => {
+            try {
+              const lr = await fetch(repo.languages_url);
+              if (!lr.ok) return {} as Record<string, number>;
+              return (await lr.json()) as Record<string, number>;
+            } catch {
+              return {} as Record<string, number>;
+            }
+          })
+        );
+        const bytes = new Map<string, number>();
+        langMaps.forEach((m) => {
+          Object.entries(m).forEach(([k, v]) => bytes.set(k, (bytes.get(k) || 0) + v));
+        });
+        let sorted: LangStat[];
+        if (bytes.size) {
+          const sum = Array.from(bytes.values()).reduce((a, b) => a + b, 0) || 1;
+          sorted = Array.from(bytes.entries())
+            .map(([lang, count]) => ({ lang, count, pct: Math.round((count / sum) * 100) }))
+            .sort((a, b) => b.pct - a.pct)
+            .slice(0, 6);
+        } else {
+          const c = new Map<string, number>();
+          repos.forEach((repo) => {
+            const l = repo.language || (isEn ? "Other" : "Lainnya");
+            if (l) c.set(l, (c.get(l) || 0) + 1);
+          });
+          const t = Array.from(c.values()).reduce((a, b) => a + b, 0) || 1;
+          sorted = Array.from(c.entries())
+            .map(([lang, count]) => ({ lang, count, pct: Math.round((count / t) * 100) }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 6);
+        }
+        if (sorted.length) {
+          const s = sorted.reduce((a, b) => a + b.pct, 0);
+          if (s !== 100) sorted[0].pct += 100 - s;
+        }
+        setLangs(sorted);
+        setLangErr(null);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : errGeneric;
+        // 403 rate limit — jangan block dashboard total
+        if (msg.includes("403")) setLangErr(isEn ? "GitHub rate limit — try again shortly" : "Batas GitHub — coba lagi sebentar");
+        else setLangErr(msg);
+      }
+    })();
+    promises.push(ghP);
+
+    const evP = (async () => {
+      try {
+        const er = await fetch(`https://api.github.com/users/${USER}/events/public?per_page=100`);
+        if (!er.ok) throw new Error(`${er.status}`);
+        const events: { type: string; repo: { name: string }; payload: { commits?: { message: string }[]; size?: number }; created_at: string }[] =
+          await er.json();
+        const push = events.filter((e) => e.type === "PushEvent");
+        const commitItems: CommitItem[] = push.slice(0, 20).map((e) => {
+          const msg = e.payload.commits?.[0]?.message || fallbackCommit;
+          const d = new Date(e.created_at);
+          const rel = d.toLocaleDateString(isEn ? "en-US" : "id-ID", { day: "2-digit", month: "short", year: "numeric" });
+          return {
+            repo: e.repo.name.replace(`${USER}/`, ""),
+            message: msg.split("\n")[0].slice(0, 72),
+            time: rel,
+            url: `https://github.com/${e.repo.name}`,
+          };
+        });
+        setCommits(commitItems.length ? commitItems : []);
+        setErr(null);
+        // kalau heatmap belum keisi dari jogruber, fallback dari events
+        setHeatmap((prev) => {
+          if (prev && prev.total > 0) return prev;
+          const dayMap = new Map<string, number>();
+          for (const e of push) {
+            const iso = new Date(e.created_at).toISOString().slice(0, 10);
+            const c = e.payload.commits?.length ?? e.payload.size ?? 1;
+            dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
+          }
+          return buildHeatmapFromCounts(dayMap, new Date());
+        });
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : errGeneric;
+        if (msg.includes("403")) setErr(isEn ? "GitHub rate limit — heatmap still from cache" : "Batas GitHub — heatmap tetap tampil");
+        else setErr(msg);
+      }
+    })();
+    promises.push(evP);
+
+    await Promise.allSettled(promises);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -429,7 +451,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEn, fallbackCommit, errRepo, errAct]);
 
-  return { langs, commits, heatmap, loading, err, refresh: fetchAll };
+  return { langs, commits, heatmap, loading, err, langErr, refresh: fetchAll };
 }
 
 function TerminalHero({ lines }: { lines: string[] }) {
@@ -476,7 +498,7 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
   const { lang, setLang } = useLang();
   const isEn = lang === "en";
   const t = tDict[lang];
-  const { langs, commits, heatmap, loading, err } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric);
+  const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
   const todayId = new Date().toISOString().slice(0, 10);
@@ -646,10 +668,10 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
               {t.bahasaDesc}
             </p>
             <div className="mt-5 space-y-3">
-              {loading ? (
+              {loading && !langs ? (
                 <p className="font-mono text-xs text-muted">{t.loadingLang}</p>
-              ) : err ? (
-                <p className="font-mono text-xs text-terracotta">{err}</p>
+              ) : langErr && !langs ? (
+                <p className="font-mono text-xs text-terracotta">{langErr}</p>
               ) : langs && langs.length ? (
                 langs.map((l, i) => (
                   <motion.div
@@ -674,9 +696,12 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
                     </div>
                   </motion.div>
                 ))
+              ) : langErr ? (
+                <p className="font-mono text-xs text-terracotta">{langErr}</p>
               ) : (
                 <p className="font-mono text-xs text-muted">{t.noLang}</p>
               )}
+              {langErr && langs ? <p className="font-mono text-[11px] text-terracotta/80">{langErr} — menampilkan cache</p> : null}
             </div>
             <a
               href={`https://github.com/${USER}?tab=repositories`}
@@ -690,15 +715,16 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
 
           <section className="warm-card p-6 md:col-span-7">
             <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
-            {loading ? (
+            {heatmap ? (
+              <ContributionHeatmap weeks={heatmap.weeks} total={heatmap.total} commits={commits} isEn={isEn} t={t} />
+            ) : loading ? (
               <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
             ) : err ? (
               <p className="mt-5 font-mono text-xs text-terracotta">{err}</p>
-            ) : heatmap ? (
-              <ContributionHeatmap weeks={heatmap.weeks} total={heatmap.total} commits={commits} isEn={isEn} t={t} />
             ) : (
               <p className="mt-5 font-mono text-xs text-muted">{t.noActivity}</p>
             )}
+            {err && heatmap ? <p className="mt-3 font-mono text-[11px] text-terracotta/80">{err}</p> : null}
           </section>
         </div>
 
