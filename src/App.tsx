@@ -606,7 +606,7 @@ function KPage({ onDone }: { onDone: () => void }) {
             onTouchEnd={() => { mx.set(0); my.set(0); }}
           >
             <motion.img
-              src="/kyronix-k-page.webp"
+              src="/kyronix-k-hex.webp"
               alt="KYRONIX K"
               width={1024}
               height={1024}
@@ -619,13 +619,13 @@ function KPage({ onDone }: { onDone: () => void }) {
               animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
               transition={{ type: "spring", stiffness: 180, damping: 18, mass: 1.15, delay: 0.55 } as unknown as Record<string, unknown>}
             />
-            {/* sweep ngikut siluet K-PAGE2 tanpa BG */}
+            {/* sweep ngikut siluet K hex */}
             <motion.div
               aria-hidden
               className="pointer-events-none absolute inset-0 overflow-hidden"
               style={{
-                WebkitMaskImage: "url(/kyronix-k-page.png)",
-                maskImage: "url(/kyronix-k-page.png)",
+                WebkitMaskImage: "url(/kyronix-k-hex.webp)",
+                maskImage: "url(/kyronix-k-hex.webp)",
                 WebkitMaskSize: "contain",
                 maskSize: "contain",
                 WebkitMaskRepeat: "no-repeat",
@@ -1198,7 +1198,7 @@ function Hero({ ready }: { ready: boolean }) {
   const taglineY = useTransform(scrollYProgress, [0, 1], [0, light ? -10 : -24]);
   const ctaY = useTransform(scrollYProgress, [0, 1], [0, light ? -8 : -18]);
   return (
-    <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28"
+    <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-black pt-24 sm:pt-28"
       onMouseMove={(e) => {
         const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
         heroMx.set(((e.clientX - r.left) / r.width - 0.5) * 2);
@@ -1214,9 +1214,11 @@ function Hero({ ready }: { ready: boolean }) {
       }}
       onTouchEnd={() => { heroMx.set(0); heroMy.set(0); }}
     >
-      {/* Hero: Blueprint Grid 32px + scanline — stripes cuma di Intro biar gak duplikat */}
+      {/* Hero bg hitam + glow — sama kayak KPage src/App.tsx:589 bg-black + bg-terracotta/14 blur-[80px] */}
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/14 blur-[80px] max-sm:h-[380px] max-sm:w-[380px] max-sm:blur-[56px]" style={{ y: gridY } as unknown as Record<string, unknown>} />
+      {/* Grid 32px di atas glow, di bawah KYRONIX — keep */}
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-      {/* K hexagon ghost — K tembaga + hexagon circuit (Logo Kyronix baru) watermark subtle behind KYRONIX */}
+      {/* K hexagon ghost — K tembaga + hexagon circuit (kyronix-k-hex.webp) watermark subtle behind KYRONIX */}
       <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[48%] h-[min(72vw,560px)] w-[min(72vw,560px)] -translate-x-1/2 -translate-y-1/2 will-change-transform max-sm:h-[84vw] max-sm:w-[84vw]" style={{ y: gridY, opacity: 0.085 } as unknown as Record<string, unknown>}>
         <img src="/kyronix-k-hex.webp" alt="" width={1024} height={1024} loading="eager" decoding="async" draggable={false} className="h-full w-full select-none object-contain" style={{ filter: "blur(0.3px)" } as React.CSSProperties} />
       </motion.div>
