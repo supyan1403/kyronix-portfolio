@@ -342,23 +342,20 @@ function ContributionHeatmap({
     return labels;
   }, [weeks, isEn]);
 
-  // acak dulu baru nemu titik bener — shuffle phase hanya saat ganti tahun (tidak tiap live poll)
+  // acak dulu baru nemu titik bener — SETIAP RENDER (ganti tahun + tiap fetch baru)
   const LEVELS = useMemo(() => ["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"] as GHLevel[], []);
   const [phase, setPhase] = useState<"shuffle"|"reveal">("shuffle");
   const [shuffleSeed, setShuffleSeed] = useState(0);
+  const lastSigRef = useRef<string>("");
+  const sig = useMemo(() => `${yearLabel}|${weeks.length}|${weeks.flat().slice(0,3).map(d=>d.iso).join(",")}|${total}`, [yearLabel, weeks, total]);
   useEffect(() => {
+    if (sig === lastSigRef.current) return;
+    lastSigRef.current = sig;
     setPhase("shuffle");
     setShuffleSeed((s) => s + 1);
     const tm = window.setTimeout(() => setPhase("reveal"), 420);
     return () => window.clearTimeout(tm);
-  }, [yearLabel]);
-  // data baru datang (initial load) juga trigger reveal
-  useEffect(() => {
-    if (weeks.length && phase === "shuffle") {
-      const tm = window.setTimeout(() => setPhase("reveal"), 480);
-      return () => window.clearTimeout(tm);
-    }
-  }, [weeks, phase]);
+  }, [sig]);
 
   const shuffled = useMemo(() => {
     // random level per cell berbasis seed + index — ringan, tidak bikin object style 350
