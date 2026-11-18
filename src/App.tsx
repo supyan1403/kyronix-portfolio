@@ -977,7 +977,7 @@ const dict = {
       ctaPrimary: "Hubungi Saya",
       ctaSecondary: "Jelajahi Hasil",
       tagline: "DARI IDE KE INFRA.",
-      desc: "Menjelajahi dunia pengembangan perangkat lunak sebagai seorang vibe coder yang mengandalkan pemanfaatan perangkat modern secara optimal. Melalui eksplorasi aktif dan pemodelan sistem yang terstruktur, cara saya mewujudkan berbagai gagasan kreatif menjadi sistem berbasis web yang fungsional tanpa batas konvensional.",
+      desc: "Sebagai seorang vibe coder yang mengandalkan perangkat modern, cara saya memadukan proses penelitian, pemodelan sistem, dan pengembangan web untuk mewujudkan gagasan menjadi solusi fungsional yang terstruktur.",
     },
     profile: {
       eyebrow: "DI BALIK KYRONIX",
@@ -1072,7 +1072,7 @@ const dict = {
       ctaPrimary: "Contact Me",
       ctaSecondary: "Explore Builds",
       tagline: "FROM IDEA TO INFRA.",
-      desc: "Exploring the world of software development as a vibe coder who relies on the optimal use of modern tools. Through active exploration and structured system modeling, the way I bring various creative ideas to life as functional web based systems without conventional limits.",
+      desc: "As a vibe coder leveraging modern tools, the way I combine research, system modeling, and web development to turn ideas into structured, functional solutions.",
     },
     profile: {
       eyebrow: "BEHIND KYRONIX",
