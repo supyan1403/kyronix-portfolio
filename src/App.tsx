@@ -982,7 +982,7 @@ const dict = {
       title: "DI BALIK KYRONIX",
       name: "Supyan Sauri",
       role: "System Architect – Data & Web Systems",
-      bio: "Suka mengulik hal baru dan menikmati proses belajar yang mendalam. Cara saya mengubah gagasan kompleks menjadi solusi fungsional lewat pemodelan dan arsitektur sistem yang rapi serta eksplorasi web app secara mandiri dan berkelanjutan",
+      bio: "Suka belajar hal baru dan menikmati proses belajar yang mendalam. Cara saya mengubah gagasan kompleks menjadi solusi fungsional lewat pemodelan dan arsitektur sistem yang rapi serta eksplorasi web app secara mandiri dan berkelanjutan",
       ctaPrimary: "MASUK LAB",
       ctaSecondary: "HUBUNGI SAYA",
       ctaDashboard: "BUKA DASHBOARD AKTIVITAS",
