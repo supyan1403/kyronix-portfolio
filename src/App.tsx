@@ -1371,17 +1371,67 @@ function Profile() {
               <Magnetic href="#contact" variant="ghost" onClick={() => scrollToId("contact")}>{t.ctaSecondary} <Mail size={16} /></Magnetic>
             </motion.div>
           </motion.div>
-          <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col will-change-transform md:col-span-5 md:pl-2">
-            {/* C Accent Rail — border-l terracotta, no box, architects vibe */}
-            <div className="space-y-4">
-              {rows.map((r, idx) => (
-                <motion.div key={r.k} initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.36 + idx * 0.09 : 0.04 + (3 - idx) * 0.04 }} className="flex items-start gap-3 border-l-2 border-terracotta bg-surface/30 py-1 pl-3.5 pr-2">
-                  <span className="mt-0.5 inline-flex shrink-0 items-center justify-center text-terracotta">
-                    <r.Icon size={14} strokeWidth={1.9} />
-                  </span>
-                  <p className="font-sans text-[13px] font-semibold uppercase leading-[1.55] tracking-[0.03em] text-ink">{(isId ? r.v : r.vEn).toUpperCase()}</p>
-                </motion.div>
-              ))}
+          <div style={{ y: titleY } as unknown as Record<string, unknown>} className="flex flex-col gap-3 will-change-transform md:col-span-5 md:pl-2">
+            {/* System-spec layout — Origin / Fokus stack / Pendekatan+Eksplorasi */}
+            {/* Origin */}
+            <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.36 : 0.04 }} className="warm-card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
+                    <MapPin size={12} strokeWidth={1.9} /> {isId ? "BASE NODE / ORIGIN" : "BASE NODE / ORIGIN"}
+                  </p>
+                  <p className="mt-2 font-sans text-[12.5px] font-bold uppercase leading-[1.4] tracking-[0.03em] text-ink">{(isId ? rows[0].v : rows[0].vEn).toUpperCase()}</p>
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
+                    <span>COORDS -7.32° S, 108.22° E</span>
+                    <span>TIMEZONE WIB (UTC+07:00)</span>
+                  </div>
+                </div>
+                <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-terracotta/30 bg-terracotta/10 text-terracotta">
+                  <span className="h-2 w-2 rounded-full bg-terracotta live-dot" />
+                </span>
+              </div>
+            </motion.div>
+            {/* Fokus stack */}
+            <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.45 : 0.04 }} className="warm-card p-4">
+              <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
+                <Layers size={12} strokeWidth={1.9} /> {isId ? "FOKUS SISTEM" : "SYSTEM FOCUS"}
+              </p>
+              <p className="mt-2 font-sans text-[12px] font-bold uppercase leading-[1.45] tracking-[0.02em] text-ink">{(isId ? rows[1].v : rows[1].vEn).toUpperCase()}</p>
+              <div className="mt-3 flex items-center justify-between gap-2 border-t border-border/10 pt-3 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
+                <span>SYSTEM_DATA_FLOW PIPELINE_SPEC_V2.4</span>
+                <span className="inline-flex items-center gap-1 shrink-0 text-terracotta"><span className="h-1.5 w-1.5 rounded-full bg-terracotta live-dot" /> HIGH THROUGHPUT</span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                <div className="border border-border/15 bg-cream/5 px-2 py-2.5 text-center">
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">Data Ingest</p>
+                  <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.06em] text-muted">ETL & Validation</p>
+                </div>
+                <div className="border border-terracotta/40 bg-terracotta/15 px-2 py-2.5 text-center">
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">System Model</p>
+                  <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.06em] text-muted">Relational / Graph</p>
+                </div>
+                <div className="border border-border/15 bg-cream/5 px-2 py-2.5 text-center">
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06em] text-ink">Web Interface</p>
+                  <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.06em] text-muted">Reactive Core</p>
+                </div>
+              </div>
+            </motion.div>
+            {/* Pendekatan + Eksplorasi — 2 col */}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.54 : 0.04 }} className="warm-card flex flex-col p-4">
+                <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><Compass size={12} strokeWidth={1.9} /> {isId ? "PENDEKATAN" : "APPROACH"}</p>
+                <p className="mt-2 flex-1 font-sans text-[12px] leading-relaxed text-muted">{isId ? rows[2].v : rows[2].vEn}</p>
+                <div className="mt-3 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.1em] text-muted"><span>{isId ? "Process Decomposition" : "Process Decomposition"}</span><span className="text-ink font-bold">100%</span></div>
+                <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-border/20"><div className="h-full w-full bg-terracotta" /></div>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.62 : 0.04 }} className="warm-card flex flex-col p-4">
+                <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><Lightbulb size={12} strokeWidth={1.9} /> {isId ? "EKSPLORASI" : "EXPLORATION"}</p>
+                <p className="mt-2 flex-1 font-sans text-[12px] leading-relaxed text-muted">{isId ? rows[3].v : rows[3].vEn}</p>
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted">NG CYCLE</span>
+                  <span className="inline-flex items-center gap-1 border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.1em] text-emerald-400"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400 live-dot" /> {isId ? "BERKELANJUTAN" : "CONTINUOUS"}</span>
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
