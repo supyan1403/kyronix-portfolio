@@ -953,6 +953,76 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   );
 }
 
+export function DashboardPage({ onBack }: { onBack?: () => void }) {
+  const { lang, setLang } = useLang();
+  const isEn = lang === "en";
+  const t = tDict[lang];
+  const [heatmapYear, setHeatmapYear] = useState<number | "last">("last");
+  const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear, true);
+  const todayId = toLocalISO(new Date());
+  const todayCount = useMemo(() => {
+    if (!heatmap) return 0;
+    for (const w of heatmap.weeks) for (const d of w) if (d.iso === todayId) return d.count;
+    return 0;
+  }, [heatmap, todayId]);
+  const totalReal = heatmap?.total ?? 0;
+  const streakReal = useMemo(() => {
+    if (!heatmap) return 0;
+    const flat = heatmap.weeks.flat();
+    const map = new Map(flat.map((d) => [d.iso, d.count] as const));
+    let streak2 = 0;
+    const c2 = new Date(); c2.setHours(0,0,0,0);
+    if ((map.get(toLocalISO(c2)) ?? 0) === 0) c2.setDate(c2.getDate()-1);
+    for (let i=0;i<400;i++){ const iso=toLocalISO(c2); if((map.get(iso)??0)>0){streak2++; c2.setDate(c2.getDate()-1);} else break; }
+    return streak2;
+  }, [heatmap]);
+  const fokusDots = useMemo(() => {
+    if (!heatmap) return Array(7).fill(false);
+    const flat = heatmap.weeks.flat(); const map=new Map(flat.map((d)=>[d.iso,d.count] as const)); const out:boolean[]=[]; const cur=new Date(); cur.setHours(0,0,0,0);
+    for(let i=6;i>=0;i--){ const d=new Date(cur); d.setDate(cur.getDate()-i); out.push((map.get(toLocalISO(d))??0)>0); } return out;
+  }, [heatmap]);
+  const handleBack = () => {
+    if (onBack) onBack();
+    else { window.history.pushState({}, "", "/"); window.dispatchEvent(new PopStateEvent("popstate")); window.scrollTo(0,0); }
+  };
+  return (
+    <main className="relative min-h-[100dvh] overflow-x-clip bg-cream">
+      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} />
+      <div aria-hidden className="pointer-events-none absolute -right-[12%] top-[10%] h-[520px] w-[520px] bg-terracotta/10 blur-[56px] md:blur-[80px]" />
+      <div aria-hidden className="pointer-events-none absolute -left-[10%] bottom-[6%] h-[420px] w-[420px] bg-sage/10 blur-[56px] md:blur-[70px]" />
+      <div className="relative mx-auto max-w-[1120px] px-[5vw] pb-10 pt-8">
+        <div className="flex items-center justify-end gap-4">
+          <div className="inline-flex rounded-xl border border-white/15 bg-surface p-1 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+            <button onClick={() => setLang("id")} aria-pressed={!isEn} className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${!isEn ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}>ID</button>
+            <button onClick={() => setLang("en")} aria-pressed={isEn} className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${isEn ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}>EN</button>
+          </div>
+        </div>
+        <div className="mt-6 flex items-center gap-3">
+          <button onClick={handleBack} className="inline-flex items-center gap-2 border border-border bg-surface px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-terracotta hover:text-terracotta">← {t.back}</button>
+        </div>
+        <div className="mt-8 text-center">
+          <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted"><span className="inline-flex h-3 w-3 items-center justify-center text-terracotta/60"><Cpu size={14} /></span>{t.eyebrow}</p>
+          <h1 className="mx-auto mt-4 max-w-3xl font-display text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[0.9] tracking-[0.01em] text-ink">{t.title}</h1>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted">{t.desc}</p>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <div className="warm-card flex min-h-[118px] flex-col justify-between p-5"><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p><p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">{totalReal.toLocaleString(isEn?"en-US":"id-ID")}<span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span></p><span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted"><Clock size={12} className="text-terracotta" /> {isEn?(heatmapYear==="last"?"last year":String(heatmapYear)):(heatmapYear==="last"?"1 tahun terakhir":String(heatmapYear))}</span></div>
+          <div className={`warm-card flex min-h-[118px] flex-col justify-between p-5 ${todayCount===0?"opacity-90":""}`}><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p><p className={`mt-2 font-display text-2xl font-extrabold ${todayCount===0?"text-muted":"text-ink"}`}>{todayCount}<span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span></p><span className={`mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest ${todayCount===0?"text-muted":"text-terracotta"}`}><Activity size={12} className={todayCount===0?"text-muted":"text-terracotta"} /> {todayCount===0?t.todayEmpty:t.todayActive}</span></div>
+          <div className="warm-card flex min-h-[118px] flex-col justify-between p-5"><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p><p className="mt-2 font-display text-2xl font-extrabold text-ink">{streakReal}<span className="ml-1 font-mono text-xs text-muted"> {t.hari}</span></p><span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted"><Flame size={12} className="text-terracotta" /> {t.beruntun}</span></div>
+        </div>
+        <section className="mt-6 warm-card p-6"><h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2><div className="mt-5 space-y-3">{langs && langs.length ? langs.map((l)=>{ const ic=langIconSrc(l.lang); return (<div key={l.lang}><div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest"><span className="inline-flex items-center gap-2 font-semibold text-ink">{ic?<img src={ic} alt="" width={16} height={16} className="h-4 w-4 object-contain" loading="lazy"/>:null}{l.lang}</span><span className="text-muted">{l.pct} {t.percent}</span></div><div className="mt-1.5 h-2 overflow-hidden rounded-full bg-cream-deep"><div style={{width:`${l.pct}%`} as React.CSSProperties} className="h-full rounded-full bg-gradient-to-r from-[#B85E2E] to-[#E07A5F]"/></div></div>);}) : <p className="font-mono text-xs text-muted">{t.noLang}</p>}</div><a href={`https://github.com/${USER}?tab=repositories`} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-terracotta hover:text-ink">{t.viewGithub} <SiGithub size={14}/></a></section>
+        <section className="mt-6 warm-card p-6"><h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>{heatmap ? <ContributionHeatmap weeks={heatmap.weeks} total={heatmap.total} isEn={isEn} t={t} yearLabel={String(heatmapYear)} onYearChange={setHeatmapYear as (y:number|"last")=>void} availableYears={[2026,2025]} /> : <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>}</section>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="warm-card p-5"><div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><BarChart3 size={14}/> {t.fokusHarian}</div><p className="mt-2 font-sans text-sm font-semibold leading-relaxed text-ink">{t.fokusDesc}</p><div className="mt-3 flex gap-1.5">{fokusDots.map((active,i)=><span key={i} className={`h-2 flex-1 rounded-full ${active?"bg-terracotta":"bg-border/30"}`}/>)}</div><p className="mt-2 font-mono text-[11px] text-muted">{t.fokusHint}</p></div>
+          <div className="warm-card p-5"><div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><Database size={14}/> {t.pemodelan}</div><p className="mt-2 font-sans text-sm font-semibold leading-relaxed text-ink">{t.pemodelanDesc}</p><p className="mt-2 font-mono text-[11px] text-muted">{t.pemodelanHint}</p></div>
+          <div className="warm-card p-5"><div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta"><Cpu size={14}/> {t.eksplorasi}</div><p className="mt-2 font-sans text-sm font-semibold leading-relaxed text-ink">{t.eksplorasiDesc}</p><p className="mt-2 font-mono text-[11px] text-muted">{t.eksplorasiHint}</p></div>
+        </div>
+        <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-widest text-muted">{t.footer}</p>
+      </div>
+    </main>
+  );
+}
+
 export default function Dashboard({ onBack: _onBack }: { onBack?: () => void }) {
   return <DashboardEmbed />;
 }

@@ -49,7 +49,7 @@ import {
   SiTailwindcss,
   SiVercel,
 } from "react-icons/si";
-import { DashboardEmbed } from "./pages/Dashboard";
+import { DashboardEmbed, default as DashboardPage } from "./pages/Dashboard";
 
 /* ---------- Utility: Warm Dark palette tokens ---------- */
 const WARM = {
@@ -1385,7 +1385,9 @@ function Profile() {
     { k: "Eksplorasi", kEn: "Exploration", Icon: Lightbulb, v: "Aktif memperluas wawasan melalui pengembangan web secara mandiri dan berkelanjutan", vEn: "Actively expanding horizons through independent and continuous web development" },
   ];
   const goDashboard = () => {
-    scrollToId("profile");
+    window.history.pushState({}, "", "/dashboard");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+    window.scrollTo(0, 0);
   };
   const activityRef = useRef<HTMLDivElement>(null);
   const activityInView = useInView(activityRef as unknown as React.RefObject<Element>, { amount: 0.1, margin: "0px 0px -8% 0px" });
@@ -1406,7 +1408,7 @@ function Profile() {
               {t.bio}
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>} animate={inView ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)} transition={{ duration: 0.6, ease: EASE, delay: inView ? 0.58 : 0 }} className="flex flex-wrap gap-3 pt-2">
-              <Magnetic href="#profile" variant="primary" onClick={goDashboard}>{(t as unknown as { ctaDashboard: string }).ctaDashboard || t.ctaPrimary} <ArrowUpRight size={16} /></Magnetic>
+              <Magnetic href="/dashboard" variant="primary" onClick={goDashboard}>{(t as unknown as { ctaDashboard: string }).ctaDashboard || t.ctaPrimary} <ArrowUpRight size={16} /></Magnetic>
               <Magnetic href="#contact" variant="ghost" onClick={() => scrollToId("contact")}>{t.ctaSecondary} <Mail size={16} /></Magnetic>
             </motion.div>
           </motion.div>
@@ -2903,23 +2905,17 @@ function App() {
     return "intro";
   });
   const [lang, setLang] = useState<Lang>("id");
+  const [route, setRoute] = useState(() => (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/"));
   useLenis(true);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
-  // /dashboard lama → redirect ke #profile (single page sekarang)
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard")) {
-      window.history.replaceState({}, "", "/#profile");
-      requestAnimationFrame(() => scrollToId("profile"));
-    }
-    const onPop = () => {
-      if (window.location.pathname.startsWith("/dashboard")) {
-        window.history.replaceState({}, "", "/#profile");
-        scrollToId("profile");
-      }
-    };
+    const onPop = () => setRoute(window.location.pathname.startsWith("/dashboard") ? "/dashboard" : "/");
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
+  useEffect(() => {
+    if (route === "/dashboard" && phase !== "ready") setPhase("ready");
+  }, [route, phase]);
   useEffect(() => {
     if (phase === "ready") {
       try { sessionStorage.setItem("kyronix:introDone", "1"); } catch {}
@@ -2927,6 +2923,23 @@ function App() {
   }, [phase]);
   const bands = dict[lang].bands;
   const ready = phase === "ready";
+  if (route === "/dashboard") {
+    return (
+      <LangCtx.Provider value={{ lang, setLang }}>
+        <DashboardPage
+          onBack={() => {
+            window.history.pushState({}, "", "/");
+            setRoute("/");
+            window.scrollTo(0, 0);
+            requestAnimationFrame(() => {
+              window.scrollTo(0, 0);
+              lenisInstance?.resize();
+            });
+          }}
+        />
+      </LangCtx.Provider>
+    );
+  }
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
       <main className="crt relative bg-cream overflow-x-clip">
