@@ -342,6 +342,34 @@ function ContributionHeatmap({
     return labels;
   }, [weeks, isEn]);
 
+  // acak dulu baru nemu titik bener — shuffle phase hanya saat ganti tahun (tidak tiap live poll)
+  const LEVELS = useMemo(() => ["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"] as GHLevel[], []);
+  const [phase, setPhase] = useState<"shuffle"|"reveal">("shuffle");
+  const [shuffleSeed, setShuffleSeed] = useState(0);
+  useEffect(() => {
+    setPhase("shuffle");
+    setShuffleSeed((s) => s + 1);
+    const tm = window.setTimeout(() => setPhase("reveal"), 420);
+    return () => window.clearTimeout(tm);
+  }, [yearLabel]);
+  // data baru datang (initial load) juga trigger reveal
+  useEffect(() => {
+    if (weeks.length && phase === "shuffle") {
+      const tm = window.setTimeout(() => setPhase("reveal"), 480);
+      return () => window.clearTimeout(tm);
+    }
+  }, [weeks, phase]);
+
+  const shuffled = useMemo(() => {
+    // random level per cell berbasis seed + index — ringan, tidak bikin object style 350
+    return weeks.map((week, wi) =>
+      week.map((_, di) => {
+        const n = (shuffleSeed * 9301 + wi * 49297 + di * 23311) % 5;
+        return LEVELS[n];
+      })
+    );
+  }, [weeks, shuffleSeed, LEVELS]);
+
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between gap-3 border-b border-border/10 pb-3">
@@ -370,88 +398,48 @@ function ContributionHeatmap({
       </div>
 
       <div className="mt-3 overflow-hidden border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "320px" } as React.CSSProperties}>
-        <div className="hidden md:block">
-          <div className="flex gap-[3px]">
-            <span className="w-[28px] shrink-0" />
-            <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
-              {weeks.map((_, idx) => {
-                const lbl = monthLabels.find((m) => m.col === idx);
-                return (
-                  <span key={idx} className="font-mono text-[10px] leading-none text-muted">
-                    {lbl ? lbl.label : ""}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-          <div className="mt-1.5 flex gap-[3px]">
-            <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] leading-[11px] text-muted">
-              <span className="h-[11px] leading-[11px]">Mon</span>
-              <span className="h-[11px] leading-[11px]">Tue</span>
-              <span className="h-[11px] leading-[11px]">Wed</span>
-              <span className="h-[11px] leading-[11px]">Thu</span>
-              <span className="h-[11px] leading-[11px]">Fri</span>
-              <span className="h-[11px] leading-[11px]">Sat</span>
-              <span className="h-[11px] leading-[11px]">Sun</span>
-            </div>
-            <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
-              {weeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[3px]">
-                  {week.map((day, di) => {
-                    if (!day.iso) return <span key={`${wi}-${di}`} className="h-[11px] w-full rounded-[2px] border border-transparent bg-transparent" />;
-                    const { bg, border } = levelMetaByLevel(day.level);
-                    const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
-                    return (
-                      <span
-                        key={day.iso}
-                        title={tip}
-                        aria-label={tip}
-                        className="h-[11px] w-full rounded-[2px] border"
-                        style={{ background: bg, borderColor: border } as React.CSSProperties}
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="overflow-x-auto hide-scrollbar md:hidden">
-          <div className="min-w-[760px]">
-            <div className="flex gap-[3px] pl-[28px] font-mono text-[10px] leading-none text-muted">
-              {weeks.map((_, idx) => {
-                const lbl = monthLabels.find((m) => m.col === idx);
-                return (
-                  <span key={idx} className="w-[11px] shrink-0 text-left">
-                    {lbl ? lbl.label : ""}
-                  </span>
-                );
-              })}
+        {/* Opsi A: 1 papan saja (dari 742 -> 371 kotak) — scroll halus di hp & desktop */}
+        <div className="overflow-x-auto hide-scrollbar">
+          <div className="min-w-[740px]">
+            <div className="flex gap-[3px]">
+              <span className="w-[28px] shrink-0" />
+              <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
+                {weeks.map((_, idx) => {
+                  const lbl = monthLabels.find((m) => m.col === idx);
+                  return (
+                    <span key={idx} className="font-mono text-[10px] leading-none text-muted">
+                      {lbl ? lbl.label : ""}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
             <div className="mt-1.5 flex gap-[3px]">
               <div className="flex w-[28px] shrink-0 flex-col gap-[3px] font-mono text-[10px] leading-[11px] text-muted">
-                <span className="h-[11px]">Mon</span>
-                <span className="h-[11px]">Tue</span>
-                <span className="h-[11px]">Wed</span>
-                <span className="h-[11px]">Thu</span>
-                <span className="h-[11px]">Fri</span>
-                <span className="h-[11px]">Sat</span>
-                <span className="h-[11px]">Sun</span>
+                <span className="h-[11px] leading-[11px]">Mon</span>
+                <span className="h-[11px] leading-[11px]">Tue</span>
+                <span className="h-[11px] leading-[11px]">Wed</span>
+                <span className="h-[11px] leading-[11px]">Thu</span>
+                <span className="h-[11px] leading-[11px]">Fri</span>
+                <span className="h-[11px] leading-[11px]">Sat</span>
+                <span className="h-[11px] leading-[11px]">Sun</span>
               </div>
-              <div className="flex gap-[3px]">
+              <div className="grid flex-1 gap-[3px]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` } as React.CSSProperties}>
                 {weeks.map((week, wi) => (
                   <div key={wi} className="flex flex-col gap-[3px]">
                     {week.map((day, di) => {
-                      if (!day.iso) return <span key={`${wi}-${di}`} className="h-[11px] w-[11px] shrink-0 rounded-[2px] border border-transparent bg-transparent" />;
-                      const { bg, border } = levelMetaByLevel(day.level);
+                      if (!day.iso) return <span key={`${wi}-${di}`} className="h-[11px] w-full rounded-[2px] border border-transparent bg-transparent" />;
                       const tip = `${day.iso} • ${day.count} ${isEn ? "contributions" : "kontribusi"}`;
+                      const rnd = shuffled[wi]?.[di] ?? "NONE";
+                      const show = phase === "shuffle" ? rnd : day.level;
+                      const delay = phase === "reveal" ? `${wi * 14 + di * 8}ms` : "0ms";
                       return (
                         <span
                           key={day.iso}
                           title={tip}
                           aria-label={tip}
-                          className="h-[11px] w-[11px] shrink-0 rounded-[2px] border"
-                          style={{ background: bg, borderColor: border } as React.CSSProperties}
+                          className={`h-[11px] w-full rounded-[2px] border hm-${show} hm-cell`}
+                          style={{ transitionDelay: delay } as React.CSSProperties}
                         />
                       );
                     })}
@@ -464,16 +452,9 @@ function ContributionHeatmap({
         <div className="mt-3 flex items-center justify-end gap-1.5 font-mono text-[10px] text-muted">
           <span>{t.less}</span>
           <span className="inline-flex gap-[3px]">
-            {["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"].map((lv) => {
-              const { bg, border } = levelMetaByLevel(lv as GHLevel);
-              return (
-                <i
-                  key={lv}
-                  className="h-[10px] w-[10px] rounded-[2px] border"
-                  style={{ background: bg, borderColor: border } as React.CSSProperties}
-                />
-              );
-            })}
+            {["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"].map((lv) => (
+              <i key={lv} className={`h-[10px] w-[10px] rounded-[2px] border hm-${lv}`} />
+            ))}
           </span>
           <span>{t.more}</span>
         </div>
@@ -666,8 +647,15 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
   }, [isEn, fallbackCommit, errRepo, errAct, heatmapYear, enabled]);
 
   useEffect(() => {
-    // heatmap baru mount ~53×7 cells — kasih info ke Lenis biar ukur tinggi lagi
-    requestAnimationFrame(() => lenisInstance?.resize());
+    // heatmap baru mount — resize lenis pake debounce biar tidak layout thrash tiap kotak shuffle
+    let id = 0 as unknown as number;
+    const cb = () => { (lenisInstance as unknown as { resize?: () => void })?.resize?.(); };
+    if ("requestIdleCallback" in window) id = (window as unknown as { requestIdleCallback: (cb: ()=>void)=>number }).requestIdleCallback(cb);
+    else id = window.setTimeout(cb, 160) as unknown as number;
+    return () => {
+      if ("cancelIdleCallback" in window) (window as unknown as { cancelIdleCallback:(n:number)=>void }).cancelIdleCallback(id as number);
+      else window.clearTimeout(id);
+    };
   }, [heatmap]);
 
   return { langs, commits, heatmap, loading, err, langErr, refresh: fetchAll };

@@ -271,6 +271,17 @@ button:disabled, a[aria-disabled="true"] { cursor: default; }
   transform: translateZ(0);
   backface-visibility: hidden;
 }
+/* Heatmap 5 level — class biar 350 kotak tidak pakai 350 inline style object */
+.hm-NONE { background: #252220; border-color: rgba(58,54,50,0.35); }
+.hm-FIRST_QUARTILE { background: #5A2E18; border-color: rgba(90,46,24,1); }
+.hm-SECOND_QUARTILE { background: #8A3E1A; border-color: rgba(138,62,26,1); }
+.hm-THIRD_QUARTILE { background: #C4713C; border-color: rgba(196,113,60,1); }
+.hm-FOURTH_QUARTILE { background: #E07A5F; border-color: rgba(224,122,95,1); }
+.hm-cell { transition: background-color 360ms ease, border-color 360ms ease, transform 360ms ease, opacity 360ms ease; }
+@media (prefers-reduced-motion: reduce) {
+  .hm-cell { transition: none; }
+}
+
 @media (max-width: 768px) {
   #stack, #lab, #experience, #contact { content-visibility: visible; }
   #projects { contain: layout style; }
