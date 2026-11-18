@@ -843,42 +843,35 @@ export default function Dashboard({ onBack }: { onBack?: () => void }) {
           </p>
         </div>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-12">
-          <div className="md:col-span-7">
-            <TerminalHero lines={[...t.terminalLines]} />
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <div className="warm-card flex items-center justify-between p-5">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
+              <p className="mt-1 font-display text-3xl font-extrabold leading-none text-ink">
+                {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
+                <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
+              </p>
+            </div>
+            <span className="flex h-10 w-10 items-center justify-center border border-terracotta/20 bg-cream-deep text-terracotta">
+              <Clock size={18} />
+            </span>
           </div>
-          <div className="grid gap-4 md:col-span-5 md:grid-cols-1">
-            <div className="warm-card flex items-center justify-between p-5">
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
-                <p className="mt-1 font-display text-3xl font-extrabold leading-none text-ink">
-                  {totalReal.toLocaleString(isEn ? "en-US" : "id-ID")}
-                  <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
-                </p>
-              </div>
-              <span className="flex h-10 w-10 items-center justify-center border border-terracotta/20 bg-cream-deep text-terracotta">
-                <Clock size={18} />
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className={`warm-card p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p>
-                <p className={`mt-2 font-display text-2xl font-extrabold ${todayCount === 0 ? "text-muted" : "text-ink"}`}>
-                  {todayCount}
-                  <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
-                </p>
-              </div>
-              <div className="warm-card p-5">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
-                <p className="mt-2 font-display text-2xl font-extrabold text-ink">
-                  {streakReal}
-                  <span className="ml-1 font-mono text-xs text-muted"> {t.hari}</span>
-                </p>
-                <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
-                  <Flame size={12} className="text-terracotta" /> {t.beruntun}
-                </span>
-              </div>
-            </div>
+          <div className={`warm-card p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p>
+            <p className={`mt-2 font-display text-2xl font-extrabold ${todayCount === 0 ? "text-muted" : "text-ink"}`}>
+              {todayCount}
+              <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
+            </p>
+          </div>
+          <div className="warm-card p-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
+            <p className="mt-2 font-display text-2xl font-extrabold text-ink">
+              {streakReal}
+              <span className="ml-1 font-mono text-xs text-muted"> {t.hari}</span>
+            </p>
+            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+              <Flame size={12} className="text-terracotta" /> {t.beruntun}
+            </span>
           </div>
         </div>
 
