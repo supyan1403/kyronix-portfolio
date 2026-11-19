@@ -19,6 +19,56 @@ function ChipPixel({ size = 24, className, style }: { size?: number; className?:
   );
 }
 
+function SplitReveal({
+  text,
+  className = "",
+  delay = 0,
+  play,
+  as: Tag = "h2",
+}: {
+  text: string;
+  className?: string;
+  delay?: number;
+  play?: boolean;
+  as?: "h1" | "h2" | "h3";
+}) {
+  const low = useMemo(
+    () =>
+      typeof window !== "undefined" &&
+      (window.matchMedia("(max-width: 640px)").matches || (navigator.hardwareConcurrency ?? 8) <= 4),
+    [],
+  );
+  const words = text.split(" ");
+  const MotionTag = motion[Tag];
+  const onceMode = play === undefined;
+  return (
+    <MotionTag
+      className={className}
+      initial="hidden"
+      {...(onceMode
+        ? { whileInView: "show", viewport: { amount: 0.45, margin: "0px 0px -10% 0px" } }
+        : { animate: play ? "show" : "hidden" })}
+      transition={{ staggerChildren: 0.07, delayChildren: delay }}
+    >
+      {words.map((w, i) => (
+        <span className="mask-line mr-[0.25em]" key={i}>
+          <motion.span
+            className="inline-block"
+            variants={
+              low
+                ? ({ hidden: { y: "14px", opacity: 0 }, show: { y: 0, opacity: 1 } } as unknown as Record<string, unknown>)
+                : ({ hidden: { y: "115%", opacity: 0, filter: "blur(6px)" }, show: { y: 0, opacity: 1, filter: "blur(0px)" } } as unknown as Record<string, unknown>)
+            }
+            transition={{ duration: 0.9, ease: EASE }}
+          >
+            {w}
+          </motion.span>
+        </span>
+      ))}
+    </MotionTag>
+  );
+}
+
 function ghHeaders(): HeadersInit {
   const tok = (import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim();
   return tok ? { Authorization: `Bearer ${tok}` } : {};
@@ -847,21 +897,28 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
 
         {/* Opening — full 1 layar kayak EKOSISTEM tapi ga 100dvh penuh biar ga ketinggian */}
         <section data-dash-opening className="relative flex min-h-[76dvh] flex-col items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[8vh] text-center">
-          <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline will-change-transform max-sm:text-[30vw]" style={{ y: openingTitleY, opacity: 0.03 } as unknown as Record<string, unknown>}>LAB</motion.div>
+          <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] watermark will-change-transform max-sm:text-[30vw]" style={{ y: openingTitleY, opacity: 0.11 } as unknown as Record<string, unknown>}>LAB</motion.div>
           <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.7]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.03) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE }} style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="relative will-change-transform">
             <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
               <ChipPixel size={14} className="text-terracotta/60" />
               {t.eyebrow}
             </p>
-            <h2 className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink">
-              {t.title.split(" ").map((w, i, arr) => (
-                <span key={i} className={w.includes("-") ? "whitespace-nowrap" : undefined}>{w}{i < arr.length - 1 ? " " : ""}</span>
-              ))}
-            </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
+            <SplitReveal
+              key={t.title}
+              as="h2"
+              text={t.title}
+              className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
+            />
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
+              transition={{ duration: 0.6, ease: EASE, delay: 0.35 }}
+              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base"
+            >
               {t.desc}
-            </p>
+            </motion.p>
           </motion.div>
         </section>
 
