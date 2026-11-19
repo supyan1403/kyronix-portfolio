@@ -400,9 +400,9 @@ function SloganChar({
   ready: boolean;
   progress: MotionValue<number>;
 }) {
-  // reverse: huruf paling kanan menghilang lebih dulu
+  // reverse: huruf paling kanan menghilang lebih dulu (1 = tampil, 0 = hilang)
   const outStart = 0.42 - index * 0.014;
-  const outOpacity = useTransform(progress, [outStart - 0.02, outStart], [0, 1]);
+  const outOpacity = useTransform(progress, [outStart - 0.02, outStart], [1, 0]);
   return (
     <motion.span
       className={emph ? "inline-block font-semibold text-terracotta" : "inline-block"}
@@ -1121,7 +1121,7 @@ function HoloCore({ ready, mx, my }: { ready: boolean; mx: MotionValue<number>; 
 const dict = {
   id: {
     nav: {
-      profile: "Profil",
+      profile: "LAB",
       stack: "Stack",
       projects: "Proyek",
       experience: "Pengalaman",
@@ -1217,7 +1217,7 @@ const dict = {
   },
   en: {
     nav: {
-      profile: "Profile",
+      profile: "LAB",
       stack: "Stack",
       projects: "Projects",
       experience: "Experience",
@@ -1544,7 +1544,6 @@ function Profile() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const gridY = useTransform(scrollYProgress, [0, 1], [22, -22]);
   const titleY = useTransform(scrollYProgress, [0, 1], [14, -14]);
-  const ghostY = useTransform(scrollYProgress, [0, 1], [18, -18]);
   const inView = useInView(ref, { amount: 0.35, margin: "0px 0px -12% 0px" });
   const rows = [
     { k: "Asal", kEn: "Based", Icon: MapPin, v: "Tasikmalaya, Jawa Barat, Indonesia", vEn: "Tasikmalaya, West Java, Indonesia" },
@@ -1557,7 +1556,7 @@ function Profile() {
     <section ref={ref} id="profile" className="relative flex min-h-[100dvh] items-center overflow-visible bg-transparent px-[5vw] py-[12vh]">
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.55]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       <motion.div aria-hidden className="pointer-events-none absolute -right-[10%] top-[18%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px] will-change-transform max-sm:hidden" style={{ y: titleY } as unknown as Record<string, unknown>} />
-      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] watermark will-change-transform max-sm:text-[30vw]" style={{ y: ghostY, opacity: 0.11 } as unknown as Record<string, unknown>}>LAB</motion.div>
+      {/* LAB watermark dipindah ke seam Profil ↔ Aktivitas (Activity) */}
       {/* lab scan line neon */}
       <motion.div aria-hidden className="pointer-events-none absolute left-[5vw] right-[5vw] top-[8%] h-px bg-gradient-to-r from-transparent via-terracotta/25 to-transparent" style={{ y: titleY } as unknown as Record<string, unknown>} />
       <div className="relative mx-auto w-full max-w-[1120px]">
@@ -1642,6 +1641,8 @@ function Activity() {
   const inView = useInView(ref as unknown as React.RefObject<Element>, { amount: 0.1, margin: "0px 0px -12% 0px" });
   return (
     <section ref={secRef} id="activity" className="relative overflow-visible bg-transparent px-[5vw] py-10">
+      {/* satu-satunya LAB watermark — duduk di seam Profil ↔ Aktivitas */}
+      <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] watermark will-change-transform max-sm:text-[30vw]" style={{ y: actGridY, opacity: 0.11 } as unknown as Record<string, unknown>}>LAB</motion.div>
       <motion.div aria-hidden className="pointer-events-none absolute -left-[8%] bottom-[-6%] h-[420px] w-[420px] bg-terracotta/10 blur-[48px] will-change-transform max-sm:hidden" style={{ y: actGridY } as unknown as Record<string, unknown>} />
       <motion.div
         ref={ref as unknown as React.RefObject<HTMLDivElement>}

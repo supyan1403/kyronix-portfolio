@@ -806,7 +806,6 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   const rawHead = useTransform(dashProgress, [0, 1], [10, -10]);
   const dashHeadY = useSpring(rawHead, { stiffness: 140, damping: 30, mass: 0.3 });
   const openingGridY = useTransform(dashProgress, [0, 1], [22, -22]);
-  const openingTitleY = useTransform(dashProgress, [0, 1], [14, -14]);
   const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear, shouldFetch);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
@@ -897,7 +896,6 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
 
         {/* Opening — full 1 layar kayak EKOSISTEM tapi ga 100dvh penuh biar ga ketinggian */}
         <section data-dash-opening className="relative flex min-h-[76dvh] flex-col items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[8vh] text-center">
-          <motion.div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] watermark will-change-transform max-sm:text-[30vw]" style={{ y: openingTitleY, opacity: 0.11 } as unknown as Record<string, unknown>}>LAB</motion.div>
           <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.7]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.03) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE }} style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="relative will-change-transform">
             <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
