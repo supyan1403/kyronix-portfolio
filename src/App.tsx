@@ -1953,23 +1953,33 @@ function Projects() {
     <div id="projects" className="relative bg-transparent overflow-x-clip">
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
-      {/* Bento — asymmetric editorial 8/4 + 7/5 (pecah template) */}
-      <section className="relative px-[5vw] pb-[14vh] pt-3">
-        <div className="mx-auto max-w-[1120px]">
-          <div className="grid gap-5 md:grid-cols-12 md:items-stretch">
-            <div className="md:col-span-8 flex flex-col [&>article]:flex-1 [&>article]:!min-h-[520px] [&>article]:!h-full">
-              <ProjectCard p={projects[0]} idx={0} onOpen={handleOpen} />
+      {/* Kartu — baris horizontal scroll (uniform) */}
+      <section
+        className="relative px-0 pb-[12vh] pt-3"
+        aria-label={t.projectsTitle}
+      >
+        <div
+          role="region"
+          aria-label="Karya"
+          tabIndex={0}
+          onWheel={(e) => {
+            const el = e.currentTarget;
+            if (el.scrollWidth <= el.clientWidth) return;
+            if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+            if (!el.contains(document.activeElement) && el !== document.activeElement) return;
+            e.preventDefault();
+            el.scrollBy({ left: e.deltaY, behavior: "auto" });
+          }}
+          className="flex gap-5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-[5vw] pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60"
+        >
+          {projects.map((proj, idx) => (
+            <div
+              key={proj.title}
+              className="min-w-[86vw] max-w-[86vw] shrink-0 snap-start sm:min-w-[360px] sm:max-w-[400px] md:min-w-[420px] md:max-w-[480px]"
+            >
+              <ProjectCard p={proj} idx={idx} onOpen={handleOpen} />
             </div>
-            <div className="md:col-span-4 flex flex-col [&>article]:flex-1 [&>article]:!h-full md:[&>article]:!min-h-[520px]">
-              <ProjectCard p={projects[1]} idx={1} onOpen={handleOpen} compact />
-            </div>
-            <div className="md:col-span-7 flex flex-col [&>article]:flex-1 [&>article]:!h-full md:[&>article]:!min-h-[440px]">
-              <ProjectCard p={projects[2]} idx={2} onOpen={handleOpen} compact />
-            </div>
-            <div className="md:col-span-5 flex flex-col [&>article]:flex-1 [&>article]:!h-full md:[&>article]:!min-h-[440px]">
-              <ProjectCard p={projects[3]} idx={3} onOpen={handleOpen} compact />
-            </div>
-          </div>
+          ))}
         </div>
       </section>
       {typeof document !== "undefined" &&
