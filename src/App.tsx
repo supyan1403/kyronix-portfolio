@@ -171,7 +171,7 @@ function scrollToId(id: string) {
   else el.scrollIntoView({ behavior: "smooth" });
 }
 
-/* ---------- Smooth scroll (Lenis) — desktop smooth, HP native biar ga sendat ---------- */
+/* ---------- Smooth scroll (Lenis) — desktop smooth, HP native 120Hz ---------- */
 function useLenis(enabled = true) {
   useEffect(() => {
     if (!enabled) {
@@ -184,9 +184,8 @@ function useLenis(enabled = true) {
       return;
     }
     const isCoarse = window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 768px)").matches;
-    // HP: jangan hijack touch — pakai scroll native Chrome (compositor thread, fling 120hz mulus)
-    // Lenis tetap hidup untuk scrollToId(programmatic) tapi smoothTouch OFF
     if (isCoarse) {
+      // HP: jangan hijack — fling 120hz di compositor, tanpa rAF tambahan
       const lenis = new Lenis({
         duration: 0.9,
         smoothWheel: false,
@@ -197,13 +196,17 @@ function useLenis(enabled = true) {
       lenisInstance = lenis;
       (window as unknown as Record<string, unknown>).__lenis = lenis;
       let raf = 0;
+      let needsRaf = false;
+      const onScrollTo = () => { needsRaf = true; if (!raf) raf = requestAnimationFrame(loop); };
       const loop = (t: number) => {
         lenis.raf(t);
-        raf = requestAnimationFrame(loop);
+        if (needsRaf && lenis.isScrolling) raf = requestAnimationFrame(loop);
+        else raf = 0;
       };
-      raf = requestAnimationFrame(loop);
+      lenis.on("scroll", onScrollTo);
       return () => {
-        cancelAnimationFrame(raf);
+        if (raf) cancelAnimationFrame(raf);
+        lenis.off("scroll", onScrollTo);
         lenis.destroy();
         lenisInstance = null;
         try { delete (window as unknown as Record<string, unknown>).__lenis; } catch { (window as unknown as Record<string, unknown>).__lenis = null; }
@@ -213,8 +216,8 @@ function useLenis(enabled = true) {
     const cores = navigator.hardwareConcurrency ?? 8;
     const isLow = (typeof dm === "number" ? dm <= 4 : false) || cores <= 4;
     const lenis = new Lenis({
-      duration: isLow ? 1.0 : 1.25,
-      wheelMultiplier: 0.9,
+      duration: isLow ? 1.0 : 1.15,
+      wheelMultiplier: 0.95,
       smoothWheel: true,
       smoothTouch: false,
       gestureOrientation: "vertical",
@@ -1211,14 +1214,14 @@ function Hero({ ready }: { ready: boolean }) {
   }, [ready]);
   const done = typed.length === FULL.length;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  // spring halus biar hero tidak jentak 60/120fps
-  const smooth = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.3 });
-  const heroY = useTransform(smooth, [0, 1], [0, light ? -48 : -160]);
-  const heroOpacity = useTransform(smooth, [0, 0.55], [1, 0]);
-  const heroScale = useTransform(smooth, [0, 1], [1, light ? 0.97 : 0.92]);
-  const gridY = useTransform(smooth, [0, 1], [0, light ? -14 : -30]);
-  const taglineY = useTransform(smooth, [0, 1], [0, light ? -10 : -24]);
-  const ctaY = useTransform(smooth, [0, 1], [0, light ? -8 : -18]);
+  // spring halus — desktop saja; mobile/low native scroll tanpa spring biar 120hz mulus
+  const smooth = useSpring(scrollYProgress, { stiffness: 220, damping: 32, mass: 0.22, restDelta: 0.001 });
+  const heroY = useTransform(smooth, [0, 1], [0, light || low ? 0 : -96]);
+  const heroOpacity = useTransform(smooth, [0, 0.55], [1, light || low ? 1 : 0]);
+  const heroScale = useTransform(smooth, [0, 1], [1, light || low ? 1 : 0.96]);
+  const gridY = useTransform(smooth, [0, 1], [0, light || low ? 0 : -16]);
+  const taglineY = useTransform(smooth, [0, 1], [0, 0]);
+  const ctaY = useTransform(smooth, [0, 1], [0, 0]);
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28"
       onMouseMove={(e) => {
