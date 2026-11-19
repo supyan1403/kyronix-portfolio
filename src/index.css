@@ -332,6 +332,16 @@
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* KARYA horizontal — scrollbar tipis horizontal yang kelihatan (warm) */
+.karya-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #3A3632 #1A1816;
+}
+.karya-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
+.karya-scroll::-webkit-scrollbar-track { background: #1A1816; border-radius: 999px; }
+.karya-scroll::-webkit-scrollbar-thumb { background: #3A3632; border-radius: 999px; border: 1px solid #252220; }
+.karya-scroll::-webkit-scrollbar-thumb:hover { background: #4A4642; }
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track, .live-dot, .blink { animation: none; }
 }

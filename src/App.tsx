@@ -1806,15 +1806,62 @@ function Stack() {
 /* ---------- 3. Featured projects — Bento Featured ---------- */
 
 function ProjectCard({ p, idx, onOpen, compact }: { p: (typeof projects)[number]; idx: number; onOpen: (pp: (typeof projects)[number]) => void; compact?: boolean }) {
+  void compact;
   const { lang } = useLang();
-  const isDone = p.status === "RESEARCH DONE" || p.status === "LIVE NOW";
+  const isDeployed = p.status === "LIVE NOW";
+  const isDoneNotDeployed = p.status === "RESEARCH DONE";
+  const isDone = isDeployed || isDoneNotDeployed;
   const isHero = idx === 0;
+  const borderColor = isDeployed ? "#22c55e" : isDoneNotDeployed ? "#f59e0b" : undefined;
   return (
-    <motion.article role="button" tabIndex={0} onClick={() => onOpen(p)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.22, margin: "0px 0px -12% 0px" }} transition={{ duration: 0.62, ease: EASE, delay: idx * 0.08 }} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 380, damping: 22 }} className={"warm-card relative flex cursor-pointer flex-col overflow-hidden pb-6 will-change-transform " + (compact ? "min-h-[420px] p-5 md:p-6" : isHero ? "min-h-[500px] p-6 md:p-7 " + (isDone ? "border-green-500/55" : "border-border") : "min-h-[480px] p-5 md:p-7 " + (isDone ? "border-green-500/35" : ""))} style={{ borderColor: isDone ? "#22c55e" : undefined } as React.CSSProperties}>
-      {!isHero || compact ? null : <span aria-hidden className={"pointer-events-none absolute -right-[1px] -top-[1px] px-2.5 py-1 font-mono text-[10px] font-black tracking-[0.16em] text-white " + (isDone ? "bg-green-600" : "bg-terracotta")}>FEATURED</span>}
-      <div className="flex items-center justify-between"><span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span><span className={"inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider sm:shrink-0 " + "warm-tag"}>{(p as { livePulse?: boolean }).livePulse && <Radio size={12} className="live-dot shrink-0" />}<span className="break-words">{p.status}</span></span></div>
-      <div className="min-w-0 flex-1"><p className="mt-4 mb-3 font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{p.kind}</p><h3 data-text={p.title} className={"font-sans font-semibold uppercase leading-[1.1] tracking-[0.06em] text-ink " + (isHero && !compact ? "text-[2.05rem] md:text-[2.5rem]" : "text-[1.55rem] md:text-[1.85rem]")}>{p.title}</h3><p className="leading-relaxed" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p></div>
-      <div className="mt-6 flex items-end justify-between gap-3 border-t border-border/10 pt-4"><div className="flex flex-1 flex-wrap gap-2 pr-2">{p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}</div><span className={"flex h-10 w-10 shrink-0 items-center justify-center border md:h-12 md:w-12 " + (isDone ? "border-green-500/30 bg-transparent text-green-600 hover:bg-green-600 hover:text-white hover:border-green-600" : "border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white")}><ArrowUpRight size={18} /></span></div>
+    <motion.article
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpen(p)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }}
+      initial={{ opacity: 0, y: 18 } as unknown as Record<string, unknown>}
+      whileInView={{ opacity: 1, y: 0 } as unknown as Record<string, unknown>}
+      viewport={{ amount: 0.22, margin: "0px 0px -12% 0px" }}
+      transition={{ duration: 0.62, ease: EASE, delay: idx * 0.08 } as unknown as Record<string, unknown>}
+      whileHover={{ y: -4 } as unknown as Record<string, unknown>}
+      whileTap={{ scale: 0.98 } as unknown as Record<string, unknown>}
+      className={
+        "warm-card relative flex cursor-pointer flex-col overflow-hidden pb-5 will-change-transform min-h-[390px] p-5 md:min-h-[410px] md:p-6 " +
+        (isDeployed ? "border-green-500/40" : isDoneNotDeployed ? "border-amber-500/35" : "")
+      }
+      style={{ borderColor } as React.CSSProperties}
+    >
+      {isHero ? (
+        <span aria-hidden className={"pointer-events-none absolute -right-[1px] -top-[1px] rounded-bl-[10px] px-2.5 py-1 font-mono text-[10px] font-black tracking-[0.16em] text-white " + (isDeployed ? "bg-green-600" : isDoneNotDeployed ? "bg-amber-500" : "bg-terracotta")}>
+          FEATURED
+        </span>
+      ) : null}
+      <div className="flex items-center justify-between gap-2">
+        <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
+        <span
+          className={
+            "inline-flex max-w-[62%] items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider leading-none " +
+            (isDeployed
+              ? "border-green-500/40 bg-green-500/10 text-green-400"
+              : isDoneNotDeployed
+                ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
+                : "warm-tag")
+          }
+          title={isDoneNotDeployed ? (lang === "id" ? "Selesai — belum deploy" : "Done — not deployed") : undefined}
+        >
+          {isDeployed ? <Radio size={10} className="live-dot shrink-0" /> : isDoneNotDeployed ? <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" /> : null}
+          <span className="truncate">{p.status}{isDoneNotDeployed ? (lang === "id" ? " · BELUM DEPLOY" : " · NOT DEPLOYED") : ""}</span>
+        </span>
+      </div>
+      <div className="min-w-0 flex flex-1 flex-col">
+        <p className="mt-3 mb-2 font-mono text-[11px] uppercase tracking-[0.18em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
+        <h3 data-text={p.title} className="line-clamp-2 min-h-[2.3em] font-sans text-[1.25rem] font-semibold uppercase leading-[1.15] tracking-[0.05em] text-ink md:text-[1.38rem]">{p.title}</h3>
+        <p className="mt-2 line-clamp-3 min-h-[4.85em] text-[13px] leading-[1.6]" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
+      </div>
+      <div className="mt-5 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
+        <div className="flex flex-1 flex-wrap gap-1.5 pr-2">{p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}</div>
+        <span className={"flex h-9 w-9 shrink-0 items-center justify-center border md:h-10 md:w-10 " + (isDeployed ? "border-green-500/30 bg-transparent text-green-500 hover:bg-green-600 hover:text-white hover:border-green-600" : isDoneNotDeployed ? "border-amber-500/30 bg-transparent text-amber-500 hover:bg-amber-500 hover:text-[#1A1816] hover:border-amber-500" : "border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white")}><ArrowUpRight size={16} /></span>
+      </div>
     </motion.article>
   );
 }
@@ -1965,7 +2012,7 @@ function Projects() {
           role="region"
           aria-label="Karya"
           tabIndex={0}
-          className="flex cursor-grab select-none gap-5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-[5vw] py-4 [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 [&>div]:items-stretch"
+          className="karya-scroll flex cursor-grab select-none gap-4 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-[5vw] py-4 pb-5 active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 [&>div]:items-stretch"
           style={{ touchAction: "pan-x pan-y" } as React.CSSProperties}
           onPointerDown={(e) => {
             if (e.button !== 0) return;
@@ -2004,9 +2051,9 @@ function Projects() {
           {projects.map((proj, idx) => (
             <div
               key={proj.title}
-              className="flex min-w-[86vw] max-w-[86vw] shrink-0 snap-start sm:min-w-[360px] sm:max-w-[400px] md:min-w-[420px] md:max-w-[480px]"
+              className="flex min-w-[78vw] max-w-[78vw] shrink-0 snap-start sm:min-w-[300px] sm:max-w-[340px] md:min-w-[340px] md:max-w-[380px]"
             >
-              <div className="flex min-h-[520px] w-full">
+              <div className="flex min-h-[390px] w-full md:min-h-[410px]">
                 <ProjectCard p={proj} idx={idx} onOpen={(p) => { if (drag.current.moved) return; handleOpen(p); }} />
               </div>
             </div>
