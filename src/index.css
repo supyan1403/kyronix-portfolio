@@ -123,6 +123,22 @@
   .hero-outline { -webkit-text-stroke-width: 1.6px; letter-spacing: 0; }
 }
 
+/* Hero KYRONIX — outline SVG yang digambar (stroke dash) */
+.hero-sketch {
+  font-family: var(--font-kyronix);
+  font-weight: 400;
+  letter-spacing: 0;
+  fill: rgba(245, 239, 230, 0.055);
+  stroke: rgba(245, 239, 230, 0.9);
+  stroke-width: 2.1;
+  paint-order: stroke fill;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+@media (max-width: 640px) {
+  .hero-sketch { stroke-width: 1.6; }
+}
+
 /* Watermark section — sama kejelasannya dengan watermark Hero (stroke + fill + opacity) */
 .watermark,
 .hero-watermark {

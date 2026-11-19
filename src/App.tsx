@@ -100,6 +100,29 @@ function ChipPixel({ size = 24, className, style }: { size?: number; className?:
 }
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+/* --- Hero KYRONIX "sketch": ukur advance per huruf pakai canvas (font Anton) --- */
+const HERO_FONT_STACK = 'Anton, Impact, "Arial Black", sans-serif';
+let heroMeasureCtx: CanvasRenderingContext2D | null = null;
+function measureHeroTitle(text: string) {
+  if (typeof window === "undefined" || typeof document === "undefined") return null;
+  const rootFs = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  // sama dengan text-[clamp(4.2rem,17.5vw,13rem)]
+  const fs = Math.min(Math.max(4.2 * rootFs, 0.175 * window.innerWidth), 13 * rootFs);
+  if (!heroMeasureCtx) heroMeasureCtx = document.createElement("canvas").getContext("2d");
+  if (!heroMeasureCtx) return null;
+  heroMeasureCtx.font = `400 ${fs}px ${HERO_FONT_STACK}`;
+  const gap = 0.085 * fs;
+  const advances: number[] = [];
+  let width = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    const w = heroMeasureCtx.measureText(text[i]).width;
+    advances.push(w);
+    width += w + (i < text.length - 1 ? gap : 0);
+  }
+  return { fs, gap, advances, width };
+}
+
 let lenisInstance: Lenis | null = null;
 
 function useIsMobile() {
@@ -568,12 +591,9 @@ function KPage({ onDone }: { onDone: () => void }) {
   const my = useMotionValue(0);
   const rx = useTransform(mx, [-1, 1], [8, -8]);
   const ry = useTransform(my, [-1, 1], [-7, 7]);
-  const finish = () => { setPct(100); setLeaving(true); };
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
     lenisInstance?.stop();
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
-    window.addEventListener("keydown", onKey);
 
     let cancelled = false;
     let raf = 0;
@@ -629,7 +649,6 @@ function KPage({ onDone }: { onDone: () => void }) {
       cancelled = true;
       if (raf) cancelAnimationFrame(raf);
       timers.forEach((t) => window.clearTimeout(t));
-      window.removeEventListener("keydown", onKey);
     };
   }, []);
   const handleExitComplete = () => {
@@ -651,11 +670,6 @@ function KPage({ onDone }: { onDone: () => void }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, filter: "blur(10px)" }}
           transition={{ duration: 0.85, ease: EASE }}
-          onClick={finish}
-          role="button"
-          tabIndex={0}
-          aria-label="Lanjut ke portfolio — klik atau tekan Esc"
-          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") finish(); }}
         >
           {/* frame 0 hitam solid — fade in, bukan pop */}
           <div aria-hidden className="absolute inset-0 bg-black" />
@@ -749,7 +763,7 @@ function KPage({ onDone }: { onDone: () => void }) {
               />
             </div>
             <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.28em] text-white/40 max-sm:text-[9px]">
-              tap / Esc to skip
+              menyiapkan antarmuka
             </p>
           </motion.div>
         </motion.div>
@@ -1265,6 +1279,16 @@ function Hero({ ready }: { ready: boolean }) {
   const isMobile = useIsMobile();
   const light = isMobile;
   const FULL = "KYRONIX";
+  const [metrics, setMetrics] = useState(() => measureHeroTitle(FULL));
+  const reduceMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  useEffect(() => {
+    const update = () => setMetrics(measureHeroTitle(FULL));
+    update();
+    window.addEventListener("resize", update);
+    const fonts = document.fonts;
+    fonts?.ready.then(update).catch(() => {});
+    return () => window.removeEventListener("resize", update);
+  }, [FULL]);
   // tilt 3D persis KPage — HP = laptop (onTouch + onMouse)
   const heroMx = useMotionValue(0);
   const heroMy = useMotionValue(0);
@@ -1337,30 +1361,52 @@ function Hero({ ready }: { ready: boolean }) {
       <div aria-hidden className="pointer-events-none absolute bottom-[24px] left-[24px] h-[22px] w-[22px] border-b-[1.5px] border-l-[1.5px] border-terracotta/20 max-sm:bottom-[16px] max-sm:left-[16px] max-sm:h-[18px] max-sm:w-[18px]" />
       <div aria-hidden className="pointer-events-none absolute bottom-[24px] right-[24px] h-[22px] w-[22px] border-b-[1.5px] border-r-[1.5px] border-terracotta/20 max-sm:bottom-[16px] max-sm:right-[16px] max-sm:h-[18px] max-sm:w-[18px]" />
       <motion.div className="relative z-20 mx-auto flex w-full max-w-[1100px] flex-1 flex-col items-center justify-center gap-5 px-[6vw] pb-16 pt-6 sm:gap-6 sm:px-[5vw] md:px-[4vw] lg:items-start lg:gap-6 lg:text-left" style={light ? ({ opacity: heroOpacity } as unknown as Record<string, unknown>) : ({ y: heroY, opacity: heroOpacity, scale: heroScale } as unknown as Record<string, unknown>)} initial={light ? ({ opacity: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, filter: "blur(10px)" } as unknown as Record<string, unknown>)} animate={light ? ({ opacity: 1 } as unknown as Record<string, unknown>) : low ? (ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)) : (ready ? ({ opacity: 1, filter: "blur(0px)" } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>))} transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}>
-        {/* KYRONIX — kolom kiri, 1 baris no-wrap */}
+        {/* KYRONIX — outline digambar seperti sketcher (SVG stroke draw) */}
         <motion.div
-              aria-label={FULL}
-              role="img"
-              className="hero-outline relative inline-flex select-none flex-nowrap items-end justify-center lg:justify-start gap-[0.085em] text-[clamp(4.2rem,17.5vw,13rem)] leading-[0.95] will-change-transform max-w-full"
-              style={{ perspective: 800, transformStyle: "preserve-3d", rotateX: heroRx, rotateY: heroRy, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
+          aria-label={FULL}
+          role="img"
+          className="relative select-none will-change-transform"
+          style={{ perspective: 800, transformStyle: "preserve-3d", rotateX: heroRx, rotateY: heroRy, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
+        >
+          <span className="sr-only">{FULL}</span>
+          {metrics ? (
+            <svg
+              width={metrics.width}
+              height={Math.round(metrics.fs * 0.95)}
+              viewBox={`0 0 ${metrics.width} ${Math.round(metrics.fs * 0.95)}`}
+              aria-hidden="true"
+              className="block max-w-full overflow-visible"
             >
-              <span className="sr-only">{FULL}</span>
-              {FULL.split("").map((ch, i) => (
-                <motion.span
-                  key={ch + i}
-                  className="relative inline-block will-change-transform"
-                  initial={{ clipPath: "inset(-30% -30% 115% -30%)", y: light ? 10 : low ? 16 : 30, opacity: 0 } as unknown as Record<string, unknown>}
-                  animate={
-                    ready
-                      ? ({ clipPath: "inset(-30% -30% -30% -30%)", y: 0, opacity: 1 } as unknown as Record<string, unknown>)
-                      : ({} as unknown as Record<string, unknown>)
-                  }
-                  transition={{ duration: light ? 0.72 : low ? 0.82 : 0.98, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * (light ? 0.045 : 0.075) }}
-                >
-                  {ch}
-                </motion.span>
-              ))}
-            </motion.div>
+              {(() => {
+                let x = 0;
+                return FULL.split("").map((ch, i) => {
+                  const node = (
+                    <motion.text
+                      key={ch + i}
+                      x={x}
+                      y={metrics.fs * 0.78}
+                      fontSize={metrics.fs}
+                      className="hero-sketch"
+                      style={{ strokeDasharray: 4000 } as unknown as React.CSSProperties}
+                      initial={{ strokeDashoffset: reduceMotion ? 0 : 4000, fillOpacity: reduceMotion ? 1 : 0 } as unknown as Record<string, unknown>}
+                      animate={ready ? ({ strokeDashoffset: 0, fillOpacity: 1 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
+                      transition={
+                        {
+                          strokeDashoffset: { duration: light ? 0.6 : 0.92, ease: [0.16, 1, 0.3, 1], delay: 0.08 + i * 0.09 },
+                          fillOpacity: { duration: 0.55, ease: EASE, delay: 0.5 + i * 0.09 },
+                        } as unknown as Record<string, unknown>
+                      }
+                    >
+                      {ch}
+                    </motion.text>
+                  );
+                  x += metrics.advances[i] + metrics.gap;
+                  return node;
+                });
+              })()}
+            </svg>
+          ) : null}
+        </motion.div>
                 {/* bawah KYRONIX — single kolom kiri (tanpa split) */}
         <div className="flex w-full max-w-[640px] flex-col gap-5 lg:mx-0 lg:items-start lg:text-left">
           <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none lg:text-left" style={{ y: taglineY } as unknown as Record<string, unknown>}>
