@@ -2149,7 +2149,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
+                          className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
                         >
                           {(t.projectModal as { readArticle: string }).readArticle} <ArrowUpRight size={14} />
                         </motion.button>
@@ -2173,7 +2173,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30 hover:bg-white/5"
+                          className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30 hover:bg-white/5"
                         >
                           {(t.projectModal as { download: string }).download} <Download size={14} />
                         </motion.button>
@@ -2182,7 +2182,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-terracotta/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-terracotta hover:bg-ink/10"
+                          className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-terracotta/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-terracotta hover:bg-ink/10"
                         >
                           {(t.projectModal as { articleCta: string }).articleCta} <ArrowUpRight size={14} />
                         </motion.button>
@@ -2191,7 +2191,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
+                          className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
                         >
                           {t.projectModal.close}
                         </motion.button>
@@ -2205,7 +2205,7 @@ function Projects() {
                         whileHover={{ y: -2, scale: 1.02 }}
                         whileTap={{ scale: 0.97, y: 0 }}
                         transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                        className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
                       >
                         {t.projectModal.cta} <ArrowUpRight size={14} />
                       </motion.button>
@@ -2214,7 +2214,7 @@ function Projects() {
                         whileHover={{ y: -2, scale: 1.02 }}
                         whileTap={{ scale: 0.97, y: 0 }}
                         transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
                       >
                         {t.projectModal.close}
                       </motion.button>
@@ -2383,8 +2383,8 @@ function ExpRow({
             </ul>
             {(e as { certificateHref?: string }).certificateHref && (
               <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-4">
-                <button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex items-center gap-2 rounded-full bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button>
-                <button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 rounded-full border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5">{(t.experience as { download: string }).download} <Download size={12} /></button>
+                <button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex items-center gap-2 rounded-[10px] bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button>
+                <button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 rounded-[10px] border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5">{(t.experience as { download: string }).download} <Download size={12} /></button>
               </div>
             )}
           </div>
@@ -2394,10 +2394,10 @@ function ExpRow({
                 <ul className="mt-6 space-y-2 border-t border-border pt-6">
                   {points.map((p) => (<li key={p} className="flex gap-3 leading-relaxed text-muted"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: lowActive ? "rgba(224,122,95,1)" : "rgba(120,113,108,0.25)", transition: `background-color ${cc}` }} />{p}</li>))}
                 </ul>
-                {(e as { certificateHref?: string }).certificateHref && (<div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4"><button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button><button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 rounded-full border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink">{(t.experience as { download: string }).download} <Download size={12} /></button></div>)}
+                {(e as { certificateHref?: string }).certificateHref && (<div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4"><button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button><button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 rounded-[10px] border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink">{(t.experience as { download: string }).download} <Download size={12} /></button></div>)}
               </div>
             ) : (<p className="mt-4 line-clamp-2 border-t border-border pt-4 text-sm leading-relaxed text-muted/80">{points[0]}</p>)}
-            <button type="button" onClick={(ev) => { ev.stopPropagation(); setOpen((v) => !v); }} className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest ${open ? "border-border/20 bg-transparent text-ink" : "border-terracotta bg-terracotta text-white hover:bg-[#d46a52]"}`}>{open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}</button>
+            <button type="button" onClick={(ev) => { ev.stopPropagation(); setOpen((v) => !v); }} className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] border px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest ${open ? "border-border/20 bg-transparent text-ink" : "border-terracotta bg-terracotta text-white hover:bg-[#d46a52]"}`}>{open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}</button>
           </div>
         </article>
       </div>
