@@ -386,8 +386,41 @@ function SplitReveal({
   );
 }
 
-function Eyebrow({ index, label }: { index: string; label: string }) {
+/* Karakter slogan — ngetik satu-satu, hilang reverse saat scroll dari Hero */
+function SloganChar({
+  char,
+  index,
+  emph,
+  ready,
+  progress,
+}: {
+  char: string;
+  index: number;
+  emph: boolean;
+  ready: boolean;
+  progress: MotionValue<number>;
+}) {
+  // reverse: huruf paling kanan menghilang lebih dulu
+  const outStart = 0.42 - index * 0.014;
+  const outOpacity = useTransform(progress, [outStart - 0.02, outStart], [0, 1]);
   return (
+    <motion.span
+      className={emph ? "inline-block font-semibold text-terracotta" : "inline-block"}
+      style={{ opacity: outOpacity } as unknown as Record<string, unknown>}
+    >
+      <motion.span
+        className="inline-block"
+        initial={{ opacity: 0 } as unknown as Record<string, unknown>}
+        animate={ready ? ({ opacity: 1 } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
+        transition={{ duration: 0.06, ease: "linear", delay: 0.7 + index * 0.055 }}
+      >
+        {char}
+      </motion.span>
+    </motion.span>
+  );
+}
+
+function Eyebrow({ index, label }: { index: string; label: string }) {  return (
     <motion.p
       initial={{ opacity: 0, x: -20 }}
       whileInView={{ opacity: 1, x: 0 }}
@@ -589,8 +622,15 @@ function KPage({ onDone }: { onDone: () => void }) {
   const lastPct = useRef(-1);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const rx = useTransform(mx, [-1, 1], [8, -8]);
-  const ry = useTransform(my, [-1, 1], [-7, 7]);
+  const smx = useSpring(mx, { stiffness: 110, damping: 18, mass: 0.45 });
+  const smy = useSpring(my, { stiffness: 110, damping: 18, mass: 0.45 });
+  const rx = useTransform(smy, [-1, 1], [11, -11]);
+  const ry = useTransform(smx, [-1, 1], [-10, 10]);
+  const kx = useTransform(smx, [-1, 1], [-22, 22]);
+  const ky = useTransform(smy, [-1, 1], [-14, 14]);
+  const glowX = useTransform(smx, [-1, 1], [34, -34]);
+  const glowY = useTransform(smy, [-1, 1], [24, -24]);
+  const glowOpacity = useTransform([smx, smy], ([x, y]: number[]) => 0.55 + Math.min(0.45, (Math.abs(x) + Math.abs(y)) * 0.22));
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
     lenisInstance?.stop();
@@ -672,28 +712,29 @@ function KPage({ onDone }: { onDone: () => void }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, filter: "blur(10px)" }}
           transition={{ duration: 0.85, ease: EASE }}
+          onMouseMove={(e) => onPointer(e.clientX, e.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect())}
+          onMouseLeave={() => { mx.set(0); my.set(0); }}
+          onTouchMove={(e) => {
+            const t = e.touches[0];
+            if (!t) return;
+            onPointer(t.clientX, t.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect());
+          }}
+          onTouchEnd={() => { mx.set(0); my.set(0); }}
         >
           {/* frame 0 hitam solid — fade in, bukan pop */}
           <div aria-hidden className="absolute inset-0 bg-black" />
           <motion.div
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 bg-terracotta/14 blur-[80px] max-sm:h-[380px] max-sm:w-[380px] max-sm:blur-[56px]"
-            initial={{ opacity: 0, scale: 0.82 }}
-            animate={{ opacity: 1, scale: 1 }}
+            style={{ x: glowX, y: glowY, opacity: glowOpacity } as unknown as Record<string, unknown>}
+            initial={{ scale: 0.82 }}
+            animate={{ scale: 1 }}
             exit={{ opacity: 0, scale: 0.92, filter: "blur(8px)" } as unknown as Record<string, unknown>}
             transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
           />
           <motion.div
             className="relative flex items-center justify-center will-change-transform"
-            style={{ perspective: 900, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
-            onMouseMove={(e) => onPointer(e.clientX, e.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect())}
-            onMouseLeave={() => { mx.set(0); my.set(0); }}
-            onTouchMove={(e) => {
-              const t = e.touches[0];
-              if (!t) return;
-              onPointer(t.clientX, t.clientY, (e.currentTarget as HTMLElement).getBoundingClientRect());
-            }}
-            onTouchEnd={() => { mx.set(0); my.set(0); }}
+            style={{ perspective: 900 } as unknown as Record<string, unknown>}
           >
             <motion.img
               src="/kyronix-k-hex.webp"
@@ -704,7 +745,7 @@ function KPage({ onDone }: { onDone: () => void }) {
               decoding="async"
               draggable={false}
               className="relative h-[min(52dvh,460px)] w-auto max-w-[min(86vw,620px)] select-none will-change-transform object-contain max-sm:h-[min(48dvh,360px)] max-sm:max-w-[88vw]"
-              style={{ rotateX: rx, rotateY: ry, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
+              style={{ rotateX: rx, rotateY: ry, x: kx, y: ky } as unknown as Record<string, unknown>}
               initial={{ opacity: 0, scale: 0.72, rotateX: 16, rotateY: -14, filter: "blur(14px)" }}
               animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
               exit={{ opacity: 0, scale: 0.86, filter: "blur(8px)" } as unknown as Record<string, unknown>}
@@ -1386,8 +1427,8 @@ function Hero({ ready }: { ready: boolean }) {
                 const baseY = metrics.fs * 0.78;
                 let x = 0;
                 return FULL.split("").map((ch, i) => {
-                  const t0 = 0.05 + i * (light ? 0.03 : 0.04);
-                  const slotStep = light ? 0.1 : 0.082;
+                  const t0 = 0.08 + i * (light ? 0.05 : 0.07);
+                  const slotStep = light ? 0.17 : 0.15;
                   // urutan acak tapi deterministik (biar tidak berubah tiap render)
                   let s = (i + 1) * 7919;
                   const rnd = () => {
@@ -1401,7 +1442,7 @@ function Hero({ ready }: { ready: boolean }) {
                     order[k] = order[j];
                     order[j] = tmp;
                   }
-                  const letterEnd = t0 + CHUNKS * slotStep + 0.22;
+                  const letterEnd = t0 + CHUNKS * slotStep + 0.38;
                   const node = (
                     <g key={ch + i}>
                       {/* potongan outline muncul acak — digambar per segmen */}
@@ -1445,8 +1486,8 @@ function Hero({ ready }: { ready: boolean }) {
                         animate={ready ? ({ opacity: 1, fillOpacity: 1 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
                         transition={
                           {
-                            opacity: { duration: 0.24, ease: EASE, delay: letterEnd - 0.14 },
-                            fillOpacity: { duration: 0.4, ease: EASE, delay: letterEnd + 0.08 },
+                            opacity: { duration: 0.34, ease: EASE, delay: letterEnd - 0.22 },
+                            fillOpacity: { duration: 0.55, ease: EASE, delay: letterEnd + 0.06 },
                           } as unknown as Record<string, unknown>
                         }
                       >
@@ -1470,15 +1511,14 @@ function Hero({ ready }: { ready: boolean }) {
                 <span key={wi}>
                   <span className="inline-block whitespace-nowrap">
                     {Array.from(word).map((ch, ci) => (
-                      <motion.span
+                      <SloganChar
                         key={ci}
-                        className={start + ci >= emphFrom ? "inline-block font-semibold text-ink" : "inline-block"}
-                        initial={{ opacity: 0, y: 12 } as unknown as Record<string, unknown>}
-                        animate={ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
-                        transition={{ duration: 0.5, ease: EASE, delay: 0.5 + (start + ci) * 0.022 }}
-                      >
-                        {ch}
-                      </motion.span>
+                        char={ch}
+                        index={start + ci}
+                        emph={start + ci >= emphFrom}
+                        ready={ready}
+                        progress={smooth}
+                      />
                     ))}
                   </span>
                   {wi < sloganWords.length - 1 ? " " : null}
