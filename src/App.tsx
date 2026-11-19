@@ -1290,7 +1290,6 @@ function Hero({ ready }: { ready: boolean }) {
     tm = window.setTimeout(tick, 380) as unknown as number;
     return () => clearTimeout(tm);
   }, [ready]);
-  const done = typed.length === FULL.length;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   // spring halus — desktop saja; mobile/low native scroll tanpa spring biar 120hz mulus
   const smooth = useSpring(scrollYProgress, { stiffness: 220, damping: 32, mass: 0.22, restDelta: 0.001 });
@@ -1334,94 +1333,42 @@ function Hero({ ready }: { ready: boolean }) {
         <motion.div
               aria-label={FULL}
               role="img"
-              className="relative inline-flex select-none flex-nowrap items-end justify-center lg:justify-start gap-[0.06em] will-change-transform max-w-full"
+              className="hero-outline relative inline-flex select-none flex-nowrap items-end justify-center lg:justify-start gap-[0.02em] font-display text-[clamp(3.1rem,12.4vw,9.4rem)] font-black leading-[0.9] tracking-[0.01em] will-change-transform max-w-full"
               style={{ perspective: 800, transformStyle: "preserve-3d", rotateX: heroRx, rotateY: heroRy, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
             >
               <span className="sr-only">{FULL}</span>
               {FULL.split("").map((ch, i) => {
                 const visible = i < typed.length;
-                const isLast = i === FULL.length - 1;
-                const src = `/letters/kyronix-${ch.toLowerCase()}.webp`;
-                const srcPng = `/letters/kyronix-${ch.toLowerCase()}.png`;
                 return (
                   <motion.span
                     key={ch + i}
-                    className="relative inline-flex will-change-transform"
+                    className="relative inline-block will-change-transform"
                     initial={
                       light
-                        ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)
+                        ? ({ opacity: 0, y: 6 } as unknown as Record<string, unknown>)
                         : low
-                          ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)
-                          : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
+                          ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)
+                          : ({ opacity: 0, y: 26, filter: "blur(10px)" } as unknown as Record<string, unknown>)
                     }
                     animate={
                       visible
-                        ? light
+                        ? light || low
                           ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
-                          : low
-                            ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
-                            : ({ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 } as unknown as Record<string, unknown>)
+                          : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)
                         : light
-                          ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>)
+                          ? ({ opacity: 0, y: 6 } as unknown as Record<string, unknown>)
                           : low
-                            ? ({ opacity: 0, y: 14 } as unknown as Record<string, unknown>)
-                            : ({ opacity: 0, y: 28, filter: "blur(10px)", scale: 0.92 } as unknown as Record<string, unknown>)
+                            ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)
+                            : ({ opacity: 0, y: 26, filter: "blur(10px)" } as unknown as Record<string, unknown>)
                     }
                     transition={{ duration: light ? 0.42 : 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * (light ? 0.035 : 0.06) }}
                   >
-                    <picture>
-                      <source srcSet={src} type="image/webp" />
-                      <img
-                        src={srcPng}
-                        alt=""
-                        width={520}
-                        height={528}
-                        loading="eager"
-                        decoding="async"
-                        draggable={false}
-                        className="h-[clamp(2.35rem,8.8vw,8.2rem)] w-auto select-none object-contain"
-                        style={{ filter: visible ? "drop-shadow(0 12px 28px rgba(0,0,0,0.28)) drop-shadow(0 28px 36px rgba(224,122,95,0.14))" : undefined } as React.CSSProperties}
-                      />
-                    </picture>
-                    {/* sweep ngikut siluet — mask per huruf kayak KPage */}
-                    <motion.span
-                      aria-hidden
-                      className="pointer-events-none absolute inset-0 overflow-hidden"
-                      style={{
-                        WebkitMaskImage: `url(${srcPng})`,
-                        maskImage: `url(${srcPng})`,
-                        WebkitMaskSize: "contain",
-                        maskSize: "contain",
-                        WebkitMaskRepeat: "no-repeat",
-                        maskRepeat: "no-repeat",
-                        WebkitMaskPosition: "center",
-                        maskPosition: "center",
-                        filter: "blur(0.5px)",
-                      } as React.CSSProperties}
-                      initial={{ opacity: 0 }}
-                      animate={visible && done ? ({ opacity: [0, 0, 1, 1, 0] } as unknown as Record<string, unknown>) : ({ opacity: 0 } as unknown as Record<string, unknown>)}
-                      transition={{ duration: 1.55, times: [0, 0.42, 0.52, 0.84, 1], ease: "easeInOut", delay: 0.52 + i * 0.06 } as unknown as Record<string, unknown>}
-                    >
-                      <motion.span
-                        className="absolute inset-y-0 w-[42%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
-                        initial={{ x: "-130%" }}
-                        animate={visible && done ? ({ x: "260%" } as unknown as Record<string, unknown>) : ({ x: "-130%" } as unknown as Record<string, unknown>)}
-                        transition={{ duration: 0.92, ease: [0.22, 1, 0.36, 1], delay: 0.52 + i * 0.06 }}
-                        style={{ transform: "skewX(-18deg)" }}
-                      />
-                    </motion.span>
-                    {isLast && done && (
-                      <motion.span
-                        aria-hidden
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.35, duration: 0.6 }}
-                        className="pointer-events-none absolute -inset-x-3 -top-2 bottom-0 -z-10 bg-gradient-to-r from-transparent via-terracotta/16 to-transparent blur-[14px]"
-                      />
-                    )}
+                    {ch}
                   </motion.span>
                 );
               })}
+              {/* glow hangat tipis di belakang garis huruf */}
+              <span aria-hidden className="pointer-events-none absolute inset-x-[6%] bottom-[4%] -z-10 h-10 rounded-full bg-terracotta/25 blur-[34px]" />
             </motion.div>
                 {/* bawah KYRONIX — single kolom kiri (tanpa split) */}
         <div className="flex w-full max-w-[640px] flex-col gap-5 lg:mx-0 lg:items-start lg:text-left">

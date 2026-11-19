@@ -103,6 +103,24 @@
   .text-outline { -webkit-text-stroke-width: 1.15px; }
 }
 
+/* Hero KYRONIX — watermark outline (pengganti block 3D image) */
+.hero-outline {
+  color: transparent;
+  -webkit-text-stroke: 2.1px rgba(245, 239, 230, 0.86);
+  -webkit-text-fill-color: rgba(245, 239, 230, 0.055);
+  paint-order: stroke fill;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  text-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.38),
+    0 0 64px rgba(196, 113, 60, 0.16);
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+@media (max-width: 640px) {
+  .hero-outline { -webkit-text-stroke-width: 1.5px; }
+}
+
 /* Warm card — dark surface, soft shadow — rounded dikit 16px (base radius) */
 .warm-card {
   position: relative;
