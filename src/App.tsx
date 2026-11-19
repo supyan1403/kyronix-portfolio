@@ -368,7 +368,7 @@ function SplitReveal({
       transition={{ staggerChildren: 0.07, delayChildren: delay }}
     >
       {words.map((w, i) => (
-        <span className="mask-line mr-[0.25em]" key={i}>
+        <span className="mask-line" key={i}>
           <motion.span
             className="inline-block"
             variants={
@@ -380,6 +380,7 @@ function SplitReveal({
           >
             {w}
           </motion.span>
+          {i < words.length - 1 ? " " : null}
         </span>
       ))}
     </MotionTag>

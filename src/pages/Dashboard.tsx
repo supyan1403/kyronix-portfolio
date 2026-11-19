@@ -51,7 +51,7 @@ function SplitReveal({
       transition={{ staggerChildren: 0.07, delayChildren: delay }}
     >
       {words.map((w, i) => (
-        <span className="mask-line mr-[0.25em]" key={i}>
+        <span className="mask-line" key={i}>
           <motion.span
             className="inline-block"
             variants={
@@ -63,6 +63,7 @@ function SplitReveal({
           >
             {w}
           </motion.span>
+          {i < words.length - 1 ? " " : null}
         </span>
       ))}
     </MotionTag>
@@ -897,26 +898,36 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
         {/* Opening — full 1 layar kayak EKOSISTEM tapi ga 100dvh penuh biar ga ketinggian */}
         <section data-dash-opening className="relative flex min-h-[76dvh] flex-col items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[8vh] text-center">
           <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.7]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.03) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE }} style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="relative will-change-transform">
-            <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
-              <ChipPixel size={14} className="text-terracotta/60" />
-              {t.eyebrow}
-            </p>
-            <SplitReveal
-              key={t.title}
-              as="h2"
-              text={t.title}
-              className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
-            />
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
-              transition={{ duration: 0.6, ease: EASE, delay: 0.35 }}
-              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base"
-            >
-              {t.desc}
-            </motion.p>
+          {/* entrance (opacity) di luar, parallax (y) di dalam — biar transform tidak berebut */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="relative"
+          >
+            <motion.div style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="will-change-transform">
+              <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
+                <ChipPixel size={14} className="text-terracotta/60" />
+                {t.eyebrow}
+              </p>
+              <SplitReveal
+                key={t.title}
+                as="h2"
+                text={t.title}
+                className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
+              />
+              {/* subtitle: tunggu judul selesai dulu (3 kata × stagger 0.07 + durasi 0.9) */}
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
+                transition={{ duration: 0.6, ease: EASE, delay: 1.1 }}
+                className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base"
+              >
+                {t.desc}
+              </motion.p>
+            </motion.div>
           </motion.div>
         </section>
 
