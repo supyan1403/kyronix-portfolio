@@ -563,18 +563,71 @@ function Intro({ onDone }: { onDone: () => void }) {
 /* ---------- K — dedicated page after boot (K-PAGE2 3D copper, bg hitam) ---------- */
 function KPage({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
+  const [pct, setPct] = useState(0);
+  const lastPct = useRef(-1);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const rx = useTransform(mx, [-1, 1], [8, -8]);
   const ry = useTransform(my, [-1, 1], [-7, 7]);
-  const finish = () => setLeaving(true);
+  const finish = () => { setPct(100); setLeaving(true); };
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
     lenisInstance?.stop();
-    const t = window.setTimeout(finish, 4200);
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
     window.addEventListener("keydown", onKey);
-    return () => { window.clearTimeout(t); window.removeEventListener("keydown", onKey); };
+
+    let cancelled = false;
+    let raf = 0;
+    let finished = false;
+    let assetsReady = false;
+    const timers: number[] = [];
+
+    const markDone = () => {
+      if (finished || cancelled) return;
+      finished = true;
+      setPct(100);
+      timers.push(window.setTimeout(() => { if (!cancelled) setLeaving(true); }, 240));
+    };
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      assetsReady = true;
+      markDone();
+    } else {
+      // tahan di 92% sampai K + font siap, biar % jujur (tidak bohong 100% sebelum render)
+      Promise.all([
+        new Promise<void>((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+          img.src = "/kyronix-k-hex.webp";
+        }),
+        document.fonts?.ready ?? Promise.resolve(),
+      ]).then(() => { assetsReady = true; });
+
+      const DUR = 2200;
+      const start = performance.now();
+      const tick = (now: number) => {
+        if (cancelled || finished) return;
+        const timePct = Math.min(100, ((now - start) / DUR) * 100);
+        const next = Math.min(timePct, assetsReady ? 100 : 92);
+        // throttle: re-render cuma saat angka bulat berubah (bukan tiap frame)
+        const rounded = Math.round(next);
+        if (rounded !== lastPct.current) {
+          lastPct.current = rounded;
+          setPct(rounded);
+        }
+        if (next >= 100) { markDone(); return; }
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }
+
+    return () => {
+      cancelled = true;
+      if (raf) cancelAnimationFrame(raf);
+      timers.forEach((t) => window.clearTimeout(t));
+      window.removeEventListener("keydown", onKey);
+    };
   }, []);
   const handleExitComplete = () => {
     document.documentElement.style.overflow = "";
@@ -594,7 +647,7 @@ function KPage({ onDone }: { onDone: () => void }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, filter: "blur(10px)" }}
-          transition={{ duration: 1.45, ease: EASE }}
+          transition={{ duration: 0.6, ease: EASE }}
           onClick={finish}
           role="button"
           tabIndex={0}
@@ -609,7 +662,7 @@ function KPage({ onDone }: { onDone: () => void }) {
             initial={{ opacity: 0, scale: 0.82 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.92, filter: "blur(8px)" } as unknown as Record<string, unknown>}
-            transition={{ duration: 1.35, ease: EASE, delay: 0.35 }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
           />
           <motion.div
             className="relative flex items-center justify-center will-change-transform"
@@ -636,7 +689,7 @@ function KPage({ onDone }: { onDone: () => void }) {
               initial={{ opacity: 0, scale: 0.72, rotateX: 16, rotateY: -14, filter: "blur(14px)" }}
               animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
               exit={{ opacity: 0, scale: 0.86, filter: "blur(8px)" } as unknown as Record<string, unknown>}
-              transition={{ type: "spring", stiffness: 180, damping: 18, mass: 1.15, delay: 0.55 } as unknown as Record<string, unknown>}
+              transition={{ type: "spring", stiffness: 180, damping: 18, mass: 1.15, delay: 0.12 } as unknown as Record<string, unknown>}
             />
             {/* sweep ngikut siluet K hex */}
             <motion.div
@@ -656,25 +709,46 @@ function KPage({ onDone }: { onDone: () => void }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 0, 1, 1, 0] } as unknown as Record<string, unknown>}
               exit={{ opacity: 0 } as unknown as Record<string, unknown>}
-              transition={{ duration: 3.4, times: [0, 0.55, 0.62, 0.86, 1], ease: "easeInOut" } as unknown as Record<string, unknown>}
+              transition={{ duration: 1.9, times: [0, 0.34, 0.44, 0.82, 1], ease: "easeInOut" } as unknown as Record<string, unknown>}
             >
               <motion.div
                 className="absolute inset-y-0 w-[45%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
                 initial={{ x: "-130%" }}
                 animate={{ x: "260%" }}
-                transition={{ duration: 1.55, delay: 1.85, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 1.0, delay: 0.78, ease: [0.22, 1, 0.36, 1] }}
                 style={{ transform: "skewX(-18deg)" }}
               />
             </motion.div>
           </motion.div>
-          <motion.p
-            className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.32em] text-white/70 max-sm:bottom-[5%] max-sm:text-[10px]"
-            initial={{ opacity: 0, y: 10 }}
+          <motion.div
+            className="pointer-events-none absolute bottom-[6%] left-1/2 w-[min(300px,74vw)] -translate-x-1/2 max-sm:bottom-[5%]"
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.25, duration: 0.85, ease: EASE }}
+            exit={{ opacity: 0 } as unknown as Record<string, unknown>}
+            transition={{ delay: 0.35, duration: 0.5, ease: EASE }}
           >
-            KYRONIX — tap / Esc to skip
-          </motion.p>
+            <div className="mb-2 flex items-end justify-between font-mono text-[10px] uppercase tracking-[0.28em]">
+              <span className="text-white/35">kyronix</span>
+              <span className="tabular-nums font-bold text-white/80">{Math.round(pct)}%</span>
+            </div>
+            <div
+              role="progressbar"
+              aria-label="Memuat KYRONIX"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(pct)}
+              className="relative h-[2px] w-full overflow-hidden bg-white/12"
+            >
+              <div
+                aria-hidden
+                className="absolute inset-y-0 left-0 bg-terracotta"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.28em] text-white/40 max-sm:text-[9px]">
+              tap / Esc to skip
+            </p>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -2928,8 +3002,10 @@ function App() {
   const [phase, setPhase] = useState<"intro" | "k" | "ready">(() => {
     try {
       if (typeof window !== "undefined" && sessionStorage.getItem("kyronix:introDone") === "1") return "ready";
+      // easter egg — terminal boot lama hanya muncul lewat ?boot=1
+      if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("boot") === "1") return "intro";
     } catch {}
-    return "intro";
+    return "k";
   });
   const [lang, setLang] = useState<Lang>("id");
   useLenis(true);
@@ -2960,7 +3036,7 @@ function App() {
       <main className="crt relative bg-cream overflow-x-clip">
         {/* canvas C: 1 lembar Grid 32px kontinu Hero → Contact */}
         <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as React.CSSProperties} />
-      <Intro onDone={() => setPhase("k")} />
+      {phase === "intro" && <Intro onDone={() => window.setTimeout(() => setPhase("k"), 720)} />}
       {phase === "k" && <KPage onDone={() => setPhase("ready")} />}
       <GlowCursor />
       <Nav ready={ready} />
