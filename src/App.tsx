@@ -1916,6 +1916,8 @@ function ProjectsOpening() {
 function Projects() {
   const { lang } = useLang();
   const t = dict[lang];
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const drag = useRef({ active: false, startX: 0, startLeft: 0, moved: false });
   const [active, setActive] = useState<(typeof projects)[number] | null>(null);
   const [docHref, setDocHref] = useState<string | null>(null);
   useEffect(() => {
@@ -1959,17 +1961,45 @@ function Projects() {
         aria-label={t.projectsTitle}
       >
         <div
+          ref={scrollerRef}
           role="region"
           aria-label="Karya"
           tabIndex={0}
-          onWheel={(e) => {
-            const el = e.currentTarget;
-            if (el.scrollWidth <= el.clientWidth) return;
-            if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-            e.preventDefault();
-            el.scrollBy({ left: e.deltaY, behavior: "auto" });
+          className="flex cursor-grab select-none gap-5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-[5vw] py-4 [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 [&>div]:items-stretch"
+          style={{ touchAction: "pan-x pan-y" } as React.CSSProperties}
+          onPointerDown={(e) => {
+            if (e.button !== 0) return;
+            const el = scrollerRef.current;
+            if (!el) return;
+            drag.current = { active: true, startX: e.clientX, startLeft: el.scrollLeft, moved: false };
+            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+            el.style.scrollSnapType = "none";
+            el.style.scrollBehavior = "auto";
           }}
-          className="flex gap-5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-[5vw] py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 [&>div]:items-stretch"
+          onPointerMove={(e) => {
+            if (!drag.current.active) return;
+            const el = scrollerRef.current;
+            if (!el) return;
+            const dx = e.clientX - drag.current.startX;
+            if (Math.abs(dx) > 4) drag.current.moved = true;
+            el.scrollLeft = drag.current.startLeft - dx;
+          }}
+          onPointerUp={(e) => {
+            const el = scrollerRef.current;
+            if (el) {
+              el.style.scrollSnapType = "";
+              el.style.scrollBehavior = "";
+              try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+            }
+            setTimeout(() => { drag.current.moved = false; }, 80);
+            drag.current.active = false;
+          }}
+          onPointerCancel={(e) => {
+            const el = scrollerRef.current;
+            if (el) { el.style.scrollSnapType = ""; el.style.scrollBehavior = ""; }
+            drag.current.active = false;
+            drag.current.moved = false;
+          }}
         >
           {projects.map((proj, idx) => (
             <div
@@ -1977,7 +2007,7 @@ function Projects() {
               className="flex min-w-[86vw] max-w-[86vw] shrink-0 snap-start sm:min-w-[360px] sm:max-w-[400px] md:min-w-[420px] md:max-w-[480px]"
             >
               <div className="flex min-h-[520px] w-full">
-                <ProjectCard p={proj} idx={idx} onOpen={handleOpen} />
+                <ProjectCard p={proj} idx={idx} onOpen={(p) => { if (drag.current.moved) return; handleOpen(p); }} />
               </div>
             </div>
           ))}
