@@ -1333,7 +1333,7 @@ function Hero({ ready }: { ready: boolean }) {
         <motion.div
               aria-label={FULL}
               role="img"
-              className="hero-outline relative inline-flex select-none flex-nowrap items-end justify-center lg:justify-start gap-[0.02em] font-display text-[clamp(3.1rem,12.4vw,9.4rem)] font-black leading-[0.9] tracking-[0.01em] will-change-transform max-w-full"
+              className="hero-outline relative inline-flex select-none flex-nowrap items-end justify-center lg:justify-start gap-[0.02em] text-[clamp(3.6rem,15vw,11rem)] leading-[0.95] will-change-transform max-w-full"
               style={{ perspective: 800, transformStyle: "preserve-3d", rotateX: heroRx, rotateY: heroRy, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
             >
               <span className="sr-only">{FULL}</span>

@@ -20,6 +20,7 @@
   --color-silver: #A8A298;
   --font-display: "Bricolage Grotesque", "Space Grotesk", sans-serif;
   --font-impact: "Anton", Impact, "Arial Black", sans-serif;
+  --font-kyronix: "Anton", Impact, "Arial Black", sans-serif;
   --font-sans: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
@@ -103,8 +104,11 @@
   .text-outline { -webkit-text-stroke-width: 1.15px; }
 }
 
-/* Hero KYRONIX — watermark outline (pengganti block 3D image) */
+/* Hero KYRONIX — watermark outline brutalist (Anton), pengganti block 3D image */
 .hero-outline {
+  font-family: var(--font-kyronix);
+  font-weight: 400;
+  letter-spacing: 0.018em;
   color: transparent;
   -webkit-text-stroke: 2.1px rgba(245, 239, 230, 0.86);
   -webkit-text-fill-color: rgba(245, 239, 230, 0.055);
@@ -118,7 +122,7 @@
   -webkit-font-smoothing: antialiased;
 }
 @media (max-width: 640px) {
-  .hero-outline { -webkit-text-stroke-width: 1.5px; }
+  .hero-outline { -webkit-text-stroke-width: 1.6px; letter-spacing: 0.012em; }
 }
 
 /* Warm card — dark surface, soft shadow — rounded dikit 16px (base radius) */
