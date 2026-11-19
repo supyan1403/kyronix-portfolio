@@ -3001,10 +3001,17 @@ function Contact() {
 function App() {
   const [phase, setPhase] = useState<"intro" | "k" | "ready">(() => {
     try {
-      if (typeof window !== "undefined" && sessionStorage.getItem("kyronix:introDone") === "1") return "ready";
-      // easter egg — terminal boot lama hanya muncul lewat ?boot=1
-      if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("boot") === "1") return "intro";
+      if (typeof window === "undefined") return "ready";
+      const p = new URLSearchParams(window.location.search);
+      // ?nointro=1 — langsung ke Hero (buat debug / balik dari dashboard)
+      if (p.get("nointro") === "1") return "ready";
+      // ?boot=1 — easter egg terminal lama
+      if (p.get("boot") === "1") return "intro";
+      // deep link ke section / dashboard — jangan ditahan K Page
+      if (window.location.hash && window.location.hash !== "#top") return "ready";
+      if (window.location.pathname.startsWith("/dashboard")) return "ready";
     } catch {}
+    // default: K Page SELALU tampil tiap load (skip sessionStorage dihapus)
     return "k";
   });
   const [lang, setLang] = useState<Lang>("id");
@@ -3024,11 +3031,6 @@ function App() {
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
-  useEffect(() => {
-    if (phase === "ready") {
-      try { sessionStorage.setItem("kyronix:introDone", "1"); } catch {}
-    }
-  }, [phase]);
   const bands = dict[lang].bands;
   const ready = phase === "ready";
   return (
