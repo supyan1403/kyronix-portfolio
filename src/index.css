@@ -104,7 +104,7 @@
   .text-outline { -webkit-text-stroke-width: 1.15px; }
 }
 
-/* Hero KYRONIX — watermark outline brutalist (Anton), pengganti block 3D image */
+/* Hero KYRONIX — outline bersih tanpa glow/shadow (flat line-art) */
 .hero-outline {
   font-family: var(--font-kyronix);
   font-weight: 400;
@@ -115,9 +115,7 @@
   paint-order: stroke fill;
   stroke-linejoin: round;
   stroke-linecap: round;
-  text-shadow:
-    0 14px 34px rgba(0, 0, 0, 0.38),
-    0 0 64px rgba(196, 113, 60, 0.16);
+  text-shadow: none;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
 }

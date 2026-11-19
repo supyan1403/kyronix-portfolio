@@ -1365,8 +1365,6 @@ function Hero({ ready }: { ready: boolean }) {
                   </motion.span>
                 );
               })}
-              {/* glow hangat tipis di belakang garis huruf */}
-              <span aria-hidden className="pointer-events-none absolute inset-x-[6%] bottom-[4%] -z-10 h-10 rounded-full bg-terracotta/25 blur-[34px]" />
             </motion.div>
                 {/* bawah KYRONIX — single kolom kiri (tanpa split) */}
         <div className="flex w-full max-w-[640px] flex-col gap-5 lg:mx-0 lg:items-start lg:text-left">
