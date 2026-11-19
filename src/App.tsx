@@ -1684,6 +1684,15 @@ const stackGallery: { id: string; title: Record<Lang, string>; tiles: Tile[] }[]
     ],
   },
   {
+    id: "database",
+    title: { id: "Database", en: "Database" },
+    tiles: [
+      { label: "PostgreSQL", src: "/icons/postgresql.svg", brand: true, color: "#336791" },
+      { label: "MySQL", src: "/icons/mysql.svg", brand: true, color: "#00758F" },
+      { label: "Supabase", src: "/icons/supabase.svg", brand: true, color: "#3ECF8E" },
+    ],
+  },
+  {
     id: "rancangan",
     title: { id: "Rancangan Sistem & Diagram", en: "System Design & Diagrams" },
     tiles: [
@@ -1700,7 +1709,6 @@ const stackGallery: { id: string; title: Record<Lang, string>; tiles: Tile[] }[]
       { label: "OpenCode", src: "/icons/opencode.svg", brand: true },
       { label: "Node.js", Icon: SiNodedotjs, brand: true, color: "#339933" },
       { label: "Vercel", Icon: SiVercel, brand: true, color: "#F5EFE6" },
-      { label: "PostgreSQL", src: "/icons/postgresql.svg", brand: true, color: "#336791" },
     ],
   },
   {
