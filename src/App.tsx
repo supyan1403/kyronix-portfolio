@@ -1847,35 +1847,23 @@ function ProjectCard({ p, idx, onOpen, compact }: { p: (typeof projects)[number]
       ) : null}
       <div className="flex items-center justify-between gap-2">
         <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cream-deep font-mono text-[11px] font-bold text-muted">{p.no}</span>
-        <span
-          className={
-            "inline-flex max-w-[62%] items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider leading-none " +
-            (isDeployed
-              ? "border-green-500/40 bg-green-500/10 text-green-400"
-              : isDoneNotDeployed
-                ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
-                : "warm-tag")
-          }
-          title={isDoneNotDeployed ? (lang === "id" ? "Selesai — belum deploy" : "Done — not deployed") : undefined}
-        >
-          {isDeployed ? <Radio size={10} className="live-dot shrink-0" /> : isDoneNotDeployed ? <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" /> : null}
-          <span className="truncate">{p.status}{isDoneNotDeployed ? (lang === "id" ? " · BELUM DEPLOY" : " · NOT DEPLOYED") : ""}</span>
-        </span>
+        {cat && CatIcon && catLabel ? (
+          <span className={"inline-flex max-w-[56%] items-center gap-1.5 self-start rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest leading-none " + cat.cls} title={catLabel}>
+            <CatIcon size={11} className="shrink-0" />
+            <span className="truncate">{catLabel}</span>
+          </span>
+        ) : (
+          <span className="warm-tag max-w-[56%] truncate font-mono text-[10px]">{p.status}</span>
+        )}
       </div>
-      {cat && CatIcon && catLabel ? (
-        <span className={"mt-3 inline-flex w-fit items-center gap-1.5 self-start rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest leading-none " + cat.cls}>
-          <CatIcon size={11} className="shrink-0" />
-          <span className="truncate">{catLabel}</span>
-        </span>
-      ) : null}
       <div className="min-w-0 flex flex-1 flex-col">
         <p className="mt-2 mb-2 font-mono text-[11px] uppercase tracking-[0.18em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
         <h3 data-text={p.title} className="line-clamp-2 min-h-[2.3em] font-sans text-[1.25rem] font-semibold uppercase leading-[1.15] tracking-[0.05em] text-ink md:text-[1.38rem]">{p.title}</h3>
-        <p className="mt-2 line-clamp-3 min-h-[4.85em] text-[13px] leading-[1.6]" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
+        <p className="mt-2 line-clamp-2 min-h-[3.3em] text-[13px] leading-[1.6]" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
       </div>
       <div className="mt-5 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
         <div className="flex flex-1 flex-wrap gap-1.5 pr-2">{p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}</div>
-        <span className={"flex h-9 w-9 shrink-0 items-center justify-center border md:h-10 md:w-10 " + (isDeployed ? "border-green-500/30 bg-transparent text-green-500 hover:bg-green-600 hover:text-white hover:border-green-600" : isDoneNotDeployed ? "border-amber-500/30 bg-transparent text-amber-500 hover:bg-amber-500 hover:text-[#1A1816] hover:border-amber-500" : "border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white")}><ArrowUpRight size={16} /></span>
+        <span className={"flex h-9 w-9 shrink-0 items-center justify-center rounded-full border md:h-10 md:w-10 " + (isDeployed ? "border-green-500/30 bg-transparent text-green-500 hover:bg-green-600 hover:text-white hover:border-green-600" : isDoneNotDeployed ? "border-amber-500/30 bg-transparent text-amber-500 hover:bg-amber-500 hover:text-[#1A1816] hover:border-amber-500" : "border-border/30 bg-transparent text-terracotta hover:bg-ink hover:text-white")}><ArrowUpRight size={16} /></span>
       </div>
     </motion.article>
   );
@@ -2092,6 +2080,8 @@ function Projects() {
               </div>
             </div>
           ))}
+          {/* spacer peek — biar kanan masih ada sisa, user paham bisa di-scroll (peeks setengah kartu ke-4) */}
+          <div aria-hidden className="shrink-0 w-6 sm:w-10 lg:w-16" />
           </div>
         </div>
       </section>
@@ -2159,7 +2149,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
+                          className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
                         >
                           {(t.projectModal as { readArticle: string }).readArticle} <ArrowUpRight size={14} />
                         </motion.button>
@@ -2183,7 +2173,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30 hover:bg-white/5"
+                          className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30 hover:bg-white/5"
                         >
                           {(t.projectModal as { download: string }).download} <Download size={14} />
                         </motion.button>
@@ -2192,7 +2182,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 border border-terracotta/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-terracotta hover:bg-ink/10"
+                          className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-terracotta/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-terracotta hover:bg-ink/10"
                         >
                           {(t.projectModal as { articleCta: string }).articleCta} <ArrowUpRight size={14} />
                         </motion.button>
@@ -2201,7 +2191,7 @@ function Projects() {
                           whileHover={{ y: -2, scale: 1.02 }}
                           whileTap={{ scale: 0.97, y: 0 }}
                           transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                          className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
+                          className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
                         >
                           {t.projectModal.close}
                         </motion.button>
@@ -2215,7 +2205,7 @@ function Projects() {
                         whileHover={{ y: -2, scale: 1.02 }}
                         whileTap={{ scale: 0.97, y: 0 }}
                         transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                        className="inline-flex cursor-pointer items-center gap-2 bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-terracotta px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(28,25,23,0.08)] hover:bg-[#d46a52] hover:shadow-[0_4px_16px_rgba(28,25,23,0.12)]"
                       >
                         {t.projectModal.cta} <ArrowUpRight size={14} />
                       </motion.button>
@@ -2224,7 +2214,7 @@ function Projects() {
                         whileHover={{ y: -2, scale: 1.02 }}
                         whileTap={{ scale: 0.97, y: 0 }}
                         transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                        className="inline-flex cursor-pointer items-center gap-2 border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-white/30"
                       >
                         {t.projectModal.close}
                       </motion.button>
@@ -2393,8 +2383,8 @@ function ExpRow({
             </ul>
             {(e as { certificateHref?: string }).certificateHref && (
               <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-4">
-                <button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex items-center gap-2 bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button>
-                <button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5">{(t.experience as { download: string }).download} <Download size={12} /></button>
+                <button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex items-center gap-2 rounded-full bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button>
+                <button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 rounded-full border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink hover:border-border/30 hover:bg-surface/5">{(t.experience as { download: string }).download} <Download size={12} /></button>
               </div>
             )}
           </div>
@@ -2404,10 +2394,10 @@ function ExpRow({
                 <ul className="mt-6 space-y-2 border-t border-border pt-6">
                   {points.map((p) => (<li key={p} className="flex gap-3 leading-relaxed text-muted"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: lowActive ? "rgba(224,122,95,1)" : "rgba(120,113,108,0.25)", transition: `background-color ${cc}` }} />{p}</li>))}
                 </ul>
-                {(e as { certificateHref?: string }).certificateHref && (<div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4"><button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex cursor-pointer items-center gap-2 bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button><button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink">{(t.experience as { download: string }).download} <Download size={12} /></button></div>)}
+                {(e as { certificateHref?: string }).certificateHref && (<div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4"><button type="button" onClick={(ev) => { ev.stopPropagation(); onOpenCert?.((e as { certificateHref: string }).certificateHref); }} className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white">{(t.experience as { viewCert: string }).viewCert} <ArrowUpRight size={12} /></button><button type="button" onClick={async (ev) => { ev.stopPropagation(); const href = (e as { certificateHref: string }).certificateHref; try { const res = await fetch(href); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = href.split("/").pop() || "sertifikat.pdf"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); } catch { window.open(href, "_blank", "noopener,noreferrer"); } }} className="inline-flex items-center gap-2 rounded-full border border-border/20 bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-ink">{(t.experience as { download: string }).download} <Download size={12} /></button></div>)}
               </div>
             ) : (<p className="mt-4 line-clamp-2 border-t border-border pt-4 text-sm leading-relaxed text-muted/80">{points[0]}</p>)}
-            <button type="button" onClick={(ev) => { ev.stopPropagation(); setOpen((v) => !v); }} className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 border px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest ${open ? "border-border/20 bg-transparent text-ink" : "border-terracotta bg-terracotta text-white hover:bg-[#d46a52]"}`}>{open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}</button>
+            <button type="button" onClick={(ev) => { ev.stopPropagation(); setOpen((v) => !v); }} className={`mt-4 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border px-4 py-2.5 font-mono text-xs font-black uppercase tracking-widest ${open ? "border-border/20 bg-transparent text-ink" : "border-terracotta bg-terracotta text-white hover:bg-[#d46a52]"}`}>{open ? (t.experience as { hideDetail: string }).hideDetail : (t.experience as { showDetail: string }).showDetail}</button>
           </div>
         </article>
       </div>
