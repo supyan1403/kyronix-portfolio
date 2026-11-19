@@ -1270,25 +1270,6 @@ function Hero({ ready }: { ready: boolean }) {
   const heroMy = useMotionValue(0);
   const heroRx = useTransform(heroMy, [-1, 1], [5, -5]);
   const heroRy = useTransform(heroMx, [-1, 1], [-6, 6]);
-  const [typed, setTyped] = useState("");
-  useEffect(() => {
-    if (!ready) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setTyped(FULL);
-      return;
-    }
-    let idx = 0;
-    let tm: number | undefined;
-    const tick = () => {
-      if (idx <= FULL.length) {
-        setTyped(FULL.slice(0, idx));
-        idx += 1;
-        if (idx <= FULL.length) tm = window.setTimeout(tick, idx === 0 ? 420 : 145 + Math.random() * 55) as unknown as number;
-      }
-    };
-    tm = window.setTimeout(tick, 380) as unknown as number;
-    return () => clearTimeout(tm);
-  }, [ready]);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   // spring halus — desktop saja; mobile/low native scroll tanpa spring biar 120hz mulus
   const smooth = useSpring(scrollYProgress, { stiffness: 220, damping: 32, mass: 0.22, restDelta: 0.001 });
@@ -1297,6 +1278,13 @@ function Hero({ ready }: { ready: boolean }) {
   const heroScale = useTransform(smooth, [0, 1], [1, light || low ? 1 : 0.96]);
   const gridY = useTransform(smooth, [0, 1], [0, light || low ? 0 : -16]);
   const taglineY = useTransform(smooth, [0, 1], [0, 0]);
+  // watermark: keluar ke samping seperti kinetic band saat halaman di-scroll
+  const wmRightX = useTransform(smooth, [0, 0.85], [0, light ? 160 : 320]);
+  const wmLeftX = useTransform(smooth, [0, 0.85], [0, light ? -160 : -320]);
+  const wmFade = useTransform(smooth, [0, 0.6], [1, 0]);
+  const slogan = t2.hero.tagline;
+  const emphFrom = slogan.indexOf("INFRA.");
+  const sloganWords = slogan.split(" ");
   return (
     <section id="top" ref={ref} className="relative flex min-h-[100dvh] flex-col justify-center overflow-x-clip bg-transparent pt-24 sm:pt-28"
       onMouseMove={(e) => {
@@ -1316,10 +1304,32 @@ function Hero({ ready }: { ready: boolean }) {
     >
       {/* Hero: Blueprint Grid 32px — keep, K circuit ganti watermark diagonal */}
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-      {/* Watermark KYRONIX horizontal — N terbelah setengah: ½N kanan atas + ½N kiri bawah */}
+      {/* Watermark KYRONIX horizontal — masuk saat Hero muncul, keluar ke samping saat scroll */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden select-none">
-        <span className="hero-watermark absolute right-0 top-[5%] translate-x-[32%] whitespace-nowrap text-[26vw] leading-none max-sm:top-[2%] max-sm:text-[34vw]" style={{ opacity: 0.085 } as React.CSSProperties}>KYRONIX</span>
-        <span className="hero-watermark absolute bottom-[5%] left-0 -translate-x-[68%] whitespace-nowrap text-[26vw] leading-none max-sm:bottom-[2%] max-sm:text-[34vw]" style={{ opacity: 0.085 } as React.CSSProperties}>KYRONIX</span>
+        <div className="absolute right-0 top-[3%] translate-x-[30%] max-sm:top-[1%]">
+          <motion.div style={{ x: wmRightX, opacity: wmFade } as unknown as Record<string, unknown>}>
+            <motion.span
+              className="hero-watermark block whitespace-nowrap text-[28vw] leading-none max-sm:text-[36vw]"
+              initial={{ opacity: 0, x: light ? 90 : 260 }}
+              animate={ready ? ({ opacity: 0.11, x: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
+              transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1], delay: 0.34 }}
+            >
+              KYRONIX
+            </motion.span>
+          </motion.div>
+        </div>
+        <div className="absolute bottom-[3%] left-0 -translate-x-[70%] max-sm:bottom-[1%]">
+          <motion.div style={{ x: wmLeftX, opacity: wmFade } as unknown as Record<string, unknown>}>
+            <motion.span
+              className="hero-watermark block whitespace-nowrap text-[28vw] leading-none max-sm:text-[36vw]"
+              initial={{ opacity: 0, x: light ? -90 : -260 }}
+              animate={ready ? ({ opacity: 0.11, x: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
+              transition={{ duration: 1.25, ease: [0.16, 1, 0.3, 1], delay: 0.44 }}
+            >
+              KYRONIX
+            </motion.span>
+          </motion.div>
+        </div>
       </div>
       {/* corner brackets blueprint — keep */}
       <div aria-hidden className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
@@ -1335,41 +1345,46 @@ function Hero({ ready }: { ready: boolean }) {
               style={{ perspective: 800, transformStyle: "preserve-3d", rotateX: heroRx, rotateY: heroRy, transform: "translateZ(0)" } as unknown as Record<string, unknown>}
             >
               <span className="sr-only">{FULL}</span>
-              {FULL.split("").map((ch, i) => {
-                const visible = i < typed.length;
-                return (
-                  <motion.span
-                    key={ch + i}
-                    className="relative inline-block will-change-transform"
-                    initial={
-                      light
-                        ? ({ opacity: 0, y: 6 } as unknown as Record<string, unknown>)
-                        : low
-                          ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)
-                          : ({ opacity: 0, y: 26, filter: "blur(10px)" } as unknown as Record<string, unknown>)
-                    }
-                    animate={
-                      visible
-                        ? light || low
-                          ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>)
-                          : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)
-                        : light
-                          ? ({ opacity: 0, y: 6 } as unknown as Record<string, unknown>)
-                          : low
-                            ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>)
-                            : ({ opacity: 0, y: 26, filter: "blur(10px)" } as unknown as Record<string, unknown>)
-                    }
-                    transition={{ duration: light ? 0.42 : 0.62, ease: [0.16, 1, 0.3, 1], delay: 0.04 + i * (light ? 0.035 : 0.06) }}
-                  >
-                    {ch}
-                  </motion.span>
-                );
-              })}
+              {FULL.split("").map((ch, i) => (
+                <motion.span
+                  key={ch + i}
+                  className="relative inline-block will-change-transform"
+                  initial={{ clipPath: "inset(-30% -30% 115% -30%)", y: light ? 10 : low ? 16 : 30, opacity: 0 } as unknown as Record<string, unknown>}
+                  animate={
+                    ready
+                      ? ({ clipPath: "inset(-30% -30% -30% -30%)", y: 0, opacity: 1 } as unknown as Record<string, unknown>)
+                      : ({} as unknown as Record<string, unknown>)
+                  }
+                  transition={{ duration: light ? 0.72 : low ? 0.82 : 0.98, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * (light ? 0.045 : 0.075) }}
+                >
+                  {ch}
+                </motion.span>
+              ))}
             </motion.div>
                 {/* bawah KYRONIX — single kolom kiri (tanpa split) */}
         <div className="flex w-full max-w-[640px] flex-col gap-5 lg:mx-0 lg:items-start lg:text-left">
-          <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none lg:text-left" style={{ y: taglineY } as unknown as Record<string, unknown>} initial={light ? ({ opacity: 0, y: 8 } as unknown as Record<string, unknown>) : low ? ({ opacity: 0, y: 10 } as unknown as Record<string, unknown>) : ({ opacity: 0, y: 12, filter: "blur(6px)" } as unknown as Record<string, unknown>)} animate={ready ? (light ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : low ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({ opacity: 1, y: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>)) : ({} as unknown as Record<string, unknown>)} transition={{ duration: 0.8, delay: 0.72 }}>
-            {t2.hero.tagline.replace(" INFRA.", "")}<span className="font-semibold tracking-[0.08em] text-ink"> INFRA.</span>
+          <motion.p className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none lg:text-left" style={{ y: taglineY } as unknown as Record<string, unknown>}>
+            {sloganWords.map((word, wi) => {
+              const start = sloganWords.slice(0, wi).reduce((a, w) => a + w.length + 1, 0);
+              return (
+                <span key={wi}>
+                  <span className="inline-block whitespace-nowrap">
+                    {Array.from(word).map((ch, ci) => (
+                      <motion.span
+                        key={ci}
+                        className={start + ci >= emphFrom ? "inline-block font-semibold text-ink" : "inline-block"}
+                        initial={{ opacity: 0, y: 12 } as unknown as Record<string, unknown>}
+                        animate={ready ? ({ opacity: 1, y: 0 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
+                        transition={{ duration: 0.5, ease: EASE, delay: 0.5 + (start + ci) * 0.022 }}
+                      >
+                        {ch}
+                      </motion.span>
+                    ))}
+                  </span>
+                  {wi < sloganWords.length - 1 ? " " : null}
+                </span>
+              );
+            })}
           </motion.p>
         </div>
                 <motion.button aria-label="Scroll" onClick={() => scrollToId("stack")} initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: 1.25, duration: 0.6 }} className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink md:flex">
