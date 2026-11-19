@@ -1383,25 +1383,65 @@ function Hero({ ready }: { ready: boolean }) {
               {(() => {
                 let x = 0;
                 return FULL.split("").map((ch, i) => {
+                  const t0 = (light ? 0.04 : 0.06) + i * (light ? 0.03 : 0.05);
+                  const scrawlDur = light ? 0.9 : 1.2;
+                  const finalDelay = t0 + (light ? 0.32 : 0.46);
+                  const baseY = metrics.fs * 0.78;
                   const node = (
-                    <motion.text
-                      key={ch + i}
-                      x={x}
-                      y={metrics.fs * 0.78}
-                      fontSize={metrics.fs}
-                      className="hero-sketch"
-                      style={{ strokeDasharray: 4000 } as unknown as React.CSSProperties}
-                      initial={{ strokeDashoffset: reduceMotion ? 0 : 4000, fillOpacity: reduceMotion ? 1 : 0 } as unknown as Record<string, unknown>}
-                      animate={ready ? ({ strokeDashoffset: 0, fillOpacity: 1 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
-                      transition={
-                        {
-                          strokeDashoffset: { duration: light ? 0.6 : 0.92, ease: [0.16, 1, 0.3, 1], delay: 0.08 + i * 0.09 },
-                          fillOpacity: { duration: 0.55, ease: EASE, delay: 0.5 + i * 0.09 },
-                        } as unknown as Record<string, unknown>
-                      }
-                    >
-                      {ch}
-                    </motion.text>
+                    <g key={ch + i}>
+                      {/* coretan 1 — gores panjang, geser searah jarum */}
+                      <motion.text
+                        x={x}
+                        y={baseY}
+                        fontSize={metrics.fs}
+                        className="hero-sketch sketch-scrawl"
+                        style={{ strokeDasharray: "26 34" } as unknown as React.CSSProperties}
+                        initial={{ strokeDashoffset: 0, opacity: 0 } as unknown as Record<string, unknown>}
+                        animate={
+                          ready
+                            ? ({ strokeDashoffset: -620, opacity: reduceMotion ? 0 : [0, 0.55, 0.55, 0] } as unknown as Record<string, unknown>)
+                            : ({} as unknown as Record<string, unknown>)
+                        }
+                        transition={{ duration: scrawlDur, delay: t0, ease: "linear" } as unknown as Record<string, unknown>}
+                      >
+                        {ch}
+                      </motion.text>
+                      {/* coretan 2 — gores pendek, arah balik */}
+                      <motion.text
+                        x={x}
+                        y={baseY}
+                        fontSize={metrics.fs}
+                        className="hero-sketch sketch-scrawl"
+                        style={{ strokeDasharray: "8 46" } as unknown as React.CSSProperties}
+                        initial={{ strokeDashoffset: -240, opacity: 0 } as unknown as Record<string, unknown>}
+                        animate={
+                          ready
+                            ? ({ strokeDashoffset: 700, opacity: reduceMotion ? 0 : [0, 0.4, 0.4, 0] } as unknown as Record<string, unknown>)
+                            : ({} as unknown as Record<string, unknown>)
+                        }
+                        transition={{ duration: scrawlDur * 1.18, delay: t0 + 0.09, ease: "linear" } as unknown as Record<string, unknown>}
+                      >
+                        {ch}
+                      </motion.text>
+                      {/* garis final — outline utuh ditegaskan */}
+                      <motion.text
+                        x={x}
+                        y={baseY}
+                        fontSize={metrics.fs}
+                        className="hero-sketch"
+                        style={{ strokeDasharray: 4000 } as unknown as React.CSSProperties}
+                        initial={{ strokeDashoffset: reduceMotion ? 0 : 4000, fillOpacity: reduceMotion ? 1 : 0 } as unknown as Record<string, unknown>}
+                        animate={ready ? ({ strokeDashoffset: 0, fillOpacity: 1 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
+                        transition={
+                          {
+                            strokeDashoffset: { duration: light ? 0.42 : 0.6, ease: [0.16, 1, 0.3, 1], delay: finalDelay },
+                            fillOpacity: { duration: 0.45, ease: EASE, delay: finalDelay + 0.32 },
+                          } as unknown as Record<string, unknown>
+                        }
+                      >
+                        {ch}
+                      </motion.text>
+                    </g>
                   );
                   x += metrics.advances[i] + metrics.gap;
                   return node;
