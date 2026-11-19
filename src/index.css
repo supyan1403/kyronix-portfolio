@@ -108,7 +108,7 @@
 .hero-outline {
   font-family: var(--font-kyronix);
   font-weight: 400;
-  letter-spacing: 0.018em;
+  letter-spacing: 0; /* jarak antar huruf diatur flex gap biar presisi */
   color: transparent;
   -webkit-text-stroke: 2.1px rgba(245, 239, 230, 0.86);
   -webkit-text-fill-color: rgba(245, 239, 230, 0.055);
@@ -122,7 +122,7 @@
   -webkit-font-smoothing: antialiased;
 }
 @media (max-width: 640px) {
-  .hero-outline { -webkit-text-stroke-width: 1.6px; letter-spacing: 0.012em; }
+  .hero-outline { -webkit-text-stroke-width: 1.6px; letter-spacing: 0; }
 }
 
 /* Warm card — dark surface, soft shadow — rounded dikit 16px (base radius) */
