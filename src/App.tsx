@@ -1805,14 +1805,23 @@ function Stack() {
 
 /* ---------- 3. Featured projects — Bento Featured ---------- */
 
+const CATEGORY_META = {
+  penelitian: { label: { id: "Penelitian", en: "Research" } as const, Icon: BarChart3, cls: "border-amber-500/30 bg-amber-500/10 text-amber-400" },
+  iot: { label: { id: "IoT · Hardware", en: "IoT · Hardware" } as const, Icon: Cpu, cls: "border-[#C4713C]/30 bg-[#C4713C]/10 text-[#E8A07A]" },
+  data: { label: { id: "Data Engineering", en: "Data Engineering" } as const, Icon: Database, cls: "border-violet-500/30 bg-violet-500/10 text-violet-300" },
+  web: { label: { id: "Aplikasi Web", en: "Web App" } as const, Icon: Layers, cls: "border-[#8FA89B]/30 bg-[#8FA89B]/15 text-[#8FA89B]" },
+} as const;
+
 function ProjectCard({ p, idx, onOpen, compact }: { p: (typeof projects)[number]; idx: number; onOpen: (pp: (typeof projects)[number]) => void; compact?: boolean }) {
   void compact;
   const { lang } = useLang();
   const isDeployed = p.status === "LIVE NOW";
   const isDoneNotDeployed = p.status === "RESEARCH DONE";
-  const isDone = isDeployed || isDoneNotDeployed;
   const isHero = idx === 0;
   const borderColor = isDeployed ? "#22c55e" : isDoneNotDeployed ? "#f59e0b" : undefined;
+  const cat = (p as { category?: keyof typeof CATEGORY_META }).category ? CATEGORY_META[(p as { category: keyof typeof CATEGORY_META }).category] : null;
+  const catLabel = cat ? cat.label[lang] : null;
+  const CatIcon = cat?.Icon;
   return (
     <motion.article
       role="button"
@@ -1853,8 +1862,14 @@ function ProjectCard({ p, idx, onOpen, compact }: { p: (typeof projects)[number]
           <span className="truncate">{p.status}{isDoneNotDeployed ? (lang === "id" ? " · BELUM DEPLOY" : " · NOT DEPLOYED") : ""}</span>
         </span>
       </div>
+      {cat && CatIcon && catLabel ? (
+        <span className={"mt-3 inline-flex w-fit items-center gap-1.5 self-start rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest leading-none " + cat.cls}>
+          <CatIcon size={11} className="shrink-0" />
+          <span className="truncate">{catLabel}</span>
+        </span>
+      ) : null}
       <div className="min-w-0 flex flex-1 flex-col">
-        <p className="mt-3 mb-2 font-mono text-[11px] uppercase tracking-[0.18em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
+        <p className="mt-2 mb-2 font-mono text-[11px] uppercase tracking-[0.18em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
         <h3 data-text={p.title} className="line-clamp-2 min-h-[2.3em] font-sans text-[1.25rem] font-semibold uppercase leading-[1.15] tracking-[0.05em] text-ink md:text-[1.38rem]">{p.title}</h3>
         <p className="mt-2 line-clamp-3 min-h-[4.85em] text-[13px] leading-[1.6]" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
       </div>
@@ -1882,6 +1897,7 @@ const projects = [
     no: "01",
     title: "Digital Twin Platform",
     kind: "Spatial Modeling · Research",
+    category: "penelitian" as const,
     desc: { id: "Riset pemodelan spasial & Digital Twin untuk lahan pertanian 800m² memakai Kriging & Random Forest.", en: "Spatial modeling & Digital Twin research for 800m2 agricultural plot using Kriging & Random Forest." } as const,
     stack: ["Kriging", "Random Forest", "GeoPandas", "Python"],
     status: "RESEARCH DONE",
@@ -1893,6 +1909,7 @@ const projects = [
     no: "02",
     title: "IoT Smart Feeder",
     kind: "IoT · Hardware Prototype",
+    category: "iot" as const,
     desc: { id: "Sistem pakan otomatis berbasis ESP32 dengan motor servo dan penjadwalan jarak jauh untuk rutinitas pakan.", en: "ESP32-based automated feeding system with servo motors and remote scheduling for pet feeding routines." } as const,
     stack: ["ESP32", "Servo Motors", "MQTT", "Sensors"],
     status: "IN PROGRESS",
@@ -1903,6 +1920,7 @@ const projects = [
     no: "03",
     title: "BPS PDF Publication ETL Pipeline",
     kind: "Data Engineering · ETL",
+    category: "data" as const,
     desc: { id: "Pipeline ETL otomatis yang mem-parsing PDF publikasi BPS tidak terstruktur menjadi database relasional PostgreSQL.", en: "Automated text-parsing pipeline converting unstructured BPS publication PDFs to relational PostgreSQL database." } as const,
     stack: ["Python", "ETL", "PostgreSQL", "Pandas"],
     status: "LIVE NOW",
@@ -1913,6 +1931,7 @@ const projects = [
     no: "04",
     title: "Kulinara — Kuliner Nusantara",
     kind: "Pengembangan Web · Concept",
+    category: "web" as const,
     desc: { id: "Aplikasi konsep untuk eksplorasi kuliner Nusantara, pelacakan nutrisi terstruktur, dan estimasi anggaran memasak.", en: "Concept app for Indonesian culinary exploration, structured nutrition tracking, and cooking budget estimation." } as const,
     stack: ["Concept", "Nutrition API", "Tailwind", "PostgreSQL"],
     status: "CONCEPT STAGE",
@@ -2016,38 +2035,52 @@ function Projects() {
             className="karya-scroll flex cursor-grab select-none gap-4 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory py-4 pb-5 active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 [&>div]:items-stretch"
             style={{ touchAction: "pan-x pan-y", scrollPaddingInline: "24px" } as React.CSSProperties}
             onPointerDown={(e) => {
-            if (e.button !== 0) return;
-            const el = scrollerRef.current;
-            if (!el) return;
-            drag.current = { active: true, startX: e.clientX, startLeft: el.scrollLeft, moved: false };
-            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-            el.style.scrollSnapType = "none";
-            el.style.scrollBehavior = "auto";
-          }}
-          onPointerMove={(e) => {
-            if (!drag.current.active) return;
-            const el = scrollerRef.current;
-            if (!el) return;
-            const dx = e.clientX - drag.current.startX;
-            if (Math.abs(dx) > 4) drag.current.moved = true;
-            el.scrollLeft = drag.current.startLeft - dx;
-          }}
-          onPointerUp={(e) => {
-            const el = scrollerRef.current;
-            if (el) {
-              el.style.scrollSnapType = "";
-              el.style.scrollBehavior = "";
-              try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
-            }
-            setTimeout(() => { drag.current.moved = false; }, 80);
-            drag.current.active = false;
-          }}
-          onPointerCancel={(e) => {
-            const el = scrollerRef.current;
-            if (el) { el.style.scrollSnapType = ""; el.style.scrollBehavior = ""; }
-            drag.current.active = false;
-            drag.current.moved = false;
-          }}
+              // biarkan click di kartu tetap jalan — drag cuma saat gerak horizontal cukup
+              const el = scrollerRef.current;
+              if (!el) return;
+              if (e.button !== 0) return;
+              drag.current = { active: true, startX: e.clientX, startLeft: el.scrollLeft, moved: false };
+              // jangan setPointerCapture di sini — biar click asli tidak tertahan; snap dimatikan hanya saat mulai drag
+            }}
+            onPointerMove={(e) => {
+              if (!drag.current.active) return;
+              const el = scrollerRef.current;
+              if (!el) return;
+              const dx = e.clientX - drag.current.startX;
+              if (Math.abs(dx) < 6) return;
+              // baru drag — tahan agar tidak jadi click, matikan snap
+              if (!drag.current.moved) {
+                drag.current.moved = true;
+                el.style.scrollSnapType = "none";
+                el.style.scrollBehavior = "auto";
+              }
+              el.scrollLeft = drag.current.startLeft - dx;
+              e.preventDefault();
+            }}
+            onPointerUp={() => {
+              const el = scrollerRef.current;
+              if (el) {
+                el.style.scrollSnapType = "";
+                el.style.scrollBehavior = "";
+              }
+              // reset moved agak lambat biar onClick kartu bisa cek drag.moved
+              const wasMoved = drag.current.moved;
+              drag.current.active = false;
+              if (wasMoved) setTimeout(() => { drag.current.moved = false; }, 180);
+              else drag.current.moved = false;
+            }}
+            onPointerCancel={() => {
+              const el = scrollerRef.current;
+              if (el) { el.style.scrollSnapType = ""; el.style.scrollBehavior = ""; }
+              drag.current.active = false;
+              drag.current.moved = false;
+            }}
+            onClickCapture={(e) => {
+              if (drag.current.moved) {
+                e.preventDefault();
+                e.stopPropagation();
+              }
+            }}
         >
           {projects.map((proj, idx) => (
             <div
@@ -2092,7 +2125,10 @@ function Projects() {
               >
                 <X size={16} />
               </button>
-              <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>{active.kind}</p>
+              <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: WARM.terracotta }}>
+                {active.kind}
+                {(() => { const c = (active as { category?: keyof typeof CATEGORY_META }).category; if (!c) return null; const m = CATEGORY_META[c]; const I = m.Icon; return <span className={"ml-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 align-middle text-[10px] font-bold tracking-widest " + m.cls}><I size={10} />{m.label[lang]}</span>; })()}
+              </p>
               <h3 className="mt-2 pr-8 font-display text-2xl font-normal uppercase leading-tight tracking-[0.14em] text-ink">
                 {((active as { href?: string }).href ? (t.projectModal as { articleTitle: string }).articleTitle : t.projectModal.title)}
               </h3>
