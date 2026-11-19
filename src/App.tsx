@@ -1318,8 +1318,8 @@ function Hero({ ready }: { ready: boolean }) {
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[1]" style={{ y: gridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
       {/* Watermark KYRONIX horizontal — N terbelah setengah: ½N kanan atas + ½N kiri bawah */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden select-none">
-        <span className="absolute right-0 top-[5%] translate-x-[32%] whitespace-nowrap font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline max-sm:top-[3%] max-sm:text-[30vw]" style={{ opacity: 0.032 } as React.CSSProperties}>KYRONIX</span>
-        <span className="absolute bottom-[5%] left-0 -translate-x-[68%] whitespace-nowrap font-display text-[22vw] font-black leading-none tracking-[0.02em] text-outline max-sm:bottom-[3%] max-sm:text-[30vw]" style={{ opacity: 0.032 } as React.CSSProperties}>KYRONIX</span>
+        <span className="hero-watermark absolute right-0 top-[5%] translate-x-[32%] whitespace-nowrap text-[26vw] leading-none max-sm:top-[2%] max-sm:text-[34vw]" style={{ opacity: 0.085 } as React.CSSProperties}>KYRONIX</span>
+        <span className="hero-watermark absolute bottom-[5%] left-0 -translate-x-[68%] whitespace-nowrap text-[26vw] leading-none max-sm:bottom-[2%] max-sm:text-[34vw]" style={{ opacity: 0.085 } as React.CSSProperties}>KYRONIX</span>
       </div>
       {/* corner brackets blueprint — keep */}
       <div aria-hidden className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]" />
