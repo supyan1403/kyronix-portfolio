@@ -621,6 +621,8 @@ function KPage({ onDone }: { onDone: () => void }) {
           img.src = "/kyronix-k-hex.webp";
         }),
         document.fonts?.ready ?? Promise.resolve(),
+        // pastikan Anton siap sebelum Hero mengukur lebar huruf (sketch SVG)
+        document.fonts?.load?.('400 100px Anton').catch(() => {}) ?? Promise.resolve(),
       ]).then(() => { assetsReady = true; });
 
       const DUR = 3800;
@@ -1286,6 +1288,7 @@ function Hero({ ready }: { ready: boolean }) {
     update();
     window.addEventListener("resize", update);
     const fonts = document.fonts;
+    fonts?.load?.("400 100px Anton").then(update).catch(() => {});
     fonts?.ready.then(update).catch(() => {});
     return () => window.removeEventListener("resize", update);
   }, [FULL]);
