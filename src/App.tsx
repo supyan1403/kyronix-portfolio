@@ -1381,61 +1381,72 @@ function Hero({ ready }: { ready: boolean }) {
               className="block max-w-full overflow-visible"
             >
               {(() => {
+                const CHUNKS = light || low ? 5 : 8;
+                const SEG = light || low ? 660 : 420;
+                const baseY = metrics.fs * 0.78;
                 let x = 0;
                 return FULL.split("").map((ch, i) => {
-                  const t0 = (light ? 0.04 : 0.06) + i * (light ? 0.03 : 0.05);
-                  const scrawlDur = light ? 0.9 : 1.2;
-                  const finalDelay = t0 + (light ? 0.32 : 0.46);
-                  const baseY = metrics.fs * 0.78;
+                  const t0 = 0.05 + i * (light ? 0.03 : 0.04);
+                  const slotStep = light ? 0.1 : 0.082;
+                  // urutan acak tapi deterministik (biar tidak berubah tiap render)
+                  let s = (i + 1) * 7919;
+                  const rnd = () => {
+                    s = (s * 9301 + 49297) % 233280;
+                    return s / 233280;
+                  };
+                  const order = Array.from({ length: CHUNKS }, (_, k) => k);
+                  for (let k = order.length - 1; k > 0; k -= 1) {
+                    const j = Math.floor(rnd() * (k + 1));
+                    const tmp = order[k];
+                    order[k] = order[j];
+                    order[j] = tmp;
+                  }
+                  const letterEnd = t0 + CHUNKS * slotStep + 0.22;
                   const node = (
                     <g key={ch + i}>
-                      {/* coretan 1 — gores panjang, geser searah jarum */}
-                      <motion.text
-                        x={x}
-                        y={baseY}
-                        fontSize={metrics.fs}
-                        className="hero-sketch sketch-scrawl"
-                        style={{ strokeDasharray: "26 34" } as unknown as React.CSSProperties}
-                        initial={{ strokeDashoffset: 0, opacity: 0 } as unknown as Record<string, unknown>}
-                        animate={
-                          ready
-                            ? ({ strokeDashoffset: -620, opacity: reduceMotion ? 0 : [0, 0.55, 0.55, 0] } as unknown as Record<string, unknown>)
-                            : ({} as unknown as Record<string, unknown>)
-                        }
-                        transition={{ duration: scrawlDur, delay: t0, ease: "linear" } as unknown as Record<string, unknown>}
-                      >
-                        {ch}
-                      </motion.text>
-                      {/* coretan 2 — gores pendek, arah balik */}
-                      <motion.text
-                        x={x}
-                        y={baseY}
-                        fontSize={metrics.fs}
-                        className="hero-sketch sketch-scrawl"
-                        style={{ strokeDasharray: "8 46" } as unknown as React.CSSProperties}
-                        initial={{ strokeDashoffset: -240, opacity: 0 } as unknown as Record<string, unknown>}
-                        animate={
-                          ready
-                            ? ({ strokeDashoffset: 700, opacity: reduceMotion ? 0 : [0, 0.4, 0.4, 0] } as unknown as Record<string, unknown>)
-                            : ({} as unknown as Record<string, unknown>)
-                        }
-                        transition={{ duration: scrawlDur * 1.18, delay: t0 + 0.09, ease: "linear" } as unknown as Record<string, unknown>}
-                      >
-                        {ch}
-                      </motion.text>
-                      {/* garis final — outline utuh ditegaskan */}
+                      {/* potongan outline muncul acak — digambar per segmen */}
+                      {order.map((segIdx, slot) => {
+                        const delay = t0 + slot * slotStep;
+                        const start = -segIdx * SEG;
+                        return (
+                          <motion.text
+                            key={segIdx}
+                            x={x}
+                            y={baseY}
+                            fontSize={metrics.fs}
+                            className="hero-sketch sketch-scrawl"
+                            style={{ strokeDasharray: `${SEG} 5200` } as unknown as React.CSSProperties}
+                            initial={{ strokeDashoffset: start, opacity: 0 } as unknown as Record<string, unknown>}
+                            animate={
+                              ready && !reduceMotion
+                                ? ({ strokeDashoffset: start + 22, opacity: [0, 1, 1, 0] } as unknown as Record<string, unknown>)
+                                : ({} as unknown as Record<string, unknown>)
+                            }
+                            transition={
+                              {
+                                duration: Math.max(0.25, letterEnd - delay),
+                                times: [0, 0.12, 0.86, 1],
+                                delay,
+                                ease: "linear",
+                              } as unknown as Record<string, unknown>
+                            }
+                          >
+                            {ch}
+                          </motion.text>
+                        );
+                      })}
+                      {/* outline final — menegaskan bentuk setelah semua segmen */}
                       <motion.text
                         x={x}
                         y={baseY}
                         fontSize={metrics.fs}
                         className="hero-sketch"
-                        style={{ strokeDasharray: 4000 } as unknown as React.CSSProperties}
-                        initial={{ strokeDashoffset: reduceMotion ? 0 : 4000, fillOpacity: reduceMotion ? 1 : 0 } as unknown as Record<string, unknown>}
-                        animate={ready ? ({ strokeDashoffset: 0, fillOpacity: 1 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
+                        initial={{ opacity: reduceMotion ? 1 : 0, fillOpacity: reduceMotion ? 1 : 0 } as unknown as Record<string, unknown>}
+                        animate={ready ? ({ opacity: 1, fillOpacity: 1 } as unknown as Record<string, unknown>) : ({} as unknown as Record<string, unknown>)}
                         transition={
                           {
-                            strokeDashoffset: { duration: light ? 0.42 : 0.6, ease: [0.16, 1, 0.3, 1], delay: finalDelay },
-                            fillOpacity: { duration: 0.45, ease: EASE, delay: finalDelay + 0.32 },
+                            opacity: { duration: 0.24, ease: EASE, delay: letterEnd - 0.14 },
+                            fillOpacity: { duration: 0.4, ease: EASE, delay: letterEnd + 0.08 },
                           } as unknown as Record<string, unknown>
                         }
                       >
