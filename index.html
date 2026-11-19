@@ -5,6 +5,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><!-- figma:title --></title>
+    <script>
+      // Setiap load/refresh selalu mulai dari Opening → Hero.
+      // 1) matikan pemulihan posisi scroll browser
+      // 2) buang hash/anchor supaya browser tidak lompat ke section
+      // 3) paksa posisi paling atas sebelum paint pertama
+      (function () {
+        try {
+          if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+        } catch (e) {}
+        try {
+          var clean = location.pathname.indexOf("/dashboard") === 0;
+          if (clean || location.hash) {
+            history.replaceState(null, "", clean ? "/" : location.pathname + location.search);
+          }
+        } catch (e) {}
+        window.scrollTo(0, 0);
+      })();
+    </script>
     <!-- figma:head-end -->
   </head>
   <body>

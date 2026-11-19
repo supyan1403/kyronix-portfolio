@@ -22,6 +22,14 @@
         "cursor-talk-to-figma-mcp"
       ],
       "enabled": true
+    },
+    "figcraft": {
+      "type": "local",
+      "command": [
+        "node",
+        "./node_modules/figcraft/dist/mcp.js"
+      ],
+      "enabled": true
     }
   }
 }

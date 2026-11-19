@@ -807,6 +807,9 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   const rawHead = useTransform(dashProgress, [0, 1], [10, -10]);
   const dashHeadY = useSpring(rawHead, { stiffness: 140, damping: 30, mass: 0.3 });
   const openingGridY = useTransform(dashProgress, [0, 1], [22, -22]);
+  // subtitle hilang duluan saat scroll — title/eyebrow belakangan
+  const subtitleOpacity = useTransform(dashProgress, [0.26, 0.38], [1, 0]);
+  const titleOpacity = useTransform(dashProgress, [0.34, 0.48], [1, 0]);
   const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear, shouldFetch);
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
@@ -907,26 +910,29 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             className="relative"
           >
             <motion.div style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="will-change-transform">
-              <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
-                <ChipPixel size={14} className="text-terracotta/60" />
-                {t.eyebrow}
-              </p>
-              <SplitReveal
-                key={t.title}
-                as="h2"
-                text={t.title}
-                className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
-              />
-              {/* subtitle: tunggu judul selesai dulu (3 kata × stagger 0.07 + durasi 0.9) */}
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
-                transition={{ duration: 0.6, ease: EASE, delay: 1.1 }}
-                className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base"
-              >
-                {t.desc}
-              </motion.p>
+              <motion.div style={{ opacity: titleOpacity } as unknown as Record<string, unknown>}>
+                <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
+                  <ChipPixel size={14} className="text-terracotta/60" />
+                  {t.eyebrow}
+                </p>
+                <SplitReveal
+                  key={t.title}
+                  as="h2"
+                  text={t.title}
+                  className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
+                />
+              </motion.div>
+              <motion.div style={{ opacity: subtitleOpacity } as unknown as Record<string, unknown>}>
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
+                  transition={{ duration: 0.6, ease: EASE, delay: 1.1 }}
+                  className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base"
+                >
+                  {t.desc}
+                </motion.p>
+              </motion.div>
             </motion.div>
           </motion.div>
         </section>

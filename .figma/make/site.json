@@ -1,6 +1,6 @@
 {
-  "title": "KYRONIX — Supyan Sauri | Vibe Coder & System Architect",
-  "description": "Portfolio Supyan Sauri (KYRONIX) — Vibe Coder & System Architect. Data engineering, web & IoT: Dari ide ke infra. Digital Twin 800m2, BPS ETL pipeline, IoT Smart Feeder.",
+  "title": "KYRONIX - SUPYAN SAURI",
+  "description": "Portfolio Supyan Sauri (KYRONIX) — System Architect: Data & Web Systems. Data engineering, web & IoT: Dari ide ke infra. Digital Twin 800m2, BPS ETL pipeline, IoT Smart Feeder.",
   "language": "id",
   "icons": {
     "icon": "/favicon.png"
@@ -12,6 +12,6 @@
     "addBypassLinks": true
   },
   "customScripts": {
-    "headEnd": "<link rel=\"canonical\" href=\"https://kyronix.my.id/\" />\n<meta name=\"theme-color\" content=\"#1A1816\" />\n<meta name=\"author\" content=\"Supyan Sauri\" />\n<meta name=\"keywords\" content=\"Supyan Sauri, KYRONIX, portfolio, system architect, data engineering, ETL, IoT, BPS, Digital Twin\" />\n<meta property=\"og:type\" content=\"website\" />\n<meta property=\"og:url\" content=\"https://kyronix.my.id/\" />\n<meta property=\"og:site_name\" content=\"KYRONIX\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Person\",\"name\":\"Supyan Sauri\",\"alternateName\":\"KYRONIX\",\"url\":\"https://kyronix.my.id\",\"jobTitle\":\"Vibe Coder & System Architect\",\"description\":\"Data engineering, web & IoT: Dari ide ke infra.\",\"sameAs\":[\"https://github.com/supyan1403\"]}<\/script>\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"KYRONIX — Supyan Sauri\",\"url\":\"https://kyronix.my.id\",\"inLanguage\":\"id\"}<\/script>"
+    "headEnd": "<link rel=\"canonical\" href=\"https://kyronix.my.id/\" />\n<meta name=\"theme-color\" content=\"#1A1816\" />\n<meta name=\"author\" content=\"Supyan Sauri\" />\n<meta name=\"keywords\" content=\"Supyan Sauri, KYRONIX, portfolio, system architect, data engineering, ETL, IoT, BPS, Digital Twin\" />\n<meta property=\"og:type\" content=\"website\" />\n<meta property=\"og:url\" content=\"https://kyronix.my.id/\" />\n<meta property=\"og:site_name\" content=\"KYRONIX\" />\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Person\",\"name\":\"Supyan Sauri\",\"alternateName\":\"KYRONIX\",\"url\":\"https://kyronix.my.id\",\"jobTitle\":\"System Architect - Data & Web Systems\",\"description\":\"Data engineering, web & IoT: Dari ide ke infra.\",\"sameAs\":[\"https://github.com/supyan1403\"]}<\/script>\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"KYRONIX - SUPYAN SAURI\",\"url\":\"https://kyronix.my.id\",\"inLanguage\":\"id\"}<\/script>"
   }
 }
