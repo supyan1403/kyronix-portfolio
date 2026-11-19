@@ -444,7 +444,7 @@ function Tag({ children, tone = "yellow" }: { children: ReactNode; tone?: "yello
     silver: "warm-tag silver",
   }[tone];
   return (
-    <span className={`inline-block rounded-none border px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-wider ${t}`}>
+    <span className={`inline-block rounded-[10px] border px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-wider ${t}`}>
       {children}
     </span>
   );
@@ -1207,6 +1207,8 @@ const dict = {
     projectModal: {
       title: "Belum Tersedia",
       body: "Belum di-deploy. Tautan demo akan aktif setelah rilis.",
+      inProgressBody: "Masih dalam pengerjaan — prototype & integrasi berjalan. Tautan demo akan aktif setelah pengembangan selesai.",
+      conceptBody: "Masih tahap konsep — belum ada demo. Hubungi saya untuk diskusi konsep & roadmap.",
       articleTitle: "Artikel Riset Tersedia",
       articleBody: "Ini adalah riset, bukan demo web. Dokumen lengkap tersedia sebagai PDF — baca langsung atau unduh untuk offline.",
       cta: "Hubungi saya untuk preview",
@@ -1303,6 +1305,8 @@ const dict = {
     projectModal: {
       title: "Project Not Yet Available",
       body: "This project isn't deployed yet. The live link will be available after release.",
+      inProgressBody: "Still in progress — prototype & integration ongoing. The live link will be available after development is complete.",
+      conceptBody: "Still at concept stage — no demo yet. Contact me to discuss the concept & roadmap.",
       articleTitle: "Research Article Available",
       articleBody: "This is a research project, not a web demo. The full paper is available as PDF — read inline or download for offline.",
       cta: "Contact me for a preview",
@@ -1857,9 +1861,30 @@ function ProjectCard({ p, idx, onOpen, compact }: { p: (typeof projects)[number]
         )}
       </div>
       <div className="min-w-0 flex flex-1 flex-col">
-        <p className="mt-2 mb-2 font-mono text-[11px] uppercase tracking-[0.18em]" style={{ color: WARM.terracotta }}>{p.kind}</p>
+        <p
+          className="mt-2 mb-2 font-mono text-[11px] uppercase tracking-[0.18em]"
+          style={{ color: isDeployed ? "#22c55e" : isDoneNotDeployed ? "#f59e0b" : WARM.terracotta }}
+        >
+          {p.status === "RESEARCH DONE"
+            ? lang === "id"
+              ? "SELESAI \u00b7 BELUM DEPLOY"
+              : "DONE \u00b7 NOT DEPLOYED"
+            : p.status === "LIVE NOW"
+              ? lang === "id"
+                ? "SELESAI"
+                : "COMPLETED"
+            : p.status === "IN PROGRESS"
+              ? lang === "id"
+                ? "DALAM PENGERJAAN"
+                : "IN PROGRESS"
+            : p.status === "CONCEPT STAGE"
+              ? lang === "id"
+                ? "KONSEP"
+                : "CONCEPT"
+              : p.status}
+        </p>
         <h3 data-text={p.title} className="line-clamp-2 min-h-[2.3em] font-sans text-[1.25rem] font-semibold uppercase leading-[1.15] tracking-[0.05em] text-ink md:text-[1.38rem]">{p.title}</h3>
-        <p className="mt-2 line-clamp-2 min-h-[3.3em] text-[13px] leading-[1.6]" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
+        <p className="mt-2 text-[13px] leading-[1.6]" style={{ color: WARM.muted }}>{(typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang])}</p>
       </div>
       <div className="mt-5 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
         <div className="flex flex-1 flex-wrap gap-1.5 pr-2">{p.stack.map((s) => (<Tag key={s} tone={p.tone === "lime" ? "yellow" : p.tone === "coral" ? "pink" : "violet"}>{s}</Tag>))}</div>
@@ -2073,14 +2098,14 @@ function Projects() {
           {projects.map((proj, idx) => (
             <div
               key={proj.title}
-              className="flex min-w-[78vw] max-w-[78vw] shrink-0 snap-start sm:min-w-[300px] sm:max-w-[340px] md:min-w-[340px] md:max-w-[380px]"
+              className="flex min-w-[78vw] max-w-[78vw] shrink-0 snap-start sm:min-w-[300px] sm:max-w-[330px] md:min-w-[320px] md:max-w-[340px]"
             >
               <div className="flex min-h-[390px] w-full md:min-h-[410px]">
                 <ProjectCard p={proj} idx={idx} onOpen={(p) => { if (drag.current.moved) return; handleOpen(p); }} />
               </div>
             </div>
           ))}
-          {/* spacer peek — biar kanan masih ada sisa, user paham bisa di-scroll (peeks setengah kartu ke-4) */}
+          {/* spacer peek — biar kanan masih ada sisa, user paham bisa di-scroll (peeks setengah kartu ke-4: 320-340px → desktop 3 full + ~160px peek) */}
           <div aria-hidden className="shrink-0 w-6 sm:w-10 lg:w-16" />
           </div>
         </div>
@@ -2127,7 +2152,7 @@ function Projects() {
               >
                 {active.title}
               </p>
-              <p className="mt-3 text-sm font-medium leading-relaxed text-ink">{((active as { href?: string }).href ? (t.projectModal as { articleBody: string }).articleBody : t.projectModal.body)}</p>
+              <p className="mt-3 text-sm font-medium leading-relaxed text-ink">{((active as { href?: string }).href ? (t.projectModal as { articleBody: string }).articleBody : active.status === "IN PROGRESS" ? (t.projectModal as { inProgressBody: string }).inProgressBody : active.status === "CONCEPT STAGE" ? (t.projectModal as { conceptBody: string }).conceptBody : t.projectModal.body)}</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 {(() => {
                   const href = (active as { href?: string }).href;
@@ -2618,7 +2643,7 @@ function PdfBlobViewer({ href, title, failed, onFailed }: { href: string; title:
       <div className="flex min-h-[62dvh] flex-1 flex-col items-center justify-center gap-3 border border-border bg-cream p-6 text-center sm:min-h-[52vh]">
         <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-cream-deep text-terracotta"><FileText size={22} /></span>
         <p className="font-mono text-xs leading-relaxed text-muted">Preview diblokir — buka tab baru di bawah.</p>
-        <a href={href} target="_blank" rel="noreferrer" className="inline-flex border border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">Buka PDF ↗</a>
+        <a href={href} target="_blank" rel="noreferrer" className="inline-flex rounded-[10px] border border-terracotta bg-terracotta px-4 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52]">Buka PDF ↗</a>
       </div>
     );
   }
@@ -2725,7 +2750,7 @@ function CertificateViewer({
                 {kind === "article" && (
                   <button
                     onClick={doDownload}
-                    className="inline-flex cursor-pointer items-center gap-1.5 bg-terracotta px-3 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52] sm:px-4 sm:gap-2"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[10px] bg-terracotta px-3 py-2 font-mono text-xs font-black uppercase tracking-widest text-white hover:bg-[#d46a52] sm:px-4 sm:gap-2"
                   >
                     <Download size={14} />
                     {(t.projectModal as { download: string }).download}
@@ -2734,7 +2759,7 @@ function CertificateViewer({
                 <button
                   onClick={onClose}
                   aria-label={t.projectModal.close}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center border border-border bg-transparent text-ink hover:border-terracotta hover:text-terracotta sm:h-9 sm:w-9"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-border bg-transparent text-ink hover:border-terracotta hover:text-terracotta sm:h-9 sm:w-9"
                 >
                   <X size={16} />
                 </button>
@@ -2745,7 +2770,7 @@ function CertificateViewer({
               <PdfBlobViewer href={href} title={title} failed={failed} onFailed={() => setFailed(true)} />
               <div className="flex shrink-0 flex-col gap-2 border-t border-border/20 pt-2 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
                 <span className="max-sm:text-xs">{failed ? "Preview diblokir Chrome — buka tab baru di bawah." : "HP / iOS tidak preview? Pakai tombol di bawah."}</span>
-                <a href={href} target="_blank" rel="noreferrer" className="inline-flex justify-center border border-terracotta bg-terracotta px-4 py-2.5 text-center font-bold uppercase tracking-widest text-white hover:bg-[#d46a52] max-sm:w-full">Buka PDF Di Tab Baru ↗</a>
+                <a href={href} target="_blank" rel="noreferrer" className="inline-flex justify-center rounded-[10px] border border-terracotta bg-terracotta px-4 py-2.5 text-center font-bold uppercase tracking-widest text-white hover:bg-[#d46a52] max-sm:w-full">Buka PDF Di Tab Baru ↗</a>
               </div>
             </div>
           </motion.div>
