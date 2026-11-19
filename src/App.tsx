@@ -2002,19 +2002,20 @@ function Projects() {
     <div id="projects" className="relative bg-transparent">
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
-      {/* Kartu — baris horizontal scroll (uniform) — dikasih breathing room biar hover -y tidak kepotong */}
+      {/* Kartu — baris horizontal scroll — container margin biar tidak mepet viewport */}
       <section
-        className="relative px-0 pb-[12vh] pt-8"
+        className="relative pb-[12vh] pt-8"
         aria-label={t.projectsTitle}
       >
-        <div
-          ref={scrollerRef}
-          role="region"
-          aria-label="Karya"
-          tabIndex={0}
-          className="karya-scroll flex cursor-grab select-none gap-4 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-[5vw] py-4 pb-5 active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 [&>div]:items-stretch"
-          style={{ touchAction: "pan-x pan-y" } as React.CSSProperties}
-          onPointerDown={(e) => {
+        <div className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-[2.5vw]">
+          <div
+            ref={scrollerRef}
+            role="region"
+            aria-label="Karya"
+            tabIndex={0}
+            className="karya-scroll flex cursor-grab select-none gap-4 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory py-4 pb-5 active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 [&>div]:items-stretch"
+            style={{ touchAction: "pan-x pan-y", scrollPaddingInline: "24px" } as React.CSSProperties}
+            onPointerDown={(e) => {
             if (e.button !== 0) return;
             const el = scrollerRef.current;
             if (!el) return;
@@ -2058,6 +2059,7 @@ function Projects() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       </section>
       {typeof document !== "undefined" &&
