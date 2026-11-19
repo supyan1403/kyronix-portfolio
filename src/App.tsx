@@ -1950,12 +1950,12 @@ function Projects() {
   const handleCta = () => { setActive(null); setTimeout(() => scrollToId("contact"), 120); };
 
   return (
-    <div id="projects" className="relative bg-transparent overflow-x-clip">
+    <div id="projects" className="relative bg-transparent">
       {/* Opening — full 100dvh EPIC — keep */}
       <ProjectsOpening />
-      {/* Kartu — baris horizontal scroll (uniform) */}
+      {/* Kartu — baris horizontal scroll (uniform) — dikasih breathing room biar hover -y tidak kepotong */}
       <section
-        className="relative px-0 pb-[12vh] pt-3"
+        className="relative px-0 pb-[12vh] pt-8"
         aria-label={t.projectsTitle}
       >
         <div
@@ -1966,18 +1966,19 @@ function Projects() {
             const el = e.currentTarget;
             if (el.scrollWidth <= el.clientWidth) return;
             if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-            if (!el.contains(document.activeElement) && el !== document.activeElement) return;
             e.preventDefault();
             el.scrollBy({ left: e.deltaY, behavior: "auto" });
           }}
-          className="flex gap-5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-[5vw] pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60"
+          className="flex gap-5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory px-[5vw] py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 [&>div]:items-stretch"
         >
           {projects.map((proj, idx) => (
             <div
               key={proj.title}
-              className="min-w-[86vw] max-w-[86vw] shrink-0 snap-start sm:min-w-[360px] sm:max-w-[400px] md:min-w-[420px] md:max-w-[480px]"
+              className="flex min-w-[86vw] max-w-[86vw] shrink-0 snap-start sm:min-w-[360px] sm:max-w-[400px] md:min-w-[420px] md:max-w-[480px]"
             >
-              <ProjectCard p={proj} idx={idx} onOpen={handleOpen} />
+              <div className="flex min-h-[520px] w-full">
+                <ProjectCard p={proj} idx={idx} onOpen={handleOpen} />
+              </div>
             </div>
           ))}
         </div>
