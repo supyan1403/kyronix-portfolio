@@ -586,7 +586,7 @@ function KPage({ onDone }: { onDone: () => void }) {
       if (finished || cancelled) return;
       finished = true;
       setPct(100);
-      timers.push(window.setTimeout(() => { if (!cancelled) setLeaving(true); }, 240));
+      timers.push(window.setTimeout(() => { if (!cancelled) setLeaving(true); }, 420));
     };
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -604,19 +604,23 @@ function KPage({ onDone }: { onDone: () => void }) {
         document.fonts?.ready ?? Promise.resolve(),
       ]).then(() => { assetsReady = true; });
 
-      const DUR = 2200;
+      const DUR = 3800;
       const start = performance.now();
       const tick = (now: number) => {
         if (cancelled || finished) return;
-        const timePct = Math.min(100, ((now - start) / DUR) * 100);
-        const next = Math.min(timePct, assetsReady ? 100 : 92);
+        const t = Math.min(1, (now - start) / DUR);
+        // ease-out: naik cepat di awal, melambat menjelang akhir biar terasa disengaja
+        const eased = (1 - Math.pow(1 - t, 2.4)) * 100;
+        const next = Math.min(eased, assetsReady ? 100 : 92);
         // throttle: re-render cuma saat angka bulat berubah (bukan tiap frame)
         const rounded = Math.round(next);
         if (rounded !== lastPct.current) {
           lastPct.current = rounded;
           setPct(rounded);
         }
-        if (next >= 100) { markDone(); return; }
+        if (t >= 1) {
+          if (assetsReady) { markDone(); return; }
+        }
         raf = requestAnimationFrame(tick);
       };
       raf = requestAnimationFrame(tick);
@@ -647,7 +651,7 @@ function KPage({ onDone }: { onDone: () => void }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, filter: "blur(10px)" }}
-          transition={{ duration: 0.6, ease: EASE }}
+          transition={{ duration: 0.85, ease: EASE }}
           onClick={finish}
           role="button"
           tabIndex={0}
@@ -689,7 +693,7 @@ function KPage({ onDone }: { onDone: () => void }) {
               initial={{ opacity: 0, scale: 0.72, rotateX: 16, rotateY: -14, filter: "blur(14px)" }}
               animate={{ opacity: 1, scale: 1, rotateX: 0, rotateY: 0, filter: "blur(0px)" } as unknown as Record<string, unknown>}
               exit={{ opacity: 0, scale: 0.86, filter: "blur(8px)" } as unknown as Record<string, unknown>}
-              transition={{ type: "spring", stiffness: 180, damping: 18, mass: 1.15, delay: 0.12 } as unknown as Record<string, unknown>}
+              transition={{ type: "spring", stiffness: 165, damping: 17, mass: 1.2, delay: 0.25 } as unknown as Record<string, unknown>}
             />
             {/* sweep ngikut siluet K hex */}
             <motion.div
@@ -709,13 +713,13 @@ function KPage({ onDone }: { onDone: () => void }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 0, 1, 1, 0] } as unknown as Record<string, unknown>}
               exit={{ opacity: 0 } as unknown as Record<string, unknown>}
-              transition={{ duration: 1.9, times: [0, 0.34, 0.44, 0.82, 1], ease: "easeInOut" } as unknown as Record<string, unknown>}
+              transition={{ duration: 2.9, times: [0, 0.3, 0.42, 0.82, 1], ease: "easeInOut" } as unknown as Record<string, unknown>}
             >
               <motion.div
                 className="absolute inset-y-0 w-[45%] bg-gradient-to-r from-transparent via-white/70 to-transparent"
                 initial={{ x: "-130%" }}
                 animate={{ x: "260%" }}
-                transition={{ duration: 1.0, delay: 0.78, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 1.35, delay: 1.45, ease: [0.22, 1, 0.36, 1] }}
                 style={{ transform: "skewX(-18deg)" }}
               />
             </motion.div>
