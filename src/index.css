@@ -521,6 +521,17 @@
   scrollbar-width: thin;
   scrollbar-color: #3a3632 #1a1816;
 }
+/* mobile: scroller horizontal tanpa scrollbar (native swipe + snap) */
+@media (max-width: 767px) {
+  .karya-scroll {
+    scrollbar-width: none;
+  }
+  .karya-scroll::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+  }
+}
 .karya-scroll::-webkit-scrollbar {
   height: 6px;
   width: 6px;

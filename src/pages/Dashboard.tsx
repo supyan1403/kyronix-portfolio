@@ -6,9 +6,29 @@ import { useLang } from "../langCtx";
 const EASE = [0.22, 1, 0.36, 1] as const;
 const USER = "supyan1403";
 
-function ChipPixel({ size = 24, className, style }: { size?: number; className?: string; style?: React.CSSProperties }) {
+function ChipPixel({
+  size = 24,
+  className,
+  style,
+}: {
+  size?: number;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} style={style} stroke="currentColor" strokeWidth={1.7} strokeLinecap="square" strokeLinejoin="miter" aria-hidden>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+      style={style}
+      stroke="currentColor"
+      strokeWidth={1.7}
+      strokeLinecap="square"
+      strokeLinejoin="miter"
+      aria-hidden
+    >
       <rect x={6.5} y={6.5} width={11} height={11} rx={0} />
       <rect x={9.7} y={9.7} width={4.6} height={4.6} rx={0} />
       <path d="M9 6.5V4.2M12 6.5V3.6M15 6.5V4.2" />
@@ -35,7 +55,8 @@ function SplitReveal({
   const low = useMemo(
     () =>
       typeof window !== "undefined" &&
-      (window.matchMedia("(max-width: 640px)").matches || (navigator.hardwareConcurrency ?? 8) <= 4),
+      (window.matchMedia("(max-width: 640px)").matches ||
+        (navigator.hardwareConcurrency ?? 8) <= 4),
     [],
   );
   const words = text.split(" ");
@@ -56,8 +77,14 @@ function SplitReveal({
             className="inline-block"
             variants={
               low
-                ? ({ hidden: { y: "14px", opacity: 0 }, show: { y: 0, opacity: 1 } } as unknown as Record<string, unknown>)
-                : ({ hidden: { y: "115%", opacity: 0, filter: "blur(6px)" }, show: { y: 0, opacity: 1, filter: "blur(0px)" } } as unknown as Record<string, unknown>)
+                ? ({
+                    hidden: { y: "14px", opacity: 0 },
+                    show: { y: 0, opacity: 1 },
+                  } as unknown as Record<string, unknown>)
+                : ({
+                    hidden: { y: "115%", opacity: 0, filter: "blur(6px)" },
+                    show: { y: 0, opacity: 1, filter: "blur(0px)" },
+                  } as unknown as Record<string, unknown>)
             }
             transition={{ duration: 0.9, ease: EASE }}
           >
@@ -224,7 +251,11 @@ function toLocalISO(d: Date) {
   return `${y}-${m}-${day}`;
 }
 
-function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(), levelMap?: Map<string, GHLevel>) {
+function buildHeatmapFromCounts(
+  countMap: Map<string, number>,
+  today = new Date(),
+  levelMap?: Map<string, GHLevel>,
+) {
   // GitHub parity: 53w window ending today, aligned Mon–Sun (same as github.com)
   const end = new Date(today);
   end.setHours(0, 0, 0, 0);
@@ -249,7 +280,17 @@ function buildHeatmapFromCounts(countMap: Map<string, number>, today = new Date(
       const iso = toLocalISO(cur);
       const cnt = countMap.get(iso) ?? 0;
       const lvl = levelMap?.get(iso);
-      const level: GHLevel = (lvl as GHLevel) ?? (cnt === 0 ? "NONE" : cnt <= 2 ? "FIRST_QUARTILE" : cnt <= 5 ? "SECOND_QUARTILE" : cnt <= 9 ? "THIRD_QUARTILE" : "FOURTH_QUARTILE");
+      const level: GHLevel =
+        (lvl as GHLevel) ??
+        (cnt === 0
+          ? "NONE"
+          : cnt <= 2
+            ? "FIRST_QUARTILE"
+            : cnt <= 5
+              ? "SECOND_QUARTILE"
+              : cnt <= 9
+                ? "THIRD_QUARTILE"
+                : "FOURTH_QUARTILE");
       if (cur >= startExact && cur <= end) total += cnt;
       week.push({
         date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
@@ -268,7 +309,11 @@ function mockHeatmap(_today = new Date()) {
   return buildHeatmapFromCounts(new Map(), new Date());
 }
 
-function buildHeatmapForYear(countMap: Map<string, number>, year: number, levelMap?: Map<string, GHLevel>) {
+function buildHeatmapForYear(
+  countMap: Map<string, number>,
+  year: number,
+  levelMap?: Map<string, GHLevel>,
+) {
   const startExact = new Date(year, 0, 1);
   startExact.setHours(0, 0, 0, 0);
   const endExact = new Date(year, 11, 31);
@@ -294,7 +339,17 @@ function buildHeatmapForYear(countMap: Map<string, number>, year: number, levelM
       const iso = toLocalISO(cur);
       const cnt = countMap.get(iso) ?? 0;
       const lvl = levelMap?.get(iso);
-      const level: GHLevel = (lvl as GHLevel) ?? (cnt === 0 ? "NONE" : cnt <= 2 ? "FIRST_QUARTILE" : cnt <= 5 ? "SECOND_QUARTILE" : cnt <= 9 ? "THIRD_QUARTILE" : "FOURTH_QUARTILE");
+      const level: GHLevel =
+        (lvl as GHLevel) ??
+        (cnt === 0
+          ? "NONE"
+          : cnt <= 2
+            ? "FIRST_QUARTILE"
+            : cnt <= 5
+              ? "SECOND_QUARTILE"
+              : cnt <= 9
+                ? "THIRD_QUARTILE"
+                : "FOURTH_QUARTILE");
       total += cnt;
       week.push({
         date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
@@ -315,7 +370,12 @@ function levelMetaByCount(count: number) {
   if (count <= 9) return { bg: "#C4713C", border: "rgba(196,113,60,1)" };
   return { bg: "#E07A5F", border: "rgba(224,122,95,1)" };
 }
-function buildHeatmapFromGraphQLCalendar(cal: { totalContributions: number; weeks: { contributionDays: { date: string; contributionCount: number; contributionLevel: string }[] }[] }): { weeks: HeatWeek[]; total: number } {
+function buildHeatmapFromGraphQLCalendar(cal: {
+  totalContributions: number;
+  weeks: {
+    contributionDays: { date: string; contributionCount: number; contributionLevel: string }[];
+  }[];
+}): { weeks: HeatWeek[]; total: number } {
   const weeks: HeatWeek[] = cal.weeks.map((w) =>
     w.contributionDays.map((d) => {
       const dt = new Date(`${d.date}T12:00:00`);
@@ -325,18 +385,23 @@ function buildHeatmapFromGraphQLCalendar(cal: { totalContributions: number; week
         count: d.contributionCount,
         level: normalizeGHLevel(d.contributionLevel),
       };
-    })
+    }),
   );
   return { weeks, total: cal.totalContributions };
 }
 
 function ghLevelToMeta(level: GHLevel) {
   switch (level) {
-    case "FOURTH_QUARTILE": return { bg: "#E07A5F", border: "rgba(224,122,95,1)" };
-    case "THIRD_QUARTILE": return { bg: "#C4713C", border: "rgba(196,113,60,1)" };
-    case "SECOND_QUARTILE": return { bg: "#8A3E1A", border: "rgba(138,62,26,1)" };
-    case "FIRST_QUARTILE": return { bg: "#5A2E18", border: "rgba(90,46,24,1)" };
-    default: return { bg: "#252220", border: "rgba(58,54,50,0.35)" };
+    case "FOURTH_QUARTILE":
+      return { bg: "#E07A5F", border: "rgba(224,122,95,1)" };
+    case "THIRD_QUARTILE":
+      return { bg: "#C4713C", border: "rgba(196,113,60,1)" };
+    case "SECOND_QUARTILE":
+      return { bg: "#8A3E1A", border: "rgba(138,62,26,1)" };
+    case "FIRST_QUARTILE":
+      return { bg: "#5A2E18", border: "rgba(90,46,24,1)" };
+    default:
+      return { bg: "#252220", border: "rgba(58,54,50,0.35)" };
   }
 }
 function normalizeGHLevel(v: unknown): GHLevel {
@@ -413,7 +478,12 @@ function ContributionHeatmap({
     while (cur <= end) {
       const iso = toLocalISO(cur);
       const hit = levelMap.get(iso);
-      const item: HeatDay = hit ?? { date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }), iso, count: 0, level: "NONE" as GHLevel };
+      const item: HeatDay = hit ?? {
+        date: cur.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
+        iso,
+        count: 0,
+        level: "NONE" as GHLevel,
+      };
       list.push(item);
       s += item.count;
       cur.setDate(cur.getDate() + 1);
@@ -422,7 +492,9 @@ function ContributionHeatmap({
   }, [levelMap, monthFilter]);
   const active = useMemo(() => days.filter((d) => d.count > 0).length, [days]);
   const weekdayLabels = useMemo(() => {
-    const base = isEn ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] : ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+    const base = isEn
+      ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      : ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
     return base;
   }, [isEn]);
   const leadingEmpty = useMemo(() => {
@@ -431,11 +503,24 @@ function ContributionHeatmap({
     return (d.getDay() + 6) % 7; // Mon=0
   }, [days]);
 
-  const LEVELS = useMemo(() => ["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"] as GHLevel[], []);
-  const [phase, setPhase] = useState<"shuffle"|"reveal">("shuffle");
+  const LEVELS = useMemo(
+    () =>
+      [
+        "NONE",
+        "FIRST_QUARTILE",
+        "SECOND_QUARTILE",
+        "THIRD_QUARTILE",
+        "FOURTH_QUARTILE",
+      ] as GHLevel[],
+    [],
+  );
+  const [phase, setPhase] = useState<"shuffle" | "reveal">("shuffle");
   const [shuffleSeed, setShuffleSeed] = useState(0);
   const lastSigRef = useRef<string>("");
-  const sig = useMemo(() => `${monthFilter}|${days[0]?.iso}|${days[days.length - 1]?.iso}|${sum}`, [monthFilter, days, sum]);
+  const sig = useMemo(
+    () => `${monthFilter}|${days[0]?.iso}|${days[days.length - 1]?.iso}|${sum}`,
+    [monthFilter, days, sum],
+  );
   useEffect(() => {
     if (sig === lastSigRef.current) return;
     lastSigRef.current = sig;
@@ -452,7 +537,18 @@ function ContributionHeatmap({
     });
   }, [days, shuffleSeed, LEVELS]);
 
-  const filterLabel = monthFilter === "thisMonth" ? (isEn ? "this month" : "bulan ini") : monthFilter === "lastMonth" ? (isEn ? "last month" : "bulan lalu") : (isEn ? "last 30 days" : "30 hari terakhir");
+  const filterLabel =
+    monthFilter === "thisMonth"
+      ? isEn
+        ? "this month"
+        : "bulan ini"
+      : monthFilter === "lastMonth"
+        ? isEn
+          ? "last month"
+          : "bulan lalu"
+        : isEn
+          ? "last 30 days"
+          : "30 hari terakhir";
   const monthInfo = useMemo(() => {
     const today = new Date();
     if (monthFilter === "thisMonth") {
@@ -465,8 +561,15 @@ function ContributionHeatmap({
     const end = new Date(today);
     const start = new Date(end);
     start.setDate(end.getDate() - 29);
-    const sLabel = start.toLocaleDateString(isEn ? "en-US" : "id-ID", { day: "numeric", month: "short" });
-    const eLabel = end.toLocaleDateString(isEn ? "en-US" : "id-ID", { day: "numeric", month: "long", year: "numeric" });
+    const sLabel = start.toLocaleDateString(isEn ? "en-US" : "id-ID", {
+      day: "numeric",
+      month: "short",
+    });
+    const eLabel = end.toLocaleDateString(isEn ? "en-US" : "id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
     return `${sLabel} – ${eLabel}`;
   }, [monthFilter, isEn]);
   const trailingEmpty = useMemo(() => {
@@ -478,14 +581,17 @@ function ContributionHeatmap({
     <div className="mt-4 flex h-[318px] flex-col">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/10 pb-3">
         <p className="font-mono text-[12px] font-semibold tracking-tight text-ink">
-          {sum.toLocaleString(isEn ? "en-US" : "id-ID")} {isEn ? `contributions in ${filterLabel}` : `kontribusi dalam ${filterLabel}`}
+          {sum.toLocaleString(isEn ? "en-US" : "id-ID")}{" "}
+          {isEn ? `contributions in ${filterLabel}` : `kontribusi dalam ${filterLabel}`}
         </p>
         <span className="inline-flex shrink-0 gap-1 border border-terracotta/20 bg-transparent p-1">
-          {([
-            ["lastMonth", isEn ? "Last month" : "Bulan lalu"],
-            ["thisMonth", isEn ? "This month" : "Bulan ini"],
-            ["last30", isEn ? "Last 30 days" : "1 bulan terakhir"],
-          ] as const).map(([key, label]) => (
+          {(
+            [
+              ["lastMonth", isEn ? "Last month" : "Bulan lalu"],
+              ["thisMonth", isEn ? "This month" : "Bulan ini"],
+              ["last30", isEn ? "Last 30 days" : "1 bulan terakhir"],
+            ] as const
+          ).map(([key, label]) => (
             <button
               key={key}
               onClick={() => setMonthFilter(key as MonthFilter)}
@@ -497,13 +603,21 @@ function ContributionHeatmap({
         </span>
       </div>
       {/* info bulan aktif */}
-      <p className="mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-terracotta">{monthInfo}</p>
+      <p className="mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-terracotta">
+        {monthInfo}
+      </p>
 
-      <div className="mt-2 flex h-[238px] flex-col border border-border/10 bg-cream-deep/40 p-3" style={{ contentVisibility: "auto", containIntrinsicSize: "238px" } as React.CSSProperties}>
+      <div
+        className="mt-2 flex h-[238px] flex-col border border-border/10 bg-cream-deep/40 p-3"
+        style={{ contentVisibility: "auto", containIntrinsicSize: "238px" } as React.CSSProperties}
+      >
         {/* C kalender kecil — 7 kolom, kotak kosong fill warna saja, full sebulan — flex-col + footer mt-auto biar tidak geser saat switch */}
         <div className="grid grid-cols-7 gap-1">
           {weekdayLabels.map((w) => (
-            <span key={w} className="text-center font-mono text-[9px] font-semibold uppercase tracking-widest text-muted/70">
+            <span
+              key={w}
+              className="text-center font-mono text-[9px] font-semibold uppercase tracking-widest text-muted/70"
+            >
               {w}
             </span>
           ))}
@@ -534,12 +648,20 @@ function ContributionHeatmap({
         </div>
         <div className="mt-auto pt-3 space-y-2 font-mono text-[10px] text-muted">
           <div className="flex items-center justify-between">
-            <span>{active} {isEn ? "active days" : "hari aktif"} / {days.length}</span>
+            <span>
+              {active} {isEn ? "active days" : "hari aktif"} / {days.length}
+            </span>
           </div>
           <div className="flex items-center justify-start gap-1.5">
             <span>{t.less}</span>
             <span className="inline-flex gap-[3px]">
-              {["NONE","FIRST_QUARTILE","SECOND_QUARTILE","THIRD_QUARTILE","FOURTH_QUARTILE"].map((lv) => (
+              {[
+                "NONE",
+                "FIRST_QUARTILE",
+                "SECOND_QUARTILE",
+                "THIRD_QUARTILE",
+                "FOURTH_QUARTILE",
+              ].map((lv) => (
                 <i key={lv} className={`h-[10px] w-[10px] rounded-[2px] border hm-${lv}`} />
               ))}
             </span>
@@ -547,12 +669,19 @@ function ContributionHeatmap({
           </div>
         </div>
       </div>
-
     </div>
   );
 }
 
-function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, errAct: string, errGeneric: string, heatmapYear: number | "last", enabled = true) {
+function useGitHubLive(
+  isEn: boolean,
+  fallbackCommit: string,
+  errRepo: string,
+  errAct: string,
+  errGeneric: string,
+  heatmapYear: number | "last",
+  enabled = true,
+) {
   const [langs, setLangs] = useState<LangStat[] | null>(null);
   const [commits, setCommits] = useState<CommitItem[] | null>(null);
   const [heatmap, setHeatmap] = useState<{ weeks: HeatWeek[]; total: number } | null>(null);
@@ -573,16 +702,41 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         try {
           const from = heatmapYear === "last" ? undefined : `${heatmapYear}-01-01T00:00:00Z`;
           const to = heatmapYear === "last" ? undefined : `${heatmapYear}-12-31T23:59:59Z`;
-          const q = heatmapYear === "last"
-            ? `query{user(login:"${USER}"){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`
-            : `query($from:DateTime!,$to:DateTime!){user(login:"${USER}"){contributionsCollection(from:$from,to:$to){contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`;
-          const gr = await fetchWithTimeout("https://api.github.com/graphql", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${tok}`, "Content-Type": "application/json" },
-            body: JSON.stringify(heatmapYear === "last" ? { query: q } : { query: q, variables: { from, to } }),
-          }, 5500);
+          const q =
+            heatmapYear === "last"
+              ? `query{user(login:"${USER}"){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`
+              : `query($from:DateTime!,$to:DateTime!){user(login:"${USER}"){contributionsCollection(from:$from,to:$to){contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`;
+          const gr = await fetchWithTimeout(
+            "https://api.github.com/graphql",
+            {
+              method: "POST",
+              headers: { Authorization: `Bearer ${tok}`, "Content-Type": "application/json" },
+              body: JSON.stringify(
+                heatmapYear === "last" ? { query: q } : { query: q, variables: { from, to } },
+              ),
+            },
+            5500,
+          );
           if (gr.ok) {
-            const j = await gr.json() as { data?: { user?: { contributionsCollection?: { contributionCalendar?: { totalContributions: number; weeks: { contributionDays: { date: string; contributionCount: number; contributionLevel: string }[] }[] } } } }; errors?: unknown };
+            const j = (await gr.json()) as {
+              data?: {
+                user?: {
+                  contributionsCollection?: {
+                    contributionCalendar?: {
+                      totalContributions: number;
+                      weeks: {
+                        contributionDays: {
+                          date: string;
+                          contributionCount: number;
+                          contributionLevel: string;
+                        }[];
+                      }[];
+                    };
+                  };
+                };
+              };
+              errors?: unknown;
+            };
             const cal = j?.data?.user?.contributionsCollection?.contributionCalendar;
             if (cal?.weeks?.length) {
               setHeatmap(buildHeatmapFromGraphQLCalendar(cal));
@@ -593,9 +747,12 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
       }
       try {
         const yParam = heatmapYear === "last" ? "last" : String(heatmapYear);
-        const gr = await fetch(`https://github-contributions-api.jogruber.de/v4/${USER}?y=${yParam}`);
+        const gr = await fetch(
+          `https://github-contributions-api.jogruber.de/v4/${USER}?y=${yParam}`,
+        );
         if (!gr.ok) throw new Error("gh");
-        const gj: { contributions: { date: string; count: number; level?: number | string }[] } = await gr.json();
+        const gj: { contributions: { date: string; count: number; level?: number | string }[] } =
+          await gr.json();
         const cMap = new Map<string, number>();
         const lMap = new Map<string, GHLevel>();
         gj.contributions.forEach((c) => {
@@ -604,7 +761,11 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
           if (lv !== undefined && lv !== null) lMap.set(c.date, normalizeGHLevel(lv));
         });
         const withLevel = lMap.size > 0;
-        setHeatmap(heatmapYear === "last" ? buildHeatmapFromCounts(cMap, new Date(), withLevel ? lMap : undefined) : buildHeatmapForYear(cMap, heatmapYear as number, withLevel ? lMap : undefined));
+        setHeatmap(
+          heatmapYear === "last"
+            ? buildHeatmapFromCounts(cMap, new Date(), withLevel ? lMap : undefined)
+            : buildHeatmapForYear(cMap, heatmapYear as number, withLevel ? lMap : undefined),
+        );
       } catch {
         // fallback heatmap dari events kalau proxy down — akan diisi di bawah
       }
@@ -621,9 +782,14 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
         setLangs(FALLBACK_LANGS);
       }
       try {
-        const r = await fetchWithTimeout(`https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`, { headers: ghHeaders() }, 4500);
+        const r = await fetchWithTimeout(
+          `https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`,
+          { headers: ghHeaders() },
+          4500,
+        );
         if (!r.ok) throw new Error(`${r.status}`);
-        const repos: { name: string; languages_url: string; language: string | null }[] = await r.json();
+        const repos: { name: string; languages_url: string; language: string | null }[] =
+          await r.json();
         let sorted: LangStat[];
         // pakai bytes asli biar 25% rata hilang — JS 51% sesuai live: kulinara+project_bps_tasik JS 2.1MB
         // tanpa token tetap pakai languages_url (4 repo ringan), tapi kalau 1 aja gagal jangan pakai partial (bikin PHP 40% ngaco)
@@ -636,7 +802,7 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
             } catch {
               return null as unknown as Record<string, number>;
             }
-          })
+          }),
         );
         // kalau ada repo yang gagal (rate limit/timeout) → jangan pakai partial, pakai fallback jujur
         const anyFailed = langMapsAll.some((m) => !m || typeof m !== "object");
@@ -690,15 +856,27 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
 
     const evP = (async () => {
       try {
-        const er = await fetchWithTimeout(`https://api.github.com/users/${USER}/events/public?per_page=100`, { headers: ghHeaders() }, 4500);
+        const er = await fetchWithTimeout(
+          `https://api.github.com/users/${USER}/events/public?per_page=100`,
+          { headers: ghHeaders() },
+          4500,
+        );
         if (!er.ok) throw new Error(`${er.status}`);
-        const events: { type: string; repo: { name: string }; payload: { commits?: { message: string }[]; size?: number }; created_at: string }[] =
-          await er.json();
+        const events: {
+          type: string;
+          repo: { name: string };
+          payload: { commits?: { message: string }[]; size?: number };
+          created_at: string;
+        }[] = await er.json();
         const push = events.filter((e) => e.type === "PushEvent");
         const commitItems: CommitItem[] = push.slice(0, 20).map((e) => {
           const msg = e.payload.commits?.[0]?.message || fallbackCommit;
           const d = new Date(e.created_at);
-          const rel = d.toLocaleDateString(isEn ? "en-US" : "id-ID", { day: "2-digit", month: "short", year: "numeric" });
+          const rel = d.toLocaleDateString(isEn ? "en-US" : "id-ID", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
           return {
             repo: e.repo.name.replace(`${USER}/`, ""),
             message: msg.split("\n")[0].slice(0, 72),
@@ -717,7 +895,9 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
             const c = e.payload.commits?.length ?? e.payload.size ?? 1;
             dayMap.set(iso, (dayMap.get(iso) ?? 0) + c);
           }
-          return heatmapYear === "last" ? buildHeatmapFromCounts(dayMap, new Date()) : buildHeatmapForYear(dayMap, heatmapYear as number);
+          return heatmapYear === "last"
+            ? buildHeatmapFromCounts(dayMap, new Date())
+            : buildHeatmapForYear(dayMap, heatmapYear as number);
         });
       } catch {
         setErr(null);
@@ -740,11 +920,19 @@ function useGitHubLive(isEn: boolean, fallbackCommit: string, errRepo: string, e
   useEffect(() => {
     // heatmap baru mount — resize lenis pake debounce biar tidak layout thrash tiap kotak shuffle
     let id = 0 as unknown as number;
-    const cb = () => { (window as unknown as { __lenis?: { resize?: () => void } }).__lenis?.resize?.(); };
-    if ("requestIdleCallback" in window) id = (window as unknown as { requestIdleCallback: (cb: ()=>void)=>number }).requestIdleCallback(cb);
+    const cb = () => {
+      (window as unknown as { __lenis?: { resize?: () => void } }).__lenis?.resize?.();
+    };
+    if ("requestIdleCallback" in window)
+      id = (
+        window as unknown as { requestIdleCallback: (cb: () => void) => number }
+      ).requestIdleCallback(cb);
     else id = window.setTimeout(cb, 160) as unknown as number;
     return () => {
-      if ("cancelIdleCallback" in window) (window as unknown as { cancelIdleCallback:(n:number)=>void }).cancelIdleCallback(id as number);
+      if ("cancelIdleCallback" in window)
+        (window as unknown as { cancelIdleCallback: (n: number) => void }).cancelIdleCallback(
+          id as number,
+        );
       else window.clearTimeout(id);
     };
   }, [heatmap]);
@@ -761,7 +949,9 @@ function TerminalHero({ lines }: { lines: string[] }) {
           <i className="h-2.5 w-2.5 rounded-full bg-[#fbbf24]" />
           <i className="h-2.5 w-2.5 rounded-full bg-[#8FA89B]" />
         </span>
-        <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">kyronix@lab — zsh</span>
+        <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+          kyronix@lab — zsh
+        </span>
         <span className="ml-auto inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> live
         </span>
@@ -803,14 +993,25 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   const bahasaRef = useRef<HTMLElement>(null);
   const langInView = useInView(bahasaRef as unknown as React.RefObject<Element>, { amount: 0.25 });
   // 1x parallax aja (blur disain lain udah whileInView) — hemat 8 listeners + spring biar 60/120 halus
-  const { scrollYProgress: dashProgress } = useScroll({ target: embedRef as unknown as React.RefObject<Element>, offset: ["start end", "end start"] });
+  const { scrollYProgress: dashProgress } = useScroll({
+    target: embedRef as unknown as React.RefObject<Element>,
+    offset: ["start end", "end start"],
+  });
   const rawHead = useTransform(dashProgress, [0, 1], [10, -10]);
   const dashHeadY = useSpring(rawHead, { stiffness: 140, damping: 30, mass: 0.3 });
   const openingGridY = useTransform(dashProgress, [0, 1], [22, -22]);
   // subtitle hilang duluan saat scroll — title/eyebrow belakangan
   const subtitleOpacity = useTransform(dashProgress, [0.26, 0.38], [1, 0]);
   const titleOpacity = useTransform(dashProgress, [0.34, 0.48], [1, 0]);
-  const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(isEn, t.fallbackCommit, t.errRepo, t.errAct, t.errGeneric, heatmapYear, shouldFetch);
+  const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(
+    isEn,
+    t.fallbackCommit,
+    t.errRepo,
+    t.errAct,
+    t.errGeneric,
+    heatmapYear,
+    shouldFetch,
+  );
 
   // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
   const todayId = toLocalISO(new Date());
@@ -831,7 +1032,9 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    let last90 = 0, thisMonth = 0, thisWeek = 0;
+    let last90 = 0,
+      thisMonth = 0,
+      thisWeek = 0;
     const cur = new Date(today);
     // last 90
     for (let i = 0; i < 90; i++) {
@@ -897,163 +1100,279 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
 
   return (
     <div ref={embedRef} className="relative">
-
-        {/* Opening — full 1 layar kayak EKOSISTEM tapi ga 100dvh penuh biar ga ketinggian */}
-        <section data-dash-opening className="relative flex min-h-[76dvh] flex-col items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[8vh] text-center">
-          <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.7]" style={{ y: openingGridY, backgroundImage: "linear-gradient(to right, rgba(224,122,95,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.03) 1px, transparent 1px)", backgroundSize: "32px 32px" } as unknown as Record<string, unknown>} />
-          {/* entrance (opacity) di luar, parallax (y) di dalam — biar transform tidak berebut */}
+      {/* Opening — full 1 layar kayak EKOSISTEM tapi ga 100dvh penuh biar ga ketinggian */}
+      <section
+        data-dash-opening
+        className="relative flex min-h-[76dvh] flex-col items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[8vh] text-center"
+      >
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.7]"
+          style={
+            {
+              y: openingGridY,
+              backgroundImage:
+                "linear-gradient(to right, rgba(224,122,95,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(224,122,95,0.03) 1px, transparent 1px)",
+              backgroundSize: "32px 32px",
+            } as unknown as Record<string, unknown>
+          }
+        />
+        {/* entrance (opacity) di luar, parallax (y) di dalam — biar transform tidak berebut */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="relative"
+        >
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
-            transition={{ duration: 0.5, ease: EASE }}
-            className="relative"
+            style={{ y: dashHeadY } as unknown as Record<string, unknown>}
+            className="will-change-transform"
           >
-            <motion.div style={{ y: dashHeadY } as unknown as Record<string, unknown>} className="will-change-transform">
-              <motion.div style={{ opacity: titleOpacity } as unknown as Record<string, unknown>}>
-                <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
-                  <ChipPixel size={14} className="text-terracotta/60" />
-                  {t.eyebrow}
-                </p>
-                <SplitReveal
-                  key={t.title}
-                  as="h2"
-                  text={t.title}
-                  className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
-                />
-              </motion.div>
-              <motion.div style={{ opacity: subtitleOpacity } as unknown as Record<string, unknown>}>
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
-                  transition={{ duration: 0.6, ease: EASE, delay: 1.1 }}
-                  className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base"
-                >
-                  {t.desc}
-                </motion.p>
-              </motion.div>
+            <motion.div style={{ opacity: titleOpacity } as unknown as Record<string, unknown>}>
+              <p className="flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
+                <ChipPixel size={14} className="text-terracotta/60" />
+                {t.eyebrow}
+              </p>
+              <SplitReveal
+                key={t.title}
+                as="h2"
+                text={t.title}
+                className="mx-auto mt-4 max-w-4xl font-display text-[clamp(2.2rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
+              />
+            </motion.div>
+            <motion.div style={{ opacity: subtitleOpacity } as unknown as Record<string, unknown>}>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ amount: 0.35, margin: "0px 0px -10% 0px" }}
+                transition={{ duration: 0.6, ease: EASE, delay: 1.1 }}
+                className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted sm:text-base"
+              >
+                {t.desc}
+              </motion.p>
             </motion.div>
           </motion.div>
-        </section>
+        </motion.div>
+      </section>
 
-        <div className="mt-8 grid gap-4 grid-cols-3">
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.04 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.totalBelajar}</p>
-            <p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">
-              {heatTotals.all.toLocaleString(isEn ? "en-US" : "id-ID")}
-              <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
-            </p>
-            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
-              <Clock size={12} className="text-terracotta" /> {t.totalHint}
+      <div className="mt-8 grid gap-3 grid-cols-2 sm:gap-4 sm:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.04 }}
+          className="warm-card flex min-h-[112px] flex-col justify-between p-4 sm:min-h-[118px] sm:p-5"
+        >
+          <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-terracotta sm:text-[10px] sm:tracking-[0.18em]">
+            {t.totalBelajar}
+          </p>
+          <p className="mt-2 font-display text-3xl font-extrabold leading-none text-ink">
+            {heatTotals.all.toLocaleString(isEn ? "en-US" : "id-ID")}
+            <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted">
+              {" "}
+              {t.jam}
             </span>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.card3Month}</p>
-            <p className="mt-2 font-display text-2xl font-extrabold leading-none text-ink">
-              {heatTotals.last90.toLocaleString(isEn ? "en-US" : "id-ID")}
-              <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
-            </p>
-            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
-              <CalendarRange size={12} className="text-terracotta" /> 90 {isEn ? "days" : "hari"}
+          </p>
+          <span className="mt-2 inline-flex flex-wrap items-center gap-1 font-mono text-[9px] uppercase leading-tight tracking-[0.08em] text-muted sm:text-[10px] sm:tracking-widest">
+            <Clock size={12} className="text-terracotta" /> {t.totalHint}
+          </span>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.08 }}
+          className="warm-card flex min-h-[112px] flex-col justify-between p-4 sm:min-h-[118px] sm:p-5"
+        >
+          <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-terracotta sm:text-[10px] sm:tracking-[0.18em]">
+            {t.card3Month}
+          </p>
+          <p className="mt-2 font-display text-2xl font-extrabold leading-none text-ink">
+            {heatTotals.last90.toLocaleString(isEn ? "en-US" : "id-ID")}
+            <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted">
+              {" "}
+              {t.jam}
             </span>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.cardThisMonth}</p>
-            <p className="mt-2 font-display text-2xl font-extrabold leading-none text-ink">
-              {heatTotals.thisMonth.toLocaleString(isEn ? "en-US" : "id-ID")}
-              <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted"> {t.jam}</span>
-            </p>
-            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
-              <CalendarDays size={12} className="text-terracotta" /> {new Date().toLocaleDateString(isEn ? "en-US" : "id-ID", { month: "long" })}
+          </p>
+          <span className="mt-2 inline-flex flex-wrap items-center gap-1 font-mono text-[9px] uppercase leading-tight tracking-[0.08em] text-muted sm:text-[10px] sm:tracking-widest">
+            <CalendarRange size={12} className="text-terracotta" /> 90 {isEn ? "days" : "hari"}
+          </span>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
+          className="warm-card flex min-h-[112px] flex-col justify-between p-4 sm:min-h-[118px] sm:p-5"
+        >
+          <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-terracotta sm:text-[10px] sm:tracking-[0.18em]">
+            {t.cardThisMonth}
+          </p>
+          <p className="mt-2 font-display text-2xl font-extrabold leading-none text-ink">
+            {heatTotals.thisMonth.toLocaleString(isEn ? "en-US" : "id-ID")}
+            <span className="ml-1 font-mono text-sm font-bold tracking-widest text-muted">
+              {" "}
+              {t.jam}
             </span>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.12 }} className={`warm-card flex min-h-[118px] flex-col justify-between p-5 ${todayCount === 0 ? "opacity-90" : ""}`}>
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.ngodingHariIni}</p>
-            <p className={`mt-2 font-display text-2xl font-extrabold ${todayCount === 0 ? "text-muted" : "text-ink"}`}>
-              {todayCount}
-              <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
-            </p>
-            <span className={`mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest ${todayCount === 0 ? "text-muted" : "text-terracotta"}`}>
-              <Activity size={12} className={todayCount === 0 ? "text-muted" : "text-terracotta"} /> {todayCount === 0 ? t.todayEmpty : t.todayActive}
-            </span>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.14 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.cardThisWeek}</p>
-            <p className="mt-2 font-display text-2xl font-extrabold text-ink">
-              {heatTotals.thisWeek}
-              <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
-            </p>
-            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
-              <Activity size={12} className="text-terracotta" /> {isEn ? "Mon–Sun" : "Sen–Min"}
-            </span>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.16 }} className="warm-card flex min-h-[118px] flex-col justify-between p-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">{t.streak}</p>
-            <p className="mt-2 font-display text-2xl font-extrabold text-ink">
-              {streakReal}
-              <span className="ml-1 font-mono text-xs text-muted"> {t.hari}</span>
-            </p>
-            <span className="mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted">
-              <Flame size={12} className="text-terracotta" /> {t.beruntun}
-            </span>
-          </motion.div>
-        </div>
+          </p>
+          <span className="mt-2 inline-flex flex-wrap items-center gap-1 font-mono text-[9px] uppercase leading-tight tracking-[0.08em] text-muted sm:text-[10px] sm:tracking-widest">
+            <CalendarDays size={12} className="text-terracotta" />{" "}
+            {new Date().toLocaleDateString(isEn ? "en-US" : "id-ID", { month: "long" })}
+          </span>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.12 }}
+          className={`warm-card flex min-h-[112px] flex-col justify-between p-4 sm:min-h-[118px] sm:p-5 ${todayCount === 0 ? "opacity-90" : ""}`}
+        >
+          <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-terracotta sm:text-[10px] sm:tracking-[0.18em]">
+            {t.ngodingHariIni}
+          </p>
+          <p
+            className={`mt-2 font-display text-2xl font-extrabold ${todayCount === 0 ? "text-muted" : "text-ink"}`}
+          >
+            {todayCount}
+            <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
+          </p>
+          <span
+            className={`mt-2 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest ${todayCount === 0 ? "text-muted" : "text-terracotta"}`}
+          >
+            <Activity size={12} className={todayCount === 0 ? "text-muted" : "text-terracotta"} />{" "}
+            {todayCount === 0 ? t.todayEmpty : t.todayActive}
+          </span>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.14 }}
+          className="warm-card flex min-h-[112px] flex-col justify-between p-4 sm:min-h-[118px] sm:p-5"
+        >
+          <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-terracotta sm:text-[10px] sm:tracking-[0.18em]">
+            {t.cardThisWeek}
+          </p>
+          <p className="mt-2 font-display text-2xl font-extrabold text-ink">
+            {heatTotals.thisWeek}
+            <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
+          </p>
+          <span className="mt-2 inline-flex flex-wrap items-center gap-1 font-mono text-[9px] uppercase leading-tight tracking-[0.08em] text-muted sm:text-[10px] sm:tracking-widest">
+            <Activity size={12} className="text-terracotta" /> {isEn ? "Mon–Sun" : "Sen–Min"}
+          </span>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.3, margin: "0px 0px -10% 0px" }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.16 }}
+          className="warm-card flex min-h-[112px] flex-col justify-between p-4 sm:min-h-[118px] sm:p-5"
+        >
+          <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-terracotta sm:text-[10px] sm:tracking-[0.18em]">
+            {t.streak}
+          </p>
+          <p className="mt-2 font-display text-2xl font-extrabold text-ink">
+            {streakReal}
+            <span className="ml-1 font-mono text-xs text-muted"> {t.hari}</span>
+          </p>
+          <span className="mt-2 inline-flex flex-wrap items-center gap-1 font-mono text-[9px] uppercase leading-tight tracking-[0.08em] text-muted sm:text-[10px] sm:tracking-widest">
+            <Flame size={12} className="text-terracotta" /> {t.beruntun}
+          </span>
+        </motion.div>
+      </div>
 
-        {/* split — bahasa 70 / aktivitas 30 — tinggi samakan, bahasa yang stretch */}
-        <div className="mt-6 grid gap-6 lg:grid-cols-[7fr_3fr] lg:items-stretch">
-          <motion.section ref={bahasaRef as unknown as React.RefObject<HTMLElement>} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.08 }} className="warm-card flex flex-col p-6">
-            <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.bahasaTitle}</h2>
-            <div className="mt-5 space-y-5">
-              {langs && langs.length ? (
-                langs.map((l, i) => (
-                  <div key={l.lang}>
-                    <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest">
-                      {(() => { const ic = langIconSrc(l.lang); return (
-                      <span className="inline-flex items-center gap-2 font-semibold text-ink">
-                        {ic ? <img src={ic} alt="" aria-hidden width={16} height={16} className="h-4 w-4 object-contain" loading="lazy" /> : null}
-                        {l.lang}
-                      </span>
-                      );})()}
-                      <span className="text-muted">{l.pct}{t.percent}</span>
-                    </div>
-                    <div className="mt-2 h-2 overflow-hidden rounded-full border border-border/20 bg-cream-deep">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={langInView ? { width: `${l.pct}%` } : { width: 0 }}
-                        transition={{ duration: 0.9, ease: EASE, delay: langInView ? 0.08 + i * 0.07 : 0 }}
-                        className="h-full rounded-full bg-gradient-to-r from-[#B85E2E] to-[#E07A5F]"
-                      />
-                    </div>
+      {/* split — bahasa 70 / aktivitas 30 — tinggi samakan, bahasa yang stretch */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-[7fr_3fr] lg:items-stretch">
+        <motion.section
+          ref={bahasaRef as unknown as React.RefObject<HTMLElement>}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.08 }}
+          className="warm-card flex flex-col p-6"
+        >
+          <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">
+            {t.bahasaTitle}
+          </h2>
+          <div className="mt-5 space-y-5">
+            {langs && langs.length ? (
+              langs.map((l, i) => (
+                <div key={l.lang}>
+                  <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-widest">
+                    {(() => {
+                      const ic = langIconSrc(l.lang);
+                      return (
+                        <span className="inline-flex items-center gap-2 font-semibold text-ink">
+                          {ic ? (
+                            <img
+                              src={ic}
+                              alt=""
+                              aria-hidden
+                              width={16}
+                              height={16}
+                              className="h-4 w-4 object-contain"
+                              loading="lazy"
+                            />
+                          ) : null}
+                          {l.lang}
+                        </span>
+                      );
+                    })()}
+                    <span className="text-muted">
+                      {l.pct}
+                      {t.percent}
+                    </span>
                   </div>
-                ))
-              ) : (
-                <p className="font-mono text-xs text-muted">{t.noLang}</p>
-              )}
-            </div>
-          </motion.section>
-
-          <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }} transition={{ duration: 0.6, ease: EASE, delay: 0.1 }} className="warm-card flex flex-col p-6">
-            <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">{t.commitTitle}</h2>
-            {heatmap ? (
-              <ContributionHeatmap
-                weeks={heatmap.weeks}
-                total={heatmap.total}
-                isEn={isEn}
-                t={t}
-                yearLabel={String(heatmapYear)}
-                onYearChange={setHeatmapYear as (y: number | "last") => void}
-                availableYears={[2026, 2025]}
-              />
+                  <div className="mt-2 h-2 overflow-hidden rounded-full border border-border/20 bg-cream-deep">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={langInView ? { width: `${l.pct}%` } : { width: 0 }}
+                      transition={{
+                        duration: 0.9,
+                        ease: EASE,
+                        delay: langInView ? 0.08 + i * 0.07 : 0,
+                      }}
+                      className="h-full rounded-full bg-gradient-to-r from-[#B85E2E] to-[#E07A5F]"
+                    />
+                  </div>
+                </div>
+              ))
             ) : (
-              <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
+              <p className="font-mono text-xs text-muted">{t.noLang}</p>
             )}
-          </motion.section>
-        </div>
+          </div>
+        </motion.section>
 
-        <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-widest text-muted">
-          {t.footer}
-        </p>
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.2, margin: "0px 0px -10% 0px" }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
+          className="warm-card flex flex-col p-6"
+        >
+          <h2 className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink">
+            {t.commitTitle}
+          </h2>
+          {heatmap ? (
+            <ContributionHeatmap
+              weeks={heatmap.weeks}
+              total={heatmap.total}
+              isEn={isEn}
+              t={t}
+              yearLabel={String(heatmapYear)}
+              onYearChange={setHeatmapYear as (y: number | "last") => void}
+              availableYears={[2026, 2025]}
+            />
+          ) : (
+            <p className="mt-5 font-mono text-xs text-muted">{t.loadingActivity}</p>
+          )}
+        </motion.section>
+      </div>
+
+      <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-widest text-muted">
+        {t.footer}
+      </p>
     </div>
   );
 }

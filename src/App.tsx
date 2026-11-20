@@ -37,7 +37,7 @@ import {
   Compass,
   X,
 } from "lucide-react";
-/* brand full-color icons — simple-icons + local asseticon via react-icons/si (Draw.io kept via si) */
+/* brand full-color icons Ã¢â‚¬â€ simple-icons + local asseticon via react-icons/si (Draw.io kept via si) */
 import {
   SiArduino,
   SiDiagramsdotnet,
@@ -232,7 +232,7 @@ function scrollToId(id: string) {
   }
 }
 
-/* ---------- Smooth scroll (Lenis) — desktop smooth, HP native 120Hz ---------- */
+/* ---------- Smooth scroll (Lenis) Ã¢â‚¬â€ desktop smooth, HP native 120Hz ---------- */
 function useLenis(enabled = true) {
   useEffect(() => {
     if (!enabled) {
@@ -252,7 +252,7 @@ function useLenis(enabled = true) {
       window.matchMedia("(pointer: coarse)").matches ||
       window.matchMedia("(max-width: 768px)").matches;
     if (isCoarse) {
-      // HP: jangan hijack — fling 120hz di compositor, tanpa rAF tambahan
+      // HP: jangan hijack Ã¢â‚¬â€ fling 120hz di compositor, tanpa rAF tambahan
       const lenis = new Lenis({
         duration: 0.9,
         smoothWheel: false,
@@ -449,7 +449,7 @@ function SplitReveal({
   );
 }
 
-/* Karakter slogan — ngetik satu-satu, hilang reverse saat scroll dari Hero */
+/* Karakter slogan Ã¢â‚¬â€ ngetik satu-satu, hilang reverse saat scroll dari Hero */
 function SloganChar({
   char,
   index,
@@ -525,7 +525,7 @@ function Tag({
   );
 }
 
-/* ---------- Kinetic band — tanpa BG solid 3× selang-seling (adaptive: scroll-linked desktop, CSS marquee low-end) ---------- */
+/* ---------- Kinetic band Ã¢â‚¬â€ tanpa BG solid 3Ãƒâ€” selang-seling (adaptive: scroll-linked desktop, CSS marquee low-end) ---------- */
 function KineticBand({
   text,
   accent,
@@ -540,7 +540,7 @@ function KineticBand({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const rawX = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
   const x = useSpring(rawX, { stiffness: 120, damping: 30, mass: 0.35 });
-  // low-end: no 5× scroll listeners — pure CSS marquee (same look selang-seling via reverse direction)
+  // low-end: no 5Ãƒâ€” scroll listeners Ã¢â‚¬â€ pure CSS marquee (same look selang-seling via reverse direction)
   if (low) {
     return (
       <div className="overflow-hidden bg-transparent py-4 md:py-6" aria-hidden>
@@ -585,18 +585,18 @@ function KineticBand({
 
 /* ---------- Arcade "CONTINUE?" countdown ---------- */
 
-/* ---------- Intro — Hybrid brutalist terminal typing (B) ---------- */
+/* ---------- Intro Ã¢â‚¬â€ Hybrid brutalist terminal typing (B) ---------- */
 function Intro({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
   const finish = () => {
-    // mount KPage di bawah Intro SEBELUM clip wipe — jangan buka overflow, biar stack tidak bocor saat Intro wipe
+    // mount KPage di bawah Intro SEBELUM clip wipe Ã¢â‚¬â€ jangan buka overflow, biar stack tidak bocor saat Intro wipe
     onDone();
     setLeaving(true);
   };
 
   const LINES: { prompt: string; text: string }[] = [
     { prompt: "$", text: "whoami" },
-    { prompt: ">", text: "supyan sauri — system architect" },
+    { prompt: ">", text: "supyan sauri Ã¢â‚¬â€ system architect" },
     { prompt: "$", text: "boot kyronix.my.id" },
   ];
   const [lineIdx, setLineIdx] = useState(0);
@@ -637,7 +637,7 @@ function Intro({ onDone }: { onDone: () => void }) {
     return () => clearTimeout(t);
   }, [lineIdx, charIdx, done]);
 
-  // ESC / click to skip — mount KPage dulu (onDone) biar stack tidak bocor saat Intro wipe
+  // ESC / click to skip Ã¢â‚¬â€ mount KPage dulu (onDone) biar stack tidak bocor saat Intro wipe
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -669,7 +669,7 @@ function Intro({ onDone }: { onDone: () => void }) {
             }}
           />
           <p className="absolute left-6 top-6 font-mono text-xs uppercase tracking-[0.3em] text-muted">
-            FRAME 001 / BOOTING — SUPYAN SAURI
+            FRAME 001 / BOOTING Ã¢â‚¬â€ SUPYAN SAURI
           </p>
           <div className="relative w-[min(560px,92vw)] border border-border bg-surface p-5 shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:p-7">
             <div className="absolute -right-2 -top-2 bg-terracotta px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
@@ -709,7 +709,7 @@ function Intro({ onDone }: { onDone: () => void }) {
                 className={`h-2 w-2 rounded-full ${done ? "bg-terracotta live-dot" : "bg-[#fbbf24] animate-pulse"}`}
               />
               {done ? (
-                <span className="text-terracotta">ready — click or ESC to skip</span>
+                <span className="text-terracotta">ready Ã¢â‚¬â€ click or ESC to skip</span>
               ) : (
                 <span>typing...</span>
               )}
@@ -724,7 +724,7 @@ function Intro({ onDone }: { onDone: () => void }) {
   );
 }
 
-/* ---------- K — dedicated page after boot (K-PAGE2 3D copper, bg hitam) ---------- */
+/* ---------- K Ã¢â‚¬â€ dedicated page after boot (K-PAGE2 3D copper, bg hitam) ---------- */
 function KPage({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
   const [pct, setPct] = useState(0);
@@ -858,7 +858,7 @@ function KPage({ onDone }: { onDone: () => void }) {
             my.set(0);
           }}
         >
-          {/* frame 0 hitam solid — fade in, bukan pop */}
+          {/* frame 0 hitam solid Ã¢â‚¬â€ fade in, bukan pop */}
           <div aria-hidden className="absolute inset-0 bg-black" />
           <motion.div
             aria-hidden
@@ -1003,7 +1003,7 @@ function LangSwitch() {
           key={l}
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
-          className={`rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-[0.14em] transition-all ${lang === l ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}
+          className={`rounded-lg px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] transition-all sm:px-3.5 sm:py-1.5 sm:text-xs sm:tracking-[0.14em] ${lang === l ? "bg-terracotta font-sans text-white shadow-sm" : "bg-white/[0.08] font-mono text-ink hover:bg-white/15"}`}
         >
           {l === "id" ? "ID" : "EN"}
         </button>
@@ -1015,6 +1015,8 @@ function LangSwitch() {
 function Nav({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const [activeId, setActiveId] = useState("top");
+  // chip ID/EN: di mobile sembunyi saat scroll turun supaya tidak menimpa kartu
+  const [langHidden, setLangHidden] = useState(false);
   useEffect(() => {
     const ids = ["top", ...links.map((l) => l.id)];
     const pick = () => {
@@ -1058,9 +1060,17 @@ function Nav({ ready }: { ready: boolean }) {
       setActiveId(b);
     };
     let raf = 0;
+    let lastY = window.scrollY;
     const onScroll = () => {
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(pick);
+      raf = requestAnimationFrame(() => {
+        pick();
+        const y = window.scrollY;
+        // chip ID/EN kembali muncul saat di atas atau saat scroll naik
+        if (y < 96 || y < lastY - 6) setLangHidden(false);
+        else if (y > lastY + 6) setLangHidden(true);
+        lastY = y;
+      });
     };
     pick();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -1084,7 +1094,7 @@ function Nav({ ready }: { ready: boolean }) {
       >
         Skip to content
       </a>
-      {/* desktop: vertical right-6 center — pixel square dots */}
+      {/* desktop: vertical right-6 center Ã¢â‚¬â€ pixel square dots */}
       <nav
         aria-label="Section navigation"
         className="fixed right-6 top-1/2 z-[90] hidden -translate-y-1/2 flex-col items-center gap-3.5 opacity-[0.78] transition-opacity duration-300 hover:opacity-100 md:flex"
@@ -1115,10 +1125,10 @@ function Nav({ ready }: { ready: boolean }) {
         })}
       </nav>
 
-      {/* mobile: horizontal bottom center — pixel square dots */}
+      {/* mobile: horizontal bottom center Ã¢â‚¬â€ pixel square dots */}
       <nav
         aria-label="Section navigation"
-        className="fixed bottom-5 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-2 opacity-[0.72] transition-opacity hover:opacity-100 active:opacity-100 md:hidden"
+        className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-[90] flex max-w-[calc(100vw-1rem)] -translate-x-1/2 items-center gap-1.5 opacity-[0.72] transition-opacity hover:opacity-100 active:opacity-100 md:hidden"
       >
         <div className="pointer-events-none absolute inset-x-3 top-1/2 h-[2px] -translate-y-1/2 bg-border/60" />
         {dots.map((d, i) => {
@@ -1129,10 +1139,10 @@ function Nav({ ready }: { ready: boolean }) {
               onClick={() => scrollToId(d.id)}
               aria-label={d.label}
               aria-current={isActive ? "true" : undefined}
-              className="relative flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
             >
               <span
-                className={`relative block border bg-cream transition-colors ${
+                className={`relative block border bg-border/80 transition-colors ${
                   isActive
                     ? `h-3.5 w-3.5 rounded-full border-terracotta bg-terracotta active:bg-terracotta active:border-terracotta`
                     : `h-3 w-3 rounded-full border-border/40 active:border-terracotta active:bg-terracotta`
@@ -1143,8 +1153,12 @@ function Nav({ ready }: { ready: boolean }) {
         })}
       </nav>
 
-      {/* lang switch — always visible, napas dari pinggir */}
-      <div className="fixed right-4 top-3 z-[90] flex md:right-6 md:top-4">
+      {/* lang switch - always visible, napas dari pinggir */}
+      <div
+        className={`fixed right-3 top-3 z-[90] flex transition-all duration-300 md:right-6 md:top-4 ${
+          langHidden ? "max-md:pointer-events-none max-md:-translate-y-16 max-md:opacity-0" : ""
+        }`}
+      >
         <LangSwitch />
       </div>
     </>
@@ -1315,7 +1329,7 @@ function Hero3D({
   );
 }
 
-/* ---------- Holographic Core — Procedural A refined (gap clean, pure circle) ---------- */
+/* ---------- Holographic Core Ã¢â‚¬â€ Procedural A refined (gap clean, pure circle) ---------- */
 function HoloCore({
   ready,
   mx,
@@ -1349,7 +1363,7 @@ function HoloCore({
       >
         {/* soft ground shadow */}
         <div className="absolute left-1/2 top-[72%] h-[48px] w-[90px] -translate-x-1/2 rounded-[50%] bg-black/35 blur-[10px]" />
-        {/* ring 1 — outer 1.5px */}
+        {/* ring 1 Ã¢â‚¬â€ outer 1.5px */}
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
@@ -1372,7 +1386,7 @@ function HoloCore({
             } as React.CSSProperties
           }
         />
-        {/* ring 2 — dashed thinner */}
+        {/* ring 2 Ã¢â‚¬â€ dashed thinner */}
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
@@ -1383,7 +1397,7 @@ function HoloCore({
             } as React.CSSProperties
           }
         />
-        {/* core — pure circle 62px, no square border */}
+        {/* core Ã¢â‚¬â€ pure circle 62px, no square border */}
         <div
           className="absolute left-1/2 top-1/2 h-[58px] w-[58px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-[radial-gradient(circle_at_35%_30%,#E07A5F_0%,#E7E5E4_42%,#2a0a14_72%,#0a1628_100%)] shadow-[0_0_14px_rgba(232,17,45,0.35),0_0_22px_rgba(124,58,237,0.22)] lg:h-[62px] lg:w-[62px]"
           style={{ transform: "translate(-50%,-50%) translateZ(14px)" } as React.CSSProperties}
@@ -1417,7 +1431,7 @@ function HoloCore({
   );
 }
 
-/* ---------- i18n — ID / EN ---------- */
+/* ---------- i18n Ã¢â‚¬â€ ID / EN ---------- */
 const dict = {
   id: {
     nav: {
@@ -1439,7 +1453,7 @@ const dict = {
       eyebrow: "DI BALIK KYRONIX",
       title: "HALO, SAYA SUPYAN SAURI",
       name: "Supyan Sauri",
-      role: "System Architect – Data & Web Systems",
+      role: "System Architect Ã¢â‚¬â€œ Data & Web Systems",
       bio: "Memiliki ketertarikan tinggi terhadap proses pembelajaran mendalam serta eksplorasi teknologi baru. Melalui pemodelan sistem yang terstruktur dan pengembangan web secara berkelanjutan, cara saya menterjemahkan berbagai gagasan kompleks menjadi solusi yang fungsional dan andal",
       ctaPrimary: "MASUK LAB",
       ctaSecondary: "HUBUNGI SAYA",
@@ -1460,8 +1474,8 @@ const dict = {
         "Rekam jejak langkah dan proses yang saya jalani sejauh ini untuk terus berkembang secara berkelanjutan.",
       viewCert: "Lihat Sertifikat",
       download: "Unduh",
-      showDetail: "Lihat Detail ↓",
-      hideDetail: "Tutup ↑",
+      showDetail: "Lihat Detail Ã¢â€ â€œ",
+      hideDetail: "Tutup Ã¢â€ â€˜",
     },
     labEyebrow: "Cara Kerja",
     labTitle: "CARA SAYA BEKERJA.",
@@ -1494,7 +1508,7 @@ const dict = {
       phone: "No HP (opsional)",
       message: "Pesan",
       send: "Kirim Pesan",
-      sending: "Mengirim…",
+      sending: "MengirimÃ¢â‚¬Â¦",
       success: "Terkirim! Saya akan balas via email.",
       error: "Gagal kirim. Coba lagi atau email langsung.",
       namePh: "",
@@ -1503,7 +1517,7 @@ const dict = {
       phonePh: "",
       messagePh: "",
     },
-    backToTop: "Kembali ke atas ↑",
+    backToTop: "Kembali ke atas Ã¢â€ â€˜",
     downloadCv: "Unduh CV",
     bands: {
       behindKyronix: "DI BALIK KYRONIX",
@@ -1531,12 +1545,12 @@ const dict = {
       title: "Belum Tersedia",
       body: "Belum di-deploy. Tautan demo akan aktif setelah rilis.",
       inProgressBody:
-        "Masih dalam pengerjaan — prototype & integrasi berjalan. Tautan demo akan aktif setelah pengembangan selesai.",
+        "Masih dalam pengerjaan Ã¢â‚¬â€ prototype & integrasi berjalan. Tautan demo akan aktif setelah pengembangan selesai.",
       conceptBody:
-        "Masih tahap konsep — belum ada demo. Hubungi saya untuk diskusi konsep & roadmap.",
+        "Masih tahap konsep Ã¢â‚¬â€ belum ada demo. Hubungi saya untuk diskusi konsep & roadmap.",
       articleTitle: "Artikel Riset Tersedia",
       articleBody:
-        "Ini adalah riset, bukan demo web. Dokumen lengkap tersedia sebagai PDF — baca langsung atau unduh untuk offline.",
+        "Ini adalah riset, bukan demo web. Dokumen lengkap tersedia sebagai PDF Ã¢â‚¬â€ baca langsung atau unduh untuk offline.",
       conceptLabel: "KONSEP",
       conceptInitialLabel: "KONSEP AWAL",
       cta: "Hubungi saya untuk preview",
@@ -1546,14 +1560,14 @@ const dict = {
       close: "Tutup",
     },
     viewer: {
-      certificate: "Sertifikat — KYRONIX",
-      article: "Artikel — KYRONIX",
+      certificate: "Sertifikat Ã¢â‚¬â€ KYRONIX",
+      article: "Artikel Ã¢â‚¬â€ KYRONIX",
       openInNewTab: "Buka di Tab Baru",
-      hintFailed: "Preview diblokir Chrome — pakai Buka di Tab Baru di header.",
+      hintFailed: "Preview diblokir Chrome Ã¢â‚¬â€ pakai Buka di Tab Baru di header.",
       hintMobile: "Mobile tidak preview? Pakai Buka di Tab Baru di header.",
-      loading: "Memuat PDF…",
-      blocked: "Preview diblokir — buka tab baru di bawah.",
-      openPdf: "Buka PDF ↗",
+      loading: "Memuat PDFÃ¢â‚¬Â¦",
+      blocked: "Preview diblokir Ã¢â‚¬â€ buka tab baru di bawah.",
+      openPdf: "Buka PDF Ã¢â€ â€”",
     },
   },
   en: {
@@ -1566,7 +1580,7 @@ const dict = {
       contact: "Contact",
     },
     hero: {
-      hi: "Hey — I'm Supyan Sauri",
+      hi: "Hey Ã¢â‚¬â€ I'm Supyan Sauri",
       ctaPrimary: "Contact Me",
       ctaSecondary: "Explore Builds",
       tagline: "FROM IDEA TO INFRA.",
@@ -1576,7 +1590,7 @@ const dict = {
       eyebrow: "BEHIND KYRONIX",
       title: "HI, I AM SUPYAN SAURI",
       name: "Supyan Sauri",
-      role: "System Architect – Data & Web Systems",
+      role: "System Architect Ã¢â‚¬â€œ Data & Web Systems",
       bio: "Highly interested in deep learning processes and exploration of new technologies. Through structured system modeling and continuous web development, the way I translate various complex ideas into functional and reliable solutions",
       ctaPrimary: "Enter Lab",
       ctaSecondary: "Contact Me",
@@ -1595,8 +1609,8 @@ const dict = {
       subtitle: "A record of steps and processes I've taken so far to keep growing sustainably.",
       viewCert: "View Certificate",
       download: "Download",
-      showDetail: "View Detail ↓",
-      hideDetail: "Hide ↑",
+      showDetail: "View Detail Ã¢â€ â€œ",
+      hideDetail: "Hide Ã¢â€ â€˜",
     },
     labEyebrow: "How I Work",
     labTitle: "HOW I WORK.",
@@ -1629,7 +1643,7 @@ const dict = {
       phone: "Phone (optional)",
       message: "Message",
       send: "Send Message",
-      sending: "Sending…",
+      sending: "SendingÃ¢â‚¬Â¦",
       success: "Sent! I'll reply via email.",
       error: "Failed to send. Try again or email directly.",
       namePh: "",
@@ -1638,7 +1652,7 @@ const dict = {
       phonePh: "",
       messagePh: "",
     },
-    backToTop: "Back to top ↑",
+    backToTop: "Back to top Ã¢â€ â€˜",
     downloadCv: "Download CV",
     bands: {
       behindKyronix: "BEHIND KYRONIX",
@@ -1666,12 +1680,12 @@ const dict = {
       title: "Project Not Yet Available",
       body: "This project isn't deployed yet. The live link will be available after release.",
       inProgressBody:
-        "Still in progress — prototype & integration ongoing. The live link will be available after development is complete.",
+        "Still in progress Ã¢â‚¬â€ prototype & integration ongoing. The live link will be available after development is complete.",
       conceptBody:
-        "Still at concept stage — no demo yet. Contact me to discuss the concept & roadmap.",
+        "Still at concept stage Ã¢â‚¬â€ no demo yet. Contact me to discuss the concept & roadmap.",
       articleTitle: "Research Article Available",
       articleBody:
-        "This is a research project, not a web demo. The full paper is available as PDF — read inline or download for offline.",
+        "This is a research project, not a web demo. The full paper is available as PDF Ã¢â‚¬â€ read inline or download for offline.",
       conceptLabel: "CONCEPT",
       conceptInitialLabel: "INITIAL CONCEPT",
       cta: "Contact me for a preview",
@@ -1681,19 +1695,19 @@ const dict = {
       close: "Close",
     },
     viewer: {
-      certificate: "Certificate — KYRONIX",
-      article: "Article — KYRONIX",
+      certificate: "Certificate Ã¢â‚¬â€ KYRONIX",
+      article: "Article Ã¢â‚¬â€ KYRONIX",
       openInNewTab: "Open in New Tab",
-      hintFailed: "Preview blocked by Chrome — use Open in New Tab in the header.",
+      hintFailed: "Preview blocked by Chrome Ã¢â‚¬â€ use Open in New Tab in the header.",
       hintMobile: "No preview on mobile? Use Open in New Tab in the header.",
-      loading: "Loading PDF…",
-      blocked: "Preview blocked — open in a new tab below.",
-      openPdf: "Open PDF ↗",
+      loading: "Loading PDFÃ¢â‚¬Â¦",
+      blocked: "Preview blocked Ã¢â‚¬â€ open in a new tab below.",
+      openPdf: "Open PDF Ã¢â€ â€”",
     },
   },
 } as const;
 
-/* ---------- 1. Hero — Warm Dark Center + epic KYRONIX 3D block tembaga persis K ---------- */
+/* ---------- 1. Hero Ã¢â‚¬â€ Warm Dark Center + epic KYRONIX 3D block tembaga persis K ---------- */
 function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const t2 = dict[lang];
@@ -1717,13 +1731,13 @@ function Hero({ ready }: { ready: boolean }) {
     fonts?.ready.then(update).catch(() => {});
     return () => window.removeEventListener("resize", update);
   }, [FULL]);
-  // tilt 3D persis KPage — HP = laptop (onTouch + onMouse)
+  // tilt 3D persis KPage Ã¢â‚¬â€ HP = laptop (onTouch + onMouse)
   const heroMx = useMotionValue(0);
   const heroMy = useMotionValue(0);
   const heroRx = useTransform(heroMy, [-1, 1], [5, -5]);
   const heroRy = useTransform(heroMx, [-1, 1], [-6, 6]);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  // spring halus — desktop saja; mobile/low native scroll tanpa spring biar 120hz mulus
+  // spring halus Ã¢â‚¬â€ desktop saja; mobile/low native scroll tanpa spring biar 120hz mulus
   const smooth = useSpring(scrollYProgress, {
     stiffness: 220,
     damping: 32,
@@ -1777,7 +1791,7 @@ function Hero({ ready }: { ready: boolean }) {
         heroMy.set(0);
       }}
     >
-      {/* Hero: Blueprint Grid 32px — keep, K circuit ganti watermark diagonal */}
+      {/* Hero: Blueprint Grid 32px Ã¢â‚¬â€ keep, K circuit ganti watermark diagonal */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[1]"
@@ -1790,7 +1804,7 @@ function Hero({ ready }: { ready: boolean }) {
           } as unknown as Record<string, unknown>
         }
       />
-      {/* Watermark KYRONIX horizontal — masuk saat Hero muncul, keluar ke samping saat scroll */}
+      {/* Watermark KYRONIX horizontal Ã¢â‚¬â€ masuk saat Hero muncul, keluar ke samping saat scroll */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden select-none">
         <div className="absolute right-0 top-[3%] translate-x-[30%] max-sm:top-[1%]">
           <motion.div
@@ -1827,7 +1841,7 @@ function Hero({ ready }: { ready: boolean }) {
           </motion.div>
         </div>
       </div>
-      {/* corner brackets blueprint — keep */}
+      {/* corner brackets blueprint Ã¢â‚¬â€ keep */}
       <div
         aria-hidden
         className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]"
@@ -1874,7 +1888,7 @@ function Hero({ ready }: { ready: boolean }) {
         }
         transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
       >
-        {/* KYRONIX — outline digambar seperti sketcher (SVG stroke draw) */}
+        {/* KYRONIX Ã¢â‚¬â€ outline digambar seperti sketcher (SVG stroke draw) */}
         <motion.div
           aria-label={FULL}
           role="img"
@@ -1925,7 +1939,7 @@ function Hero({ ready }: { ready: boolean }) {
                       key={ch + i}
                       style={{ opacity: kyOut[i] } as unknown as Record<string, unknown>}
                     >
-                      {/* potongan outline muncul acak — digambar per segmen */}
+                      {/* potongan outline muncul acak Ã¢â‚¬â€ digambar per segmen */}
                       {order.map((segIdx, slot) => {
                         const delay = t0 + slot * slotStep;
                         const start = -segIdx * SEG;
@@ -1966,7 +1980,7 @@ function Hero({ ready }: { ready: boolean }) {
                           </motion.text>
                         );
                       })}
-                      {/* outline final — menegaskan bentuk setelah semua segmen */}
+                      {/* outline final Ã¢â‚¬â€ menegaskan bentuk setelah semua segmen */}
                       <motion.text
                         x={x}
                         y={baseY}
@@ -2001,7 +2015,7 @@ function Hero({ ready }: { ready: boolean }) {
             </svg>
           ) : null}
         </motion.div>
-        {/* bawah KYRONIX — single kolom kiri (tanpa split) */}
+        {/* bawah KYRONIX Ã¢â‚¬â€ single kolom kiri (tanpa split) */}
         <div className="flex w-full max-w-[640px] flex-col gap-5 lg:mx-0 lg:items-start lg:text-left">
           <motion.p
             className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none lg:text-left"
@@ -2051,7 +2065,7 @@ function Hero({ ready }: { ready: boolean }) {
   );
 }
 
-/* ---------- 1.5 Profile — Kyronix Lab (cyber-sleek lab, dark + neon oranye, no colon, no project) ---------- */
+/* ---------- 1.5 Profile Ã¢â‚¬â€ Kyronix Lab (cyber-sleek lab, dark + neon oranye, no colon, no project) ---------- */
 function Profile() {
   const { lang } = useLang();
   const t = dict[lang].profile as (typeof dict)["id"]["profile"] & { ctaDashboard?: string };
@@ -2115,7 +2129,7 @@ function Profile() {
         className="pointer-events-none absolute -right-[10%] top-[18%] h-[520px] w-[520px] bg-terracotta/10 blur-[80px] will-change-transform max-sm:hidden"
         style={{ y: titleY } as unknown as Record<string, unknown>}
       />
-      {/* LAB watermark dipindah ke seam Profil ↔ Aktivitas (Activity) */}
+      {/* LAB watermark dipindah ke seam Profil Ã¢â€ â€ Aktivitas (Activity) */}
       {/* lab scan line neon */}
       <motion.div
         aria-hidden
@@ -2182,7 +2196,7 @@ function Profile() {
             style={{ y: titleY } as unknown as Record<string, unknown>}
             className="flex flex-col gap-3 will-change-transform md:col-span-5 md:pl-2"
           >
-            {/* System-spec layout — Origin / Fokus stack / Pendekatan+Eksplorasi */}
+            {/* System-spec layout Ã¢â‚¬â€ Origin / Fokus stack / Pendekatan+Eksplorasi */}
             {/* Origin */}
             <motion.div
               initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
@@ -2204,7 +2218,7 @@ function Profile() {
                     {(isId ? rows[0].v : rows[0].vEn).toUpperCase()}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
-                    <span>COORDS -7.32° S, 108.22° E</span>
+                    <span>COORDS -7.32Ã‚Â° S, 108.22Ã‚Â° E</span>
                     <span>TIMEZONE WIB (UTC+07:00)</span>
                   </div>
                 </div>
@@ -2254,7 +2268,7 @@ function Profile() {
                 </div>
               </div>
             </motion.div>
-            {/* Pendekatan + Eksplorasi — 2 col */}
+            {/* Pendekatan + Eksplorasi Ã¢â‚¬â€ 2 col */}
             <div className="grid gap-3 sm:grid-cols-2">
               <motion.div
                 initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
@@ -2316,7 +2330,7 @@ function Activity() {
       id="activity"
       className="relative overflow-visible bg-transparent px-[5vw] py-10"
     >
-      {/* satu-satunya LAB watermark — duduk di seam Profil ↔ Aktivitas */}
+      {/* satu-satunya LAB watermark Ã¢â‚¬â€ duduk di seam Profil Ã¢â€ â€ Aktivitas */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] watermark will-change-transform max-sm:text-[30vw]"
@@ -2350,7 +2364,7 @@ function Activity() {
   );
 }
 
-/* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Gallery: folder + full-color brand icons, HANYA APLIKASI REAL) ---------- */
+/* ---------- 2. Tech stack Ã¢â‚¬â€ MY SYSTEM TOOLKIT (Gallery: folder + full-color brand icons, HANYA APLIKASI REAL) ---------- */
 type Tile = {
   label: string;
   Icon?: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>;
@@ -2435,7 +2449,7 @@ function Stack() {
   const flatXRev = useTransform(flatProgress, [0, 1], [10, -10]);
   return (
     <section id="stack" className="relative bg-transparent overflow-x-clip">
-      {/* Opening — full 100dvh text-only EPIC — enter+exit 1 blok */}
+      {/* Opening Ã¢â‚¬â€ full 100dvh text-only EPIC Ã¢â‚¬â€ enter+exit 1 blok */}
       <section
         ref={openingRef}
         className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]"
@@ -2474,7 +2488,7 @@ function Stack() {
               key={t.stackTitle}
               play={stackInView}
               text={t.stackTitle}
-              className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
+              className="mx-auto max-w-4xl font-display text-[clamp(1.9rem,8.4vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
             />
             <motion.p
               initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
@@ -2492,7 +2506,7 @@ function Stack() {
           </motion.div>
         </div>
       </section>
-      {/* Flat — tanpa kartu, icon nempel langsung di bg-cream — fade horizontal + parallax */}
+      {/* Flat Ã¢â‚¬â€ tanpa kartu, icon nempel langsung di bg-cream Ã¢â‚¬â€ fade horizontal + parallax */}
       <div ref={flatRef} className="relative px-[5vw] pb-[18vh]">
         <div className="relative mx-auto max-w-[1120px] space-y-12">
           {stackGallery.map((g, gi) => (
@@ -2557,7 +2571,7 @@ function Stack() {
   );
 }
 
-/* ---------- 3. Featured projects — Bento Featured ---------- */
+/* ---------- 3. Featured projects Ã¢â‚¬â€ Bento Featured ---------- */
 
 const CATEGORY_META = {
   penelitian: {
@@ -2566,7 +2580,7 @@ const CATEGORY_META = {
     cls: "border-amber-500/30 bg-amber-500/10 text-amber-400",
   },
   iot: {
-    label: { id: "IoT · Hardware", en: "IoT · Hardware" } as const,
+    label: { id: "IoT Ã‚Â· Hardware", en: "IoT Ã‚Â· Hardware" } as const,
     Icon: Cpu,
     cls: "border-[#C4713C]/30 bg-[#C4713C]/10 text-[#E8A07A]",
   },
@@ -2587,11 +2601,13 @@ function ProjectCard({
   idx,
   onOpen,
   compact,
+  interactive = true,
 }: {
   p: (typeof projects)[number];
   idx: number;
   onOpen: (pp: (typeof projects)[number]) => void;
   compact?: boolean;
+  interactive?: boolean;
 }) {
   void compact;
   const { lang } = useLang();
@@ -2609,10 +2625,14 @@ function ProjectCard({
   const CatIcon = cat?.Icon;
   return (
     <motion.article
-      role="button"
-      tabIndex={0}
-      onClick={() => onOpen(p)}
+      role={interactive ? "button" : undefined}
+      aria-hidden={interactive ? undefined : true}
+      tabIndex={interactive ? 0 : -1}
+      onClick={() => {
+        if (interactive) onOpen(p);
+      }}
       onKeyDown={(e) => {
+        if (!interactive) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onOpen(p);
@@ -2627,7 +2647,7 @@ function ProjectCard({
       whileHover={{ y: -4 } as unknown as Record<string, unknown>}
       whileTap={{ scale: 0.98 } as unknown as Record<string, unknown>}
       className={
-        "warm-card relative flex cursor-pointer flex-col overflow-hidden pb-5 will-change-transform min-h-[390px] p-5 md:min-h-[410px] md:p-6 " +
+        "warm-card relative flex h-full cursor-pointer flex-col overflow-hidden pb-5 will-change-transform min-h-[390px] p-5 max-md:min-h-0 md:min-h-[410px] md:p-6 " +
         (isDeployed ? "border-green-500/40" : isDoneNotDeployed ? "border-amber-500/35" : "")
       }
       style={{ borderColor } as React.CSSProperties}
@@ -2686,11 +2706,14 @@ function ProjectCard({
         >
           {p.title}
         </h3>
-        <p className="mt-2 text-[13px] leading-[1.6]" style={{ color: WARM.muted }}>
+        <p
+          className="mt-2 text-[13px] leading-[1.6] max-md:line-clamp-3"
+          style={{ color: WARM.muted }}
+        >
           {typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang]}
         </p>
       </div>
-      <div className="mt-5 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
+      <div className="mt-auto flex items-end justify-between gap-3 border-t border-border/10 pt-4">
         <div className="flex flex-1 flex-wrap gap-1.5 pr-2">
           {p.stack.map((s) => (
             <Tag
@@ -2726,7 +2749,7 @@ function ProjectStickyCard(p: {
   return <ProjectCard p={p.p} idx={p.idx} onOpen={p.onOpen} />;
 }
 
-/* ---------- 3. Featured projects — warm-tagd builds ---------- */
+/* ---------- 3. Featured projects Ã¢â‚¬â€ warm-tagd builds ---------- */
 type ProjectFolder = "research" | "iot" | "webapp";
 const projectMeta: Record<string, { folder: ProjectFolder; Icon: typeof BarChart3 }> = {
   "01": { folder: "research", Icon: BarChart3 },
@@ -2738,10 +2761,10 @@ const projects = [
   {
     no: "01",
     title: "Digital Twin Platform",
-    kind: "Spatial Modeling · Research",
+    kind: "Spatial Modeling Ã‚Â· Research",
     category: "penelitian" as const,
     desc: {
-      id: "Riset pemodelan spasial & Digital Twin untuk lahan pertanian 800m² memakai Kriging & Random Forest.",
+      id: "Riset pemodelan spasial & Digital Twin untuk lahan pertanian 800mÃ‚Â² memakai Kriging & Random Forest.",
       en: "Spatial modeling & Digital Twin research for 800m2 agricultural plot using Kriging & Random Forest.",
     } as const,
     concept: {
@@ -2757,15 +2780,15 @@ const projects = [
   {
     no: "02",
     title: "IoT Smart Feeder",
-    kind: "IoT · Hardware Prototype",
+    kind: "IoT Ã‚Â· Hardware Prototype",
     category: "iot" as const,
     desc: {
       id: "Sistem pakan otomatis berbasis ESP32 dengan motor servo dan penjadwalan jarak jauh untuk rutinitas pakan.",
       en: "ESP32-based automated feeding system with servo motors and remote scheduling for pet feeding routines.",
     } as const,
     concept: {
-      id: "Sistem pemberian pakan otomatis untuk tiga kucing semi-indoor dengan risiko konsumsi oleh kucing liar dan batasan anggaran ≤ Rp150.000. Prinsip utama: penyaluran pakan hanya atas konfirmasi pemilik. Solusi mengandalkan ESP32-CAM (OV2640) sebagai pengendali tunggal yang terintegrasi dengan Blynk (V0 pemberian manual, V1 jadwal, V3 durasi servo SG90). Tiga mode operasi: terjadwal (nonaktif secara default; 07.00/17.00), konfirmasi (notifikasi push → persetujuan pemilik → aktuasi servo), dan manual. MVP mencakup F1–F5 serta live view MJPEG; RFID dan sensor level ditunda karena keterbatasan kalung dan anggaran. Estimasi biaya ±Rp117.000 dengan arsitektur Blynk Cloud sebagai penghubung.",
-      en: "Automated feeding system for three semi-indoor cats with stray-animal risk and ≤ IDR 150k budget. Core principle: dispensing only upon owner confirmation. Solution uses ESP32-CAM (OV2640) as single controller integrated with Blynk (V0 manual feed, V1 schedule, V3 servo duration SG90). Three modes: scheduled (off by default; 07:00/17:00), confirmation-based (push notification → owner approval → servo actuation), and manual. MVP covers F1–F5 plus MJPEG live view; RFID and level sensors deferred due to collar and budget constraints. Estimated cost ±IDR 117k with Blynk Cloud as bridge.",
+      id: "Sistem pemberian pakan otomatis untuk tiga kucing semi-indoor dengan risiko konsumsi oleh kucing liar dan batasan anggaran Ã¢â€°Â¤ Rp150.000. Prinsip utama: penyaluran pakan hanya atas konfirmasi pemilik. Solusi mengandalkan ESP32-CAM (OV2640) sebagai pengendali tunggal yang terintegrasi dengan Blynk (V0 pemberian manual, V1 jadwal, V3 durasi servo SG90). Tiga mode operasi: terjadwal (nonaktif secara default; 07.00/17.00), konfirmasi (notifikasi push Ã¢â€ â€™ persetujuan pemilik Ã¢â€ â€™ aktuasi servo), dan manual. MVP mencakup F1Ã¢â‚¬â€œF5 serta live view MJPEG; RFID dan sensor level ditunda karena keterbatasan kalung dan anggaran. Estimasi biaya Ã‚Â±Rp117.000 dengan arsitektur Blynk Cloud sebagai penghubung.",
+      en: "Automated feeding system for three semi-indoor cats with stray-animal risk and Ã¢â€°Â¤ IDR 150k budget. Core principle: dispensing only upon owner confirmation. Solution uses ESP32-CAM (OV2640) as single controller integrated with Blynk (V0 manual feed, V1 schedule, V3 servo duration SG90). Three modes: scheduled (off by default; 07:00/17:00), confirmation-based (push notification Ã¢â€ â€™ owner approval Ã¢â€ â€™ servo actuation), and manual. MVP covers F1Ã¢â‚¬â€œF5 plus MJPEG live view; RFID and level sensors deferred due to collar and budget constraints. Estimated cost Ã‚Â±IDR 117k with Blynk Cloud as bridge.",
     } as const,
     stack: ["ESP32", "Servo Motors", "MQTT", "Sensors"],
     status: "CONCEPT STAGE",
@@ -2775,7 +2798,7 @@ const projects = [
   {
     no: "03",
     title: "BPS PDF Publication ETL Pipeline",
-    kind: "Data Engineering · ETL",
+    kind: "Data Engineering Ã‚Â· ETL",
     category: "data" as const,
     desc: {
       id: "Pipeline ETL otomatis yang mem-parsing PDF publikasi BPS tidak terstruktur menjadi database relasional PostgreSQL.",
@@ -2792,8 +2815,8 @@ const projects = [
   },
   {
     no: "04",
-    title: "Kulinara — Kuliner Nusantara",
-    kind: "Pengembangan Web · Concept",
+    title: "Kulinara Ã¢â‚¬â€ Kuliner Nusantara",
+    kind: "Pengembangan Web Ã‚Â· Concept",
     category: "web" as const,
     desc: {
       id: "Aplikasi konsep untuk eksplorasi kuliner Nusantara, pelacakan nutrisi terstruktur, dan estimasi anggaran memasak.",
@@ -2810,16 +2833,16 @@ const projects = [
   },
   {
     no: "05",
-    title: "Smart Stock — Inventaris UMKM",
-    kind: "Aplikasi Web · Inventory System",
+    title: "Smart Stock Ã¢â‚¬â€ Inventaris UMKM",
+    kind: "Aplikasi Web Ã‚Â· Inventory System",
     category: "web" as const,
     desc: {
-      id: "Aplikasi inventaris UMKM: stok masuk/keluar, konversi satuan eceran–grosir, stok minimum, dan riwayat mutasi dengan row lock transaksional.",
-      en: "SME inventory app: stock in/out, retail–wholesale unit conversion, minimum stock alerts, and transactional movement history with row locking.",
+      id: "Aplikasi inventaris UMKM: stok masuk/keluar, konversi satuan eceranÃ¢â‚¬â€œgrosir, stok minimum, dan riwayat mutasi dengan row lock transaksional.",
+      en: "SME inventory app: stock in/out, retailÃ¢â‚¬â€œwholesale unit conversion, minimum stock alerts, and transactional movement history with row locking.",
     } as const,
     concept: {
-      id: "Sistem manajemen inventaris cerdas untuk UMKM dengan pemantauan stok real-time, notifikasi stok minimum, dan riwayat mutasi transaksional. Arsitektur Docker Compose (Next.js 14 App Router :3000, Laravel 11 php-fpm :8000, PostgreSQL 16) dengan model data 7 tabel (USERS, CATEGORIES, SUPPLIERS, UNITS, PRODUCTS, PRODUCT_UNITS, STOCK_MOVEMENTS) yang mendukung konversi satuan eceran–grosir melalui conversion_factor. Mekanisme mutasi menerapkan SELECT ... FOR UPDATE (row lock), perhitungan qty_base di server, validasi stok kurang (422 STOK_KURANG), adjustment absolut qty_after, guard CHECK stock_qty ≥ 0, dan retry deadlock hingga 3×. Alur peran owner/admin/staff serta roadmap 6 fase terdokumentasi pada diagram Notion.",
-      en: "Smart inventory management system for SMEs with real-time stock monitoring, low-stock alerts, and transactional movement history. Docker Compose architecture (Next.js 14 App Router :3000, Laravel 11 php-fpm :8000, PostgreSQL 16) with 7-table data model (USERS, CATEGORIES, SUPPLIERS, UNITS, PRODUCTS, PRODUCT_UNITS, STOCK_MOVEMENTS) supporting retail–wholesale conversion via conversion_factor. Mutation enforces SELECT ... FOR UPDATE (row lock), server-computed qty_base, insufficient stock validation (422 STOK_KURANG), absolute qty_after adjustment, CHECK stock_qty ≥ 0 guard, and deadlock retry up to 3×. Role flows (owner/admin/staff) and 6-phase roadmap documented in Notion diagrams.",
+      id: "Sistem manajemen inventaris cerdas untuk UMKM dengan pemantauan stok real-time, notifikasi stok minimum, dan riwayat mutasi transaksional. Arsitektur Docker Compose (Next.js 14 App Router :3000, Laravel 11 php-fpm :8000, PostgreSQL 16) dengan model data 7 tabel (USERS, CATEGORIES, SUPPLIERS, UNITS, PRODUCTS, PRODUCT_UNITS, STOCK_MOVEMENTS) yang mendukung konversi satuan eceranÃ¢â‚¬â€œgrosir melalui conversion_factor. Mekanisme mutasi menerapkan SELECT ... FOR UPDATE (row lock), perhitungan qty_base di server, validasi stok kurang (422 STOK_KURANG), adjustment absolut qty_after, guard CHECK stock_qty Ã¢â€°Â¥ 0, dan retry deadlock hingga 3Ãƒâ€”. Alur peran owner/admin/staff serta roadmap 6 fase terdokumentasi pada diagram Notion.",
+      en: "Smart inventory management system for SMEs with real-time stock monitoring, low-stock alerts, and transactional movement history. Docker Compose architecture (Next.js 14 App Router :3000, Laravel 11 php-fpm :8000, PostgreSQL 16) with 7-table data model (USERS, CATEGORIES, SUPPLIERS, UNITS, PRODUCTS, PRODUCT_UNITS, STOCK_MOVEMENTS) supporting retailÃ¢â‚¬â€œwholesale conversion via conversion_factor. Mutation enforces SELECT ... FOR UPDATE (row lock), server-computed qty_base, insufficient stock validation (422 STOK_KURANG), absolute qty_after adjustment, CHECK stock_qty Ã¢â€°Â¥ 0 guard, and deadlock retry up to 3Ãƒâ€”. Role flows (owner/admin/staff) and 6-phase roadmap documented in Notion diagrams.",
     } as const,
     stack: ["Laravel 11", "Next.js 14", "PostgreSQL", "Docker"],
     status: "CONCEPT STAGE",
@@ -2863,7 +2886,7 @@ function ProjectsOpening() {
             key={t.projectsTitle}
             play={inView}
             text={t.projectsTitle}
-            className="mx-auto font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
+            className="mx-auto font-display text-[clamp(1.9rem,8.4vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
           />
           <motion.p
             initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
@@ -2884,7 +2907,7 @@ function ProjectsOpening() {
   );
 }
 
-/* tata letak coverflow — satu sumber rumus, dipakai render React & paint imperatif (fast-scroll) */
+/* tata letak coverflow Ã¢â‚¬â€ satu sumber rumus, dipakai render React & paint imperatif (fast-scroll) */
 function coverLayout(offset: number) {
   const abs = Math.abs(offset);
   const isCenter = abs < 0.5;
@@ -2902,6 +2925,7 @@ function Projects() {
   const { lang } = useLang();
   const t = dict[lang];
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const scrollerInView = useInView(scrollerRef, { amount: 0.3 });
   const drag = useRef({ active: false, startX: 0, startLeft: 0, moved: false });
   const [active, setActive] = useState<(typeof projects)[number] | null>(null);
   const [docHref, setDocHref] = useState<string | null>(null);
@@ -2912,7 +2936,7 @@ function Projects() {
   const loopProjects = Array.from({ length: LOOP_N * LOOP_COPIES }, (_, i) => projects[i % LOOP_N]);
   const autoPauseRef = useRef(false);
   const isHoverRef = useRef(false);
-  // coverflow desktop (md+) — index 0..N-1, FEATURED di tengah
+  // coverflow desktop (md+) Ã¢â‚¬â€ index 0..N-1, FEATURED di tengah
   const [coverIdx, setCoverIdx] = useState(0);
   const coverAutoPauseRef = useRef(false);
   const coverHoverRef = useRef(false);
@@ -2920,12 +2944,12 @@ function Projects() {
   const wheelLock = useRef(0);
   const coverDragRef = useRef({ active: false, startX: 0, moved: false });
   const coverInViewRef = useRef(false);
-  // fast scroll entry — 2 detik sangat cepat→medium→lambat, digambar langsung ke DOM (tanpa re-render)
+  // fast scroll entry Ã¢â‚¬â€ 2 detik sangat cepatÃ¢â€ â€™mediumÃ¢â€ â€™lambat, digambar langsung ke DOM (tanpa re-render)
   const [coverPhase, setCoverPhase] = useState<"fast" | "reveal">("reveal");
   const coverEls = useRef<(HTMLDivElement | null)[]>([]);
   const FAST_TOTAL = 2000;
-  const FAST_DIST = LOOP_N * 12; // kelipatan utuh LOOP_N → handoff ke fase reveal tidak pernah lompat
-  // paint langsung: transform/opacity/zIndex tanpa setState, biar fast-scroll tidak re-render 60×/detik
+  const FAST_DIST = LOOP_N * 12; // kelipatan utuh LOOP_N Ã¢â€ â€™ handoff ke fase reveal tidak pernah lompat
+  // paint langsung: transform/opacity/zIndex tanpa setState, biar fast-scroll tidak re-render 60Ãƒâ€”/detik
   const paintCover = (f: number) => {
     const els = coverEls.current;
     for (let i = 0; i < els.length; i++) {
@@ -2944,7 +2968,7 @@ function Projects() {
   useEffect(() => {
     coverIdxRef.current = coverIdx;
   }, [coverIdx]);
-  // carousel: center-zoom — outer pitch gap-4 rata, inner yang di-scale; center hitung via offsetLeft (anti-scale drift)
+  // carousel: center-zoom Ã¢â‚¬â€ outer pitch gap-4 rata, inner yang di-scale; center hitung via offsetLeft (anti-scale drift)
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -3038,6 +3062,8 @@ function Projects() {
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
+    // autoplay hanya saat section terlihat Ã¢â‚¬â€ jangan geser kartu di luar layar
+    if (!scrollerInView) return;
     if (
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -3059,6 +3085,10 @@ function Projects() {
           return;
         }
         if (autoPauseRef.current || isHoverRef.current || drag.current.active || active) {
+          schedule();
+          return;
+        }
+        if (!scrollerInView) {
           schedule();
           return;
         }
@@ -3094,7 +3124,7 @@ function Projects() {
         const targetLeft = target.offsetLeft - (el.clientWidth - target.offsetWidth) / 2;
         el.scrollTo({ left: targetLeft, behavior: "smooth" });
         schedule();
-      }, 3800) as unknown as number;
+      }, 6000) as unknown as number;
     };
     schedule();
     const onVis = () => {
@@ -3105,8 +3135,8 @@ function Projects() {
       window.clearTimeout(timer);
       document.removeEventListener("visibilitychange", onVis);
     };
-  }, [active]);
-  // auto-preview coverflow desktop — gantian 3800ms, pause hover/modal
+  }, [active, scrollerInView]);
+  // auto-preview coverflow desktop Ã¢â‚¬â€ gantian 3800ms, pause hover/modal
   useEffect(() => {
     if (
       typeof window !== "undefined" &&
@@ -3168,7 +3198,7 @@ function Projects() {
       document.body.style.overflow = prevBodyOverflow;
       document.body.style.paddingRight = prevBodyPad;
       document.documentElement.style.overflow = prevHtmlOverflow;
-      // restore scroll pos — tanpa ini Chrome HP jump ke 0 terlihat "restart ke opening"
+      // restore scroll pos Ã¢â‚¬â€ tanpa ini Chrome HP jump ke 0 terlihat "restart ke opening"
       if (lenisInstance) {
         lenisInstance.start();
         lenisInstance.scrollTo(y, { immediate: true });
@@ -3178,7 +3208,7 @@ function Projects() {
       requestAnimationFrame(() => lenisInstance?.resize());
     };
   }, [active]);
-  // Hover biasa → vertikal Lenis. Shift+hover → horizontal di karya
+  // Hover biasa Ã¢â€ â€™ vertikal Lenis. Shift+hover Ã¢â€ â€™ horizontal di karya
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -3223,7 +3253,7 @@ function Projects() {
     setCoverIdx(((i % LOOP_N) + LOOP_N) % LOOP_N);
     pauseCover();
   };
-  // Shift+wheel di coverflow → geser kartu, tanpa Shift biarin vertikal
+  // Shift+wheel di coverflow Ã¢â€ â€™ geser kartu, tanpa Shift biarin vertikal
   useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
@@ -3258,7 +3288,7 @@ function Projects() {
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
-  // fast-scroll entry — ringan transform only, stepping coverIdx ~85ms total ~420ms
+  // fast-scroll entry Ã¢â‚¬â€ ringan transform only, stepping coverIdx ~85ms total ~420ms
   useEffect(() => {
     const el = stageRef.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
@@ -3325,9 +3355,9 @@ function Projects() {
 
   return (
     <div id="projects" className="relative bg-transparent">
-      {/* Opening — full 100dvh EPIC — keep */}
+      {/* Opening Ã¢â‚¬â€ full 100dvh EPIC Ã¢â‚¬â€ keep */}
       <ProjectsOpening />
-      {/* Kartu — baris horizontal scroll — container margin biar tidak mepet viewport */}
+      {/* Kartu Ã¢â‚¬â€ baris horizontal scroll Ã¢â‚¬â€ container margin biar tidak mepet viewport */}
       <section className="relative pb-[12vh] pt-8" aria-label={t.projectsTitle}>
         <div className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-[2.5vw]">
           <div
@@ -3335,9 +3365,13 @@ function Projects() {
             role="region"
             aria-label="Karya"
             tabIndex={0}
-            className="karya-scroll flex cursor-grab select-none gap-4 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory py-6 pb-5 active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 [&>div]:items-stretch md:hidden"
+            className="karya-scroll flex cursor-grab select-none gap-4 overflow-x-auto overscroll-x-contain snap-x snap-mandatory py-6 pb-5 active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-terracotta/60 md:hidden"
             style={
-              { touchAction: "pan-x pan-y", overscrollBehaviorX: "contain" } as React.CSSProperties
+              {
+                touchAction: "pan-x pan-y",
+                overscrollBehaviorX: "contain",
+                scrollBehavior: "auto",
+              } as React.CSSProperties
             }
             onPointerEnter={() => {
               isHoverRef.current = true;
@@ -3353,7 +3387,9 @@ function Projects() {
             }}
             onPointerDown={(e) => {
               autoPauseRef.current = true;
-              // biarkan click di kartu tetap jalan — drag cuma saat gerak horizontal cukup
+              // touch: serahkan ke native scroll + snap (drag custom hanya untuk mouse)
+              if (e.pointerType !== "mouse") return;
+              // biarkan click di kartu tetap jalan Ã¢â‚¬â€ drag cuma saat gerak horizontal cukup
               const el = scrollerRef.current;
               if (!el) return;
               if (e.button !== 0) return;
@@ -3363,7 +3399,7 @@ function Projects() {
                 startLeft: el.scrollLeft,
                 moved: false,
               };
-              // jangan setPointerCapture di sini — biar click asli tidak tertahan; snap dimatikan hanya saat mulai drag
+              // jangan setPointerCapture di sini Ã¢â‚¬â€ biar click asli tidak tertahan; snap dimatikan hanya saat mulai drag
             }}
             onPointerMove={(e) => {
               if (!drag.current.active) return;
@@ -3371,7 +3407,7 @@ function Projects() {
               if (!el) return;
               const dx = e.clientX - drag.current.startX;
               if (Math.abs(dx) < 6) return;
-              // baru drag — tahan agar tidak jadi click, matikan snap
+              // baru drag Ã¢â‚¬â€ tahan agar tidak jadi click, matikan snap
               if (!drag.current.moved) {
                 drag.current.moved = true;
                 el.style.scrollSnapType = "none";
@@ -3394,9 +3430,12 @@ function Projects() {
                   drag.current.moved = false;
                 }, 180);
               else drag.current.moved = false;
-              setTimeout(() => {
-                autoPauseRef.current = false;
-              }, 1800);
+              setTimeout(
+                () => {
+                  autoPauseRef.current = false;
+                },
+                e.pointerType === "mouse" ? 1800 : 6000,
+              );
             }}
             onPointerCancel={() => {
               const el = scrollerRef.current;
@@ -3423,16 +3462,19 @@ function Projects() {
               const scale = isCenter ? 1.025 : dist === 1 ? 0.985 : 0.96;
               const opacity = isCenter ? 1 : dist === 1 ? 0.96 : 0.88;
               const orig = idx % LOOP_N;
+              // hanya salinan tengah yang interaktif Ã¢â‚¬â€ klon loop disembunyikan dari fokus & screen reader
+              const isClone = idx < LOOP_N || idx >= LOOP_N * 2;
               return (
                 <div
                   key={`${proj.title}-${idx}`}
                   data-karya-pos=""
                   data-karya-card=""
-                  className="flex min-w-[78vw] max-w-[78vw] shrink-0 snap-center sm:min-w-[300px] sm:max-w-[330px] md:min-w-[320px] md:max-w-[340px]"
+                  aria-hidden={isClone ? true : undefined}
+                  className="flex min-w-[78vw] max-w-[78vw] shrink-0 snap-center [scroll-snap-stop:always] sm:min-w-[300px] sm:max-w-[330px] md:min-w-[320px] md:max-w-[340px]"
                   style={{ transition: "opacity 280ms ease" } as React.CSSProperties}
                 >
                   <div
-                    className="flex min-h-[390px] w-full md:min-h-[410px] transition-[transform] duration-[340ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
+                    className="flex h-[400px] w-full transition-[transform] duration-[340ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform sm:h-[420px] md:h-auto md:min-h-[410px]"
                     style={
                       {
                         transform: `scale(${scale})`,
@@ -3444,6 +3486,7 @@ function Projects() {
                     <ProjectCard
                       p={proj}
                       idx={orig}
+                      interactive={!isClone}
                       onOpen={(p) => {
                         if (drag.current.moved) return;
                         setActive(p);
@@ -3453,11 +3496,11 @@ function Projects() {
                 </div>
               );
             })}
-            {/* paddingInline sudah dari JS (clientWidth-card)/2, spacer tidak perlu lagi untuk center — keep tipis buat overscroll breathing */}
+            {/* paddingInline sudah dari JS (clientWidth-card)/2, spacer tidak perlu lagi untuk center Ã¢â‚¬â€ keep tipis buat overscroll breathing */}
             <div aria-hidden className="shrink-0 w-2" />
           </div>
 
-          {/* Coverflow stacked arc — desktop md+ : FEATURED di depan, samping tumpuk ke belakang */}
+          {/* Coverflow stacked arc Ã¢â‚¬â€ desktop md+ : FEATURED di depan, samping tumpuk ke belakang */}
           <div className="relative hidden md:block">
             <div
               ref={stageRef}
@@ -3507,7 +3550,7 @@ function Projects() {
                   }, 320);
                   return;
                 }
-                // gerak kecil < threshold → anggap klik, jangan blok modal
+                // gerak kecil < threshold Ã¢â€ â€™ anggap klik, jangan blok modal
                 coverDragRef.current.moved = false;
                 window.setTimeout(() => {
                   coverAutoPauseRef.current = false;
@@ -3557,7 +3600,7 @@ function Projects() {
                 const { abs, isCenter, x, z, scale, rotY } = coverLayout(offset);
                 const visible = abs <= 2;
                 const blur = abs === 0 ? 0 : abs === 1 ? 1.4 : 4;
-                // fast: view tetap 5 kartu, tidak kedip — digambar imperatif via paintCover
+                // fast: view tetap 5 kartu, tidak kedip Ã¢â‚¬â€ digambar imperatif via paintCover
                 const fast = coverPhase === "fast";
                 return (
                   <div
@@ -3622,7 +3665,7 @@ function Projects() {
                 );
               })}
             </div>
-            {/* kontrol — prev / dots / next */}
+            {/* kontrol Ã¢â‚¬â€ prev / dots / next */}
             <div className="mt-1 flex items-center justify-center gap-4 pb-2">
               <button
                 type="button"
@@ -3690,118 +3733,142 @@ function Projects() {
                   exit={{ y: 8, scale: 0.98, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 380, damping: 24 }}
                   onClick={(e) => e.stopPropagation()}
-                  className="warm-card relative my-auto flex w-full max-w-[520px] max-h-[85dvh] flex-col overflow-hidden bg-surface p-6 text-left max-sm:max-h-[88dvh] md:p-7"
+                  className="warm-card relative my-auto flex w-full max-w-[520px] max-h-[85dvh] flex-col overflow-hidden bg-surface text-left max-sm:max-h-[90dvh] md:max-h-[88dvh]"
                 >
                   <button
                     onClick={() => setActive(null)}
                     aria-label={t.projectModal.close}
-                    className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-[10px] border border-border/25 bg-cream text-ink hover:border-terracotta hover:text-terracotta"
+                    className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-[10px] border border-border/25 bg-cream text-ink shadow-[0_6px_18px_rgba(0,0,0,0.45)] hover:border-terracotta hover:text-terracotta"
                   >
                     <X size={16} />
                   </button>
-                  <p
-                    className="font-mono text-xs uppercase tracking-[0.2em]"
-                    style={{ color: WARM.terracotta }}
-                  >
-                    {active.kind}
-                    {(() => {
-                      const c = (active as { category?: keyof typeof CATEGORY_META }).category;
-                      if (!c) return null;
-                      const m = CATEGORY_META[c];
-                      const I = m.Icon;
-                      return (
-                        <span
-                          className={
-                            "ml-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 align-middle text-[10px] font-bold tracking-widest " +
-                            m.cls
-                          }
-                        >
-                          <I size={10} />
-                          {m.label[lang]}
-                        </span>
-                      );
-                    })()}
-                  </p>
-                  <h3 className="mt-2 pr-8 font-display text-2xl font-normal uppercase leading-tight tracking-[0.14em] text-ink">
-                    {(active as { href?: string }).href
-                      ? (t.projectModal as { articleTitle: string }).articleTitle
-                      : t.projectModal.title}
-                  </h3>
-                  <p className="mt-2 inline-block bg-terracotta px-2.5 py-1.5 font-mono text-xs font-black uppercase leading-none tracking-[0.22em] text-white">
-                    {active.title}
-                  </p>
-                  <p className="mt-3 text-justify text-sm font-medium leading-relaxed text-ink [hyphens:auto]">
-                    {(active as { href?: string }).href
-                      ? (t.projectModal as { articleBody: string }).articleBody
-                      : active.status === "IN PROGRESS"
-                        ? (t.projectModal as { inProgressBody: string }).inProgressBody
-                        : active.status === "CONCEPT STAGE"
-                          ? (t.projectModal as { conceptBody: string }).conceptBody
-                          : t.projectModal.body}
-                  </p>
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    {(() => {
-                      const href = (active as { href?: string }).href;
-                      const hasArticle = typeof href === "string" && href.length > 0;
-                      if (hasArticle) {
+                  <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain p-6 pb-7 md:p-7">
+                    <p
+                      className="font-mono text-xs uppercase tracking-[0.2em]"
+                      style={{ color: WARM.terracotta }}
+                    >
+                      {active.kind}
+                      {(() => {
+                        const c = (active as { category?: keyof typeof CATEGORY_META }).category;
+                        if (!c) return null;
+                        const m = CATEGORY_META[c];
+                        const I = m.Icon;
+                        return (
+                          <span
+                            className={
+                              "ml-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 align-middle text-[10px] font-bold tracking-widest " +
+                              m.cls
+                            }
+                          >
+                            <I size={10} />
+                            {m.label[lang]}
+                          </span>
+                        );
+                      })()}
+                    </p>
+                    <h3 className="mt-2 pr-8 font-display text-2xl font-normal uppercase leading-tight tracking-[0.14em] text-ink">
+                      {(active as { href?: string }).href
+                        ? (t.projectModal as { articleTitle: string }).articleTitle
+                        : t.projectModal.title}
+                    </h3>
+                    <p className="mt-2 inline-block bg-terracotta px-2.5 py-1.5 font-mono text-xs font-black uppercase leading-none tracking-[0.22em] text-white">
+                      {active.title}
+                    </p>
+                    <p className="mt-3 text-justify text-sm font-medium leading-relaxed text-ink max-md:text-left max-md:[hyphens:none]">
+                      {(active as { href?: string }).href
+                        ? (t.projectModal as { articleBody: string }).articleBody
+                        : active.status === "IN PROGRESS"
+                          ? (t.projectModal as { inProgressBody: string }).inProgressBody
+                          : active.status === "CONCEPT STAGE"
+                            ? (t.projectModal as { conceptBody: string }).conceptBody
+                            : t.projectModal.body}
+                    </p>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      {(() => {
+                        const href = (active as { href?: string }).href;
+                        const hasArticle = typeof href === "string" && href.length > 0;
+                        if (hasArticle) {
+                          return (
+                            <>
+                              <motion.button
+                                onClick={() => {
+                                  const h = href!;
+                                  const isCoarse =
+                                    typeof window !== "undefined" &&
+                                    (window.matchMedia("(pointer: coarse)").matches ||
+                                      window.innerWidth <= 768);
+                                  if (isCoarse) {
+                                    window.open(h, "_blank", "noopener,noreferrer");
+                                    return;
+                                  }
+                                  setActive(null);
+                                  setTimeout(() => setDocHref(h), 180);
+                                }}
+                                whileHover={{ y: -1, scale: 1.01 }}
+                                whileTap={{ scale: 0.98, y: 1 }}
+                                transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                                className="warm-btn primary sm text-white"
+                              >
+                                {(t.projectModal as { readArticle: string }).readArticle}{" "}
+                                <ArrowUpRight size={14} />
+                              </motion.button>
+                              <motion.button
+                                onClick={async () => {
+                                  try {
+                                    const res = await fetch(href!);
+                                    const blob = await res.blob();
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement("a");
+                                    a.href = url;
+                                    a.download = href!.split("/").pop() || "artikel.pdf";
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    a.remove();
+                                    setTimeout(() => URL.revokeObjectURL(url), 1200);
+                                  } catch {
+                                    window.open(href!, "_blank", "noopener,noreferrer");
+                                  }
+                                }}
+                                whileHover={{ y: -1, scale: 1.01 }}
+                                whileTap={{ scale: 0.98, y: 1 }}
+                                transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                                className="warm-btn ghost sm"
+                              >
+                                {(t.projectModal as { download: string }).download}{" "}
+                                <Download size={14} />
+                              </motion.button>
+                              <motion.button
+                                onClick={handleCta}
+                                whileHover={{ y: -1, scale: 1.01 }}
+                                whileTap={{ scale: 0.98, y: 1 }}
+                                transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                                className="warm-btn ghost sm !border-terracotta/30 !text-terracotta hover:!bg-ink/10"
+                              >
+                                {(t.projectModal as { articleCta: string }).articleCta}{" "}
+                                <ArrowUpRight size={14} />
+                              </motion.button>
+                              <motion.button
+                                onClick={() => setActive(null)}
+                                whileHover={{ y: -1, scale: 1.01 }}
+                                whileTap={{ scale: 0.98, y: 1 }}
+                                transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                                className="warm-btn ghost sm"
+                              >
+                                {t.projectModal.close}
+                              </motion.button>
+                            </>
+                          );
+                        }
                         return (
                           <>
-                            <motion.button
-                              onClick={() => {
-                                const h = href!;
-                                const isCoarse =
-                                  typeof window !== "undefined" &&
-                                  (window.matchMedia("(pointer: coarse)").matches ||
-                                    window.innerWidth <= 768);
-                                if (isCoarse) {
-                                  window.open(h, "_blank", "noopener,noreferrer");
-                                  return;
-                                }
-                                setActive(null);
-                                setTimeout(() => setDocHref(h), 180);
-                              }}
-                              whileHover={{ y: -1, scale: 1.01 }}
-                              whileTap={{ scale: 0.98, y: 1 }}
-                              transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                              className="warm-btn primary sm text-white"
-                            >
-                              {(t.projectModal as { readArticle: string }).readArticle}{" "}
-                              <ArrowUpRight size={14} />
-                            </motion.button>
-                            <motion.button
-                              onClick={async () => {
-                                try {
-                                  const res = await fetch(href!);
-                                  const blob = await res.blob();
-                                  const url = URL.createObjectURL(blob);
-                                  const a = document.createElement("a");
-                                  a.href = url;
-                                  a.download = href!.split("/").pop() || "artikel.pdf";
-                                  document.body.appendChild(a);
-                                  a.click();
-                                  a.remove();
-                                  setTimeout(() => URL.revokeObjectURL(url), 1200);
-                                } catch {
-                                  window.open(href!, "_blank", "noopener,noreferrer");
-                                }
-                              }}
-                              whileHover={{ y: -1, scale: 1.01 }}
-                              whileTap={{ scale: 0.98, y: 1 }}
-                              transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                              className="warm-btn ghost sm"
-                            >
-                              {(t.projectModal as { download: string }).download}{" "}
-                              <Download size={14} />
-                            </motion.button>
                             <motion.button
                               onClick={handleCta}
                               whileHover={{ y: -1, scale: 1.01 }}
                               whileTap={{ scale: 0.98, y: 1 }}
                               transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                              className="warm-btn ghost sm !border-terracotta/30 !text-terracotta hover:!bg-ink/10"
+                              className="warm-btn primary sm text-white"
                             >
-                              {(t.projectModal as { articleCta: string }).articleCta}{" "}
-                              <ArrowUpRight size={14} />
+                              {t.projectModal.cta} <ArrowUpRight size={14} />
                             </motion.button>
                             <motion.button
                               onClick={() => setActive(null)}
@@ -3814,64 +3881,31 @@ function Projects() {
                             </motion.button>
                           </>
                         );
-                      }
+                      })()}
+                    </div>
+                    {(() => {
+                      const c = (active as { concept?: { id: string; en: string } }).concept;
+                      if (!c) return null;
+                      const text = lang === "en" ? c.en : c.id;
+                      const isInitial =
+                        !!(active as { href?: string }).href || active.status === "RESEARCH DONE";
+                      const label = isInitial
+                        ? (t.projectModal as { conceptInitialLabel: string }).conceptInitialLabel
+                        : (t.projectModal as { conceptLabel: string }).conceptLabel;
                       return (
-                        <>
-                          <motion.button
-                            onClick={handleCta}
-                            whileHover={{ y: -1, scale: 1.01 }}
-                            whileTap={{ scale: 0.98, y: 1 }}
-                            transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                            className="warm-btn primary sm text-white"
-                          >
-                            {t.projectModal.cta} <ArrowUpRight size={14} />
-                          </motion.button>
-                          <motion.button
-                            onClick={() => setActive(null)}
-                            whileHover={{ y: -1, scale: 1.01 }}
-                            whileTap={{ scale: 0.98, y: 1 }}
-                            transition={{ type: "spring", stiffness: 420, damping: 18 }}
-                            className="warm-btn ghost sm"
-                          >
-                            {t.projectModal.close}
-                          </motion.button>
-                        </>
+                        <div className="mt-6 flex flex-col border-t border-border/10 pt-4">
+                          <p className="shrink-0 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
+                            {label}
+                          </p>
+                          <div className="mt-2 pr-1">
+                            <p className="text-justify text-sm leading-relaxed text-ink/90 max-md:text-left max-md:[hyphens:none]">
+                              {text}
+                            </p>
+                          </div>
+                        </div>
                       );
                     })()}
                   </div>
-                  {(() => {
-                    const c = (active as { concept?: { id: string; en: string } }).concept;
-                    if (!c) return null;
-                    const text = lang === "en" ? c.en : c.id;
-                    const isInitial =
-                      !!(active as { href?: string }).href || active.status === "RESEARCH DONE";
-                    const label = isInitial
-                      ? (t.projectModal as { conceptInitialLabel: string }).conceptInitialLabel
-                      : (t.projectModal as { conceptLabel: string }).conceptLabel;
-                    return (
-                      <div className="mt-6 flex min-h-0 flex-1 flex-col border-t border-border/10 pt-4">
-                        <p className="shrink-0 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
-                          {label}
-                        </p>
-                        <div
-                          className="karya-scroll mt-2 min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1"
-                          style={
-                            {
-                              scrollbarWidth: "thin",
-                              scrollbarColor: "#3A3632 #252220",
-                              overscrollBehavior: "contain",
-                            } as React.CSSProperties
-                          }
-                          onWheel={(e) => e.stopPropagation()}
-                          onTouchMove={(e) => e.stopPropagation()}
-                        >
-                          <p className="text-justify text-sm leading-relaxed text-ink/90 [hyphens:auto]">
-                            {text}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })()}
                 </motion.div>
               </motion.div>
             )}
@@ -3890,11 +3924,11 @@ function Projects() {
   );
 }
 
-/* ---------- 4. Experience — real profile ---------- */
+/* ---------- 4. Experience Ã¢â‚¬â€ real profile ---------- */
 const experience = [
   {
     icon: GraduationCap,
-    year: { id: "2023 — Sekarang", en: "2023 — Present" } as const,
+    year: { id: "2023 Ã¢â‚¬â€ Sekarang", en: "2023 Ã¢â‚¬â€ Present" } as const,
     period: { id: "Akademik", en: "Academic" } as const,
     role: { id: "Mahasiswa Sistem Informasi", en: "Information Systems Student" } as const,
     org: { id: "Universitas Siliwangi", en: "Siliwangi University" } as const,
@@ -3914,7 +3948,10 @@ const experience = [
     icon: BarChart3,
     year: "2026",
     period: { id: "MSIB Program", en: "MSIB Program" } as const,
-    role: { id: "Junior Data Science — VINIX7", en: "Junior Data Science — VINIX7" } as const,
+    role: {
+      id: "Junior Data Science Ã¢â‚¬â€ VINIX7",
+      en: "Junior Data Science Ã¢â‚¬â€ VINIX7",
+    } as const,
     org: {
       id: "PT Vinix Seven Aurum | Kampus Merdeka",
       en: "PT Vinix Seven Aurum | Kampus Merdeka",
@@ -3939,8 +3976,8 @@ const experience = [
     year: "2026",
     period: { id: "Kerja Praktik", en: "Internship" } as const,
     role: {
-      id: "Kerja Praktik — Data Engineering & Operasi",
-      en: "Practical Work — Data Engineering & Operations",
+      id: "Kerja Praktik Ã¢â‚¬â€ Data Engineering & Operasi",
+      en: "Practical Work Ã¢â‚¬â€ Data Engineering & Operations",
     } as const,
     org: {
       id: "Badan Pusat Statistik (BPS) Kabupaten Tasikmalaya",
@@ -4222,7 +4259,7 @@ function ExpRow({
       <motion.button
         data-dot
         onClick={onJump}
-        aria-label={`${period} — ${role}`}
+        aria-label={`${period} Ã¢â‚¬â€ ${role}`}
         style={dotStyle}
         className="absolute left-[14px] top-8 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
       >
@@ -4460,8 +4497,8 @@ function CertificateViewer({
   const title = href
     ? (href.split("/").pop()?.replace(".pdf", "") ??
       (kind === "article"
-        ? viewer.article.replace(" — KYRONIX", "")
-        : viewer.certificate.replace(" — KYRONIX", "")))
+        ? viewer.article.replace(" Ã¢â‚¬â€ KYRONIX", "")
+        : viewer.certificate.replace(" Ã¢â‚¬â€ KYRONIX", "")))
     : "";
   const headerEyebrow = kind === "article" ? viewer.article : viewer.certificate;
   const [failed, setFailed] = useState(false);
@@ -4535,7 +4572,7 @@ function CertificateViewer({
                 onClick={(e) => e.stopPropagation()}
                 className="relative flex h-[min(92dvh,920px)] max-h-[92dvh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-border bg-surface shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]"
               >
-                {/* header branded — bukan toolbar chrome */}
+                {/* header branded Ã¢â‚¬â€ bukan toolbar chrome */}
                 <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-cream px-3 py-2.5 sm:px-4 sm:py-3">
                   <div className="min-w-0 flex items-center gap-2.5">
                     <img
@@ -4573,7 +4610,7 @@ function CertificateViewer({
                     </button>
                   </div>
                 </div>
-                {/* pdf — Chrome HP fix: fetch blob → iframe blob:, object sering blok di Chrome Android */}
+                {/* pdf Ã¢â‚¬â€ Chrome HP fix: fetch blob Ã¢â€ â€™ iframe blob:, object sering blok di Chrome Android */}
                 <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#141414] p-2 sm:p-3">
                   <PdfBlobViewer
                     href={href}
@@ -4624,7 +4661,7 @@ function ExperienceOpening() {
             key={t.experience.title}
             play={inView}
             text={t.experience.title}
-            className="mx-auto max-w-4xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
+            className="mx-auto max-w-4xl font-display text-[clamp(1.9rem,8.4vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em]"
           />
           <motion.p
             initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
@@ -4654,7 +4691,7 @@ function Experience() {
   const [certHref, setCertHref] = useState<string | null>(null);
 
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start 78%", "end 52%"] });
-  // tuned lighter: slightly softer spring → fewer per-frame ticks, still buttery
+  // tuned lighter: slightly softer spring Ã¢â€ â€™ fewer per-frame ticks, still buttery
   const smooth = useSpring(scrollYProgress, { stiffness: 165, damping: 34, mass: 0.45 });
   const pipe = useTransform(smooth, [0, 1], [0, 1]);
   const expOpacity = useTransform(smooth, [0, 1], [1, 0.92]);
@@ -4701,9 +4738,9 @@ function Experience() {
 
   return (
     <div id="experience" className="relative bg-transparent overflow-x-clip">
-      {/* Opening — full 100dvh EPIC */}
+      {/* Opening Ã¢â‚¬â€ full 100dvh EPIC */}
       <ExperienceOpening />
-      {/* Timeline — cards-only */}
+      {/* Timeline Ã¢â‚¬â€ cards-only */}
       <section
         ref={trackRef}
         className="relative px-[5vw] pb-[10vh] pt-3 md:pb-[10vh] overflow-x-clip"
@@ -4724,7 +4761,7 @@ function Experience() {
               className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-border md:left-1/2"
               aria-hidden
             />
-            {/* warm pipe — 100% desktop (no mobile split) */}
+            {/* warm pipe Ã¢â‚¬â€ 100% desktop (no mobile split) */}
             <motion.div
               className="pointer-events-none absolute left-[14px] top-3 w-[18px] origin-top -translate-x-1/2 bg-terracotta/18 blur-[8px] md:left-1/2"
               style={{ scaleY: pipe, height: "100%" } as unknown as Record<string, unknown>}
@@ -4779,13 +4816,13 @@ function PcbVia({ x, y, r = 3.3 }: { x: number; y: number; r?: number }) {
   );
 }
 
-/* PCB mini "hidup" di dalam kartu — topologinya mengikuti makna tiap kata:
-   01 UNDERSTAND = fan-in (banyak sumber → satu titik, ada test point probe)
+/* PCB mini "hidup" di dalam kartu Ã¢â‚¬â€ topologinya mengikuti makna tiap kata:
+   01 UNDERSTAND = fan-in (banyak sumber Ã¢â€ â€™ satu titik, ada test point probe)
    02 ASSEMBLE   = backplane + modul dicolok + konektor jantan/betina hampir menyatu
-   03 RUN        = rel power → driver → fan-out + LED status */
+   03 RUN        = rel power Ã¢â€ â€™ driver Ã¢â€ â€™ fan-out + LED status */
 function LabPcbLive({ variant }: { variant: 0 | 1 | 2 }) {
   const pourId = `lab-pour-${variant}`;
-  // geser tiap jalur bundle sejajar; sudut tetap 45° karena dx = dy di semua belokan
+  // geser tiap jalur bundle sejajar; sudut tetap 45Ã‚Â° karena dx = dy di semua belokan
   const route = (pts: readonly (readonly [number, number])[], dy: number) =>
     "M " + pts.map(([x, y]) => `${x} ${y + dy}`).join(" L ");
   const trace = {
@@ -5005,7 +5042,7 @@ function LabPcbLive({ variant }: { variant: 0 | 1 | 2 }) {
   );
 }
 
-/* ---------- 5. How I Work — Systems over Syntax (Warm) ---------- */
+/* ---------- 5. How I Work Ã¢â‚¬â€ Systems over Syntax (Warm) ---------- */
 function Lab() {
   const { lang } = useLang();
   const t = dict[lang];
@@ -5019,7 +5056,7 @@ function Lab() {
   const labGridY = useTransform(openingProgress, [0, 1], [22, -22]);
   const labTitleY = useTransform(openingProgress, [0, 1], [14, -14]);
   const labInView = useInView(openingRef, { amount: 0.35, margin: "0px 0px -12% 0px" });
-  // Parallax 3 tahap — masuk: HILANG → RENGGANG → POSISI · keluar: POSISI → RENGGANG → HILANG
+  // Parallax 3 tahap Ã¢â‚¬â€ masuk: HILANG Ã¢â€ â€™ RENGGANG Ã¢â€ â€™ POSISI Ã‚Â· keluar: POSISI Ã¢â€ â€™ RENGGANG Ã¢â€ â€™ HILANG
   const labStepsRef = useRef<HTMLElement>(null);
   const { scrollYProgress: labStepsProgress } = useScroll({
     target: labStepsRef,
@@ -5028,24 +5065,24 @@ function Lab() {
   const reduceLabMotion =
     typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const labParallaxOff = reduceLabMotion || isMobile;
-  // 1 = renggang (baris lebar) · 0 = fix (bentuk V) — plateau di tengah biar enak dibaca
+  // 1 = renggang (baris lebar) Ã‚Â· 0 = fix (bentuk V) Ã¢â‚¬â€ plateau di tengah biar enak dibaca
   // FIX sengaja dimajukan ke 0.24: V harus sudah utuh + kabel nyambung SEBELUM panggung
-  // mencapai titik tengah layar (progress ±0.43-0.48), jadi momen "paling enak dilihat" = sirkuit penuh
+  // mencapai titik tengah layar (progress Ã‚Â±0.43-0.48), jadi momen "paling enak dilihat" = sirkuit penuh
   const labSpreadRaw = useTransform(labStepsProgress, [0.05, 0.24, 0.86, 1], [1, 0, 0, 1]);
   const labSpread = useTransform(labSpreadRaw, (s) => (labParallaxOff ? 0 : s));
   // kartu: hilang di tepi timeline, penuh saat renggang & fix
   const labCardFadeRaw = useTransform(labStepsProgress, [0.04, 0.22, 0.9, 1], [0, 1, 1, 0]);
   const labCardFade = useTransform(labCardFadeRaw, (v) => (labParallaxOff ? 1 : v));
   const labStepsGridY = useTransform(labStepsProgress, [0, 1], [-38, 38]);
-  // PCB "ditarik": 1 = kabel tersembunyi · 0 = kabel penuh.
-  // Baru mulai setelah kartu BENAR-BENAR fix di V (0.24), lalu A dulu → B (bertahap),
-  // dan SUDAH penuh di 0.40 — sebelum V duduk di tengah layar.
+  // PCB "ditarik": 1 = kabel tersembunyi Ã‚Â· 0 = kabel penuh.
+  // Baru mulai setelah kartu BENAR-BENAR fix di V (0.24), lalu A dulu Ã¢â€ â€™ B (bertahap),
+  // dan SUDAH penuh di 0.40 Ã¢â‚¬â€ sebelum V duduk di tengah layar.
   // Keluar: B ditarik balik dulu, lalu A.
   const labCableARaw = useTransform(labStepsProgress, [0.26, 0.33, 0.78, 0.86], [1, 0, 0, 1]);
   const labCableBRaw = useTransform(labStepsProgress, [0.34, 0.4, 0.7, 0.78], [1, 0, 0, 1]);
   const labCableA = useTransform(labCableARaw, (v) => (labParallaxOff ? 0 : v));
   const labCableB = useTransform(labCableBRaw, (v) => (labParallaxOff ? 0 : v));
-  // trigger animasi bertahap kartu 01 → 02 → 03
+  // trigger animasi bertahap kartu 01 Ã¢â€ â€™ 02 Ã¢â€ â€™ 03
   const labCanvasRef = useRef<HTMLDivElement>(null);
   const labPlay = useInView(labCanvasRef, { amount: 0.25, once: true });
   const labStepsMeta = [
@@ -5053,7 +5090,7 @@ function Lab() {
     { code: "SYS-02 // PROCESS" },
     { code: "SYS-03 // OUTPUT" },
   ] as const;
-  // PCB — static V: 01 & 03 naik, 02 tengah-bawah; jalur derive dari positions (tidak draggable)
+  // PCB Ã¢â‚¬â€ static V: 01 & 03 naik, 02 tengah-bawah; jalur derive dari positions (tidak draggable)
   const STAGE_W = 1360;
   const STAGE_H = 545;
   const V_POS = {
@@ -5083,7 +5120,7 @@ function Lab() {
   const vC1 = V_POS["card-1"];
   const vC2 = V_POS["card-2"];
   const vC3 = V_POS["card-3"];
-  // arah "renggang": 01 & 03 melebar ke samping + turun, 02 naik — V terbuka jadi baris lebar
+  // arah "renggang": 01 & 03 melebar ke samping + turun, 02 naik Ã¢â‚¬â€ V terbuka jadi baris lebar
   const SPREAD = {
     "card-1": { x: -108, y: 66 },
     "card-2": { x: 0, y: -30 },
@@ -5149,10 +5186,10 @@ function Lab() {
   const traceNow = tracesAt(labSpread.get());
   return (
     <div id="lab" className="relative bg-transparent overflow-x-clip">
-      {/* Opening — full 100dvh EPIC — enter+exit 1 blok */}
+      {/* Opening Ã¢â‚¬â€ full 100dvh EPIC Ã¢â‚¬â€ enter+exit 1 blok */}
       <section
         ref={openingRef}
-        className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-4 sm:px-[5vw] py-[12vh]"
+        className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-4 sm:px-[5vw] py-[12vh] max-md:min-h-[76dvh] max-md:py-[8vh]"
       >
         <motion.div
           aria-hidden
@@ -5188,7 +5225,7 @@ function Lab() {
               key={t.labTitle}
               play={labInView}
               text={t.labTitle}
-              className="mx-auto max-w-3xl font-display text-[clamp(3rem,9vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
+              className="mx-auto max-w-3xl font-display text-[clamp(1.9rem,8.4vw,6.75rem)] font-extrabold leading-[0.95] tracking-[0.01em] text-ink"
             />
             <motion.p
               initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
@@ -5206,10 +5243,10 @@ function Lab() {
           </motion.div>
         </div>
       </section>
-      {/* Steps — V: 01 & 03 naik, 02 turun; parallax renggang → fix → renggang + PCB */}
+      {/* Steps Ã¢â‚¬â€ V: 01 & 03 naik, 02 turun; parallax renggang Ã¢â€ â€™ fix Ã¢â€ â€™ renggang + PCB */}
       <section
         ref={labStepsRef}
-        className="relative overflow-x-clip px-4 sm:px-[5vw] pb-[10vh] pt-0"
+        className="relative overflow-x-clip px-4 sm:px-[5vw] pb-[10vh] pt-0 max-md:pb-[6vh] max-md:pt-2"
       >
         <div
           ref={labCanvasRef}
@@ -5309,7 +5346,7 @@ function Lab() {
                   className={`lab-trace-pulse ${labPlay ? "is-in" : ""}`}
                 />
               </svg>
-              {/* Desktop V abs — 01 & 03 naik, 02 turun; Mobile stack sejajar */}
+              {/* Desktop V abs Ã¢â‚¬â€ 01 & 03 naik, 02 turun; Mobile stack sejajar */}
               {steps.map((step, idx) => {
                 const cmds =
                   lang === "en"
@@ -5325,20 +5362,21 @@ function Lab() {
                       ] as const);
                 const meta = labStepsMeta[idx]!;
                 return (
-                  // OUTER: pemegang posisi V — bebas dari `position:relative` & `transform` milik .warm-card
+                  // OUTER: pemegang posisi V Ã¢â‚¬â€ bebas dari `position:relative` & `transform` milik .warm-card
                   <motion.div
                     key={step.title}
                     style={
                       {
-                        x: cardXY[idx]!.x,
-                        y: cardXY[idx]!.y,
+                        // mobile: kartu ditumpuk statis — nolkan offset V supaya 02 & 03 tidak terdorong ke kanan
+                        x: isMobile ? 0 : cardXY[idx]!.x,
+                        y: isMobile ? 0 : cardXY[idx]!.y,
                         opacity: labCardFade,
                         "--lab-card": `${vCard}px`,
                       } as unknown as Record<string, unknown>
                     }
                     className="absolute top-0 left-0 z-10 will-change-transform max-md:static max-md:mx-auto max-md:mb-4 max-md:w-full max-md:max-w-[340px] md:w-[var(--lab-card)]"
                   >
-                    {/* port PCB — nempel di tepi kartu, otomatis ikut gerak bareng kartu.
+                    {/* port PCB Ã¢â‚¬â€ nempel di tepi kartu, otomatis ikut gerak bareng kartu.
                     dirender SEBELUM glow/kartu (z-0) supaya separuh lingkarannya tertutup kartu */}
                     {idx < 2 && (
                       <span
@@ -5371,7 +5409,7 @@ function Lab() {
                       className={`lab-card-glow ${labPlay ? "is-in" : ""}`}
                       style={{ animationDelay: `${idx * 0.28}s, ${1.5 + idx * 0.55}s` }}
                     >
-                      {/* RISE: naik + clip reveal, tanpa fade — dipisah dari .warm-card */}
+                      {/* RISE: naik + clip reveal, tanpa fade Ã¢â‚¬â€ dipisah dari .warm-card */}
                       <div
                         className={`lab-card-wrap ${labPlay ? "is-in" : ""}`}
                         style={{ animationDelay: `${idx * 0.28}s` }}
@@ -5407,10 +5445,10 @@ function Lab() {
                               <LabPcbLive variant={idx as 0 | 1 | 2} />
                             </div>
                           </div>
-                          {/* footer band — nutup area bawah kartu biar nggak kosong */}
+                          {/* footer band Ã¢â‚¬â€ nutup area bawah kartu biar nggak kosong */}
                           <div className="-mx-5 -mb-5 flex items-center justify-between gap-3 border-t border-border/20 bg-[#0d0b0a]/45 px-5 py-3 md:-mx-6 md:-mb-6 md:px-6">
                             <p className="font-mono text-[10px] tracking-wide text-muted/60">
-                              › {cmds[idx]}
+                              Ã¢â‚¬Âº {cmds[idx]}
                             </p>
                             <span aria-hidden className="flex shrink-0 items-center gap-1">
                               <span className="h-[3px] w-[3px] bg-terracotta/45" />
@@ -5566,7 +5604,7 @@ function Contact() {
   return (
     <footer
       id="contact"
-      className="relative flex min-h-[100dvh] flex-col justify-between overflow-hidden bg-transparent px-[5vw] pb-4 max-lg:min-h-0 max-lg:pb-8 lg:py-[4vh]"
+      className="relative flex min-h-[100dvh] flex-col justify-between overflow-hidden bg-transparent px-[5vw] pb-4 max-lg:min-h-0 max-lg:pb-[calc(6rem+env(safe-area-inset-bottom))] lg:py-[4vh]"
     >
       <div aria-hidden className="hidden pointer-events-none absolute inset-0 opacity-[0.4]" />
       {/* grain mengganti orb duplikat Hero biar fase beda */}
@@ -5581,7 +5619,7 @@ function Contact() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] watermark max-sm:text-[30vw]"
+        className="pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] watermark max-sm:text-[24vw]"
         style={{ opacity: 0.11 } as unknown as React.CSSProperties}
       >
         {t.watermarks.kontak}
@@ -5616,7 +5654,7 @@ function Contact() {
             className="w-full text-left"
           >
             <div className="warm-card p-4 lg:p-5">
-              {/* honeypot — hidden dari user, bot isi = block */}
+              {/* honeypot Ã¢â‚¬â€ hidden dari user, bot isi = block */}
               <input
                 type="text"
                 name="_gotcha"
@@ -5783,7 +5821,7 @@ function Contact() {
               rel="noreferrer"
               className="warm-btn primary w-full justify-center"
             >
-              <SiGithub size={16} /> GitHub ↗
+              <SiGithub size={16} /> GitHub Ã¢â€ â€”
             </a>
           </motion.div>
         </div>
@@ -5791,7 +5829,7 @@ function Contact() {
           className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-border/10 pt-4 font-mono text-xs uppercase tracking-widest max-lg:mt-10 max-lg:pt-6"
           style={{ color: WARM.muted }}
         >
-          <p>© 2025 Supyan Sauri</p>
+          <p>Ã‚Â© 2025 Supyan Sauri</p>
           <p>KYRONIX</p>
           <button
             onClick={() => scrollToId("top")}
@@ -5806,7 +5844,7 @@ function Contact() {
 }
 
 function App() {
-  // selalu mulai dari Opening (K Page) — tidak ada pengecualian, dari URL mana pun
+  // selalu mulai dari Opening (K Page) Ã¢â‚¬â€ tidak ada pengecualian, dari URL mana pun
   const [phase, setPhase] = useState<"intro" | "k" | "ready">("k");
   const [lang, setLang] = useState<Lang>("en");
   useLenis(true);
@@ -5834,7 +5872,7 @@ function App() {
   }, []);
 
   // halaman dikembalikan dari bfcache (Back dari situs lain / tab di-restore)
-  // → putar Opening lagi dari awal, bukan melanjutkan posisi terakhir
+  // Ã¢â€ â€™ putar Opening lagi dari awal, bukan melanjutkan posisi terakhir
   useEffect(() => {
     const onPageShow = (e: PageTransitionEvent) => {
       if (!e.persisted) return;
@@ -5853,7 +5891,7 @@ function App() {
   return (
     <LangCtx.Provider value={{ lang, setLang }}>
       <main className="crt relative bg-cream overflow-x-clip">
-        {/* canvas C: 1 lembar Grid 32px kontinu Hero → Contact */}
+        {/* canvas C: 1 lembar Grid 32px kontinu Hero Ã¢â€ â€™ Contact */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[1]"
@@ -5869,7 +5907,7 @@ function App() {
         {phase === "k" && (
           <KPage
             onDone={() => {
-              // Opening selesai → selalu mendarat di Hero (paling atas), URL bersih
+              // Opening selesai Ã¢â€ â€™ selalu mendarat di Hero (paling atas), URL bersih
               window.scrollTo(0, 0);
               lenisInstance?.scrollTo(0, { immediate: true, force: true });
               try {
