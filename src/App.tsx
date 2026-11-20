@@ -5085,11 +5085,11 @@ function Lab() {
   ] as const;
   // PCB — static V: 01 & 03 naik, 02 tengah-bawah; jalur derive dari positions (tidak draggable)
   const STAGE_W = 1360;
-  const STAGE_H = 360;
+  const STAGE_H = 410;
   const V_POS = {
-    "card-1": { x: 18, y: 10 },
-    "card-2": { x: 480, y: 60 },
-    "card-3": { x: 942, y: 10 },
+    "card-1": { x: 18, y: 28 },
+    "card-2": { x: 480, y: 88 },
+    "card-3": { x: 942, y: 28 },
   } as const;
   const vCard = 300;
   // panggung V di-scale turun kalau layar desktop tidak cukup lebar (biar kartu tidak kepotong)
@@ -5409,20 +5409,20 @@ function Lab() {
                         className={`lab-card-wrap ${labPlay ? "is-in" : ""}`}
                         style={{ animationDelay: `${idx * 0.28}s` }}
                       >
-                        <div className="relative flex min-h-[260px] flex-col overflow-hidden rounded-[16px] border border-[#2A2826] bg-[#0E0D0C] p-5 md:min-h-[300px] md:p-5">
+                        <div className="relative flex min-h-[260px] flex-col overflow-hidden rounded-[16px] border border-[#C4713C]/30 bg-[#1A1816] p-5 md:min-h-[300px] md:p-5">
                           {/* corner dots - tema warm */}
-                          <span aria-hidden className="pointer-events-none absolute left-3 top-3 h-[3px] w-[3px] bg-[#3A3632]" />
-                          <span aria-hidden className="pointer-events-none absolute right-3 top-3 h-[3px] w-[3px] bg-[#3A3632]" />
-                          <span aria-hidden className="pointer-events-none absolute left-3 bottom-3 h-[3px] w-[3px] bg-[#3A3632]" />
-                          <span aria-hidden className="pointer-events-none absolute right-3 bottom-3 h-[3px] w-[3px] bg-[#3A3632]" />
+                          <span aria-hidden className="pointer-events-none absolute left-3 top-3 h-[3px] w-[3px] bg-[#C4713C]/60" />
+                          <span aria-hidden className="pointer-events-none absolute right-3 top-3 h-[3px] w-[3px] bg-[#C4713C]/60" />
+                          <span aria-hidden className="pointer-events-none absolute left-3 bottom-3 h-[3px] w-[3px] bg-[#C4713C]/60" />
+                          <span aria-hidden className="pointer-events-none absolute right-3 bottom-3 h-[3px] w-[3px] bg-[#C4713C]/60" />
                           {/* grid halus */}
-                          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "linear-gradient(to right, rgba(245,239,230,0.9) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,239,230,0.9) 1px, transparent 1px)", backgroundSize: "20px 20px" } as React.CSSProperties} />
+                          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "linear-gradient(to right, rgba(245,239,230,0.9) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,239,230,0.9) 1px, transparent 1px)", backgroundSize: "20px 20px" } as React.CSSProperties} />
                           {/* watermark 01 besar kanan — tipis, outline */}
-                          <span aria-hidden className="pointer-events-none absolute right-1 top-8 select-none font-display text-[92px] font-black leading-none tracking-tight text-white/[0.06] md:text-[110px] [ -webkit-text-stroke: 1px rgba(245,239,230,0.08) ]">
+                          <span aria-hidden className="pointer-events-none absolute right-1 top-8 select-none font-display text-[92px] font-black leading-none tracking-tight text-white/[0.07] md:text-[110px] [ -webkit-text-stroke: 1px rgba(245,239,230,0.10) ]">
                             0{idx + 1}
                           </span>
                           {/* grid vignette top */}
-                          <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-[160px] w-[160px] rounded-full bg-[#C4713C]/[0.08] blur-[30px]" />
+                          <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-[160px] w-[160px] rounded-full bg-[#C4713C]/[0.10] blur-[28px]" />
                           {/* header: SYS kiri, 01 badge kanan terracotta */}
                           <div className="relative flex items-center justify-between">
                             <span className="font-mono text-[10px] tracking-[0.16em] text-[#C4713C]">{meta.code}</span>
