@@ -2647,7 +2647,7 @@ function ProjectCard({
       whileHover={{ y: -4 } as unknown as Record<string, unknown>}
       whileTap={{ scale: 0.98 } as unknown as Record<string, unknown>}
       className={
-        "warm-card relative flex items-start cursor-pointer flex-col overflow-hidden pb-5 will-change-transform p-5 max-md:min-h-0 md:min-h-[410px] md:p-6 " +
+        "warm-card relative flex h-full cursor-pointer flex-col overflow-hidden pb-5 will-change-transform p-5 md:min-h-[410px] md:p-6 " +
         (isDeployed ? "border-green-500/40" : isDoneNotDeployed ? "border-amber-500/35" : "")
       }
       style={{ borderColor } as React.CSSProperties}
@@ -2710,7 +2710,7 @@ function ProjectCard({
           {typeof p.desc === "string" ? p.desc : (p.desc as { id: string; en: string })[lang]}
         </p>
       </div>
-      <div className="mt-5 flex items-end justify-between gap-3 border-t border-border/10 pt-4">
+      <div className="mt-auto flex items-end justify-between gap-3 border-t border-border/10 pt-4">
         <div className="flex flex-1 flex-wrap gap-1.5 pr-2">
           {p.stack.map((s) => (
             <Tag
@@ -3471,7 +3471,7 @@ function Projects() {
                   style={{ transition: "opacity 280ms ease" } as React.CSSProperties}
                 >
                   <div
-                    className="flex items-start w-full transition-[transform] duration-[340ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform sm:h-[420px] md:h-auto md:min-h-[410px]"
+                    className="flex h-[400px] w-full transition-[transform] duration-[340ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform sm:h-[420px] md:h-auto md:min-h-[410px]"
                     style={
                       {
                         transform: `scale(${scale})`,
@@ -3495,6 +3495,13 @@ function Projects() {
             })}
             {/* paddingInline sudah dari JS (clientWidth-card)/2, spacer tidak perlu lagi untuk center Ã¢â‚¬â€ keep tipis buat overscroll breathing */}
             <div aria-hidden className="shrink-0 w-2" />
+          </div>
+
+          {/* Petunjuk geser mobile */}
+          <div className="md:hidden mt-4 flex items-center gap-2 justify-center font-mono text-[11px] font-bold uppercase tracking-widest text-terracotta">
+            <span className="text-xs">←</span>
+            {lang === "id" ? "Geser kartu" : "Swipe cards"}
+            <span className="text-xs">→</span>
           </div>
 
           {/* Coverflow stacked arc Ã¢â‚¬â€ desktop md+ : FEATURED di depan, samping tumpuk ke belakang */}
