@@ -206,9 +206,9 @@ function useInViewActive() {
 function scrollToId(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
-  const isProjects = id === "projects";
+  const isCentered = id === "projects" || id === "lab";
   if (lenisInstance) {
-    if (isProjects) {
+    if (isCentered) {
       const opening = el.querySelector("section") as HTMLElement | null;
       const target = opening ?? el;
       const h = target.offsetHeight || el.offsetHeight;
@@ -227,7 +227,7 @@ function scrollToId(id: string) {
       easing: (t: number) => 1 - Math.pow(1 - t, 3),
     });
   } else {
-    if (isProjects) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (isCentered) el.scrollIntoView({ behavior: "smooth", block: "center" });
     else el.scrollIntoView({ behavior: "smooth" });
   }
 }
@@ -5082,13 +5082,13 @@ function Lab() {
     { code: "SYS-02 // PROCESS" },
     { code: "SYS-03 // OUTPUT" },
   ] as const;
-  // PCB — static V: 01 & 03 naik, 02 tengah-bawah; jalur derive dari positions (tidak draggable)
+  // PCB — zigzag (tangga turun): 01 atas-kiri, 02 tengah, 03 bawah-kanan; jalur derive dari positions
   const STAGE_W = 1360;
   const STAGE_H = 545;
   const V_POS = {
-    "card-1": { x: 18, y: 14 },
-    "card-2": { x: 480, y: 125 },
-    "card-3": { x: 942, y: 14 },
+    "card-1": { x: 18, y: 10 },
+    "card-2": { x: 480, y: 78 },
+    "card-3": { x: 942, y: 146 },
   } as const;
   const vCard = 400;
   // panggung V di-scale turun kalau layar desktop tidak cukup lebar (biar kartu tidak kepotong)
@@ -5112,11 +5112,11 @@ function Lab() {
   const vC1 = V_POS["card-1"];
   const vC2 = V_POS["card-2"];
   const vC3 = V_POS["card-3"];
-  // arah "renggang": 01 & 03 melebar ke samping + turun, 02 naik — V terbuka jadi baris lebar
+  // arah "renggang": zigzag → baris rata (semua y=~70) saat spread=1
   const SPREAD = {
-    "card-1": { x: -108, y: 66 },
-    "card-2": { x: 0, y: -30 },
-    "card-3": { x: 108, y: 66 },
+    "card-1": { x: -108, y: 60 },
+    "card-2": { x: 0, y: -8 },
+    "card-3": { x: 108, y: -76 },
   } as const;
   const card1X = useTransform(labSpread, (s) => vC1.x + s * SPREAD["card-1"].x);
   const card1Y = useTransform(labSpread, (s) => vC1.y + s * SPREAD["card-1"].y);
@@ -5546,6 +5546,8 @@ function Contact() {
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [msg, setMsg] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; message?: string }>({});
+  const [showCvModal, setShowCvModal] = useState(false);
   const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
 
   // load turnstile once if key exists
@@ -5564,25 +5566,28 @@ function Contact() {
     if (f._gotcha) {
       setStatus("success");
       setMsg(t.contactForm.success);
+      setFieldErrors({});
       return;
     }
-    if (!f.name.trim() || f.name.trim().length < 2) {
+    const errors: typeof fieldErrors = {};
+    const nameTrim = f.name.trim();
+    const emailTrim = f.email.trim();
+    const msgTrim = f.message.trim();
+    if (!nameTrim) errors.name = lang === "id" ? "Nama wajib diisi." : "Name is required.";
+    else if (nameTrim.length < 2) errors.name = lang === "id" ? "Nama minimal 2 huruf." : "Name must be at least 2 characters.";
+    if (!emailTrim) errors.email = lang === "id" ? "Email wajib diisi." : "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrim)) errors.email = lang === "id" ? "Email tidak valid." : "Invalid email.";
+    if (!msgTrim) errors.message = lang === "id" ? "Pesan wajib diisi." : "Message is required.";
+    else if (msgTrim.length < 10) errors.message = lang === "id" ? "Pesan minimal 10 karakter." : "Message must be at least 10 characters.";
+    if (Object.keys(errors).length) {
       setStatus("error");
-      setMsg(lang === "id" ? "Nama minimal 2 huruf." : "Name too short.");
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) {
-      setStatus("error");
-      setMsg(lang === "id" ? "Email tidak valid." : "Invalid email.");
-      return;
-    }
-    if (!f.message.trim() || f.message.trim().length < 10) {
-      setStatus("error");
-      setMsg(lang === "id" ? "Pesan minimal 10 karakter." : "Message too short.");
+      setMsg(Object.values(errors)[0] ?? "");
+      setFieldErrors(errors);
       return;
     }
     setStatus("loading");
     setMsg("");
+    setFieldErrors({});
     let turnstileToken = "";
     try {
       const w = window as unknown as { turnstile?: { getResponse: (id?: string) => string } };
@@ -5685,10 +5690,12 @@ function Contact() {
                   </span>
                   <input
                     value={f.name}
-                    onChange={(e) => setF({ ...f, name: e.target.value })}
+                    onChange={(e) => { setF({ ...f, name: e.target.value }); if (fieldErrors.name) setFieldErrors((p) => ({ ...p, name: undefined })); }}
                     required
-                    className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                    aria-invalid={!!fieldErrors.name}
+                    className={`w-full rounded-xl border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:ring-2 ${fieldErrors.name ? "border-terracotta focus:border-terracotta focus:ring-terracotta/30" : "border-border focus:border-terracotta focus:ring-terracotta/20"}`}
                   />
+                  {fieldErrors.name ? <span className="font-mono text-[11px] text-terracotta">{fieldErrors.name}</span> : null}
                 </label>
                 <label className="flex flex-col gap-1.5">
                   <span
@@ -5700,10 +5707,12 @@ function Contact() {
                   <input
                     type="email"
                     value={f.email}
-                    onChange={(e) => setF({ ...f, email: e.target.value })}
+                    onChange={(e) => { setF({ ...f, email: e.target.value }); if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined })); }}
                     required
-                    className="w-full rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20"
+                    aria-invalid={!!fieldErrors.email}
+                    className={`w-full rounded-xl border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:ring-2 ${fieldErrors.email ? "border-terracotta focus:border-terracotta focus:ring-terracotta/30" : "border-border focus:border-terracotta focus:ring-terracotta/20"}`}
                   />
+                  {fieldErrors.email ? <span className="font-mono text-[11px] text-terracotta">{fieldErrors.email}</span> : null}
                 </label>
                 <label className="flex flex-col gap-1.5">
                   <span
@@ -5742,11 +5751,13 @@ function Contact() {
                 </span>
                 <textarea
                   value={f.message}
-                  onChange={(e) => setF({ ...f, message: e.target.value })}
+                  onChange={(e) => { setF({ ...f, message: e.target.value }); if (fieldErrors.message) setFieldErrors((p) => ({ ...p, message: undefined })); }}
                   required
                   rows={3}
-                  className="min-h-[88px] w-full resize-y rounded-xl border border-border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 max-lg:min-h-[100px]"
+                  aria-invalid={!!fieldErrors.message}
+                  className={`min-h-[88px] w-full resize-y rounded-xl border bg-cream px-3.5 py-2.5 text-sm text-ink outline-none focus:ring-2 max-lg:min-h-[100px] ${fieldErrors.message ? "border-terracotta focus:border-terracotta focus:ring-terracotta/30" : "border-border focus:border-terracotta focus:ring-terracotta/20"}`}
                 />
+                {fieldErrors.message ? <span className="font-mono text-[11px] text-terracotta">{fieldErrors.message}</span> : null}
               </label>
 
               {siteKey ? (
@@ -5822,9 +5833,9 @@ function Contact() {
               {copied ? <Check size={16} /> : <Copy size={16} />}
               {copied ? (lang === "id" ? "Tersalin!" : "Copied!") : email}
             </button>
-            <a href="/cv.pdf" className="warm-btn ghost w-full justify-center">
+            <button type="button" onClick={() => setShowCvModal(true)} className="warm-btn ghost w-full justify-center">
               {t.downloadCv} <Download size={16} />
-            </a>
+            </button>
             <a
               href="https://github.com/supyan1403"
               target="_blank"
@@ -5849,6 +5860,18 @@ function Contact() {
           </button>
         </div>
       </div>
+      {showCvModal ? (
+        <div role="dialog" aria-modal="true" onClick={() => setShowCvModal(false)} className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/60 p-4 backdrop-blur-sm">
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-2xl border border-border bg-cream p-6 shadow-2xl">
+            <h3 className="font-display text-lg font-extrabold tracking-[0.02em] text-ink">{lang === "id" ? "CV Belum Tersedia" : "CV Not Yet Available"}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{lang === "id" ? "CV belum diunggah. Silakan hubungi saya via email untuk permintaan CV." : "CV is not yet uploaded. Please contact me via email to request a CV."}</p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button onClick={() => setShowCvModal(false)} className="warm-btn ghost">{lang === "id" ? "Tutup" : "Close"}</button>
+              <a href="mailto:supyansauri47@gmail.com" className="warm-btn primary">Email Me</a>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </footer>
   );
 }
