@@ -5408,65 +5408,47 @@ function Lab() {
                         className={`lab-card-wrap ${labPlay ? "is-in" : ""}`}
                         style={{ animationDelay: `${idx * 0.28}s` }}
                       >
-                        {(() => {
-                          const raw = step.title.toUpperCase();
-                          const map: Record<string, [string, string]> = {
-                            UNDERSTAND: ["UNDER", "STAND"],
-                            ASSEMBLE: ["ASSEM", "BLE"],
-                            RUN: ["RUN", ""],
-                            PAHAMI: ["PAHA", "MI"],
-                            RAKIT: ["RA", "KIT"],
-                            JALANKAN: ["JALAN", "KAN"],
-                          };
-                          const split = map[raw] ?? (() => {
-                            const mid = Math.ceil(raw.length / 2);
-                            return [raw.slice(0, mid), raw.slice(mid)] as [string, string];
-                          })();
-                          const renderOutline = (word: string) =>
-                            word.split("").map((ch, ci) => {
-                              if (ch === "A") {
-                                return (
-                                  <span key={ci} className="relative inline-block">
-                                    <span className="text-transparent [-webkit-text-stroke:1.4px_#F5EFE6]">A</span>
-                                    <span aria-hidden className="pointer-events-none absolute left-[8%] right-[8%] top-[52%] h-[1.6px] -translate-y-1/2 bg-[#F5EFE6]">
-                                      <span className="absolute right-0 top-1/2 h-[7px] w-[7px] -translate-y-1/2 translate-x-[1px] border-r-[1.6px] border-t-[1.6px] border-[#F5EFE6] rotate-45" />
-                                    </span>
-                                  </span>
-                                );
-                              }
-                              return (
-                                <span key={ci} className="text-transparent [-webkit-text-stroke:1.4px_#F5EFE6]">
-                                  {ch}
-                                </span>
-                              );
-                            });
-                          return (
-                            <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[32px] border border-white/[0.07] bg-[#12100F] p-7 md:min-h-[420px] md:aspect-square md:p-8">
-                              {/* glow top-right orange */}
-                              <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-[280px] w-[280px] rounded-full bg-[#C4713C]/20 blur-[60px]" />
-                              {/* glow bottom-left subtle */}
-                              <div aria-hidden className="pointer-events-none absolute -bottom-16 -left-16 h-[220px] w-[220px] rounded-full bg-[#F5EFE6]/[0.06] blur-[50px]" />
-                              <div className="relative flex items-start justify-between font-mono text-[10px] tracking-[0.2em] text-white/35">
-                                <span>{meta.code}</span>
-                                <span className="text-white/40">0{idx + 1}</span>
-                              </div>
-                              <div className="relative mt-7">
-                                <h3 className="font-display font-black leading-[0.85] tracking-[-0.03em] text-[clamp(3.05rem,9vw,4.35rem)]">
-                                  <span className="block text-[#F5EFE6]">{split[0]}</span>
-                                  {split[1] ? (
-                                    <span className="block mt-1 flex flex-wrap">{renderOutline(split[1])}</span>
-                                  ) : null}
-                                </h3>
-                              </div>
-                              <p className="relative mt-auto pt-10 text-[14px] leading-[1.6] text-white/55 [overflow-wrap:anywhere]">
-                                {step.desc}
-                              </p>
-                              <div className="relative mt-4 flex justify-end">
-                                <span className="font-display font-black text-[18px] tracking-[0.02em] text-[#D6B87A]">0{idx + 1}</span>
-                              </div>
+                        <div className="warm-card flex min-h-[232px] flex-col overflow-hidden break-words p-5 md:aspect-square md:p-[24px] max-md:aspect-auto">
+                          <div className="flex items-center justify-between border-b border-border/15 pb-2.5 font-mono text-[10px] tracking-[0.16em] text-muted">
+                            <span className="flex items-center gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-terracotta/70" />
+                              {meta.code}
+                            </span>
+                            <span className="text-[11px] font-bold tracking-wider text-ink/[0.18]">
+                              0{idx + 1}
+                            </span>
+                          </div>
+                          <span
+                            aria-hidden
+                            className="pointer-events-none absolute right-3.5 top-10 select-none font-display text-[56px] font-black leading-none tracking-tight text-ink/[0.04]"
+                          >
+                            0{idx + 1}
+                          </span>
+                          <div className="flex min-h-0 flex-1 flex-col justify-center py-2">
+                            <h3 className="w-full break-words font-sans text-[clamp(1.2rem,5.5vw,1.5rem)] font-semibold uppercase leading-none tracking-[0.06em] text-ink [overflow-wrap:anywhere]">
+                              {step.title}
+                            </h3>
+                            <p
+                              className="mt-2.5 w-full break-words text-[13px] leading-relaxed md:text-[14px] [overflow-wrap:anywhere]"
+                              style={{ color: "#A8A298" }}
+                            >
+                              {step.desc}
+                            </p>
+                            <div className="mt-5 h-[84px] w-full max-w-[300px] md:h-[96px]">
+                              <LabPcbLive variant={idx as 0 | 1 | 2} />
                             </div>
-                          );
-                        })()}
+                          </div>
+                          <div className="-mx-5 -mb-5 flex items-center justify-between gap-3 border-t border-border/20 bg-[#0d0b0a]/45 px-5 py-3 md:-mx-6 md:-mb-6 md:px-6">
+                            <p className="font-mono text-[10px] tracking-wide text-muted/60">
+                              › {cmds[idx]}
+                            </p>
+                            <span aria-hidden className="flex shrink-0 items-center gap-1">
+                              <span className="h-[3px] w-[3px] bg-terracotta/45" />
+                              <span className="h-[3px] w-[3px] bg-terracotta/70" />
+                              <span className="h-[3px] w-[3px] bg-terracotta/30" />
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
