@@ -5087,9 +5087,9 @@ function Lab() {
   const STAGE_W = 1360;
   const STAGE_H = 410;
   const V_POS = {
-    "card-1": { x: 18, y: 28 },
-    "card-2": { x: 480, y: 88 },
-    "card-3": { x: 942, y: 28 },
+    "card-1": { x: 40, y: 28 },
+    "card-2": { x: 502, y: 88 },
+    "card-3": { x: 964, y: 28 },
   } as const;
   const vCard = 300;
   // panggung V di-scale turun kalau layar desktop tidak cukup lebar (biar kartu tidak kepotong)
