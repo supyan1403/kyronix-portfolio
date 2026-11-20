@@ -5212,7 +5212,9 @@ function Lab() {
             style={{ y: labTitleY } as unknown as Record<string, unknown>}
             className="will-change-transform"
           >
-            <Eyebrow index="" label={t.labEyebrow} />
+            <div className="flex justify-center">
+              <Eyebrow index="" label={t.labEyebrow} />
+            </div>
             <SplitReveal
               key={t.labTitle}
               play={labInView}
@@ -5449,7 +5451,7 @@ function Lab() {
                                 <span className="text-white/40">0{idx + 1}</span>
                               </div>
                               <div className="relative mt-7">
-                                <h3 className="font-display font-black leading-[0.9] tracking-[-0.02em] text-[clamp(2.4rem,6vw,3.05rem)]">
+                                <h3 className="font-display font-black leading-[0.85] tracking-[-0.03em] text-[clamp(3.05rem,9vw,4.35rem)]">
                                   <span className="block text-[#F5EFE6]">{split[0]}</span>
                                   {split[1] ? (
                                     <span className="block mt-1 flex flex-wrap">{renderOutline(split[1])}</span>
