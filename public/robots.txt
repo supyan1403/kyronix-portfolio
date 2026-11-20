@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kyronix.my.id/sitemap.xml
+Host: https://kyronix.my.id
