@@ -5077,6 +5077,7 @@ function Lab() {
   // trigger animasi bertahap kartu 01 → 02 → 03
   const labCanvasRef = useRef<HTMLDivElement>(null);
   const labPlay = useInView(labCanvasRef, { amount: 0.25, once: true });
+  const labPhaseTags = ["PHASE ALPHA // ARCHITECTURE", "PHASE BETA // ASSEMBLY", "PHASE GAMMA // DEPLOY"] as const;
   const labStepsMeta = [
     { code: "SYS-01 // INPUT" },
     { code: "SYS-02 // PROCESS" },
@@ -5408,44 +5409,46 @@ function Lab() {
                         className={`lab-card-wrap ${labPlay ? "is-in" : ""}`}
                         style={{ animationDelay: `${idx * 0.28}s` }}
                       >
-                        <div className="warm-card flex min-h-[232px] flex-col overflow-hidden break-words p-5 md:aspect-square md:p-[24px] max-md:aspect-auto">
-                          <div className="flex items-center justify-between border-b border-border/15 pb-2.5 font-mono text-[10px] tracking-[0.16em] text-muted">
-                            <span className="flex items-center gap-2">
-                              <span className="h-1.5 w-1.5 rounded-full bg-terracotta/70" />
-                              {meta.code}
-                            </span>
-                            <span className="text-[11px] font-bold tracking-wider text-ink/[0.18]">
-                              0{idx + 1}
-                            </span>
-                          </div>
-                          <span
-                            aria-hidden
-                            className="pointer-events-none absolute right-3.5 top-10 select-none font-display text-[56px] font-black leading-none tracking-tight text-ink/[0.04]"
-                          >
+                        <div className="relative flex min-h-[340px] flex-col overflow-hidden rounded-[16px] border border-[#2A2826] bg-[#0E0D0C] p-5 md:aspect-square md:min-h-[380px] md:p-6">
+                          {/* corner dots - tema warm */}
+                          <span aria-hidden className="pointer-events-none absolute left-3 top-3 h-[3px] w-[3px] bg-[#3A3632]" />
+                          <span aria-hidden className="pointer-events-none absolute right-3 top-3 h-[3px] w-[3px] bg-[#3A3632]" />
+                          <span aria-hidden className="pointer-events-none absolute left-3 bottom-3 h-[3px] w-[3px] bg-[#3A3632]" />
+                          <span aria-hidden className="pointer-events-none absolute right-3 bottom-3 h-[3px] w-[3px] bg-[#3A3632]" />
+                          {/* grid halus */}
+                          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "linear-gradient(to right, rgba(245,239,230,0.9) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,239,230,0.9) 1px, transparent 1px)", backgroundSize: "20px 20px" } as React.CSSProperties} />
+                          {/* watermark 01 besar kanan — tipis, outline */}
+                          <span aria-hidden className="pointer-events-none absolute right-1 top-8 select-none font-display text-[92px] font-black leading-none tracking-tight text-white/[0.06] md:text-[110px] [ -webkit-text-stroke: 1px rgba(245,239,230,0.08) ]">
                             0{idx + 1}
                           </span>
-                          <div className="flex min-h-0 flex-1 flex-col justify-center py-2">
-                            <h3 className="w-full break-words font-sans text-[clamp(1.2rem,5.5vw,1.5rem)] font-semibold uppercase leading-none tracking-[0.06em] text-ink [overflow-wrap:anywhere]">
-                              {step.title}
-                            </h3>
-                            <p
-                              className="mt-2.5 w-full break-words text-[13px] leading-relaxed md:text-[14px] [overflow-wrap:anywhere]"
-                              style={{ color: "#A8A298" }}
-                            >
-                              {step.desc}
-                            </p>
-                            <div className="mt-5 h-[84px] w-full max-w-[300px] md:h-[96px]">
-                              <LabPcbLive variant={idx as 0 | 1 | 2} />
-                            </div>
+                          {/* grid vignette top */}
+                          <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-[160px] w-[160px] rounded-full bg-[#C4713C]/[0.08] blur-[30px]" />
+                          {/* header: SYS kiri, 01 badge kanan terracotta */}
+                          <div className="relative flex items-center justify-between">
+                            <span className="font-mono text-[10px] tracking-[0.16em] text-[#C4713C]">{meta.code}</span>
+                            <span className="rounded-[4px] bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px] font-bold tracking-widest text-white/40">0{idx + 1}</span>
                           </div>
-                          <div className="-mx-5 -mb-5 flex items-center justify-between gap-3 border-t border-border/20 bg-[#0d0b0a]/45 px-5 py-3 md:-mx-6 md:-mb-6 md:px-6">
-                            <p className="font-mono text-[10px] tracking-wide text-muted/60">
-                              › {cmds[idx]}
-                            </p>
-                            <span aria-hidden className="flex shrink-0 items-center gap-1">
-                              <span className="h-[3px] w-[3px] bg-terracotta/45" />
-                              <span className="h-[3px] w-[3px] bg-terracotta/70" />
-                              <span className="h-[3px] w-[3px] bg-terracotta/30" />
+                          {/* tag PHASE kuning/terracotta */}
+                          <div className="relative mt-4 inline-flex self-start items-center gap-1.5 rounded-[6px] bg-[#C4713C]/15 px-2.5 py-1">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#C4713C]" />
+                            <span className="font-mono text-[10px] font-bold tracking-[0.14em] text-[#C4713C]">{labPhaseTags[idx]}</span>
+                          </div>
+                          {/* title */}
+                          <h3 className="relative mt-3 font-display text-[clamp(1.55rem,4.5vw,1.9rem)] font-black uppercase leading-none tracking-[-0.02em] text-[#F5EFE6]">
+                            {step.title}
+                          </h3>
+                          <div className="relative mt-2 h-[2px] w-7 bg-[#C4713C]/70" />
+                          {/* desc */}
+                          <p className="relative mt-3 max-w-[92%] text-[12px] leading-[1.6] text-white/45 md:text-[12.5px]">
+                            {step.desc}
+                          </p>
+                          {/* footer: left accent line + NODE 01 kanan */}
+                          <div className="relative mt-auto flex items-end justify-between gap-3 pt-6">
+                            <span aria-hidden className="absolute left-0 top-5 h-8 w-[1.5px] bg-white/10" />
+                            <span className="pl-3 font-mono text-[10px] tracking-wide text-white/0">.</span>
+                            <span className="flex flex-col items-end leading-none">
+                              <span className="font-mono text-[9px] tracking-[0.18em] text-white/25">NODE</span>
+                              <span className="font-display text-[26px] font-black tracking-tight text-[#C4713C]">0{idx + 1}</span>
                             </span>
                           </div>
                         </div>
