@@ -5082,13 +5082,13 @@ function Lab() {
     { code: "SYS-02 // PROCESS" },
     { code: "SYS-03 // OUTPUT" },
   ] as const;
-  // PCB — zigzag (tangga turun): 01 atas-kiri, 02 tengah, 03 bawah-kanan; jalur derive dari positions
+  // PCB — static V: 01 & 03 naik, 02 tengah-bawah; jalur derive dari positions (tidak draggable)
   const STAGE_W = 1360;
   const STAGE_H = 545;
   const V_POS = {
-    "card-1": { x: 18, y: 10 },
-    "card-2": { x: 480, y: 78 },
-    "card-3": { x: 942, y: 146 },
+    "card-1": { x: 18, y: 14 },
+    "card-2": { x: 480, y: 125 },
+    "card-3": { x: 942, y: 14 },
   } as const;
   const vCard = 400;
   // panggung V di-scale turun kalau layar desktop tidak cukup lebar (biar kartu tidak kepotong)
@@ -5112,11 +5112,11 @@ function Lab() {
   const vC1 = V_POS["card-1"];
   const vC2 = V_POS["card-2"];
   const vC3 = V_POS["card-3"];
-  // arah "renggang": zigzag → baris rata (semua y=~70) saat spread=1
+  // arah "renggang": 01 & 03 melebar ke samping + turun, 02 naik — V terbuka jadi baris lebar
   const SPREAD = {
-    "card-1": { x: -108, y: 60 },
-    "card-2": { x: 0, y: -8 },
-    "card-3": { x: 108, y: -76 },
+    "card-1": { x: -108, y: 66 },
+    "card-2": { x: 0, y: -30 },
+    "card-3": { x: 108, y: 66 },
   } as const;
   const card1X = useTransform(labSpread, (s) => vC1.x + s * SPREAD["card-1"].x);
   const card1Y = useTransform(labSpread, (s) => vC1.y + s * SPREAD["card-1"].y);
