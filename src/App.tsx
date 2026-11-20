@@ -5085,13 +5085,13 @@ function Lab() {
   ] as const;
   // PCB — static V: 01 & 03 naik, 02 tengah-bawah; jalur derive dari positions (tidak draggable)
   const STAGE_W = 1360;
-  const STAGE_H = 545;
+  const STAGE_H = 430;
   const V_POS = {
-    "card-1": { x: 18, y: 14 },
-    "card-2": { x: 480, y: 125 },
-    "card-3": { x: 942, y: 14 },
+    "card-1": { x: 18, y: 10 },
+    "card-2": { x: 480, y: 80 },
+    "card-3": { x: 942, y: 10 },
   } as const;
-  const vCard = 400;
+  const vCard = 340;
   // panggung V di-scale turun kalau layar desktop tidak cukup lebar (biar kartu tidak kepotong)
   const [stageScale, setStageScale] = useState(1);
   const stageWrapRef = useRef<HTMLDivElement>(null);
@@ -5409,7 +5409,7 @@ function Lab() {
                         className={`lab-card-wrap ${labPlay ? "is-in" : ""}`}
                         style={{ animationDelay: `${idx * 0.28}s` }}
                       >
-                        <div className="relative flex min-h-[340px] flex-col overflow-hidden rounded-[16px] border border-[#2A2826] bg-[#0E0D0C] p-5 md:aspect-square md:min-h-[380px] md:p-6">
+                        <div className="relative flex min-h-[300px] flex-col overflow-hidden rounded-[16px] border border-[#2A2826] bg-[#0E0D0C] p-5 md:aspect-square md:min-h-[340px] md:p-6">
                           {/* corner dots - tema warm */}
                           <span aria-hidden className="pointer-events-none absolute left-3 top-3 h-[3px] w-[3px] bg-[#3A3632]" />
                           <span aria-hidden className="pointer-events-none absolute right-3 top-3 h-[3px] w-[3px] bg-[#3A3632]" />
