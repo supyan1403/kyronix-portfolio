@@ -35,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const body = (req.body ?? {}) as Body;
 
-  // honeypot — bot ngisi _gotcha langsung 200 ok palsu biar gak tau ke-block
+  // honeypot - bot ngisi _gotcha langsung 200 ok palsu biar gak tau ke-block
   if (body._gotcha && String(body._gotcha).trim() !== "") {
     return res.status(200).json({ ok: true });
   }
@@ -59,7 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (subject.length > 120) return res.status(400).json({ ok: false, error: "Subjek terlalu panjang." });
   if (phone.length > 30) return res.status(400).json({ ok: false, error: "No HP terlalu panjang." });
 
-  // Turnstile verify — kalau env belum diisi, skip (biar dev gak mental)
+  // Turnstile verify - kalau env belum diisi, skip (biar dev gak mental)
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (secret && turnstileToken) {
     try {
@@ -95,7 +95,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       </table>
       <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0" />
       <pre style="white-space:pre-wrap;word-break:break-word;background:#F5EFE6;border:1px solid #3A3632;border-radius:12px;padding:16px;margin:0">${esc(message)}</pre>
-      <p style="color:#9ca3af;font-size:12px;margin:12px 0 0">Balas langsung via Reply — replyTo sudah di-set ke ${esc(email)}.</p>
+      <p style="color:#9ca3af;font-size:12px;margin:12px 0 0">Balas langsung via Reply - replyTo sudah di-set ke ${esc(email)}.</p>
     </div>
   `;
 

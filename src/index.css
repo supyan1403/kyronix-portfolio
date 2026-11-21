@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Warm Dark palette — hangat, bukan hitam pekat */
+  /* Warm Dark palette - hangat, bukan hitam pekat */
   --color-cream: #1a1816;
   --color-cream-deep: #252220;
   --color-surface: #252220;
@@ -52,9 +52,9 @@
   }
 }
 
-/* ===== WARM DARK — soft dark ===== */
+/* ===== WARM DARK - soft dark ===== */
 
-/* Hero soft grain — premium warm noise, no orb kasar — kept for optional use */
+/* Hero soft grain - premium warm noise, no orb kasar - kept for optional use */
 .hero-grain {
   position: absolute;
   inset: 0;
@@ -66,7 +66,7 @@
   mix-blend-mode: soft-light;
 }
 
-/* Kinetic band — epic scroll */
+/* Kinetic band - epic scroll */
 @keyframes marquee {
   to {
     transform: translateX(-50%);
@@ -110,7 +110,7 @@
   }
 }
 
-/* Hero KYRONIX — outline bersih tanpa glow/shadow (flat line-art) */
+/* Hero KYRONIX - outline bersih tanpa glow/shadow (flat line-art) */
 .hero-outline {
   font-family: var(--font-kyronix);
   font-weight: 400;
@@ -132,7 +132,7 @@
   }
 }
 
-/* Hero KYRONIX — outline SVG yang digambar (stroke dash) */
+/* Hero KYRONIX - outline SVG yang digambar (stroke dash) */
 .hero-sketch {
   font-family: var(--font-kyronix);
   font-weight: 400;
@@ -150,7 +150,7 @@
   }
 }
 
-/* Coretan sketcher — gores putus-putus yang menyapu sebelum garis final */
+/* Coretan sketcher - gores putus-putus yang menyapu sebelum garis final */
 .sketch-scrawl {
   fill: none;
   stroke-width: 1.5;
@@ -162,7 +162,7 @@
   }
 }
 
-/* Watermark section — sama kejelasannya dengan watermark Hero (stroke + fill + opacity) */
+/* Watermark section - sama kejelasannya dengan watermark Hero (stroke + fill + opacity) */
 .watermark,
 .hero-watermark {
   color: transparent;
@@ -176,7 +176,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Watermark Hero — pakai font KYRONIX */
+/* Watermark Hero - pakai font KYRONIX */
 .hero-watermark {
   font-family: var(--font-kyronix);
   font-weight: 400;
@@ -193,7 +193,7 @@
   }
 }
 
-/* Warm card — dark surface, soft shadow — rounded dikit 16px (base radius) */
+/* Warm card - dark surface, soft shadow - rounded dikit 16px (base radius) */
 .warm-card {
   position: relative;
   background: var(--color-surface);
@@ -217,7 +217,7 @@
   border-color: #4a4642;
 }
 
-/* Warm button — Copper Block 3D (parity Hero KYRONIX copper extrude) — tebal */
+/* Warm button - Copper Block 3D (parity Hero KYRONIX copper extrude) - tebal */
 .warm-btn {
   display: inline-flex;
   align-items: center;
@@ -322,7 +322,7 @@
   font-size: 12px;
 }
 
-/* Warm tag — rounded dikit 10px konsisten sama button/card */
+/* Warm tag - rounded dikit 10px konsisten sama button/card */
 .warm-tag {
   display: inline-flex;
   align-items: center;
@@ -337,7 +337,7 @@
   color: var(--color-muted);
 }
 
-/* CRT off — warm has no scanlines */
+/* CRT off - warm has no scanlines */
 .scanlines-overlay {
   display: none;
 }
@@ -345,12 +345,12 @@
   display: block;
 }
 
-/* Hero sama kayak opening — diagonal stripes warm */
+/* Hero sama kayak opening - diagonal stripes warm */
 .grid-pattern {
   display: none;
 }
 
-/* Subtle warm grid — light on dark */
+/* Subtle warm grid - light on dark */
 .warm-grid {
   background-image:
     linear-gradient(rgba(245, 239, 230, 0.04) 1px, transparent 1px),
@@ -358,7 +358,7 @@
   background-size: 48px 48px;
 }
 
-/* Halftone dots — light on dark */
+/* Halftone dots - light on dark */
 .halftone {
   background-image: radial-gradient(circle, rgba(245, 239, 230, 0.06) 1.5px, transparent 1.5px);
   background-size: 16px 16px;
@@ -386,7 +386,7 @@
   animation: live-pulse 1.8s ease-in-out infinite;
 }
 
-/* PCB trace pulse di Lab (Cara Saya Bekerja) — dash mengalir */
+/* PCB trace pulse di Lab (Cara Saya Bekerja) - dash mengalir */
 @keyframes pulseFlow {
   0% {
     stroke-dashoffset: 160;
@@ -396,7 +396,7 @@
   }
 }
 
-/* — Lab: kartu masuk bertahap 01 → 02 → 03 (naik + reveal, bukan fade) — */
+/* - Lab: kartu masuk bertahap 01 → 02 → 03 (naik + reveal, bukan fade) - */
 @keyframes labCardRise {
   0% {
     transform: translate3d(0, 30px, 0) scale(0.955);
@@ -426,7 +426,7 @@
       0 0 26px rgba(196, 113, 60, 0.1);
   }
 }
-/* Denyut glow terus-menerus setelah kartu masuk — napas sirkuit */
+/* Denyut glow terus-menerus setelah kartu masuk - napas sirkuit */
 @keyframes labGlowBeat {
   0%,
   100% {
@@ -482,7 +482,7 @@
   animation: labViaPulse 2.4s ease-in-out infinite;
 }
 
-/* PCB mini di dalam kartu Lab — trace statis + pulsa yang mengalir di atasnya.
+/* PCB mini di dalam kartu Lab - trace statis + pulsa yang mengalir di atasnya.
    dasharray 16+64 = 80, jadi loop keyframes (160 → 0) mendarat pas tanpa lompat. */
 .lab-pcb-flow {
   stroke-dasharray: 16 64;
@@ -516,7 +516,7 @@
   scrollbar-width: none;
 }
 
-/* KARYA horizontal — scrollbar tipis horizontal yang kelihatan (warm) */
+/* KARYA horizontal - scrollbar tipis horizontal yang kelihatan (warm) */
 .karya-scroll {
   scrollbar-width: thin;
   scrollbar-color: #3a3632 #1a1816;
@@ -600,14 +600,14 @@ a[aria-disabled="true"] {
   cursor: default;
 }
 
-/* — mobile juga parallax & reverse animasi (jangan mati di HP) — */
+/* - mobile juga parallax & reverse animasi (jangan mati di HP) - */
 .warm-card,
 .kinetic,
 [data-dot],
 #projects [style*="transform"] {
   backface-visibility: hidden;
 }
-/* Heatmap 5 level — class biar 350 kotak tidak pakai 350 inline style object */
+/* Heatmap 5 level - class biar 350 kotak tidak pakai 350 inline style object */
 .hm-NONE {
   background: #252220;
   border-color: rgba(58, 54, 50, 0.65);

@@ -148,7 +148,7 @@ function fetchWithTimeout(url: string, init: RequestInit = {}, ms = 4000): Promi
   return fetch(url, { ...init, signal: ac.signal }).finally(() => clearTimeout(t));
 }
 
-// no ":" in any visible copy per spec — also no "project" word, use "cara saya"
+// no ":" in any visible copy per spec - also no "project" word, use "cara saya"
 type LangStat = { lang: string; count: number; pct: number };
 type CommitItem = { repo: string; message: string; time: string; url: string };
 type GHLevel = "NONE" | "FIRST_QUARTILE" | "SECOND_QUARTILE" | "THIRD_QUARTILE" | "FOURTH_QUARTILE";
@@ -187,12 +187,12 @@ const tDict = {
     heatContrib: "kontribusi dalam setahun terakhir",
     less: "Kurang",
     more: "Banyak",
-    footer: "Kyronix Lab — ruang eksperimen tempat gagasan menjadi sistem",
+    footer: "Kyronix Lab - ruang eksperimen tempat gagasan menjadi sistem",
     terminalLines: [
       "> inisialisasi kyronix lab",
-      "> menghubungkan ke github supyan1403 — terhubung",
-      "> memindai bahasa dan aktivitas terkini — selesai",
-      "> sinkronisasi rekam jejak harian — live",
+      "> menghubungkan ke github supyan1403 - terhubung",
+      "> memindai bahasa dan aktivitas terkini - selesai",
+      "> sinkronisasi rekam jejak harian - live",
     ] as string[],
     errRepo: "gagal memuat repositori",
     errAct: "gagal memuat aktivitas",
@@ -230,12 +230,12 @@ const tDict = {
     heatContrib: "contributions in the last year",
     less: "Less",
     more: "More",
-    footer: "Kyronix Lab — experimental space where ideas become systems",
+    footer: "Kyronix Lab - experimental space where ideas become systems",
     terminalLines: [
       "> initializing kyronix lab",
-      "> connecting to github supyan1403 — connected",
-      "> scanning languages and recent activity — done",
-      "> syncing daily streak — live",
+      "> connecting to github supyan1403 - connected",
+      "> scanning languages and recent activity - done",
+      "> syncing daily streak - live",
     ] as string[],
     errRepo: "failed to load repositories",
     errAct: "failed to load activity",
@@ -256,7 +256,7 @@ function buildHeatmapFromCounts(
   today = new Date(),
   levelMap?: Map<string, GHLevel>,
 ) {
-  // GitHub parity: 53w window ending today, aligned Mon–Sun (same as github.com)
+  // GitHub parity: 53w window ending today, aligned Mon-Sun (same as github.com)
   const end = new Date(today);
   end.setHours(0, 0, 0, 0);
   const start = new Date(end);
@@ -444,7 +444,7 @@ function ContributionHeatmap({
   onYearChange?: (y: number | "last") => void;
   availableYears?: number[];
 }) {
-  // C — kalender kecil + filter BULAN LALU / BULAN INI / 1 BULAN TERAKHIR
+  // C - kalender kecil + filter BULAN LALU / BULAN INI / 1 BULAN TERAKHIR
   type MonthFilter = "lastMonth" | "thisMonth" | "last30";
   const [monthFilter, setMonthFilter] = useState<MonthFilter>("last30");
   const levelMap = useMemo(() => {
@@ -458,14 +458,14 @@ function ContributionHeatmap({
     let start: Date;
     let end: Date;
     if (monthFilter === "thisMonth") {
-      // FULL sebulan walaupun hari ini 19 — 1 sampai akhir bulan
+      // FULL sebulan walaupun hari ini 19 - 1 sampai akhir bulan
       start = new Date(today.getFullYear(), today.getMonth(), 1);
       end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     } else if (monthFilter === "lastMonth") {
       start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       end = new Date(today.getFullYear(), today.getMonth(), 0);
     } else {
-      // 1 bulan terakhir — rolling 30 hari ending today
+      // 1 bulan terakhir - rolling 30 hari ending today
       end = new Date(today);
       start = new Date(end);
       start.setDate(end.getDate() - 29);
@@ -570,7 +570,7 @@ function ContributionHeatmap({
       month: "long",
       year: "numeric",
     });
-    return `${sLabel} – ${eLabel}`;
+    return `${sLabel} - ${eLabel}`;
   }, [monthFilter, isEn]);
   const trailingEmpty = useMemo(() => {
     const mod = (leadingEmpty + days.length) % 7;
@@ -611,7 +611,7 @@ function ContributionHeatmap({
         className="mt-2 flex h-[238px] flex-col border border-border/10 bg-cream-deep/40 p-3"
         style={{ contentVisibility: "auto", containIntrinsicSize: "238px" } as React.CSSProperties}
       >
-        {/* C kalender kecil — 7 kolom, kotak kosong fill warna saja, full sebulan — flex-col + footer mt-auto biar tidak geser saat switch */}
+        {/* C kalender kecil - 7 kolom, kotak kosong fill warna saja, full sebulan - flex-col + footer mt-auto biar tidak geser saat switch */}
         <div className="grid grid-cols-7 gap-1">
           {weekdayLabels.map((w) => (
             <span
@@ -691,12 +691,12 @@ function useGitHubLive(
 
   const fetchAll = async () => {
     setLoading(true);
-    // 1) heatmap 1 tahun wajib sama github — jogruber (tidak kena rate limit api.github.com)
+    // 1) heatmap 1 tahun wajib sama github - jogruber (tidak kena rate limit api.github.com)
     // 2) events + langs via api.github.com tapi tidak bikin gagal total kalau 403
     const promises: Promise<void>[] = [];
 
     const heatP = (async () => {
-      // coba GraphQL ori (count + level kuartil persis github.com) bila ada token — 100% identik
+      // coba GraphQL ori (count + level kuartil persis github.com) bila ada token - 100% identik
       const tok = (import.meta.env.VITE_GITHUB_TOKEN as string | undefined)?.trim();
       if (tok) {
         try {
@@ -767,13 +767,13 @@ function useGitHubLive(
             : buildHeatmapForYear(cMap, heatmapYear as number, withLevel ? lMap : undefined),
         );
       } catch {
-        // fallback heatmap dari events kalau proxy down — akan diisi di bawah
+        // fallback heatmap dari events kalau proxy down - akan diisi di bawah
       }
     })();
     promises.push(heatP);
 
     const ghP = (async () => {
-      // cache-first biar tidak loading lama — kasih fallback statis kalau cache kosong
+      // cache-first biar tidak loading lama - kasih fallback statis kalau cache kosong
       const cached = readLangsCache();
       if (cached?.length) {
         setLangs(cached);
@@ -791,7 +791,7 @@ function useGitHubLive(
         const repos: { name: string; languages_url: string; language: string | null }[] =
           await r.json();
         let sorted: LangStat[];
-        // pakai bytes asli biar 25% rata hilang — JS 51% sesuai live: kulinara+project_bps_tasik JS 2.1MB
+        // pakai bytes asli biar 25% rata hilang - JS 51% sesuai live: kulinara+project_bps_tasik JS 2.1MB
         // tanpa token tetap pakai languages_url (4 repo ringan), tapi kalau 1 aja gagal jangan pakai partial (bikin PHP 40% ngaco)
         const langMapsAll = await Promise.all(
           repos.slice(0, 20).map(async (repo) => {
@@ -831,7 +831,7 @@ function useGitHubLive(
             .sort((a, b) => b.pct - a.pct)
             .slice(0, 6);
         } else {
-          // jangan fallback count repo 1-1 (jadi 25% rata) — pakai bytes fallback jujur
+          // jangan fallback count repo 1-1 (jadi 25% rata) - pakai bytes fallback jujur
           sorted = [...FALLBACK_LANGS].sort((a, b) => b.pct - a.pct);
         }
         if (sorted.length) {
@@ -842,7 +842,7 @@ function useGitHubLive(
         writeLangsCache(sorted);
         setLangErr(null);
       } catch {
-        // 403 / partial / timeout — tetap tampil fallback/cache, jangan tampilkan data ngaco 40/38
+        // 403 / partial / timeout - tetap tampil fallback/cache, jangan tampilkan data ngaco 40/38
         const ok = readLangsCache();
         if (ok?.length) {
           setLangs((prev) => (prev && prev.length ? prev : ok));
@@ -918,7 +918,7 @@ function useGitHubLive(
   }, [isEn, fallbackCommit, errRepo, errAct, heatmapYear, enabled]);
 
   useEffect(() => {
-    // heatmap baru mount — resize lenis pake debounce biar tidak layout thrash tiap kotak shuffle
+    // heatmap baru mount - resize lenis pake debounce biar tidak layout thrash tiap kotak shuffle
     let id = 0 as unknown as number;
     const cb = () => {
       (window as unknown as { __lenis?: { resize?: () => void } }).__lenis?.resize?.();
@@ -950,7 +950,7 @@ function TerminalHero({ lines }: { lines: string[] }) {
           <i className="h-2.5 w-2.5 rounded-full bg-[#8FA89B]" />
         </span>
         <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-          kyronix@lab — zsh
+          kyronix@lab - zsh
         </span>
         <span className="ml-auto inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
           <span className="h-2 w-2 rounded-full bg-terracotta live-dot" /> live
@@ -992,7 +992,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   const shouldFetch = !lazy || embedInView;
   const bahasaRef = useRef<HTMLElement>(null);
   const langInView = useInView(bahasaRef as unknown as React.RefObject<Element>, { amount: 0.25 });
-  // 1x parallax aja (blur disain lain udah whileInView) — hemat 8 listeners + spring biar 60/120 halus
+  // 1x parallax aja (blur disain lain udah whileInView) - hemat 8 listeners + spring biar 60/120 halus
   const { scrollYProgress: dashProgress } = useScroll({
     target: embedRef as unknown as React.RefObject<Element>,
     offset: ["start end", "end start"],
@@ -1000,7 +1000,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
   const rawHead = useTransform(dashProgress, [0, 1], [10, -10]);
   const dashHeadY = useSpring(rawHead, { stiffness: 140, damping: 30, mass: 0.3 });
   const openingGridY = useTransform(dashProgress, [0, 1], [22, -22]);
-  // subtitle hilang duluan saat scroll — title/eyebrow belakangan
+  // subtitle hilang duluan saat scroll - title/eyebrow belakangan
   const subtitleOpacity = useTransform(dashProgress, [0.26, 0.38], [1, 0]);
   const titleOpacity = useTransform(dashProgress, [0.34, 0.48], [1, 0]);
   const { langs, commits, heatmap, loading, err, langErr } = useGitHubLive(
@@ -1013,7 +1013,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
     shouldFetch,
   );
 
-  // B — real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
+  // B - real dari heatmap: total = heatmap.total, hari ini = count today, streak = beruntun mundur
   const todayId = toLocalISO(new Date());
   const todayCount = useMemo(() => {
     if (!heatmap) return 0;
@@ -1100,7 +1100,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
 
   return (
     <div ref={embedRef} className="relative">
-      {/* Opening — full 1 layar kayak EKOSISTEM tapi ga 100dvh penuh biar ga ketinggian */}
+      {/* Opening - full 1 layar kayak EKOSISTEM tapi ga 100dvh penuh biar ga ketinggian */}
       <section
         data-dash-opening
         className="relative flex min-h-[76dvh] flex-col items-center justify-center overflow-hidden bg-transparent px-[5vw] py-[8vh] text-center"
@@ -1117,7 +1117,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             } as unknown as Record<string, unknown>
           }
         />
-        {/* entrance (opacity) di luar, parallax (y) di dalam — biar transform tidak berebut */}
+        {/* entrance (opacity) di luar, parallax (y) di dalam - biar transform tidak berebut */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -1259,7 +1259,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
             <span className="ml-1 font-mono text-xs text-muted"> {t.jam}</span>
           </p>
           <span className="mt-2 inline-flex flex-wrap items-center gap-1 font-mono text-[9px] uppercase leading-tight tracking-[0.08em] text-muted sm:text-[10px] sm:tracking-widest">
-            <Activity size={12} className="text-terracotta" /> {isEn ? "Mon–Sun" : "Sen–Min"}
+            <Activity size={12} className="text-terracotta" /> {isEn ? "Mon-Sun" : "Sen-Min"}
           </span>
         </motion.div>
         <motion.div
@@ -1282,7 +1282,7 @@ export function DashboardEmbed({ lazy }: { lazy?: boolean }) {
         </motion.div>
       </div>
 
-      {/* split — bahasa 70 / aktivitas 30 — tinggi samakan, bahasa yang stretch */}
+      {/* split - bahasa 70 / aktivitas 30 - tinggi samakan, bahasa yang stretch */}
       <div className="mt-6 grid gap-6 lg:grid-cols-[7fr_3fr] lg:items-stretch">
         <motion.section
           ref={bahasaRef as unknown as React.RefObject<HTMLElement>}

@@ -37,7 +37,7 @@ import {
   Compass,
   X,
 } from "lucide-react";
-/* brand full-color icons — simple-icons + local asseticon via react-icons/si (Draw.io kept via si) */
+/* brand full-color icons - simple-icons + local asseticon via react-icons/si (Draw.io kept via si) */
 import {
   SiArduino,
   SiDiagramsdotnet,
@@ -232,7 +232,7 @@ function scrollToId(id: string) {
   }
 }
 
-/* ---------- Smooth scroll (Lenis) — desktop smooth, HP native 120Hz ---------- */
+/* ---------- Smooth scroll (Lenis) - desktop smooth, HP native 120Hz ---------- */
 function useLenis(enabled = true) {
   useEffect(() => {
     if (!enabled) {
@@ -252,7 +252,7 @@ function useLenis(enabled = true) {
       window.matchMedia("(pointer: coarse)").matches ||
       window.matchMedia("(max-width: 768px)").matches;
     if (isCoarse) {
-      // HP: tanpa Lenis — scroll native (fling 120Hz di compositor) dan scrollToId pakai
+      // HP: tanpa Lenis - scroll native (fling 120Hz di compositor) dan scrollToId pakai
       // scrollIntoView bawaan. Instance Lenis di coarse bikin tombol/nav tidak jalan karena
       // rAF-nya cuma hidup saat ada event scroll, jadi lenis.scrollTo() tidak pernah dianimasikan.
       if (lenisInstance) {
@@ -430,7 +430,7 @@ function SplitReveal({
   );
 }
 
-/* Karakter slogan — ngetik satu-satu, hilang reverse saat scroll dari Hero */
+/* Karakter slogan - ngetik satu-satu, hilang reverse saat scroll dari Hero */
 function SloganChar({
   char,
   index,
@@ -506,7 +506,7 @@ function Tag({
   );
 }
 
-/* ---------- Kinetic band — tanpa BG solid 3× selang-seling (adaptive: scroll-linked desktop, CSS marquee low-end) ---------- */
+/* ---------- Kinetic band - tanpa BG solid 3× selang-seling (adaptive: scroll-linked desktop, CSS marquee low-end) ---------- */
 function KineticBand({
   text,
   accent,
@@ -521,7 +521,7 @@ function KineticBand({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const rawX = useTransform(scrollYProgress, [0, 1], reverse ? ["-50%", "0%"] : ["0%", "-50%"]);
   const x = useSpring(rawX, { stiffness: 120, damping: 30, mass: 0.35 });
-  // low-end: no 5× scroll listeners — pure CSS marquee (same look selang-seling via reverse direction)
+  // low-end: no 5× scroll listeners - pure CSS marquee (same look selang-seling via reverse direction)
   if (low) {
     return (
       <div className="overflow-hidden bg-transparent py-4 md:py-6" aria-hidden>
@@ -566,18 +566,18 @@ function KineticBand({
 
 /* ---------- Arcade "CONTINUE?" countdown ---------- */
 
-/* ---------- Intro — Hybrid brutalist terminal typing (B) ---------- */
+/* ---------- Intro - Hybrid brutalist terminal typing (B) ---------- */
 function Intro({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
   const finish = () => {
-    // mount KPage di bawah Intro SEBELUM clip wipe — jangan buka overflow, biar stack tidak bocor saat Intro wipe
+    // mount KPage di bawah Intro SEBELUM clip wipe - jangan buka overflow, biar stack tidak bocor saat Intro wipe
     onDone();
     setLeaving(true);
   };
 
   const LINES: { prompt: string; text: string }[] = [
     { prompt: "$", text: "whoami" },
-    { prompt: ">", text: "supyan sauri — system architect" },
+    { prompt: ">", text: "supyan sauri - system architect" },
     { prompt: "$", text: "boot kyronix.my.id" },
   ];
   const [lineIdx, setLineIdx] = useState(0);
@@ -618,7 +618,7 @@ function Intro({ onDone }: { onDone: () => void }) {
     return () => clearTimeout(t);
   }, [lineIdx, charIdx, done]);
 
-  // ESC / click to skip — mount KPage dulu (onDone) biar stack tidak bocor saat Intro wipe
+  // ESC / click to skip - mount KPage dulu (onDone) biar stack tidak bocor saat Intro wipe
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -650,7 +650,7 @@ function Intro({ onDone }: { onDone: () => void }) {
             }}
           />
           <p className="absolute left-6 top-6 font-mono text-xs uppercase tracking-[0.3em] text-muted">
-            FRAME 001 / BOOTING — SUPYAN SAURI
+            FRAME 001 / BOOTING - SUPYAN SAURI
           </p>
           <div className="relative w-[min(560px,92vw)] border border-border bg-surface p-5 shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:p-7">
             <div className="absolute -right-2 -top-2 bg-terracotta px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
@@ -690,7 +690,7 @@ function Intro({ onDone }: { onDone: () => void }) {
                 className={`h-2 w-2 rounded-full ${done ? "bg-terracotta live-dot" : "bg-[#fbbf24] animate-pulse"}`}
               />
               {done ? (
-                <span className="text-terracotta">ready — click or ESC to skip</span>
+                <span className="text-terracotta">ready - click or ESC to skip</span>
               ) : (
                 <span>typing...</span>
               )}
@@ -705,7 +705,7 @@ function Intro({ onDone }: { onDone: () => void }) {
   );
 }
 
-/* ---------- K — dedicated page after boot (K-PAGE2 3D copper, bg hitam) ---------- */
+/* ---------- K - dedicated page after boot (K-PAGE2 3D copper, bg hitam) ---------- */
 function KPage({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
   const [pct, setPct] = useState(0);
@@ -839,7 +839,7 @@ function KPage({ onDone }: { onDone: () => void }) {
             my.set(0);
           }}
         >
-          {/* frame 0 hitam solid — fade in, bukan pop */}
+          {/* frame 0 hitam solid - fade in, bukan pop */}
           <div aria-hidden className="absolute inset-0 bg-black" />
           <motion.div
             aria-hidden
@@ -1075,7 +1075,7 @@ function Nav({ ready }: { ready: boolean }) {
       >
         Skip to content
       </a>
-      {/* desktop: vertical right-6 center — pixel square dots */}
+      {/* desktop: vertical right-6 center - pixel square dots */}
       <nav
         aria-label="Section navigation"
         className="fixed right-6 top-1/2 z-[90] hidden -translate-y-1/2 flex-col items-center gap-3.5 opacity-[0.78] transition-opacity duration-300 hover:opacity-100 md:flex"
@@ -1106,7 +1106,7 @@ function Nav({ ready }: { ready: boolean }) {
         })}
       </nav>
 
-      {/* mobile: horizontal bottom center — pixel square dots */}
+      {/* mobile: horizontal bottom center - pixel square dots */}
       <nav
         aria-label="Section navigation"
         className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-[90] flex max-w-[calc(100vw-1rem)] -translate-x-1/2 items-center gap-1.5 opacity-[0.72] transition-opacity hover:opacity-100 active:opacity-100 md:hidden"
@@ -1310,7 +1310,7 @@ function Hero3D({
   );
 }
 
-/* ---------- Holographic Core — Procedural A refined (gap clean, pure circle) ---------- */
+/* ---------- Holographic Core - Procedural A refined (gap clean, pure circle) ---------- */
 function HoloCore({
   ready,
   mx,
@@ -1344,7 +1344,7 @@ function HoloCore({
       >
         {/* soft ground shadow */}
         <div className="absolute left-1/2 top-[72%] h-[48px] w-[90px] -translate-x-1/2 rounded-[50%] bg-black/35 blur-[10px]" />
-        {/* ring 1 — outer 1.5px */}
+        {/* ring 1 - outer 1.5px */}
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
@@ -1367,7 +1367,7 @@ function HoloCore({
             } as React.CSSProperties
           }
         />
-        {/* ring 2 — dashed thinner */}
+        {/* ring 2 - dashed thinner */}
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
@@ -1378,7 +1378,7 @@ function HoloCore({
             } as React.CSSProperties
           }
         />
-        {/* core — pure circle 62px, no square border */}
+        {/* core - pure circle 62px, no square border */}
         <div
           className="absolute left-1/2 top-1/2 h-[58px] w-[58px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-[radial-gradient(circle_at_35%_30%,#E07A5F_0%,#E7E5E4_42%,#2a0a14_72%,#0a1628_100%)] shadow-[0_0_14px_rgba(232,17,45,0.35),0_0_22px_rgba(124,58,237,0.22)] lg:h-[62px] lg:w-[62px]"
           style={{ transform: "translate(-50%,-50%) translateZ(14px)" } as React.CSSProperties}
@@ -1412,7 +1412,7 @@ function HoloCore({
   );
 }
 
-/* ---------- i18n — ID / EN ---------- */
+/* ---------- i18n - ID / EN ---------- */
 const dict = {
   id: {
     nav: {
@@ -1434,7 +1434,7 @@ const dict = {
       eyebrow: "DI BALIK KYRONIX",
       title: "HALO, SAYA SUPYAN SAURI",
       name: "Supyan Sauri",
-      role: "System Architect – Data & Web Systems",
+      role: "System Architect - Data & Web Systems",
       bio: "Memiliki ketertarikan tinggi terhadap proses pembelajaran mendalam serta eksplorasi teknologi baru. Melalui pemodelan sistem yang terstruktur dan pengembangan web secara berkelanjutan, cara saya menterjemahkan berbagai gagasan kompleks menjadi solusi yang fungsional dan andal",
       ctaPrimary: "MASUK LAB",
       ctaSecondary: "HUBUNGI SAYA",
@@ -1526,12 +1526,12 @@ const dict = {
       title: "Belum Tersedia",
       body: "Belum di-deploy. Tautan demo akan aktif setelah rilis.",
       inProgressBody:
-        "Masih dalam pengerjaan — prototype & integrasi berjalan. Tautan demo akan aktif setelah pengembangan selesai.",
+        "Masih dalam pengerjaan - prototype & integrasi berjalan. Tautan demo akan aktif setelah pengembangan selesai.",
       conceptBody:
-        "Masih tahap konsep — belum ada demo. Hubungi saya untuk diskusi konsep & roadmap.",
+        "Masih tahap konsep - belum ada demo. Hubungi saya untuk diskusi konsep & roadmap.",
       articleTitle: "Artikel Riset Tersedia",
       articleBody:
-        "Ini adalah riset, bukan demo web. Dokumen lengkap tersedia sebagai PDF — baca langsung atau unduh untuk offline.",
+        "Ini adalah riset, bukan demo web. Dokumen lengkap tersedia sebagai PDF - baca langsung atau unduh untuk offline.",
       conceptLabel: "KONSEP",
       conceptInitialLabel: "KONSEP AWAL",
       cta: "Hubungi saya untuk preview",
@@ -1541,13 +1541,13 @@ const dict = {
       close: "Tutup",
     },
     viewer: {
-      certificate: "Sertifikat — KYRONIX",
-      article: "Artikel — KYRONIX",
+      certificate: "Sertifikat - KYRONIX",
+      article: "Artikel - KYRONIX",
       openInNewTab: "Buka di Tab Baru",
-      hintFailed: "Preview diblokir Chrome — pakai Buka di Tab Baru di header.",
+      hintFailed: "Preview diblokir Chrome - pakai Buka di Tab Baru di header.",
       hintMobile: "Mobile tidak preview? Pakai Buka di Tab Baru di header.",
       loading: "Memuat PDF…",
-      blocked: "Preview diblokir — buka tab baru di bawah.",
+      blocked: "Preview diblokir - buka tab baru di bawah.",
       openPdf: "Buka PDF ↗",
     },
   },
@@ -1561,7 +1561,7 @@ const dict = {
       contact: "Contact",
     },
     hero: {
-      hi: "Hey — I'm Supyan Sauri",
+      hi: "Hey - I'm Supyan Sauri",
       ctaPrimary: "Contact Me",
       ctaSecondary: "Explore Builds",
       tagline: "FROM IDEA TO INFRA.",
@@ -1571,7 +1571,7 @@ const dict = {
       eyebrow: "BEHIND KYRONIX",
       title: "HI, I AM SUPYAN SAURI",
       name: "Supyan Sauri",
-      role: "System Architect – Data & Web Systems",
+      role: "System Architect - Data & Web Systems",
       bio: "Highly interested in deep learning processes and exploration of new technologies. Through structured system modeling and continuous web development, the way I translate various complex ideas into functional and reliable solutions",
       ctaPrimary: "Enter Lab",
       ctaSecondary: "Contact Me",
@@ -1661,12 +1661,12 @@ const dict = {
       title: "Project Not Yet Available",
       body: "This project isn't deployed yet. The live link will be available after release.",
       inProgressBody:
-        "Still in progress — prototype & integration ongoing. The live link will be available after development is complete.",
+        "Still in progress - prototype & integration ongoing. The live link will be available after development is complete.",
       conceptBody:
-        "Still at concept stage — no demo yet. Contact me to discuss the concept & roadmap.",
+        "Still at concept stage - no demo yet. Contact me to discuss the concept & roadmap.",
       articleTitle: "Research Article Available",
       articleBody:
-        "This is a research project, not a web demo. The full paper is available as PDF — read inline or download for offline.",
+        "This is a research project, not a web demo. The full paper is available as PDF - read inline or download for offline.",
       conceptLabel: "CONCEPT",
       conceptInitialLabel: "INITIAL CONCEPT",
       cta: "Contact me for a preview",
@@ -1676,19 +1676,19 @@ const dict = {
       close: "Close",
     },
     viewer: {
-      certificate: "Certificate — KYRONIX",
-      article: "Article — KYRONIX",
+      certificate: "Certificate - KYRONIX",
+      article: "Article - KYRONIX",
       openInNewTab: "Open in New Tab",
-      hintFailed: "Preview blocked by Chrome — use Open in New Tab in the header.",
+      hintFailed: "Preview blocked by Chrome - use Open in New Tab in the header.",
       hintMobile: "No preview on mobile? Use Open in New Tab in the header.",
       loading: "Loading PDF…",
-      blocked: "Preview blocked — open in a new tab below.",
+      blocked: "Preview blocked - open in a new tab below.",
       openPdf: "Open PDF ↗",
     },
   },
 } as const;
 
-/* ---------- 1. Hero — Warm Dark Center + epic KYRONIX 3D block tembaga persis K ---------- */
+/* ---------- 1. Hero - Warm Dark Center + epic KYRONIX 3D block tembaga persis K ---------- */
 function Hero({ ready }: { ready: boolean }) {
   const { lang } = useLang();
   const t2 = dict[lang];
@@ -1712,13 +1712,13 @@ function Hero({ ready }: { ready: boolean }) {
     fonts?.ready.then(update).catch(() => {});
     return () => window.removeEventListener("resize", update);
   }, [FULL]);
-  // tilt 3D persis KPage — HP = laptop (onTouch + onMouse)
+  // tilt 3D persis KPage - HP = laptop (onTouch + onMouse)
   const heroMx = useMotionValue(0);
   const heroMy = useMotionValue(0);
   const heroRx = useTransform(heroMy, [-1, 1], [5, -5]);
   const heroRy = useTransform(heroMx, [-1, 1], [-6, 6]);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  // spring halus — desktop saja; mobile/low native scroll tanpa spring biar 120hz mulus
+  // spring halus - desktop saja; mobile/low native scroll tanpa spring biar 120hz mulus
   const smooth = useSpring(scrollYProgress, {
     stiffness: 220,
     damping: 32,
@@ -1772,7 +1772,7 @@ function Hero({ ready }: { ready: boolean }) {
         heroMy.set(0);
       }}
     >
-      {/* Hero: Blueprint Grid 32px — keep, K circuit ganti watermark diagonal */}
+      {/* Hero: Blueprint Grid 32px - keep, K circuit ganti watermark diagonal */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[1]"
@@ -1785,7 +1785,7 @@ function Hero({ ready }: { ready: boolean }) {
           } as unknown as Record<string, unknown>
         }
       />
-      {/* Watermark KYRONIX horizontal — masuk saat Hero muncul, keluar ke samping saat scroll */}
+      {/* Watermark KYRONIX horizontal - masuk saat Hero muncul, keluar ke samping saat scroll */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden select-none">
         <div className="absolute right-0 top-[3%] translate-x-[30%] max-sm:top-[1%]">
           <motion.div
@@ -1822,7 +1822,7 @@ function Hero({ ready }: { ready: boolean }) {
           </motion.div>
         </div>
       </div>
-      {/* corner brackets blueprint — keep */}
+      {/* corner brackets blueprint - keep */}
       <div
         aria-hidden
         className="pointer-events-none absolute left-[24px] top-[88px] h-[22px] w-[22px] border-l-[1.5px] border-t-[1.5px] border-terracotta/20 max-sm:left-[16px] max-sm:top-[84px] max-sm:h-[18px] max-sm:w-[18px]"
@@ -1869,7 +1869,7 @@ function Hero({ ready }: { ready: boolean }) {
         }
         transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
       >
-        {/* KYRONIX — outline digambar seperti sketcher (SVG stroke draw) */}
+        {/* KYRONIX - outline digambar seperti sketcher (SVG stroke draw) */}
         <motion.div
           aria-label={FULL}
           role="img"
@@ -1920,7 +1920,7 @@ function Hero({ ready }: { ready: boolean }) {
                       key={ch + i}
                       style={{ opacity: kyOut[i] } as unknown as Record<string, unknown>}
                     >
-                      {/* potongan outline muncul acak — digambar per segmen */}
+                      {/* potongan outline muncul acak - digambar per segmen */}
                       {order.map((segIdx, slot) => {
                         const delay = t0 + slot * slotStep;
                         const start = -segIdx * SEG;
@@ -1961,7 +1961,7 @@ function Hero({ ready }: { ready: boolean }) {
                           </motion.text>
                         );
                       })}
-                      {/* outline final — menegaskan bentuk setelah semua segmen */}
+                      {/* outline final - menegaskan bentuk setelah semua segmen */}
                       <motion.text
                         x={x}
                         y={baseY}
@@ -1996,7 +1996,7 @@ function Hero({ ready }: { ready: boolean }) {
             </svg>
           ) : null}
         </motion.div>
-        {/* bawah KYRONIX — single kolom kiri (tanpa split) */}
+        {/* bawah KYRONIX - single kolom kiri (tanpa split) */}
         <div className="flex w-full max-w-[640px] flex-col gap-5 lg:mx-0 lg:items-start lg:text-left">
           <motion.p
             className="max-w-[24ch] text-balance font-sans text-[clamp(1.1rem,2.6vw,1.45rem)] leading-relaxed tracking-[0.08em] text-muted sm:max-w-none lg:text-left"
@@ -2046,7 +2046,7 @@ function Hero({ ready }: { ready: boolean }) {
   );
 }
 
-/* ---------- 1.5 Profile — Kyronix Lab (cyber-sleek lab, dark + neon oranye, no colon, no project) ---------- */
+/* ---------- 1.5 Profile - Kyronix Lab (cyber-sleek lab, dark + neon oranye, no colon, no project) ---------- */
 function Profile() {
   const { lang } = useLang();
   const t = dict[lang].profile as (typeof dict)["id"]["profile"] & { ctaDashboard?: string };
@@ -2177,7 +2177,7 @@ function Profile() {
             style={{ y: titleY } as unknown as Record<string, unknown>}
             className="flex flex-col gap-3 will-change-transform md:col-span-5 md:pl-2"
           >
-            {/* System-spec layout — Origin / Fokus stack / Pendekatan+Eksplorasi */}
+            {/* System-spec layout - Origin / Fokus stack / Pendekatan+Eksplorasi */}
             {/* Origin */}
             <motion.div
               initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
@@ -2249,7 +2249,7 @@ function Profile() {
                 </div>
               </div>
             </motion.div>
-            {/* Pendekatan + Eksplorasi — 2 col */}
+            {/* Pendekatan + Eksplorasi - 2 col */}
             <div className="grid gap-3 sm:grid-cols-2">
               <motion.div
                 initial={{ opacity: 0, y: 10 } as unknown as Record<string, unknown>}
@@ -2311,7 +2311,7 @@ function Activity() {
       id="activity"
       className="relative overflow-visible bg-transparent px-[5vw] py-10"
     >
-      {/* satu-satunya LAB watermark — duduk di seam Profil ↔ Aktivitas */}
+      {/* satu-satunya LAB watermark - duduk di seam Profil ↔ Aktivitas */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 select-none font-display text-[22vw] font-black leading-none tracking-[0.02em] watermark will-change-transform max-sm:text-[30vw]"
@@ -2345,7 +2345,7 @@ function Activity() {
   );
 }
 
-/* ---------- 2. Tech stack — MY SYSTEM TOOLKIT (Gallery: folder + full-color brand icons, HANYA APLIKASI REAL) ---------- */
+/* ---------- 2. Tech stack - MY SYSTEM TOOLKIT (Gallery: folder + full-color brand icons, HANYA APLIKASI REAL) ---------- */
 type Tile = {
   label: string;
   Icon?: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>;
@@ -2430,7 +2430,7 @@ function Stack() {
   const flatXRev = useTransform(flatProgress, [0, 1], [10, -10]);
   return (
     <section id="stack" className="relative bg-transparent overflow-x-clip">
-      {/* Opening — full 100dvh text-only EPIC — enter+exit 1 blok */}
+      {/* Opening - full 100dvh text-only EPIC - enter+exit 1 blok */}
       <section
         ref={openingRef}
         className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-[5vw] py-[12vh]"
@@ -2487,7 +2487,7 @@ function Stack() {
           </motion.div>
         </div>
       </section>
-      {/* Flat — tanpa kartu, icon nempel langsung di bg-cream — fade horizontal + parallax */}
+      {/* Flat - tanpa kartu, icon nempel langsung di bg-cream - fade horizontal + parallax */}
       <div ref={flatRef} className="relative px-[5vw] pb-[18vh]">
         <div className="relative mx-auto max-w-[1120px] space-y-12">
           {stackGallery.map((g, gi) => (
@@ -2552,7 +2552,7 @@ function Stack() {
   );
 }
 
-/* ---------- 3. Featured projects — Bento Featured ---------- */
+/* ---------- 3. Featured projects - Bento Featured ---------- */
 
 const CATEGORY_META = {
   penelitian: {
@@ -2727,7 +2727,7 @@ function ProjectStickyCard(p: {
   return <ProjectCard p={p.p} idx={p.idx} onOpen={p.onOpen} />;
 }
 
-/* ---------- 3. Featured projects — warm-tagd builds ---------- */
+/* ---------- 3. Featured projects - warm-tagd builds ---------- */
 type ProjectFolder = "research" | "iot" | "webapp";
 const projectMeta: Record<string, { folder: ProjectFolder; Icon: typeof BarChart3 }> = {
   "01": { folder: "research", Icon: BarChart3 },
@@ -2765,8 +2765,8 @@ const projects = [
       en: "ESP32-based automated feeding system with servo motors and remote scheduling for pet feeding routines.",
     } as const,
     concept: {
-      id: "Sistem pemberian pakan otomatis untuk tiga kucing semi-indoor dengan risiko konsumsi oleh kucing liar dan batasan anggaran ≤ Rp150.000. Prinsip utama: penyaluran pakan hanya atas konfirmasi pemilik. Solusi mengandalkan ESP32-CAM (OV2640) sebagai pengendali tunggal yang terintegrasi dengan Blynk (V0 pemberian manual, V1 jadwal, V3 durasi servo SG90). Tiga mode operasi: terjadwal (nonaktif secara default; 07.00/17.00), konfirmasi (notifikasi push → persetujuan pemilik → aktuasi servo), dan manual. MVP mencakup F1–F5 serta live view MJPEG; RFID dan sensor level ditunda karena keterbatasan kalung dan anggaran. Estimasi biaya ±Rp117.000 dengan arsitektur Blynk Cloud sebagai penghubung.",
-      en: "Automated feeding system for three semi-indoor cats with stray-animal risk and ≤ IDR 150k budget. Core principle: dispensing only upon owner confirmation. Solution uses ESP32-CAM (OV2640) as single controller integrated with Blynk (V0 manual feed, V1 schedule, V3 servo duration SG90). Three modes: scheduled (off by default; 07:00/17:00), confirmation-based (push notification → owner approval → servo actuation), and manual. MVP covers F1–F5 plus MJPEG live view; RFID and level sensors deferred due to collar and budget constraints. Estimated cost ±IDR 117k with Blynk Cloud as bridge.",
+      id: "Sistem pemberian pakan otomatis untuk tiga kucing semi-indoor dengan risiko konsumsi oleh kucing liar dan batasan anggaran ≤ Rp150.000. Prinsip utama: penyaluran pakan hanya atas konfirmasi pemilik. Solusi mengandalkan ESP32-CAM (OV2640) sebagai pengendali tunggal yang terintegrasi dengan Blynk (V0 pemberian manual, V1 jadwal, V3 durasi servo SG90). Tiga mode operasi: terjadwal (nonaktif secara default; 07.00/17.00), konfirmasi (notifikasi push → persetujuan pemilik → aktuasi servo), dan manual. MVP mencakup F1-F5 serta live view MJPEG; RFID dan sensor level ditunda karena keterbatasan kalung dan anggaran. Estimasi biaya ±Rp117.000 dengan arsitektur Blynk Cloud sebagai penghubung.",
+      en: "Automated feeding system for three semi-indoor cats with stray-animal risk and ≤ IDR 150k budget. Core principle: dispensing only upon owner confirmation. Solution uses ESP32-CAM (OV2640) as single controller integrated with Blynk (V0 manual feed, V1 schedule, V3 servo duration SG90). Three modes: scheduled (off by default; 07:00/17:00), confirmation-based (push notification → owner approval → servo actuation), and manual. MVP covers F1-F5 plus MJPEG live view; RFID and level sensors deferred due to collar and budget constraints. Estimated cost ±IDR 117k with Blynk Cloud as bridge.",
     } as const,
     stack: ["ESP32", "Servo Motors", "MQTT", "Sensors"],
     status: "CONCEPT STAGE",
@@ -2793,7 +2793,7 @@ const projects = [
   },
   {
     no: "04",
-    title: "Kulinara — Kuliner Nusantara",
+    title: "Kulinara - Kuliner Nusantara",
     kind: "Pengembangan Web · Concept",
     category: "web" as const,
     desc: {
@@ -2811,16 +2811,16 @@ const projects = [
   },
   {
     no: "05",
-    title: "Smart Stock — Inventaris UMKM",
+    title: "Smart Stock - Inventaris UMKM",
     kind: "Aplikasi Web · Inventory System",
     category: "web" as const,
     desc: {
-      id: "Aplikasi inventaris UMKM: stok masuk/keluar, konversi satuan eceran–grosir, stok minimum, dan riwayat mutasi dengan row lock transaksional.",
-      en: "SME inventory app: stock in/out, retail–wholesale unit conversion, minimum stock alerts, and transactional movement history with row locking.",
+      id: "Aplikasi inventaris UMKM: stok masuk/keluar, konversi satuan eceran-grosir, stok minimum, dan riwayat mutasi dengan row lock transaksional.",
+      en: "SME inventory app: stock in/out, retail-wholesale unit conversion, minimum stock alerts, and transactional movement history with row locking.",
     } as const,
     concept: {
-      id: "Sistem manajemen inventaris cerdas untuk UMKM dengan pemantauan stok real-time, notifikasi stok minimum, dan riwayat mutasi transaksional. Arsitektur Docker Compose (Next.js 14 App Router :3000, Laravel 11 php-fpm :8000, PostgreSQL 16) dengan model data 7 tabel (USERS, CATEGORIES, SUPPLIERS, UNITS, PRODUCTS, PRODUCT_UNITS, STOCK_MOVEMENTS) yang mendukung konversi satuan eceran–grosir melalui conversion_factor. Mekanisme mutasi menerapkan SELECT ... FOR UPDATE (row lock), perhitungan qty_base di server, validasi stok kurang (422 STOK_KURANG), adjustment absolut qty_after, guard CHECK stock_qty ≥ 0, dan retry deadlock hingga 3×. Alur peran owner/admin/staff serta roadmap 6 fase terdokumentasi pada diagram Notion.",
-      en: "Smart inventory management system for SMEs with real-time stock monitoring, low-stock alerts, and transactional movement history. Docker Compose architecture (Next.js 14 App Router :3000, Laravel 11 php-fpm :8000, PostgreSQL 16) with 7-table data model (USERS, CATEGORIES, SUPPLIERS, UNITS, PRODUCTS, PRODUCT_UNITS, STOCK_MOVEMENTS) supporting retail–wholesale conversion via conversion_factor. Mutation enforces SELECT ... FOR UPDATE (row lock), server-computed qty_base, insufficient stock validation (422 STOK_KURANG), absolute qty_after adjustment, CHECK stock_qty ≥ 0 guard, and deadlock retry up to 3×. Role flows (owner/admin/staff) and 6-phase roadmap documented in Notion diagrams.",
+      id: "Sistem manajemen inventaris cerdas untuk UMKM dengan pemantauan stok real-time, notifikasi stok minimum, dan riwayat mutasi transaksional. Arsitektur Docker Compose (Next.js 14 App Router :3000, Laravel 11 php-fpm :8000, PostgreSQL 16) dengan model data 7 tabel (USERS, CATEGORIES, SUPPLIERS, UNITS, PRODUCTS, PRODUCT_UNITS, STOCK_MOVEMENTS) yang mendukung konversi satuan eceran-grosir melalui conversion_factor. Mekanisme mutasi menerapkan SELECT ... FOR UPDATE (row lock), perhitungan qty_base di server, validasi stok kurang (422 STOK_KURANG), adjustment absolut qty_after, guard CHECK stock_qty ≥ 0, dan retry deadlock hingga 3×. Alur peran owner/admin/staff serta roadmap 6 fase terdokumentasi pada diagram Notion.",
+      en: "Smart inventory management system for SMEs with real-time stock monitoring, low-stock alerts, and transactional movement history. Docker Compose architecture (Next.js 14 App Router :3000, Laravel 11 php-fpm :8000, PostgreSQL 16) with 7-table data model (USERS, CATEGORIES, SUPPLIERS, UNITS, PRODUCTS, PRODUCT_UNITS, STOCK_MOVEMENTS) supporting retail-wholesale conversion via conversion_factor. Mutation enforces SELECT ... FOR UPDATE (row lock), server-computed qty_base, insufficient stock validation (422 STOK_KURANG), absolute qty_after adjustment, CHECK stock_qty ≥ 0 guard, and deadlock retry up to 3×. Role flows (owner/admin/staff) and 6-phase roadmap documented in Notion diagrams.",
     } as const,
     stack: ["Laravel 11", "Next.js 14", "PostgreSQL", "Docker"],
     status: "CONCEPT STAGE",
@@ -2885,7 +2885,7 @@ function ProjectsOpening() {
   );
 }
 
-/* tata letak coverflow — satu sumber rumus, dipakai render React & paint imperatif (fast-scroll) */
+/* tata letak coverflow - satu sumber rumus, dipakai render React & paint imperatif (fast-scroll) */
 function coverLayout(offset: number) {
   const abs = Math.abs(offset);
   const isCenter = abs < 0.5;
@@ -2912,12 +2912,12 @@ function Projects() {
   const LOOP_N = projects.length;
   const LOOP_COPIES = 3;
   const loopProjects = Array.from({ length: LOOP_N * LOOP_COPIES }, (_, i) => projects[i % LOOP_N]);
-  // HP: tanpa klon — loop/infinite-jump cuma untuk coverflow desktop (kalau di HP bikin lompat/ngebut)
+  // HP: tanpa klon - loop/infinite-jump cuma untuk coverflow desktop (kalau di HP bikin lompat/ngebut)
   const isMobile = useIsMobile();
   const scrollerProjects = isMobile ? projects : loopProjects;
   const autoPauseRef = useRef(false);
   const isHoverRef = useRef(false);
-  // coverflow desktop (md+) — index 0..N-1, FEATURED di tengah
+  // coverflow desktop (md+) - index 0..N-1, FEATURED di tengah
   const [coverIdx, setCoverIdx] = useState(0);
   const coverAutoPauseRef = useRef(false);
   const coverHoverRef = useRef(false);
@@ -2925,7 +2925,7 @@ function Projects() {
   const wheelLock = useRef(0);
   const coverDragRef = useRef({ active: false, startX: 0, moved: false });
   const coverInViewRef = useRef(false);
-  // fast scroll entry — 2 detik sangat cepat→medium→lambat, digambar langsung ke DOM (tanpa re-render)
+  // fast scroll entry - 2 detik sangat cepat→medium→lambat, digambar langsung ke DOM (tanpa re-render)
   const [coverPhase, setCoverPhase] = useState<"fast" | "reveal">("reveal");
   const coverEls = useRef<(HTMLDivElement | null)[]>([]);
   const FAST_TOTAL = 2000;
@@ -2949,7 +2949,7 @@ function Projects() {
   useEffect(() => {
     coverIdxRef.current = coverIdx;
   }, [coverIdx]);
-  // carousel: center-zoom — outer pitch gap-4 rata, inner yang di-scale; center hitung via offsetLeft (anti-scale drift)
+  // carousel: center-zoom - outer pitch gap-4 rata, inner yang di-scale; center hitung via offsetLeft (anti-scale drift)
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -2984,7 +2984,7 @@ function Projects() {
           }
         });
         // infinite jump: kalau best di klon luar, lompat senyap ke klon tengah yang sama (seamless)
-        // HP tidak punya klon — jangan pernah jump, cukup update center
+        // HP tidak punya klon - jangan pernah jump, cukup update center
         if (!isMobile && (best < LOOP_N || best >= LOOP_N * 2)) {
           const targetPos = best < LOOP_N ? best + LOOP_N : best - LOOP_N;
           const target = cards[targetPos];
@@ -3044,9 +3044,9 @@ function Projects() {
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
-    // HP: swipe manual saja — tanpa autoplay supaya geser tidak terasa "ngebut"
+    // HP: swipe manual saja - tanpa autoplay supaya geser tidak terasa "ngebut"
     if (isMobile) return;
-    // autoplay hanya saat section terlihat — jangan geser kartu di luar layar
+    // autoplay hanya saat section terlihat - jangan geser kartu di luar layar
     if (!scrollerInView) return;
     if (
       typeof window !== "undefined" &&
@@ -3120,7 +3120,7 @@ function Projects() {
       document.removeEventListener("visibilitychange", onVis);
     };
   }, [active, scrollerInView, isMobile]);
-  // auto-preview coverflow desktop — gantian 3800ms, pause hover/modal
+  // auto-preview coverflow desktop - gantian 3800ms, pause hover/modal
   useEffect(() => {
     if (
       typeof window !== "undefined" &&
@@ -3182,7 +3182,7 @@ function Projects() {
       document.body.style.overflow = prevBodyOverflow;
       document.body.style.paddingRight = prevBodyPad;
       document.documentElement.style.overflow = prevHtmlOverflow;
-      // restore scroll pos — tanpa ini Chrome HP jump ke 0 terlihat "restart ke opening"
+      // restore scroll pos - tanpa ini Chrome HP jump ke 0 terlihat "restart ke opening"
       if (lenisInstance) {
         lenisInstance.start();
         lenisInstance.scrollTo(y, { immediate: true });
@@ -3272,7 +3272,7 @@ function Projects() {
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
-  // fast-scroll entry — ringan transform only, stepping coverIdx ~85ms total ~420ms
+  // fast-scroll entry - ringan transform only, stepping coverIdx ~85ms total ~420ms
   useEffect(() => {
     const el = stageRef.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
@@ -3339,9 +3339,9 @@ function Projects() {
 
   return (
     <div id="projects" className="relative bg-transparent">
-      {/* Opening — full 100dvh EPIC — keep */}
+      {/* Opening - full 100dvh EPIC - keep */}
       <ProjectsOpening />
-      {/* Kartu — baris horizontal scroll — container margin biar tidak mepet viewport */}
+      {/* Kartu - baris horizontal scroll - container margin biar tidak mepet viewport */}
       <section className="relative pb-6 pt-4 md:pb-[12vh] md:pt-8" aria-label={t.projectsTitle}>
         <div className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-[2.5vw]">
           <div
@@ -3373,7 +3373,7 @@ function Projects() {
               autoPauseRef.current = true;
               // touch: serahkan ke native scroll + snap (drag custom hanya untuk mouse)
               if (e.pointerType !== "mouse") return;
-              // biarkan click di kartu tetap jalan — drag cuma saat gerak horizontal cukup
+              // biarkan click di kartu tetap jalan - drag cuma saat gerak horizontal cukup
               const el = scrollerRef.current;
               if (!el) return;
               if (e.button !== 0) return;
@@ -3383,7 +3383,7 @@ function Projects() {
                 startLeft: el.scrollLeft,
                 moved: false,
               };
-              // jangan setPointerCapture di sini — biar click asli tidak tertahan; snap dimatikan hanya saat mulai drag
+              // jangan setPointerCapture di sini - biar click asli tidak tertahan; snap dimatikan hanya saat mulai drag
             }}
             onPointerMove={(e) => {
               if (!drag.current.active) return;
@@ -3391,7 +3391,7 @@ function Projects() {
               if (!el) return;
               const dx = e.clientX - drag.current.startX;
               if (Math.abs(dx) < 6) return;
-              // baru drag — tahan agar tidak jadi click, matikan snap
+              // baru drag - tahan agar tidak jadi click, matikan snap
               if (!drag.current.moved) {
                 drag.current.moved = true;
                 el.style.scrollSnapType = "none";
@@ -3446,7 +3446,7 @@ function Projects() {
               const scale = isCenter ? 1.025 : dist === 1 ? 0.985 : 0.96;
               const opacity = isCenter ? 1 : dist === 1 ? 0.96 : 0.88;
               const orig = idx % LOOP_N;
-              // desktop: hanya salinan tengah yang interaktif — klon loop disembunyikan dari fokus & screen reader
+              // desktop: hanya salinan tengah yang interaktif - klon loop disembunyikan dari fokus & screen reader
               // HP: tidak ada klon, semua kartu interaktif
               const isClone = !isMobile && (idx < LOOP_N || idx >= LOOP_N * 2);
               return (
@@ -3481,7 +3481,7 @@ function Projects() {
                 </div>
               );
             })}
-            {/* paddingInline sudah dari JS (clientWidth-card)/2, spacer tidak perlu lagi untuk center — keep tipis buat overscroll breathing */}
+            {/* paddingInline sudah dari JS (clientWidth-card)/2, spacer tidak perlu lagi untuk center - keep tipis buat overscroll breathing */}
             <div aria-hidden className="shrink-0 w-2" />
           </div>
 
@@ -3492,7 +3492,7 @@ function Projects() {
             <span className="text-xs">→</span>
           </div>
 
-          {/* Coverflow stacked arc — desktop md+ : FEATURED di depan, samping tumpuk ke belakang */}
+          {/* Coverflow stacked arc - desktop md+ : FEATURED di depan, samping tumpuk ke belakang */}
           <div className="relative hidden md:block">
             <div
               ref={stageRef}
@@ -3592,7 +3592,7 @@ function Projects() {
                 const { abs, isCenter, x, z, scale, rotY } = coverLayout(offset);
                 const visible = abs <= 2;
                 const blur = abs === 0 ? 0 : abs === 1 ? 1.4 : 4;
-                // fast: view tetap 5 kartu, tidak kedip — digambar imperatif via paintCover
+                // fast: view tetap 5 kartu, tidak kedip - digambar imperatif via paintCover
                 const fast = coverPhase === "fast";
                 return (
                   <div
@@ -3657,7 +3657,7 @@ function Projects() {
                 );
               })}
             </div>
-            {/* kontrol — prev / dots / next */}
+            {/* kontrol - prev / dots / next */}
             <div className="mt-1 flex items-center justify-center gap-4 pb-2">
               <button
                 type="button"
@@ -3916,11 +3916,11 @@ function Projects() {
   );
 }
 
-/* ---------- 4. Experience — real profile ---------- */
+/* ---------- 4. Experience - real profile ---------- */
 const experience = [
   {
     icon: GraduationCap,
-    year: { id: "2023 — Sekarang", en: "2023 — Present" } as const,
+    year: { id: "2023 - Sekarang", en: "2023 - Present" } as const,
     period: { id: "Akademik", en: "Academic" } as const,
     role: { id: "Mahasiswa Sistem Informasi", en: "Information Systems Student" } as const,
     org: { id: "Universitas Siliwangi", en: "Siliwangi University" } as const,
@@ -3941,8 +3941,8 @@ const experience = [
     year: "2026",
     period: { id: "MSIB Program", en: "MSIB Program" } as const,
     role: {
-      id: "Junior Data Science — VINIX7",
-      en: "Junior Data Science — VINIX7",
+      id: "Junior Data Science - VINIX7",
+      en: "Junior Data Science - VINIX7",
     } as const,
     org: {
       id: "PT Vinix Seven Aurum | Kampus Merdeka",
@@ -3968,8 +3968,8 @@ const experience = [
     year: "2026",
     period: { id: "Kerja Praktik", en: "Internship" } as const,
     role: {
-      id: "Kerja Praktik — Data Engineering & Operasi",
-      en: "Practical Work — Data Engineering & Operations",
+      id: "Kerja Praktik - Data Engineering & Operasi",
+      en: "Practical Work - Data Engineering & Operations",
     } as const,
     org: {
       id: "Badan Pusat Statistik (BPS) Kabupaten Tasikmalaya",
@@ -4251,7 +4251,7 @@ function ExpRow({
       <motion.button
         data-dot
         onClick={onJump}
-        aria-label={`${period} — ${role}`}
+        aria-label={`${period} - ${role}`}
         style={dotStyle}
         className="absolute left-[14px] top-8 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[3px] border-0 bg-transparent md:left-1/2 md:top-1/2"
       >
@@ -4489,8 +4489,8 @@ function CertificateViewer({
   const title = href
     ? (href.split("/").pop()?.replace(".pdf", "") ??
       (kind === "article"
-        ? viewer.article.replace(" — KYRONIX", "")
-        : viewer.certificate.replace(" — KYRONIX", "")))
+        ? viewer.article.replace(" - KYRONIX", "")
+        : viewer.certificate.replace(" - KYRONIX", "")))
     : "";
   const headerEyebrow = kind === "article" ? viewer.article : viewer.certificate;
   const [failed, setFailed] = useState(false);
@@ -4564,7 +4564,7 @@ function CertificateViewer({
                 onClick={(e) => e.stopPropagation()}
                 className="relative flex h-[min(92dvh,920px)] max-h-[92dvh] w-[min(96vw,1240px)] max-w-[1240px] flex-col overflow-hidden border border-border bg-surface shadow-[0_8px_32px_rgba(28,25,23,0.06)] md:shadow-[10px_10px_0_#E7E5E4]"
               >
-                {/* header branded — bukan toolbar chrome */}
+                {/* header branded - bukan toolbar chrome */}
                 <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-cream px-3 py-2.5 sm:px-4 sm:py-3">
                   <div className="min-w-0 flex items-center gap-2.5">
                     <img
@@ -4602,7 +4602,7 @@ function CertificateViewer({
                     </button>
                   </div>
                 </div>
-                {/* pdf — Chrome HP fix: fetch blob → iframe blob:, object sering blok di Chrome Android */}
+                {/* pdf - Chrome HP fix: fetch blob → iframe blob:, object sering blok di Chrome Android */}
                 <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#141414] p-2 sm:p-3">
                   <PdfBlobViewer
                     href={href}
@@ -4730,9 +4730,9 @@ function Experience() {
 
   return (
     <div id="experience" className="relative bg-transparent overflow-x-clip">
-      {/* Opening — full 100dvh EPIC */}
+      {/* Opening - full 100dvh EPIC */}
       <ExperienceOpening />
-      {/* Timeline — cards-only */}
+      {/* Timeline - cards-only */}
       <section
         ref={trackRef}
         className="relative px-[5vw] pb-[10vh] pt-3 md:pb-[10vh] overflow-x-clip"
@@ -4753,7 +4753,7 @@ function Experience() {
               className="pointer-events-none absolute bottom-0 left-[14px] top-3 w-[2px] -translate-x-1/2 bg-border md:left-1/2"
               aria-hidden
             />
-            {/* warm pipe — 100% desktop (no mobile split) */}
+            {/* warm pipe - 100% desktop (no mobile split) */}
             <motion.div
               className="pointer-events-none absolute left-[14px] top-3 w-[18px] origin-top -translate-x-1/2 bg-terracotta/18 blur-[8px] md:left-1/2"
               style={{ scaleY: pipe, height: "100%" } as unknown as Record<string, unknown>}
@@ -4808,7 +4808,7 @@ function PcbVia({ x, y, r = 3.3 }: { x: number; y: number; r?: number }) {
   );
 }
 
-/* PCB mini "hidup" di dalam kartu — topologinya mengikuti makna tiap kata:
+/* PCB mini "hidup" di dalam kartu - topologinya mengikuti makna tiap kata:
    01 UNDERSTAND = fan-in (banyak sumber → satu titik, ada test point probe)
    02 ASSEMBLE   = backplane + modul dicolok + konektor jantan/betina hampir menyatu
    03 RUN        = rel power → driver → fan-out + LED status */
@@ -5034,7 +5034,7 @@ function LabPcbLive({ variant }: { variant: 0 | 1 | 2 }) {
   );
 }
 
-/* ---------- 5. How I Work — Systems over Syntax (Warm) ---------- */
+/* ---------- 5. How I Work - Systems over Syntax (Warm) ---------- */
 function Lab() {
   const { lang } = useLang();
   const t = dict[lang];
@@ -5048,7 +5048,7 @@ function Lab() {
   const labGridY = useTransform(openingProgress, [0, 1], [22, -22]);
   const labTitleY = useTransform(openingProgress, [0, 1], [14, -14]);
   const labInView = useInView(openingRef, { amount: 0.35, margin: "0px 0px -12% 0px" });
-  // Parallax 3 tahap — masuk: HILANG → RENGGANG → POSISI · keluar: POSISI → RENGGANG → HILANG
+  // Parallax 3 tahap - masuk: HILANG → RENGGANG → POSISI · keluar: POSISI → RENGGANG → HILANG
   const labStepsRef = useRef<HTMLElement>(null);
   const { scrollYProgress: labStepsProgress } = useScroll({
     target: labStepsRef,
@@ -5057,7 +5057,7 @@ function Lab() {
   const reduceLabMotion =
     typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const labParallaxOff = reduceLabMotion || isMobile;
-  // 1 = renggang (baris lebar) · 0 = fix (bentuk V) — plateau di tengah biar enak dibaca
+  // 1 = renggang (baris lebar) · 0 = fix (bentuk V) - plateau di tengah biar enak dibaca
   // FIX sengaja dimajukan ke 0.24: V harus sudah utuh + kabel nyambung SEBELUM panggung
   // mencapai titik tengah layar (progress ±0.43-0.48), jadi momen "paling enak dilihat" = sirkuit penuh
   const labSpreadRaw = useTransform(labStepsProgress, [0.05, 0.24, 0.86, 1], [1, 0, 0, 1]);
@@ -5068,7 +5068,7 @@ function Lab() {
   const labStepsGridY = useTransform(labStepsProgress, [0, 1], [-38, 38]);
   // PCB "ditarik": 1 = kabel tersembunyi · 0 = kabel penuh.
   // Baru mulai setelah kartu BENAR-BENAR fix di V (0.24), lalu A dulu → B (bertahap),
-  // dan SUDAH penuh di 0.40 — sebelum V duduk di tengah layar.
+  // dan SUDAH penuh di 0.40 - sebelum V duduk di tengah layar.
   // Keluar: B ditarik balik dulu, lalu A.
   const labCableARaw = useTransform(labStepsProgress, [0.26, 0.33, 0.78, 0.86], [1, 0, 0, 1]);
   const labCableBRaw = useTransform(labStepsProgress, [0.34, 0.4, 0.7, 0.78], [1, 0, 0, 1]);
@@ -5083,7 +5083,7 @@ function Lab() {
     { code: "SYS-02 // PROCESS" },
     { code: "SYS-03 // OUTPUT" },
   ] as const;
-  // PCB — static V: 01 & 03 naik, 02 tengah-bawah; jalur derive dari positions (tidak draggable)
+  // PCB - static V: 01 & 03 naik, 02 tengah-bawah; jalur derive dari positions (tidak draggable)
   const STAGE_W = 1360;
   const STAGE_H = 410;
   const V_POS = {
@@ -5113,7 +5113,7 @@ function Lab() {
   const vC1 = V_POS["card-1"];
   const vC2 = V_POS["card-2"];
   const vC3 = V_POS["card-3"];
-  // arah "renggang": 01 & 03 melebar ke samping + turun, 02 naik — V terbuka jadi baris lebar
+  // arah "renggang": 01 & 03 melebar ke samping + turun, 02 naik - V terbuka jadi baris lebar
   const SPREAD = {
     "card-1": { x: -108, y: 66 },
     "card-2": { x: 0, y: -30 },
@@ -5179,7 +5179,7 @@ function Lab() {
   const traceNow = tracesAt(labSpread.get());
   return (
     <div id="lab" className="relative bg-transparent overflow-x-clip">
-      {/* Opening — full 100dvh EPIC — enter+exit 1 blok */}
+      {/* Opening - full 100dvh EPIC - enter+exit 1 blok */}
       <section
         ref={openingRef}
         className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-4 sm:px-[5vw] py-[12vh] max-md:min-h-[76dvh] max-md:py-[8vh]"
@@ -5238,7 +5238,7 @@ function Lab() {
           </motion.div>
         </div>
       </section>
-      {/* Steps — V: 01 & 03 naik, 02 turun; parallax renggang → fix → renggang + PCB */}
+      {/* Steps - V: 01 & 03 naik, 02 turun; parallax renggang → fix → renggang + PCB */}
       <section
         ref={labStepsRef}
         className="relative overflow-x-clip px-4 sm:px-[5vw] pb-[10vh] pt-0 max-md:pb-[6vh] max-md:pt-2"
@@ -5341,7 +5341,7 @@ function Lab() {
                   className={`lab-trace-pulse ${labPlay ? "is-in" : ""}`}
                 />
               </svg>
-              {/* Desktop V abs — 01 & 03 naik, 02 turun; Mobile stack sejajar */}
+              {/* Desktop V abs - 01 & 03 naik, 02 turun; Mobile stack sejajar */}
               {steps.map((step, idx) => {
                 const cmds =
                   lang === "en"
@@ -5357,12 +5357,12 @@ function Lab() {
                       ] as const);
                 const meta = labStepsMeta[idx]!;
                 return (
-                  // OUTER: pemegang posisi V — bebas dari `position:relative` & `transform` milik .warm-card
+                  // OUTER: pemegang posisi V - bebas dari `position:relative` & `transform` milik .warm-card
                   <motion.div
                     key={step.title}
                     style={
                       {
-                        // mobile: kartu ditumpuk statis — nolkan offset V supaya 02 & 03 tidak terdorong ke kanan
+                        // mobile: kartu ditumpuk statis - nolkan offset V supaya 02 & 03 tidak terdorong ke kanan
                         x: isMobile ? 0 : cardXY[idx]!.x,
                         y: isMobile ? 0 : cardXY[idx]!.y,
                         opacity: labCardFade,
@@ -5371,7 +5371,7 @@ function Lab() {
                     }
                     className="absolute top-0 left-0 z-10 will-change-transform max-md:static max-md:mx-auto max-md:mb-4 max-md:w-full max-md:max-w-[340px] md:w-[var(--lab-card)]"
                   >
-                    {/* port PCB — nempel di tepi kartu, otomatis ikut gerak bareng kartu.
+                    {/* port PCB - nempel di tepi kartu, otomatis ikut gerak bareng kartu.
                     dirender SEBELUM glow/kartu (z-0) supaya separuh lingkarannya tertutup kartu */}
                     {idx < 2 && (
                       <span
@@ -5417,7 +5417,7 @@ function Lab() {
                           <span aria-hidden className="pointer-events-none absolute right-3 bottom-3 h-[3px] w-[3px] bg-[#C4713C]/60" />
                           {/* grid halus */}
                           <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "linear-gradient(to right, rgba(245,239,230,0.9) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,239,230,0.9) 1px, transparent 1px)", backgroundSize: "20px 20px" } as React.CSSProperties} />
-                          {/* watermark 01 besar kanan — tipis, outline */}
+                          {/* watermark 01 besar kanan - tipis, outline */}
                           <span aria-hidden className="pointer-events-none absolute right-1 top-8 select-none font-display text-[92px] font-black leading-none tracking-tight text-white/[0.07] md:text-[110px] [ -webkit-text-stroke: 1px rgba(245,239,230,0.10) ]">
                             0{idx + 1}
                           </span>
@@ -5649,7 +5649,7 @@ function Contact() {
             className="w-full text-left"
           >
             <div className="warm-card p-4 lg:p-5">
-              {/* honeypot — hidden dari user, bot isi = block */}
+              {/* honeypot - hidden dari user, bot isi = block */}
               <input
                 type="text"
                 name="_gotcha"
@@ -5857,7 +5857,7 @@ function Contact() {
 }
 
 function App() {
-  // selalu mulai dari Opening (K Page) — tidak ada pengecualian, dari URL mana pun
+  // selalu mulai dari Opening (K Page) - tidak ada pengecualian, dari URL mana pun
   const [phase, setPhase] = useState<"intro" | "k" | "ready">("k");
   const [lang, setLang] = useState<Lang>("en");
   useLenis(true);
